@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { CommentsService } from '../../services/comments.service'
+import RichTextEditor from '../ui/RichTextEditor'
 
 interface CommentFormProps {
   postId: number
   parentCommentId?: number
   quotedText?: string
-  onSubmit: () => void
+  onSubmit?: () => void
+  onCommentAdded?: (comment: any) => void
   onCancel?: () => void
   placeholder?: string
 }
@@ -15,6 +17,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
   parentCommentId,
   quotedText,
   onSubmit,
+  onCommentAdded,
   onCancel,
   placeholder = "Schreibe einen Kommentar..."
 }) => {
@@ -33,7 +36,9 @@ const CommentForm: React.FC<CommentFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!content.trim()) {
+    // Check text content without HTML tags
+    const textContent = content.replace(/<[^>]*>/g, '').trim()
+    if (!textContent) {
       alert('Bitte gib einen Kommentar ein')
       return
     }
@@ -41,17 +46,21 @@ const CommentForm: React.FC<CommentFormProps> = ({
     setSubmitting(true)
     
     try {
-      await commentsService.createComment({
+      const newComment = await commentsService.createComment({
         post_id: postId,
-        content: content.trim(),
-        parent_comment_id: parentCommentId,
-        quoted_text: selectedText || undefined
+        content: content.trim()
       })
 
       // Reset form
       setContent('')
       setSelectedText('')
-      onSubmit()
+      
+      if (onCommentAdded) {
+        onCommentAdded(newComment)
+      }
+      if (onSubmit) {
+        onSubmit()
+      }
     } catch (error) {
       console.error('Error creating comment:', error)
       alert('Fehler beim Erstellen des Kommentars')
@@ -60,12 +69,6 @@ const CommentForm: React.FC<CommentFormProps> = ({
     }
   }
 
-  const handleQuoteSelection = () => {
-    const selection = window.getSelection()?.toString()
-    if (selection) {
-      setSelectedText(selection.trim())
-    }
-  }
 
   const removeQuote = () => {
     setSelectedText('')
@@ -102,33 +105,18 @@ const CommentForm: React.FC<CommentFormProps> = ({
 
         {/* Comment Input */}
         <div className="relative">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            onMouseUp={handleQuoteSelection}
-            className="w-full px-3 py-3 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500 resize-vertical"
-            rows={4}
+          <RichTextEditor
+            content={content}
+            onChange={setContent}
             placeholder={placeholder}
-            disabled={submitting}
+            minHeight="120px"
           />
-          
-          {/* Quote Button */}
-          <button
-            type="button"
-            onClick={handleQuoteSelection}
-            className="absolute top-2 right-2 text-gray-400 hover:text-primary-600 transition-colors p-1"
-            title="Text zitieren"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </button>
         </div>
 
         {/* Character Count */}
         <div className="flex justify-between items-center mt-2">
           <span className="text-xs text-gray-500">
-            {content.length} Zeichen
+            {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
           </span>
           
           {/* Action Buttons */}
@@ -146,10 +134,15 @@ const CommentForm: React.FC<CommentFormProps> = ({
             
             <button
               type="submit"
-              disabled={submitting || !content.trim()}
-              className="px-4 py-2 text-sm bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              disabled={submitting || !content.replace(/<[^>]*>/g, '').trim()}
+              className="px-6 py-2 text-sm font-bold bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 shadow-md"
+              style={{ 
+                backgroundColor: '#0284c7', 
+                fontWeight: 'bold',
+                boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
+              }}
             >
-              {submitting ? 'Wird gesendet...' : (parentCommentId ? 'Antworten' : 'Kommentieren')}
+              {submitting ? '📤 Wird gesendet...' : '💬 Kommentieren'}
             </button>
           </div>
         </div>

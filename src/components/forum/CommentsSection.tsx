@@ -1,72 +1,43 @@
 import React, { useState, useEffect } from 'react'
-import { CommentsService } from '../../services/comments.service'
+import { useCommentsStore } from '../../stores/comments.store'
 import CommentCard from './CommentCard'
 import CommentForm from './CommentForm'
-import type { CommentWithRelations } from '../../types/database.types'
 
 interface CommentsSectionProps {
   postId: number
 }
 
 const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
-  const [comments, setComments] = useState<CommentWithRelations[]>([])
-  const [loading, setLoading] = useState(true)
-  const [replyingTo, setReplyingTo] = useState<number | null>(null)
-  const [quotedText, setQuotedText] = useState<string | undefined>()
   const [showCommentForm, setShowCommentForm] = useState(false)
-  const [commentCount, setCommentCount] = useState(0)
+  const [selectedText, setSelectedText] = useState('')
 
-  const commentsService = new CommentsService()
+  const {
+    comments: allComments,
+    loading: commentsLoading,
+    loadComments,
+    createComment,
+    getCommentCount
+  } = useCommentsStore()
+  
+  // Get comments for this specific post
+  const comments = allComments[postId.toString()] || []
+  const loading = commentsLoading[postId.toString()] || false
+  const commentCount = getCommentCount(postId)
 
   useEffect(() => {
-    loadComments()
-    loadCommentCount()
-  }, [postId])
+    loadComments(postId)
+  }, [postId, loadComments])
 
-  const loadComments = async () => {
+  const handleCommentSubmit = async (commentData: any) => {
     try {
-      setLoading(true)
-      const data = await commentsService.getComments(postId)
-      setComments(data)
+      await createComment(commentData)
+      setShowCommentForm(false)
     } catch (error) {
-      console.error('Error loading comments:', error)
-    } finally {
-      setLoading(false)
+      console.error('Error creating comment:', error)
+      throw error
     }
   }
 
-  const loadCommentCount = async () => {
-    try {
-      const count = await commentsService.getCommentCount(postId)
-      setCommentCount(count)
-    } catch (error) {
-      console.error('Error loading comment count:', error)
-    }
-  }
-
-  const handleCommentSubmit = () => {
-    setShowCommentForm(false)
-    setReplyingTo(null)
-    setQuotedText(undefined)
-    loadComments()
-    loadCommentCount()
-  }
-
-  const handleReply = (parentId: number, quotedText?: string) => {
-    setReplyingTo(parentId)
-    setQuotedText(quotedText)
-    setShowCommentForm(false) // Hide main form when replying
-  }
-
-  const handleCancelReply = () => {
-    setReplyingTo(null)
-    setQuotedText(undefined)
-  }
-
-  const getSortedCommentsWithReplies = () => {
-    // The main comments already include their replies from the service
-    return comments
-  }
 
   if (loading) {
     return (
@@ -89,12 +60,17 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
           
           <button
             onClick={() => setShowCommentForm(!showCommentForm)}
-            className="inline-flex items-center px-3 py-2 text-sm bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 text-sm font-bold bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all transform hover:scale-105 shadow-md"
+            style={{ 
+              backgroundColor: '#0284c7', 
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
+            }}
           >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            Kommentar hinzufügen
+            {showCommentForm ? '❌ Abbrechen' : '💬 Kommentar hinzufügen'}
           </button>
         </div>
       </div>
@@ -104,8 +80,18 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
         <div className="p-6 border-b border-gray-200 bg-gray-50">
           <CommentForm
             postId={postId}
-            onSubmit={handleCommentSubmit}
-            onCancel={() => setShowCommentForm(false)}
+            quotedText={selectedText}
+            onCommentAdded={(comment) => {
+              handleCommentSubmit({
+                post_id: postId,
+                content: comment.content,
+                quoted_text: selectedText
+              })
+            }}
+            onCancel={() => {
+              setShowCommentForm(false)
+              setSelectedText('')
+            }}
             placeholder="Teile deine Gedanken zu diesem Beitrag..."
           />
         </div>
@@ -133,28 +119,16 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
           </div>
         ) : (
           <div className="p-6 space-y-6">
-            {getSortedCommentsWithReplies().map((comment) => (
-              <div key={comment.id}>
-                <CommentCard
-                  comment={comment}
-                  onReply={handleReply}
-                  onUpdate={loadComments}
-                />
-                
-                {/* Inline Reply Form */}
-                {replyingTo === comment.id && (
-                  <div className="mt-4 ml-8">
-                    <CommentForm
-                      postId={postId}
-                      parentCommentId={comment.id}
-                      quotedText={quotedText}
-                      onSubmit={handleCommentSubmit}
-                      onCancel={handleCancelReply}
-                      placeholder={`Antwort auf ${comment.users?.username}...`}
-                    />
-                  </div>
-                )}
-              </div>
+            {comments.map((comment) => (
+              <CommentCard
+                key={comment.id}
+                comment={comment}
+                onReply={(_parentId, quotedText) => {
+                  setSelectedText(quotedText || '')
+                  setShowCommentForm(true)
+                }}
+                onUpdate={() => loadComments(postId)}
+              />
             ))}
           </div>
         )}

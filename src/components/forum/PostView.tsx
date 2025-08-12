@@ -1,36 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { PostsService } from '../../services/posts.service'
+import { useForumStore } from '../../stores/forum.store'
+import { useCommentsRealtime } from '../../hooks/useCommentsRealtime'
 import CommentsSection from './CommentsSection'
-import type { PostWithRelations } from '../../types/database.types'
+import { SelectableText } from '../ui/RichTextEditor'
 
 const PostView: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [post, setPost] = useState<PostWithRelations | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const postsService = new PostsService()
+  const postId = id ? parseInt(id) : null
+  
+  const { currentPost: post, loading, loadPost } = useForumStore()
+  
+  // Set up real-time comments for this post
+  useCommentsRealtime(postId!)
 
   useEffect(() => {
-    if (id) {
-      loadPost(parseInt(id))
+    if (postId) {
+      loadPost(postId)
     }
-  }, [id])
-
-  const loadPost = async (postId: number) => {
-    try {
-      setLoading(true)
-      const data = await postsService.getPost(postId)
-      setPost(data)
-    } catch (error) {
-      console.error('Error loading post:', error)
-      setError('Beitrag konnte nicht geladen werden')
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [postId, loadPost])
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('de-DE', {
@@ -63,7 +52,8 @@ const PostView: React.FC = () => {
     )
   }
 
-  if (error || !post) {
+
+  if (!post && !loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="text-center py-12">
@@ -74,7 +64,7 @@ const PostView: React.FC = () => {
           </div>
           <h3 className="text-lg font-medium text-gray-900">Beitrag nicht gefunden</h3>
           <p className="text-gray-500 mt-1">
-            {error || 'Der angeforderte Beitrag existiert nicht oder wurde entfernt.'}
+            Der angeforderte Beitrag existiert nicht oder wurde entfernt.
           </p>
           <button
             onClick={() => navigate('/')}
@@ -86,6 +76,8 @@ const PostView: React.FC = () => {
       </div>
     )
   }
+
+  if (!post) return null
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
@@ -153,11 +145,12 @@ const PostView: React.FC = () => {
             {post.title}
           </h1>
           
-          <div className="prose prose-gray max-w-none">
-            <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-              {post.content}
-            </div>
-          </div>
+          <SelectableText onTextSelect={() => {}}>
+            <div 
+              className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          </SelectableText>
         </div>
 
         {/* Post Actions */}

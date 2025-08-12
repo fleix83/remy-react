@@ -62,27 +62,42 @@ export class PostsService {
     designation: string
     is_published?: boolean
   }): Promise<Post> {
-    const { data: { user } } = await supabase.auth.getUser()
+    console.log('🔧 PostsService: Starting createPost with data:', postData)
+    
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError) {
+      console.error('❌ PostsService: Auth error:', authError)
+      throw new Error('Authentication failed: ' + authError.message)
+    }
     
     if (!user) {
+      console.error('❌ PostsService: No authenticated user')
       throw new Error('User not authenticated')
     }
 
+    console.log('👤 PostsService: Authenticated user:', user.email, 'ID:', user.id)
+
+    const insertData = {
+      ...postData,
+      user_id: user.id,
+      is_published: postData.is_published ?? true
+    }
+    
+    console.log('📤 PostsService: Inserting data:', insertData)
+
     const { data, error } = await supabase
       .from('posts')
-      .insert([{
-        ...postData,
-        user_id: user.id,
-        is_published: postData.is_published ?? true
-      }])
+      .insert([insertData])
       .select()
       .single()
 
     if (error) {
-      console.error('Error creating post:', error)
-      throw error
+      console.error('❌ PostsService: Database error:', error)
+      throw new Error('Database error: ' + error.message)
     }
 
+    console.log('✅ PostsService: Post created successfully:', data)
     return data
   }
 

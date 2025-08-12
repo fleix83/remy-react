@@ -1,54 +1,35 @@
 import React, { useState, useEffect } from 'react'
-import { PostsService } from '../../services/posts.service'
+import { useForumStore } from '../../stores/forum.store'
+import { testSupabaseConnection, seedTestData } from '../../utils/test-connection'
+import { debugDatabaseSchema } from '../../utils/debug-schema'
+import { debugUIState } from '../../utils/ui-debug'
+import { investigateRLS, createUserRecord } from '../../utils/fix-rls'
+import { examineRLSPolicies, generateRLSPolicySQL } from '../../utils/examine-rls'
+import { testAuthUID, suggestPolicyFix } from '../../utils/test-auth-uid'
+import { emergencyPolicyFix, testRLSBypass } from '../../utils/emergency-fix'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
-import type { PostWithRelations, Category } from '../../types/database.types'
 
 const ForumView: React.FC = () => {
-  const [posts, setPosts] = useState<PostWithRelations[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
-  const [loading, setLoading] = useState(true)
   const [showEditor, setShowEditor] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const postsService = new PostsService()
-
-  useEffect(() => {
-    loadInitialData()
-  }, [])
+  const {
+    posts,
+    categories,
+    loading,
+    filters,
+    loadPosts,
+    createPost,
+    setFilters,
+    searchPosts,
+    loadCategories
+  } = useForumStore()
 
   useEffect(() => {
     loadPosts()
-  }, [selectedCategory])
-
-  const loadInitialData = async () => {
-    try {
-      const [postsData, categoriesData] = await Promise.all([
-        postsService.getPosts(),
-        postsService.getCategories()
-      ])
-      
-      setPosts(postsData)
-      setCategories(categoriesData)
-    } catch (error) {
-      console.error('Error loading initial data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const loadPosts = async () => {
-    try {
-      setLoading(true)
-      const data = await postsService.getPosts(selectedCategory || undefined)
-      setPosts(data)
-    } catch (error) {
-      console.error('Error loading posts:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+    loadCategories() // Ensure categories are loaded
+  }, [])
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
@@ -57,25 +38,30 @@ const ForumView: React.FC = () => {
     }
 
     try {
-      setLoading(true)
-      const data = await postsService.searchPosts(searchTerm.trim())
-      setPosts(data)
+      await searchPosts(searchTerm.trim())
     } catch (error) {
       console.error('Error searching posts:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
   const handleCreatePost = async (postData: any) => {
     try {
-      await postsService.createPost(postData)
+      console.log('🚀 ForumView: Attempting to create post with data:', postData)
+      await createPost(postData)
+      console.log('✅ ForumView: Post created successfully')
       setShowEditor(false)
-      loadPosts() // Reload posts to show the new one
+      // Reload posts to show the new one
+      await loadPosts()
     } catch (error) {
-      console.error('Error creating post:', error)
+      console.error('❌ ForumView: Error creating post:', error)
+      alert('Fehler beim Erstellen des Beitrags: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
       throw error
     }
+  }
+
+  const handleCategoryFilter = (categoryId: number | null) => {
+    setFilters({ category: categoryId || undefined })
+    loadPosts({ category: categoryId || undefined })
   }
 
   const getCategoryColor = (categoryId: number) => {
@@ -101,12 +87,109 @@ const ForumView: React.FC = () => {
             </p>
           </div>
           
-          <button
-            onClick={() => setShowEditor(!showEditor)}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
-          >
-            {showEditor ? 'Schließen' : 'Neuen Beitrag erstellen'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowEditor(!showEditor)}
+              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-bold transition-all transform hover:scale-105 shadow-lg"
+              style={{ 
+                backgroundColor: '#0284c7', 
+                color: 'white', 
+                padding: '12px 24px', 
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              {showEditor ? '❌ Schließen' : '✏️ Neuen Beitrag erstellen'}
+            </button>
+            <button
+              onClick={testSupabaseConnection}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Test Database Connection"
+            >
+              🔍 Test DB
+            </button>
+            <button
+              onClick={seedTestData}
+              className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Add Test Data"
+            >
+              🌱 Seed
+            </button>
+            <button
+              onClick={debugDatabaseSchema}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Debug Schema"
+            >
+              🔧 Debug
+            </button>
+            <button
+              onClick={debugUIState}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Debug UI State"
+            >
+              🎨 UI Debug
+            </button>
+            <button
+              onClick={investigateRLS}
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Investigate RLS"
+            >
+              🛡️ RLS Debug
+            </button>
+            <button
+              onClick={createUserRecord}
+              className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Create User Record"
+            >
+              👥 Create User
+            </button>
+            <button
+              onClick={examineRLSPolicies}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Examine RLS Policies"
+            >
+              🔍 Examine RLS
+            </button>
+            <button
+              onClick={generateRLSPolicySQL}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Generate RLS Policy SQL"
+            >
+              📝 Generate SQL
+            </button>
+            <button
+              onClick={testAuthUID}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Test Auth UID"
+            >
+              🔑 Test Auth
+            </button>
+            <button
+              onClick={suggestPolicyFix}
+              className="bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Suggest Policy Fix"
+            >
+              💡 Fix Policy
+            </button>
+            <button
+              onClick={emergencyPolicyFix}
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Emergency Policy Fix"
+            >
+              🚨 Emergency Fix
+            </button>
+            <button
+              onClick={testRLSBypass}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
+              title="Test RLS Bypass"
+            >
+              🧪 Test Bypass
+            </button>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -137,9 +220,9 @@ const ForumView: React.FC = () => {
         {/* Category Filter */}
         <div className="flex items-center space-x-2 overflow-x-auto pb-2">
           <button
-            onClick={() => setSelectedCategory(null)}
+            onClick={() => handleCategoryFilter(null)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              selectedCategory === null
+              !filters.category
                 ? 'bg-primary-100 text-primary-800 border border-primary-200'
                 : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
             }`}
@@ -150,9 +233,9 @@ const ForumView: React.FC = () => {
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
+              onClick={() => handleCategoryFilter(category.id)}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors border ${
-                selectedCategory === category.id
+                filters.category === category.id
                   ? getCategoryColor(category.id)
                   : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
               }`}
@@ -188,7 +271,7 @@ const ForumView: React.FC = () => {
             </div>
             <h3 className="text-lg font-medium text-gray-900">Keine Beiträge gefunden</h3>
             <p className="text-gray-500 mt-1">
-              {selectedCategory
+              {filters.category
                 ? 'In dieser Kategorie wurden noch keine Beiträge erstellt.'
                 : 'Es wurden noch keine Beiträge erstellt.'}
             </p>

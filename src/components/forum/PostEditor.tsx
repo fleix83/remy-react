@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import type { Category } from '../../types/database.types'
 import { PostsService } from '../../services/posts.service'
+import RichTextEditor from '../ui/RichTextEditor'
 
 interface PostEditorProps {
   onSubmit?: (postData: any) => Promise<void>
@@ -218,17 +219,14 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
           <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
             Inhalt *
           </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={8}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+          <RichTextEditor
+            content={content}
+            onChange={setContent}
             placeholder="Teile deine Gedanken, Erfahrungen oder Fragen mit der Community..."
-            required
+            minHeight="200px"
           />
           <p className="text-sm text-gray-500 mt-1">
-            {content.length} Zeichen
+            {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
           </p>
         </div>
 
@@ -257,9 +255,16 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
           <button
             type="submit"
             disabled={publishing || isLoading}
-            className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 text-base font-bold text-white bg-primary-600 border border-transparent rounded-md shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all"
+            style={{ 
+              backgroundColor: '#0284c7', 
+              fontSize: '16px',
+              fontWeight: 'bold',
+              padding: '12px 24px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+            }}
           >
-            {publishing || isLoading ? 'Wird veröffentlicht...' : 'Veröffentlichen'}
+            {publishing || isLoading ? '📤 Wird veröffentlicht...' : '🚀 Veröffentlichen'}
           </button>
         </div>
       </form>

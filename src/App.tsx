@@ -1,33 +1,29 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { supabase } from './lib/supabase'
-import type { User } from '@supabase/supabase-js'
+import { useAuthStore } from './stores/auth.store'
+import { useNotificationsRealtime } from './hooks/useNotificationsRealtime'
+import { usePostsRealtime } from './hooks/usePostsRealtime'
+import { testSupabaseConnection } from './utils/test-connection'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
 import './App.css'
 
 function App() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-
+  const { user, loading } = useAuthStore()
+  
+  // Set up real-time subscriptions
+  useNotificationsRealtime()
+  usePostsRealtime()
+  
+  // Test connection on startup
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
+    testSupabaseConnection()
   }, [])
 
+  const { logout } = useAuthStore()
+  
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await logout()
   }
 
   if (loading) {
@@ -88,6 +84,8 @@ function AuthForm() {
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [message, setMessage] = useState('')
+  
+  const { login, register } = useAuthStore()
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,23 +94,10 @@ function AuthForm() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              username: email.split('@')[0]
-            }
-          }
-        })
-        if (error) throw error
+        await register(email, password, email.split('@')[0])
         setMessage('Check your email for the confirmation link!')
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        })
-        if (error) throw error
+        await login(email, password)
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'An error occurred')

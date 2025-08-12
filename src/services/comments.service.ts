@@ -8,16 +8,9 @@ export class CommentsService {
       .from('comments')
       .select(`
         *,
-        users!inner(id, username, avatar_url, role),
-        replies:comments!parent_comment_id(
-          *,
-          users!inner(id, username, avatar_url, role)
-        )
+        users!inner(id, username, avatar_url, role)
       `)
       .eq('post_id', postId)
-      .is('parent_comment_id', null)
-      .eq('is_active', true)
-      .eq('is_banned', false)
       .order('created_at', { ascending: true })
 
     if (error) {
@@ -28,33 +21,18 @@ export class CommentsService {
     return data || []
   }
 
-  // Get replies to a specific comment
+  // Get replies to a specific comment (not supported in current schema)
   async getReplies(parentCommentId: number): Promise<CommentWithRelations[]> {
-    const { data, error } = await supabase
-      .from('comments')
-      .select(`
-        *,
-        users!inner(id, username, avatar_url, role)
-      `)
-      .eq('parent_comment_id', parentCommentId)
-      .eq('is_active', true)
-      .eq('is_banned', false)
-      .order('created_at', { ascending: true })
-
-    if (error) {
-      console.error('Error fetching replies:', error)
-      throw error
-    }
-
-    return data || []
+    // The current database schema doesn't support threaded comments
+    // Return empty array for now
+    console.log('⚠️ Threaded comments not supported in current schema')
+    return []
   }
 
   // Create a new comment
   async createComment(commentData: {
     post_id: number
     content: string
-    parent_comment_id?: number
-    quoted_text?: string
   }): Promise<Comment> {
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -62,12 +40,16 @@ export class CommentsService {
       throw new Error('User not authenticated')
     }
 
+    // Only use fields that exist in the actual database schema
+    const insertData = {
+      post_id: commentData.post_id,
+      content: commentData.content,
+      user_id: user.id
+    }
+
     const { data, error } = await supabase
       .from('comments')
-      .insert([{
-        ...commentData,
-        user_id: user.id
-      }])
+      .insert([insertData])
       .select()
       .single()
 
@@ -90,8 +72,8 @@ export class CommentsService {
     const { data, error } = await supabase
       .from('comments')
       .update({ 
-        content,
-        updated_at: new Date().toISOString()
+        content
+        // Note: updated_at doesn't exist in current schema
       })
       .eq('id', commentId)
       .eq('user_id', user.id) // Ensure user owns the comment
@@ -106,7 +88,7 @@ export class CommentsService {
     return data
   }
 
-  // Delete a comment (soft delete)
+  // Delete a comment (hard delete - schema doesn't support soft delete)
   async deleteComment(commentId: number): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -116,10 +98,7 @@ export class CommentsService {
 
     const { error } = await supabase
       .from('comments')
-      .update({ 
-        is_active: false,
-        updated_at: new Date().toISOString()
-      })
+      .delete()
       .eq('id', commentId)
       .eq('user_id', user.id) // Ensure user owns the comment
 
@@ -135,8 +114,6 @@ export class CommentsService {
       .from('comments')
       .select('*', { count: 'exact', head: true })
       .eq('post_id', postId)
-      .eq('is_active', true)
-      .eq('is_banned', false)
 
     if (error) {
       console.error('Error getting comment count:', error)

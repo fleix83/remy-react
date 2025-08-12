@@ -198,21 +198,39 @@ export type Database = {
           post_id: number
           user_id: string | null
           content: string
+          parent_comment_id: number | null
+          is_edited: boolean
+          is_active: boolean
+          is_banned: boolean
+          quoted_text: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: number
           post_id: number
           user_id?: string | null
           content: string
+          parent_comment_id?: number | null
+          is_edited?: boolean
+          is_active?: boolean
+          is_banned?: boolean
+          quoted_text?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: number
           post_id?: number
           user_id?: string | null
           content?: string
+          parent_comment_id?: number | null
+          is_edited?: boolean
+          is_active?: boolean
+          is_banned?: boolean
+          quoted_text?: string | null
           created_at?: string
+          updated_at?: string
         }
       }
       messages: {
@@ -359,6 +377,76 @@ export type Database = {
           blocked_at?: string
         }
       }
+      notifications: {
+        Row: {
+          id: number
+          user_id: string
+          type: 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
+          title: string
+          message: string
+          related_post_id: number | null
+          related_comment_id: number | null
+          is_read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          user_id: string
+          type: 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
+          title: string
+          message: string
+          related_post_id?: number | null
+          related_comment_id?: number | null
+          is_read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          user_id?: string
+          type?: 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
+          title?: string
+          message?: string
+          related_post_id?: number | null
+          related_comment_id?: number | null
+          is_read?: boolean
+          created_at?: string
+        }
+      }
+      post_drafts: {
+        Row: {
+          id: number
+          user_id: string
+          category_id: number | null
+          title: string
+          content: string
+          canton: string | null
+          therapist_id: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          user_id: string
+          category_id?: number | null
+          title: string
+          content: string
+          canton?: string | null
+          therapist_id?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          user_id?: string
+          category_id?: number | null
+          title?: string
+          content?: string
+          canton?: string | null
+          therapist_id?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -369,6 +457,7 @@ export type Database = {
     Enums: {
       user_role: 'user' | 'moderator' | 'admin'
       access_role: 'all' | 'user' | 'moderator' | 'admin'
+      notification_type: 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -388,9 +477,12 @@ export type Designation = Database['public']['Tables']['designations']['Row']
 export type Tag = Database['public']['Tables']['tags']['Row']
 export type PostTag = Database['public']['Tables']['post_tags']['Row']
 export type UserBlock = Database['public']['Tables']['user_blocks']['Row']
+export type Notification = Database['public']['Tables']['notifications']['Row']
+export type PostDraft = Database['public']['Tables']['post_drafts']['Row']
 
 export type UserRole = Database['public']['Enums']['user_role']
 export type AccessRole = Database['public']['Enums']['access_role']
+export type NotificationType = Database['public']['Enums']['notification_type']
 
 // Extended types with relationships
 export type PostWithRelations = Post & {
