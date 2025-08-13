@@ -65,31 +65,22 @@ const ForumView: React.FC<ForumViewProps> = ({
     loadPosts({ category: categoryId || undefined })
   }
 
-  const getCategoryColor = (categoryId: number) => {
-    const colors = {
-      1: 'bg-blue-100 text-blue-800 border-blue-200', // Erfahrung
-      2: 'bg-green-100 text-green-800 border-green-200', // Suche TherapeutIn
-      3: 'bg-purple-100 text-purple-800 border-purple-200', // Gedanken
-      4: 'bg-red-100 text-red-800 border-red-200', // Rant
-      5: 'bg-yellow-100 text-yellow-800 border-yellow-200', // Ressourcen
-    }
-    return colors[categoryId as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-200'
-  }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6">
-      {/* Clean Header */}
-      <div className="mb-8">
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-headline font-bold text-gray-900">Forum</h1>
-          <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
-            Teile deine Erfahrungen und finde Unterstützung in der Community. 
-            Behandle andere respektvoll und teile keine persönlichen Daten.
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#1a3442]">
+      <div className="max-w-6xl mx-auto py-6 px-0 md:px-4">
+        {/* Clean Header */}
+        <div className="mb-8">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-headline font-bold text-white">Forum</h1>
+            <p className="text-gray-300 mt-2 max-w-2xl mx-auto">
+              Teile deine Erfahrungen und finde Unterstützung in der Community. 
+              Behandle andere respektvoll und teile keine persönlichen Daten.
+            </p>
+          </div>
 
         {/* Search Bar */}
-        <div className="flex items-center space-x-2 mb-6">
+        <div className="flex items-center space-x-2 mb-6 px-4 md:px-0">
           <div className="relative flex-1">
             <input
               type="text"
@@ -97,7 +88,7 @@ const ForumView: React.FC<ForumViewProps> = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2 bg-[#203f4a] border border-[#2a4a57] rounded-md text-white placeholder-gray-400 focus:ring-[#5a9f51] focus:border-[#5a9f51]"
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,20 +98,20 @@ const ForumView: React.FC<ForumViewProps> = ({
           </div>
           <button
             onClick={handleSearch}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md transition-colors"
+            className="bg-[#5a9f51] hover:bg-[#4a8542] text-white px-4 py-2 rounded-md transition-colors"
           >
             Suchen
           </button>
         </div>
 
         {/* Category Filter */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-2">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 px-4 md:px-0">
           <button
             onClick={() => handleCategoryFilter(null)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               !filters.category
-                ? 'bg-primary-100 text-primary-800 border border-primary-200'
-                : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
+                ? 'bg-[#5a9f51] text-white'
+                : 'bg-[#203f4a] text-gray-300 hover:bg-[#2a4a57]'
             }`}
           >
             Alle Kategorien
@@ -130,17 +121,17 @@ const ForumView: React.FC<ForumViewProps> = ({
             <button
               key={category.id}
               onClick={() => handleCategoryFilter(category.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors border ${
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 filters.category === category.id
-                  ? getCategoryColor(category.id)
-                  : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
+                  ? 'bg-[#5a9f51] text-white'
+                  : 'bg-[#203f4a] text-gray-300 hover:bg-[#2a4a57]'
               }`}
             >
               {category.name_de}
             </button>
           ))}
         </div>
-      </div>
+        </div>
 
       {/* Post Editor Dialog */}
       {showCreatePostDialog && (
@@ -171,45 +162,46 @@ const ForumView: React.FC<ForumViewProps> = ({
         </div>
       )}
 
-      {/* Posts List */}
-      <div>
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
+        {/* Posts List */}
+        <div>
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5a9f51]"></div>
             </div>
-            <h3 className="text-lg font-medium text-gray-900">Keine Beiträge gefunden</h3>
-            <p className="text-gray-500 mt-1">
-              {filters.category
-                ? 'In dieser Kategorie wurden noch keine Beiträge erstellt.'
-                : 'Es wurden noch keine Beiträge erstellt.'}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {posts.map((post) => (
-              <PostCard 
-                key={post.id} 
-                post={post} 
-              />
-            ))}
-          </div>
-        )}
+          ) : posts.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-white">Keine Beiträge gefunden</h3>
+              <p className="text-gray-300 mt-1">
+                {filters.category
+                  ? 'In dieser Kategorie wurden noch keine Beiträge erstellt.'
+                  : 'Es wurden noch keine Beiträge erstellt.'}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4 px-4 md:px-0">
+              {posts.map((post) => (
+                <PostCard 
+                  key={post.id} 
+                  post={post} 
+                />
+              ))}
+            </div>
+          )}
 
-        {/* Load More Button (placeholder for pagination) */}
-        {posts.length > 0 && (
-          <div className="text-center mt-8">
-            <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium transition-colors">
-              Weitere Beiträge laden
-            </button>
-          </div>
-        )}
+          {/* Load More Button (placeholder for pagination) */}
+          {posts.length > 0 && (
+            <div className="text-center mt-8">
+              <button className="bg-[#203f4a] hover:bg-[#2a4a57] text-white px-6 py-3 rounded-md font-medium transition-colors">
+                Weitere Beiträge laden
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
