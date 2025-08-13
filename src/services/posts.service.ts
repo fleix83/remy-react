@@ -143,4 +143,72 @@ export class PostsService {
 
     return data || []
   }
+
+  // Update an existing post
+  async updatePost(id: number, updates: {
+    title?: string
+    content?: string
+    category_id?: number
+    canton?: string
+    therapist_id?: number | null
+  }): Promise<PostWithRelations> {
+    console.log('🔧 PostsService: Starting updatePost for ID:', id, 'with updates:', updates)
+    
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError) {
+      console.error('❌ PostsService: Auth error:', authError)
+      throw new Error('Authentication failed: ' + authError.message)
+    }
+    
+    if (!user) {
+      console.error('❌ PostsService: No authenticated user')
+      throw new Error('User not authenticated')
+    }
+
+    // First, verify the user owns this post
+    const { data: existingPost, error: fetchError } = await supabase
+      .from('posts')
+      .select('user_id')
+      .eq('id', id)
+      .single()
+
+    if (fetchError) {
+      console.error('❌ PostsService: Error fetching post for authorization:', fetchError)
+      throw new Error('Post not found')
+    }
+
+    if (existingPost.user_id !== user.id) {
+      console.error('❌ PostsService: User not authorized to edit this post')
+      throw new Error('Not authorized to edit this post')
+    }
+
+    // Prepare update data
+    const updateData = {
+      ...updates,
+      updated_at: new Date().toISOString()
+    }
+    
+    console.log('📤 PostsService: Updating post with data:', updateData)
+
+    const { data, error } = await supabase
+      .from('posts')
+      .update(updateData)
+      .eq('id', id)
+      .select(`
+        *,
+        users!inner(id, username, avatar_url, role),
+        categories!inner(id, name_de, name_fr, name_it),
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
+      `)
+      .single()
+
+    if (error) {
+      console.error('❌ PostsService: Database error:', error)
+      throw new Error('Database error: ' + error.message)
+    }
+
+    console.log('✅ PostsService: Post updated successfully:', data)
+    return data
+  }
 }

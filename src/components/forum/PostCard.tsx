@@ -56,14 +56,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
     return colors[categoryId as keyof typeof colors] || 'bg-[#5a9f51] text-white'
   }
 
-  const getContentPreview = (content: string, maxLength: number = 150) => {
-    if (content.length <= maxLength) return content
-    return content.substring(0, maxLength) + '...'
-  }
 
   return (
     <div 
-      className="bg-[#203f4a] rounded-2xl p-6 mb-4 hover:bg-[#234652] transition-colors cursor-pointer"
+      className="bg-[#203f4a] p-6 mb-4 hover:bg-[#234652] transition-colors cursor-pointer"
+      style={{borderRadius: '20px'}}
       onClick={handleClick}
     >
       {/* Header with Category Badge and Comments */}

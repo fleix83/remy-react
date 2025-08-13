@@ -35,7 +35,13 @@ interface ForumState {
   loadMorePosts: () => Promise<void>
   loadPost: (id: number) => Promise<void>
   createPost: (postData: any) => Promise<void>
-  updatePost: (id: number, updates: Partial<PostWithRelations>) => Promise<void>
+  updatePost: (id: number, updates: {
+    title?: string
+    content?: string
+    category_id?: number
+    canton?: string
+    therapist_id?: number | null
+  }) => Promise<void>
   deletePost: (id: number) => Promise<void>
   setFilters: (filters: Partial<PostFilters>) => void
   clearFilters: () => void
@@ -149,20 +155,35 @@ export const useForumStore = create<ForumState>((set, get) => ({
   },
 
   // Update post
-  updatePost: async (id: number, updates: Partial<PostWithRelations>) => {
+  updatePost: async (id: number, updates: {
+    title?: string
+    content?: string
+    category_id?: number
+    canton?: string
+    therapist_id?: number | null
+  }) => {
     try {
-      // Note: This would need to be implemented in PostsService
-      // For now, just update locally
-      set(state => ({
-        posts: state.posts.map(post => 
-          post.id === id ? { ...post, ...updates } : post
-        ),
-        currentPost: state.currentPost?.id === id 
-          ? { ...state.currentPost, ...updates }
-          : state.currentPost
-      }))
+      console.log('🔧 ForumStore: Updating post:', id, updates)
+      
+      const postsService = new PostsService()
+      await postsService.updatePost(id, updates)
+      
+      console.log('✅ ForumStore: Post updated successfully')
+      
+      // Update posts array by reloading the specific post
+      const postsService2 = new PostsService()
+      const updatedPost = await postsService2.getPost(id)
+      
+      if (updatedPost) {
+        set(state => ({
+          posts: state.posts.map(post => 
+            post.id === id ? updatedPost : post
+          ),
+          currentPost: state.currentPost?.id === id ? updatedPost : state.currentPost
+        }))
+      }
     } catch (error) {
-      console.error('Error updating post:', error)
+      console.error('❌ ForumStore: Error updating post:', error)
       throw error
     }
   },

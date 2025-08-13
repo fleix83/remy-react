@@ -3,18 +3,35 @@ import type { Category, Therapist } from '../../types/database.types'
 import { PostsService } from '../../services/posts.service'
 import RichTextEditor from '../ui/RichTextEditor'
 import TherapistSelector from '../therapist/TherapistSelector'
+import BadgeDropdown from '../ui/BadgeDropdown'
 
 interface PostEditorProps {
   onSubmit?: (postData: any) => Promise<void>
   onCancel?: () => void
   isLoading?: boolean
+  editMode?: boolean
+  mobileOptimized?: boolean
+  initialData?: {
+    title?: string
+    content?: string
+    category_id?: number
+    canton?: string
+    therapist_id?: number
+  }
 }
 
-const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }) => {
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [categoryId, setCategoryId] = useState<number>(1)
-  const [canton, setCanton] = useState('')
+const PostEditor: React.FC<PostEditorProps> = ({ 
+  onSubmit, 
+  onCancel, 
+  isLoading, 
+  editMode = false,
+  mobileOptimized = false,
+  initialData 
+}) => {
+  const [title, setTitle] = useState(initialData?.title || '')
+  const [content, setContent] = useState(initialData?.content || '')
+  const [categoryId, setCategoryId] = useState<number>(initialData?.category_id || 1)
+  const [canton, setCanton] = useState(initialData?.canton || '')
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
   const [categories, setCategories] = useState<Category[]>([])
   const [publishing, setPublishing] = useState(false)
@@ -54,7 +71,10 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
 
   useEffect(() => {
     loadCategories()
-  }, [])
+    if (editMode && initialData?.therapist_id) {
+      loadInitialTherapist(initialData.therapist_id)
+    }
+  }, [editMode, initialData?.therapist_id])
 
   const loadCategories = async () => {
     try {
@@ -62,6 +82,20 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
       setCategories(cats)
     } catch (error) {
       console.error('Error loading categories:', error)
+    }
+  }
+
+  const loadInitialTherapist = async (therapistId: number) => {
+    try {
+      // We need to import TherapistsService to load the therapist
+      const { TherapistsService } = await import('../../services/therapists.service')
+      const therapistsService = new TherapistsService()
+      const therapist = await therapistsService.getTherapist(therapistId)
+      if (therapist) {
+        setSelectedTherapist(therapist)
+      }
+    } catch (error) {
+      console.error('Error loading initial therapist:', error)
     }
   }
 
@@ -126,155 +160,324 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
   }
 
   return (
-    <div>
-
+    <div className="relative">
       <form onSubmit={(e) => handleSubmit(e, true)}>
-        {/* Title - Hidden for Erfahrung category */}
-        {categoryId !== 1 && (
-          <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              Titel *
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
-              maxLength={255}
-              required
-            />
+        {/* Content First - Priority for mobile */}
+        {mobileOptimized ? (
+          <>
+            {/* Title for non-Erfahrung categories */}
+            {categoryId !== 1 && (
+              <div className="mb-4">
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0284c7] focus:border-transparent text-base"
+                  placeholder="Titel eingeben..."
+                  maxLength={255}
+                  required
+                />
+              </div>
+            )}
+
+            {/* Badge-Based Metadata Bar */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between space-x-3 mb-2">
+                {/* Category Badge Dropdown */}
+                <BadgeDropdown
+                  value={categoryId}
+                  options={categories.map(cat => ({ value: cat.id, label: cat.name_de }))}
+                  onChange={(value) => setCategoryId(Number(value))}
+                  placeholder="Kategorie"
+                  badgeClassName="bg-[#5a9f51] text-white hover:bg-[#4a8542]"
+                  required
+                />
+
+                {/* Canton Badge Dropdown */}
+                <BadgeDropdown
+                  value={canton}
+                  options={cantons.filter(c => c.code).map(c => ({
+                    value: c.code,
+                    label: c.name,
+                    icon: c.code ? (
+                      <img 
+                        src={`/blueprint/assets/kantone/${c.code.toLowerCase()}.png`}
+                        alt={`${c.code} flag`}
+                        className="w-3 h-2 object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none'
+                        }}
+                      />
+                    ) : undefined
+                  }))}
+                  onChange={(value) => setCanton(String(value))}
+                  placeholder="Kanton"
+                  badgeClassName="bg-gray-600 text-white hover:bg-gray-700"
+                  required
+                />
+              </div>
+
+              {/* Therapist Selector - Only for Erfahrung category */}
+              {categoryId === 1 && (
+                <div className="mt-2">
+                  <div className="bg-blue-50 border border-blue-200 rounded-md p-2 mb-2">
+                    <p className="text-xs text-blue-800">
+                      Therapeut/in für Ihre Erfahrung auswählen
+                    </p>
+                  </div>
+                  <TherapistSelector
+                    selectedTherapist={selectedTherapist}
+                    onTherapistSelect={setSelectedTherapist}
+                    canton={canton}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Content */}
+            <div className="mb-6">
+              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+                Inhalt *
+              </label>
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
+                placeholder="Teile deine Gedanken, Erfahrungen oder Fragen mit der Community..."
+                minHeight="200px"
+                mobileOptimized={mobileOptimized}
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Title - Hidden for Erfahrung category */}
+            {categoryId !== 1 && (
+              <div className="mb-4">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                  Titel *
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
+                  maxLength={255}
+                  required
+                />
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Desktop: Traditional form layout */}
+        {!mobileOptimized && (
+          <div className="mb-6">
+            {/* Title - Hidden for Erfahrung category */}
+            {categoryId !== 1 && (
+              <div className="mb-4">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                  Titel *
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
+                  maxLength={255}
+                  required
+                />
+              </div>
+            )}
+
+            {/* Category and Canton */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                  Kategorie *
+                </label>
+                <select
+                  id="category"
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(Number(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  required
+                >
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name_de}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">
+                  Kanton *
+                </label>
+                <select
+                  id="canton"
+                  value={canton}
+                  onChange={(e) => setCanton(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  required
+                >
+                  {cantons.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Therapist Selection - Only show for "Erfahrung" category */}
+            {categoryId === 1 && (
+              <div className="mb-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-blue-800">
+                        Der Titel wird automatisch basierend auf dem ausgewählten Therapeuten erstellt.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Therapeut/in *
+                </label>
+                <TherapistSelector
+                  selectedTherapist={selectedTherapist}
+                  onTherapistSelect={setSelectedTherapist}
+                  canton={canton}
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Wählen Sie den Therapeuten/die Therapeutin aus, mit dem/der Sie eine Erfahrung gemacht haben.
+                </p>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Category and Canton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-              Kategorie *
+        {/* Content for Desktop (not mobile optimized) */}
+        {!mobileOptimized && (
+          <div className="mb-6">
+            <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+              Inhalt *
             </label>
-            <select
-              id="category"
-              value={categoryId}
-              onChange={(e) => setCategoryId(Number(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              required
-            >
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name_de}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">
-              Kanton *
-            </label>
-            <select
-              id="canton"
-              value={canton}
-              onChange={(e) => setCanton(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              required
-            >
-              {cantons.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-
-        {/* Therapist Selection - Only show for "Erfahrung" category */}
-        {categoryId === 1 && (
-          <div className="mb-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-blue-800">
-                    Der Titel wird automatisch basierend auf dem ausgewählten Therapeuten erstellt.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Therapeut/in *
-            </label>
-            <TherapistSelector
-              selectedTherapist={selectedTherapist}
-              onTherapistSelect={setSelectedTherapist}
-              canton={canton}
+            <RichTextEditor
+              content={content}
+              onChange={setContent}
+              placeholder="Teile deine Gedanken, Erfahrungen oder Fragen mit der Community..."
+              minHeight="200px"
+              mobileOptimized={mobileOptimized}
             />
             <p className="text-sm text-gray-500 mt-1">
-              Wählen Sie den Therapeuten/die Therapeutin aus, mit dem/der Sie eine Erfahrung gemacht haben.
+              {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
             </p>
           </div>
         )}
 
-        {/* Content */}
-        <div className="mb-6">
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-            Inhalt *
-          </label>
-          <RichTextEditor
-            content={content}
-            onChange={setContent}
-            placeholder="Teile deine Gedanken, Erfahrungen oder Fragen mit der Community..."
-            minHeight="200px"
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
-          </p>
-        </div>
-
         {/* Action Buttons */}
-        <div className="flex items-center justify-end space-x-3">
-          {onCancel && (
+        {mobileOptimized ? (
+          /* Mobile: Single primary action with secondary actions in dropdown */
+          <div className="relative">
+            {/* Primary Action */}
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <button
+                type="submit"
+                disabled={publishing || isLoading}
+                className="flex-1 px-6 py-4 text-lg font-bold text-white bg-primary-600 border border-transparent rounded-lg shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                style={{ 
+                  backgroundColor: '#0284c7', 
+                  fontSize: '18px',
+                  fontWeight: 'bold'
+                }}
+              >
+                {publishing || isLoading 
+                  ? (editMode ? '📝 Wird aktualisiert...' : '📤 Wird veröffentlicht...')
+                  : (editMode ? '📝 Aktualisieren' : '🚀 Veröffentlichen')
+                }
+              </button>
+            </div>
+
+            {/* Secondary Actions */}
+            <div className="flex items-center justify-between space-x-2">
+              {onCancel && (
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  className="flex-1 px-4 py-3 text-sm font-medium text-gray-600 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+                  disabled={publishing}
+                >
+                  Abbrechen
+                </button>
+              )}
+              
+              <button
+                type="button"
+                onClick={(e) => handleSubmit(e, false)}
+                className="flex-1 px-4 py-3 text-sm font-medium text-gray-600 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+                disabled={publishing}
+              >
+                📄 Als Entwurf
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Desktop: Traditional button layout */
+          <div className="flex items-center justify-end space-x-3">
+            {onCancel && (
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                disabled={publishing}
+              >
+                Abbrechen
+              </button>
+            )}
+            
             <button
               type="button"
-              onClick={onCancel}
+              onClick={(e) => handleSubmit(e, false)}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               disabled={publishing}
             >
-              Abbrechen
+              Als Entwurf speichern
             </button>
-          )}
-          
-          <button
-            type="button"
-            onClick={(e) => handleSubmit(e, false)}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-            disabled={publishing}
-          >
-            Als Entwurf speichern
-          </button>
 
-          <button
-            type="submit"
-            disabled={publishing || isLoading}
-            className="px-6 py-3 text-base font-bold text-white bg-primary-600 border border-transparent rounded-md shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all"
-            style={{ 
-              backgroundColor: '#0284c7', 
-              fontSize: '16px',
-              fontWeight: 'bold',
-              padding: '12px 24px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-            }}
-          >
-            {publishing || isLoading ? '📤 Wird veröffentlicht...' : '🚀 Veröffentlichen'}
-          </button>
-        </div>
+            <button
+              type="submit"
+              disabled={publishing || isLoading}
+              className="px-6 py-3 text-base font-bold text-white bg-primary-600 border border-transparent rounded-md shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all"
+              style={{ 
+                backgroundColor: '#0284c7', 
+                fontSize: '16px',
+                fontWeight: 'bold',
+                padding: '12px 24px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              {publishing || isLoading 
+                ? (editMode ? '📝 Wird aktualisiert...' : '📤 Wird veröffentlicht...')
+                : (editMode ? '📝 Aktualisieren' : '🚀 Veröffentlichen')
+              }
+            </button>
+          </div>
+        )}
       </form>
     </div>
   )

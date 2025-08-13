@@ -13,6 +13,7 @@ interface RichTextEditorProps {
   placeholder?: string
   className?: string
   minHeight?: string
+  mobileOptimized?: boolean
 }
 
 // Citation manager hook
@@ -99,9 +100,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onChange, 
   placeholder = "Write your content...",
   className = "",
-  minHeight = "150px"
+  minHeight = "150px",
+  mobileOptimized = false
 }) => {
   const { selectedText, citationMode, insertCitation, clearSelection } = useCitationManager()
+  
+  // Dynamic height calculation for mobile optimization
+  const dynamicMinHeight = mobileOptimized ? '60vh' : minHeight
   
   const editor = useEditor({
     extensions: [
@@ -127,8 +132,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: `prose prose-sm max-w-none focus:outline-none p-4 ${className}`,
-        style: `min-height: ${minHeight}`
+        class: `prose prose-sm max-w-none focus:outline-none p-4 text-left ${className}`,
+        style: `min-height: ${dynamicMinHeight}; text-align: left;`
       }
     }
   })
@@ -146,9 +151,56 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     editor.chain().focus().extendMarkRange('link').unsetLink().run()
   }
   
-  return (
-    <div className="relative border border-gray-300 rounded-lg bg-white">
-      {/* Toolbar */}
+  // Render simplified toolbar for mobile
+  const renderToolbar = () => {
+    if (mobileOptimized) {
+      // Simplified mobile toolbar with only essential tools
+      return (
+        <div className="border-b border-gray-200 p-2 flex items-center gap-1 flex-wrap">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+              editor.isActive('bold') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'
+            }`}
+            title="Bold"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8.21 13c2.106 0 3.412-1.087 3.412-2.823 0-1.306-.984-2.283-2.324-2.386v-.055a2.176 2.176 0 0 0 1.852-2.14c0-1.51-1.162-2.46-3.014-2.46H3.843V13H8.21zM5.908 4.674h1.696c.963 0 1.517.451 1.517 1.244 0 .834-.629 1.32-1.73 1.32H5.908V4.674zm0 6.788V8.598h1.73c1.217 0 1.88.492 1.88 1.415 0 .943-.643 1.449-1.832 1.449H5.908z"/>
+            </svg>
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+              editor.isActive('italic') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'
+            }`}
+            title="Italic"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M7.991 11.674L9.53 4.455c.123-.595.246-.71 1.347-.807l.11-.52H7.211l-.11.52c1.06.096 1.128.212 1.005.807L6.57 11.674c-.123.595-.246.71-1.346.806l-.11.52h3.774l.11-.52c-1.06-.095-1.129-.211-1.006-.806z"/>
+            </svg>
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+              editor.isActive('bulletList') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'
+            }`}
+            title="Bullet List"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+            </svg>
+          </button>
+        </div>
+      )
+    }
+
+    // Full desktop toolbar
+    return (
       <div className="border-b border-gray-200 p-3 flex items-center gap-1 flex-wrap">
         {/* Text formatting */}
         <button
@@ -279,6 +331,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           </div>
         )}
       </div>
+    )
+  }
+  
+  return (
+    <div className="relative border border-gray-300 rounded-lg bg-white">
+      {/* Toolbar */}
+      {renderToolbar()}
       
       {/* Editor content */}
       <div className="relative">
