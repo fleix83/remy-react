@@ -19,21 +19,18 @@ const Navigation: React.FC<NavigationProps> = ({
   }
 
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-200">
+    <nav className="bg-[#1a3442] md:bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
           {/* Logo and Brand */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">R</span>
-              </div>
+            <Link to="/" className="flex items-center">
               <div>
-                <h1 className="text-2xl font-headline font-bold text-primary-600">
+                <h1 className="text-2xl font-headline font-bold text-[#37a653] md:text-primary-600">
                   Remy Forum
                 </h1>
-                <p className="text-xs text-gray-500 -mt-1">
+                <p className="text-xs text-gray-300 md:text-gray-500 -mt-1">
                   Psychotherapie Community
                 </p>
               </div>
@@ -128,7 +125,7 @@ const Navigation: React.FC<NavigationProps> = ({
           <div className="md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-700 hover:text-primary-600 p-2 rounded-md transition-colors"
+              className="text-[#37a653] hover:text-[#2e8844] p-2 rounded-md transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (
@@ -143,11 +140,11 @@ const Navigation: React.FC<NavigationProps> = ({
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
+          <div className="md:hidden border-t border-[#2a4a57] py-4">
             <div className="flex flex-col space-y-2">
               <Link 
                 to="/" 
-                className="text-gray-700 hover:text-primary-600 px-4 py-3 rounded-md text-base font-medium transition-colors"
+                className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🏠 Forum
@@ -155,7 +152,7 @@ const Navigation: React.FC<NavigationProps> = ({
               
               <Link 
                 to="/therapists" 
-                className="text-gray-700 hover:text-primary-600 px-4 py-3 rounded-md text-base font-medium transition-colors"
+                className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 👩‍⚕️ Therapeuten
@@ -163,7 +160,7 @@ const Navigation: React.FC<NavigationProps> = ({
               
               <Link 
                 to="/messages" 
-                className="text-gray-700 hover:text-primary-600 px-4 py-3 rounded-md text-base font-medium transition-colors"
+                className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 💬 Nachrichten
@@ -176,8 +173,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     onCreatePost()
                     setIsMobileMenuOpen(false)
                   }}
-                  className="mx-4 mt-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2"
-                  style={{ backgroundColor: '#0284c7' }}
+                  className="mx-4 mt-2 bg-[#37a653] hover:bg-[#2e8844] text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -188,10 +184,10 @@ const Navigation: React.FC<NavigationProps> = ({
 
               {/* Mobile User Menu */}
               {user ? (
-                <div className="border-t border-gray-200 mt-4 pt-4">
-                  <div className="flex items-center px-4 py-2 text-sm text-gray-700">
-                    <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                      <span className="text-primary-600 font-semibold">
+                <div className="border-t border-[#2a4a57] mt-4 pt-4">
+                  <div className="flex items-center px-4 py-2 text-sm text-gray-300">
+                    <div className="w-8 h-8 bg-[#37a653] rounded-full flex items-center justify-center mr-3">
+                      <span className="text-white font-semibold">
                         {user.email?.charAt(0)?.toUpperCase() || '?'}
                       </span>
                     </div>
@@ -200,7 +196,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   
                   <Link 
                     to="/profile" 
-                    className="block text-gray-700 hover:text-primary-600 px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="block text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     👤 Profil
@@ -211,23 +207,23 @@ const Navigation: React.FC<NavigationProps> = ({
                       handleSignOut()
                       setIsMobileMenuOpen(false)
                     }}
-                    className="w-full text-left text-gray-700 hover:text-red-600 px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="w-full text-left text-gray-300 hover:text-red-400 px-4 py-3 rounded-md text-base font-medium transition-colors"
                   >
                     🚪 Abmelden
                   </button>
                 </div>
               ) : (
-                <div className="border-t border-gray-200 mt-4 pt-4 flex flex-col space-y-2 px-4">
+                <div className="border-t border-[#2a4a57] mt-4 pt-4 flex flex-col space-y-2 px-4">
                   <Link 
                     to="/login" 
-                    className="text-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="text-center bg-[#2a4a57] hover:bg-[#37a653] text-gray-300 hover:text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Anmelden
                   </Link>
                   <Link 
                     to="/register" 
-                    className="text-center bg-primary-600 hover:bg-primary-700 text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="text-center bg-[#37a653] hover:bg-[#2e8844] text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Registrieren
