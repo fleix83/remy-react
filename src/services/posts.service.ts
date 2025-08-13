@@ -9,7 +9,8 @@ export class PostsService {
       .select(`
         *,
         users!inner(id, username, avatar_url, role),
-        categories!inner(id, name_de, name_fr, name_it)
+        categories!inner(id, name_de, name_fr, name_it),
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
       .eq('is_published', true)
       .eq('is_active', true)
@@ -37,7 +38,8 @@ export class PostsService {
       .select(`
         *,
         users!inner(id, username, avatar_url, role),
-        categories!inner(id, name_de, name_fr, name_it)
+        categories!inner(id, name_de, name_fr, name_it),
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
       .eq('id', id)
       .eq('is_published', true)
@@ -59,7 +61,7 @@ export class PostsService {
     content: string
     category_id: number
     canton: string
-    designation: string
+    therapist_id?: number
     is_published?: boolean
   }): Promise<Post> {
     console.log('🔧 PostsService: Starting createPost with data:', postData)
@@ -81,7 +83,8 @@ export class PostsService {
     const insertData = {
       ...postData,
       user_id: user.id,
-      is_published: postData.is_published ?? true
+      is_published: postData.is_published ?? true,
+      designation: 'Allgemein' // Provide default designation since it's required by DB
     }
     
     console.log('📤 PostsService: Inserting data:', insertData)
@@ -124,7 +127,8 @@ export class PostsService {
       .select(`
         *,
         users!inner(id, username, avatar_url, role),
-        categories!inner(id, name_de, name_fr, name_it)
+        categories!inner(id, name_de, name_fr, name_it),
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
       .eq('is_published', true)
       .eq('is_active', true)

@@ -14,7 +14,7 @@ interface CommentFormProps {
 
 const CommentForm: React.FC<CommentFormProps> = ({
   postId,
-  parentCommentId,
+  parentCommentId: _parentCommentId, // Unused in current implementation
   quotedText,
   onSubmit,
   onCommentAdded,

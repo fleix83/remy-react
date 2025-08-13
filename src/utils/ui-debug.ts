@@ -10,7 +10,6 @@ export function debugUIState() {
   
   // Check if buttons exist in DOM
   console.log('2. UI Elements:')
-  const createButton = document.querySelector('button:contains("Neuen Beitrag erstellen")')
   const createButtonAlt = Array.from(document.querySelectorAll('button')).find(btn => 
     btn.textContent?.includes('Neuen Beitrag') || btn.textContent?.includes('erstellen')
   )

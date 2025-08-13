@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useForumStore } from '../../stores/forum.store'
 import { useCommentsRealtime } from '../../hooks/useCommentsRealtime'
+import { getPostDisplayTitle } from '../../utils/therapistHelpers'
 import CommentsSection from './CommentsSection'
 import { SelectableText } from '../ui/RichTextEditor'
 
@@ -142,7 +143,7 @@ const PostView: React.FC = () => {
         {/* Post Title and Content */}
         <div className="px-6 py-6">
           <h1 className="text-2xl font-headline font-bold text-gray-900 mb-6">
-            {post.title}
+            {getPostDisplayTitle(post)}
           </h1>
           
           <SelectableText onTextSelect={() => {}}>

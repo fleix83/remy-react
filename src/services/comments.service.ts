@@ -22,7 +22,7 @@ export class CommentsService {
   }
 
   // Get replies to a specific comment (not supported in current schema)
-  async getReplies(parentCommentId: number): Promise<CommentWithRelations[]> {
+  async getReplies(_parentCommentId: number): Promise<CommentWithRelations[]> {
     // The current database schema doesn't support threaded comments
     // Return empty array for now
     console.log('⚠️ Threaded comments not supported in current schema')

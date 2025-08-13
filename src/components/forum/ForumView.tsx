@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { useForumStore } from '../../stores/forum.store'
-import { testSupabaseConnection, seedTestData } from '../../utils/test-connection'
-import { debugDatabaseSchema } from '../../utils/debug-schema'
-import { debugUIState } from '../../utils/ui-debug'
-import { investigateRLS, createUserRecord } from '../../utils/fix-rls'
-import { examineRLSPolicies, generateRLSPolicySQL } from '../../utils/examine-rls'
-import { testAuthUID, suggestPolicyFix } from '../../utils/test-auth-uid'
-import { emergencyPolicyFix, testRLSBypass } from '../../utils/emergency-fix'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 
-const ForumView: React.FC = () => {
-  const [showEditor, setShowEditor] = useState(false)
+interface ForumViewProps {
+  showCreatePostDialog?: boolean
+  onCreatePostDialogClose?: () => void
+}
+
+const ForumView: React.FC<ForumViewProps> = ({ 
+  showCreatePostDialog = false, 
+  onCreatePostDialogClose = () => {} 
+}) => {
+  // Remove local showEditor state, use props instead
   const [searchTerm, setSearchTerm] = useState('')
 
   const {
@@ -49,7 +50,7 @@ const ForumView: React.FC = () => {
       console.log('🚀 ForumView: Attempting to create post with data:', postData)
       await createPost(postData)
       console.log('✅ ForumView: Post created successfully')
-      setShowEditor(false)
+      onCreatePostDialogClose() // Close dialog using prop
       // Reload posts to show the new one
       await loadPosts()
     } catch (error) {
@@ -76,120 +77,15 @@ const ForumView: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      {/* Header */}
+    <div className="max-w-6xl mx-auto px-4 py-6">
+      {/* Clean Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-headline font-bold text-gray-900">Forum</h1>
-            <p className="text-gray-600 mt-1">
-              Teile deine Erfahrungen und finde Unterstützung in der Community
-            </p>
-          </div>
-          
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowEditor(!showEditor)}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-bold transition-all transform hover:scale-105 shadow-lg"
-              style={{ 
-                backgroundColor: '#0284c7', 
-                color: 'white', 
-                padding: '12px 24px', 
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-              }}
-            >
-              {showEditor ? '❌ Schließen' : '✏️ Neuen Beitrag erstellen'}
-            </button>
-            <button
-              onClick={testSupabaseConnection}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Test Database Connection"
-            >
-              🔍 Test DB
-            </button>
-            <button
-              onClick={seedTestData}
-              className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Add Test Data"
-            >
-              🌱 Seed
-            </button>
-            <button
-              onClick={debugDatabaseSchema}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Debug Schema"
-            >
-              🔧 Debug
-            </button>
-            <button
-              onClick={debugUIState}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Debug UI State"
-            >
-              🎨 UI Debug
-            </button>
-            <button
-              onClick={investigateRLS}
-              className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Investigate RLS"
-            >
-              🛡️ RLS Debug
-            </button>
-            <button
-              onClick={createUserRecord}
-              className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Create User Record"
-            >
-              👥 Create User
-            </button>
-            <button
-              onClick={examineRLSPolicies}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Examine RLS Policies"
-            >
-              🔍 Examine RLS
-            </button>
-            <button
-              onClick={generateRLSPolicySQL}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Generate RLS Policy SQL"
-            >
-              📝 Generate SQL
-            </button>
-            <button
-              onClick={testAuthUID}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Test Auth UID"
-            >
-              🔑 Test Auth
-            </button>
-            <button
-              onClick={suggestPolicyFix}
-              className="bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Suggest Policy Fix"
-            >
-              💡 Fix Policy
-            </button>
-            <button
-              onClick={emergencyPolicyFix}
-              className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Emergency Policy Fix"
-            >
-              🚨 Emergency Fix
-            </button>
-            <button
-              onClick={testRLSBypass}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md font-medium transition-colors"
-              title="Test RLS Bypass"
-            >
-              🧪 Test Bypass
-            </button>
-          </div>
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-headline font-bold text-gray-900">Forum</h1>
+          <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
+            Teile deine Erfahrungen und finde Unterstützung in der Community. 
+            Behandle andere respektvoll und teile keine persönlichen Daten.
+          </p>
         </div>
 
         {/* Search Bar */}
@@ -246,13 +142,32 @@ const ForumView: React.FC = () => {
         </div>
       </div>
 
-      {/* Post Editor */}
-      {showEditor && (
-        <div className="mb-8">
-          <PostEditor 
-            onSubmit={handleCreatePost}
-            onCancel={() => setShowEditor(false)}
-          />
+      {/* Post Editor Dialog */}
+      {showCreatePostDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-headline font-bold text-gray-900">
+                  Neuen Beitrag erstellen
+                </h2>
+                <button
+                  onClick={onCreatePostDialogClose}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <PostEditor 
+                onSubmit={handleCreatePost}
+                onCancel={onCreatePostDialogClose}
+              />
+            </div>
+          </div>
         </div>
       )}
 

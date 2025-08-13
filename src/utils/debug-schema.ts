@@ -5,7 +5,7 @@ export async function debugDatabaseSchema() {
     console.log('🔍 Debugging Database Schema...')
     
     // Check current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
     console.log('👤 Current user:', user)
     
     if (!user) {
@@ -151,7 +151,7 @@ export async function debugDatabaseSchema() {
     console.log('\n🛡️ CHECKING TABLE PERMISSIONS:')
     
     // Try a simple insert/select to see what permissions we have
-    const { data: testSelect, error: selectError } = await supabase
+    const { error: selectError } = await supabase
       .from('posts')
       .select('id, title')
       .limit(1)

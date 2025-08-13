@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CommentsService } from '../../services/comments.service'
+import { getPostDisplayTitle } from '../../utils/therapistHelpers'
 import type { PostWithRelations } from '../../types/database.types'
 
 interface PostCardProps {
@@ -87,7 +88,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
 
       {/* Title */}
       <h3 className="text-lg font-headline font-semibold text-gray-900 mb-2">
-        {post.title}
+        {getPostDisplayTitle(post)}
       </h3>
 
       {/* Content Preview */}

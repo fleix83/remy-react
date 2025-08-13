@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import type { Category } from '../../types/database.types'
+import type { Category, Therapist } from '../../types/database.types'
 import { PostsService } from '../../services/posts.service'
 import RichTextEditor from '../ui/RichTextEditor'
+import TherapistSelector from '../therapist/TherapistSelector'
 
 interface PostEditorProps {
   onSubmit?: (postData: any) => Promise<void>
@@ -14,7 +15,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
   const [content, setContent] = useState('')
   const [categoryId, setCategoryId] = useState<number>(1)
   const [canton, setCanton] = useState('')
-  const [designation, setDesignation] = useState('')
+  const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
   const [categories, setCategories] = useState<Category[]>([])
   const [publishing, setPublishing] = useState(false)
 
@@ -50,17 +51,6 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
     { code: 'ZH', name: 'Zürich' }
   ]
 
-  const designations = [
-    'Psychotherapeut',
-    'Psychologe',
-    'Psychiater',
-    'Coach',
-    'Berater',
-    'Sozialarbeiter',
-    'Klinik',
-    'Tagesklinik',
-    'Tagesstruktur'
-  ]
 
   useEffect(() => {
     loadCategories()
@@ -78,8 +68,15 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
   const handleSubmit = async (e: React.FormEvent, publish = true) => {
     e.preventDefault()
     
-    if (!title.trim() || !content.trim()) {
-      alert('Bitte Titel und Inhalt ausfüllen')
+    // For Erfahrung category, title is optional (will be auto-generated)
+    // For other categories, title is required
+    if (categoryId !== 1 && !title.trim()) {
+      alert('Bitte Titel ausfüllen')
+      return
+    }
+    
+    if (!content.trim()) {
+      alert('Bitte Inhalt ausfüllen')
       return
     }
 
@@ -88,21 +85,26 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
       return
     }
 
-    if (!designation) {
-      alert('Bitte Fachrichtung auswählen')
+
+    // Validate therapist selection for "Erfahrung" category
+    if (categoryId === 1 && !selectedTherapist) {
+      alert('Bitte wählen Sie einen Therapeuten für Ihre Erfahrung aus')
       return
     }
 
     setPublishing(true)
     
     try {
+      // For Erfahrung category, provide default title if empty (will be replaced by therapist info)
+      const finalTitle = categoryId === 1 && !title.trim() ? 'Erfahrung' : title.trim()
+      
       const postData = {
-        title: title.trim(),
+        title: finalTitle,
         content: content.trim(),
         category_id: categoryId,
         canton,
-        designation,
-        is_published: publish
+        is_published: publish,
+        ...(selectedTherapist && { therapist_id: selectedTherapist.id })
       }
 
       if (onSubmit) {
@@ -114,7 +116,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
       setContent('')
       setCategoryId(1)
       setCanton('')
-      setDesignation('')
+      setSelectedTherapist(null)
     } catch (error) {
       console.error('Error submitting post:', error)
       alert('Fehler beim Speichern des Beitrags')
@@ -124,33 +126,27 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="mb-6">
-        <h2 className="text-xl font-headline font-bold text-gray-900">
-          Neuen Beitrag erstellen
-        </h2>
-        <p className="text-gray-600 mt-1">
-          Teile deine Erfahrungen mit der Community
-        </p>
-      </div>
+    <div>
 
       <form onSubmit={(e) => handleSubmit(e, true)}>
-        {/* Title */}
-        <div className="mb-4">
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-            Titel *
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
-            maxLength={255}
-            required
-          />
-        </div>
+        {/* Title - Hidden for Erfahrung category */}
+        {categoryId !== 1 && (
+          <div className="mb-4">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+              Titel *
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
+              maxLength={255}
+              required
+            />
+          </div>
+        )}
 
         {/* Category and Canton */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -193,26 +189,38 @@ const PostEditor: React.FC<PostEditorProps> = ({ onSubmit, onCancel, isLoading }
           </div>
         </div>
 
-        {/* Designation */}
-        <div className="mb-4">
-          <label htmlFor="designation" className="block text-sm font-medium text-gray-700 mb-1">
-            Fachrichtung *
-          </label>
-          <select
-            id="designation"
-            value={designation}
-            onChange={(e) => setDesignation(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            required
-          >
-            <option value="">Fachrichtung auswählen</option>
-            {designations.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
-        </div>
+
+        {/* Therapist Selection - Only show for "Erfahrung" category */}
+        {categoryId === 1 && (
+          <div className="mb-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-blue-800">
+                    Der Titel wird automatisch basierend auf dem ausgewählten Therapeuten erstellt.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Therapeut/in *
+            </label>
+            <TherapistSelector
+              selectedTherapist={selectedTherapist}
+              onTherapistSelect={setSelectedTherapist}
+              canton={canton}
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Wählen Sie den Therapeuten/die Therapeutin aus, mit dem/der Sie eine Erfahrung gemacht haben.
+            </p>
+          </div>
+        )}
 
         {/* Content */}
         <div className="mb-6">

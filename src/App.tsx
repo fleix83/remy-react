@@ -4,11 +4,13 @@ import { useAuthStore } from './stores/auth.store'
 import { useNotificationsRealtime } from './hooks/useNotificationsRealtime'
 import { usePostsRealtime } from './hooks/usePostsRealtime'
 import { testSupabaseConnection } from './utils/test-connection'
+import Layout from './components/layout/Layout'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
 import './App.css'
 
 function App() {
+  const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
   const { user, loading } = useAuthStore()
   
   // Set up real-time subscriptions
@@ -20,10 +22,8 @@ function App() {
     testSupabaseConnection()
   }, [])
 
-  const { logout } = useAuthStore()
-  
-  const handleSignOut = async () => {
-    await logout()
+  const handleCreatePost = () => {
+    setShowCreatePostDialog(true)
   }
 
   if (loading) {
@@ -43,37 +43,20 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <nav className="bg-white shadow-sm border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-2xl font-headline font-bold text-primary-600">
-                  Remy Forum
-                </h1>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">
-                  Welcome, {user.email}
-                </span>
-                <button
-                  onClick={handleSignOut}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  Sign Out
-                </button>
-              </div>
-            </div>
-          </div>
-        </nav>
-
-        <main>
-          <Routes>
-            <Route path="/" element={<ForumView />} />
-            <Route path="/post/:id" element={<PostView />} />
-          </Routes>
-        </main>
-      </div>
+      <Layout onCreatePost={handleCreatePost}>
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <ForumView 
+                showCreatePostDialog={showCreatePostDialog}
+                onCreatePostDialogClose={() => setShowCreatePostDialog(false)}
+              />
+            } 
+          />
+          <Route path="/post/:id" element={<PostView />} />
+        </Routes>
+      </Layout>
     </Router>
   )
 }
