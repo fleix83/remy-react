@@ -3,19 +3,37 @@ import type { Post, PostWithRelations, Category } from '../types/database.types'
 
 export class PostsService {
   // Get all published posts with user and category information
-  async getPosts(categoryId?: number): Promise<PostWithRelations[]> {
+  async getPosts(categoryId?: number, includeUserBanned = false): Promise<PostWithRelations[]> {
     let query = supabase
       .from('posts')
       .select(`
         *,
-        users!inner(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
-      .eq('is_published', true)
       .eq('is_active', true)
-      .eq('is_banned', false)
       .order('created_at', { ascending: false })
+
+    if (includeUserBanned) {
+      // If including user's banned posts, get all posts (published + user's banned posts)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        query = query.or(`and(is_published.eq.true,is_banned.eq.false,moderation_status.eq.approved),and(user_id.eq.${user.id},is_banned.eq.true)`)
+      } else {
+        // Not authenticated, only show published posts
+        query = query
+          .eq('is_published', true)
+          .eq('is_banned', false)
+          .eq('moderation_status', 'approved')
+      }
+    } else {
+      // Standard query - only published, non-banned, approved posts
+      query = query
+        .eq('is_published', true)
+        .eq('is_banned', false)
+        .eq('moderation_status', 'approved')
+    }
 
     if (categoryId) {
       query = query.eq('category_id', categoryId)
@@ -32,20 +50,37 @@ export class PostsService {
   }
 
   // Get a single post with full details
-  async getPost(id: number): Promise<PostWithRelations | null> {
-    const { data, error } = await supabase
+  async getPost(id: number, includeUserBanned = false): Promise<PostWithRelations | null> {
+    let query = supabase
       .from('posts')
       .select(`
         *,
-        users!inner(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
       .eq('id', id)
-      .eq('is_published', true)
       .eq('is_active', true)
-      .eq('is_banned', false)
-      .single()
+
+    if (includeUserBanned) {
+      // Check if user can see banned posts (either public posts or their own banned posts)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        query = query.or(`and(is_published.eq.true,is_banned.eq.false,moderation_status.eq.approved),and(user_id.eq.${user.id},is_banned.eq.true)`)
+      } else {
+        query = query
+          .eq('is_published', true)
+          .eq('is_banned', false)
+          .eq('moderation_status', 'approved')
+      }
+    } else {
+      query = query
+        .eq('is_published', true)
+        .eq('is_banned', false)
+        .eq('moderation_status', 'approved')
+    }
+
+    const { data, error } = await query.single()
 
     if (error) {
       console.error('Error fetching post:', error)
@@ -83,7 +118,8 @@ export class PostsService {
     const insertData = {
       ...postData,
       user_id: user.id,
-      is_published: postData.is_published ?? true,
+      is_published: false, // Always start as unpublished - requires moderation approval
+      moderation_status: 'pending' as const,
       designation: 'Allgemein' // Provide default designation since it's required by DB
     }
     
@@ -126,13 +162,14 @@ export class PostsService {
       .from('posts')
       .select(`
         *,
-        users!inner(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
       .eq('is_published', true)
       .eq('is_active', true)
       .eq('is_banned', false)
+      .eq('moderation_status', 'approved')
       .or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
       .order('created_at', { ascending: false })
 
@@ -197,7 +234,7 @@ export class PostsService {
       .eq('id', id)
       .select(`
         *,
-        users!inner(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
