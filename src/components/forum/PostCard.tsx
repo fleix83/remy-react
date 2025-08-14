@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { CommentsService } from '../../services/comments.service'
 import { getPostDisplayTitle } from '../../utils/therapistHelpers'
 import type { PostWithRelations } from '../../types/database.types'
+import { useAuthStore } from '../../stores/auth.store'
 import ModerationActions from '../ui/ModerationActions'
+import SendMessageButton from '../messaging/SendMessageButton'
 
 interface PostCardProps {
   post: PostWithRelations
@@ -12,6 +14,7 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
   const navigate = useNavigate()
+  const { user } = useAuthStore()
   const [commentCount, setCommentCount] = useState(0)
 
   const commentsService = new CommentsService()
@@ -119,13 +122,26 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           <p className="font-medium text-white text-xs text-left leading-none">{post.users?.username}</p>
           <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>
         </div>
-        {/* Moderation Actions */}
-        <ModerationActions
-          contentType="post"
-          contentId={post.id}
-          contentUserId={post.user_id}
-          onContentDeleted={() => window.location.reload()}
-        />
+        <div className="flex items-center space-x-2">
+          {/* Send Message Button */}
+          {user && post.users && user.id !== post.user_id && (
+            <SendMessageButton
+              recipientId={post.user_id}
+              recipientUsername={post.users.username}
+              postTitle={getPostDisplayTitle(post)}
+              postId={post.id}
+              variant="icon-only"
+              className="hover:bg-[#2a4a57] rounded p-1"
+            />
+          )}
+          {/* Moderation Actions */}
+          <ModerationActions
+            contentType="post"
+            contentId={post.id}
+            contentUserId={post.user_id}
+            onContentDeleted={() => window.location.reload()}
+          />
+        </div>
       </div>
 
       {/* Title */}

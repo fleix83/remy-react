@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
+import { usePermissions } from '../../hooks/usePermissions'
+import { useNotificationsStore } from '../../stores/notifications.store'
+import { useMessagesStore } from '../../stores/messages.store'
+import MessagesButton from '../messaging/MessagesButton'
 
 interface NavigationProps {
   onCreatePost: () => void
@@ -12,7 +16,20 @@ const Navigation: React.FC<NavigationProps> = ({
   showCreatePostButton = true 
 }) => {
   const { user, logout } = useAuthStore()
+  const permissions = usePermissions()
+  const { unreadCount: notificationCount, loadNotifications } = useNotificationsStore()
+  const { unreadCount: messageCount } = useMessagesStore()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Total unread count (notifications + messages)
+  const totalUnreadCount = notificationCount + messageCount
+
+  // Load notifications when user is available
+  useEffect(() => {
+    if (user) {
+      loadNotifications()
+    }
+  }, [user, loadNotifications])
 
   const handleSignOut = async () => {
     await logout()
@@ -56,12 +73,32 @@ const Navigation: React.FC<NavigationProps> = ({
                 👩‍⚕️ Therapeuten
               </Link>
               
-              <Link 
-                to="/messages" 
-                className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                💬 Nachrichten
-              </Link>
+              {user && (
+                <MessagesButton 
+                  className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  showLabel={true}
+                />
+              )}
+              
+              {/* Admin & Moderation Links - Only for moderators and admins */}
+              {permissions.canModerate && (
+                <>
+                  <Link 
+                    to="/admin/moderation" 
+                    className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    🛡️ Moderation
+                  </Link>
+                  {permissions.isAdmin && (
+                    <Link 
+                      to="/admin" 
+                      className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      ⚙️ Admin
+                    </Link>
+                  )}
+                </>
+              )}
             </div>
 
             {/* Create Post Button */}
@@ -121,20 +158,42 @@ const Navigation: React.FC<NavigationProps> = ({
             )}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button - User Avatar with Notification Badge */}
           <div className="md:hidden">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-[#37a653] hover:text-[#2e8844] p-2 rounded-md transition-colors"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            {user ? (
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="relative p-1 rounded-full transition-colors"
+              >
+                {/* User Avatar */}
+                <div className="w-8 h-8 bg-[#37a653] rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">
+                    {user.email?.charAt(0)?.toUpperCase() || '?'}
+                  </span>
+                </div>
+                
+                {/* Notification Badge */}
+                {totalUnreadCount > 0 && (
+                  <div className="absolute -top-1 -right-1 bg-red-400 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center min-w-[1.25rem]" style={{fontSize: '0.65rem'}}>
+                    {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
+                  </div>
                 )}
-              </svg>
-            </button>
+              </button>
+            ) : (
+              // Fallback to hamburger menu for non-logged in users
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-[#37a653] hover:text-[#2e8844] p-2 rounded-md transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
@@ -158,13 +217,39 @@ const Navigation: React.FC<NavigationProps> = ({
                 👩‍⚕️ Therapeuten
               </Link>
               
-              <Link 
-                to="/messages" 
-                className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                💬 Nachrichten
-              </Link>
+              {user && (
+                <div 
+                  className="px-4 py-3"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <MessagesButton 
+                    className="text-gray-300 hover:text-[#37a653] text-base font-medium transition-colors"
+                    showLabel={true}
+                  />
+                </div>
+              )}
+
+              {/* Mobile Admin & Moderation Links - Only for moderators and admins */}
+              {permissions.canModerate && (
+                <>
+                  <Link 
+                    to="/admin/moderation" 
+                    className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    🛡️ Moderation
+                  </Link>
+                  {permissions.isAdmin && (
+                    <Link 
+                      to="/admin" 
+                      className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      ⚙️ Admin
+                    </Link>
+                  )}
+                </>
+              )}
 
               {/* Mobile Create Post Button */}
               {showCreatePostButton && (
