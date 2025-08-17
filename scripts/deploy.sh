@@ -111,23 +111,53 @@ find . -maxdepth 1 ! -name . ! -name .. ! -name .git -exec rm -rf {} + 2>/dev/nu
 # Copy only essential build files to root using absolute paths
 echo "📦 Adding build files to root..."
 # Copy specific files to preserve relative paths exactly as built
-cp "$DIST_DIR/index.html" . 2>/dev/null || true
-cp -r "$DIST_DIR/assets" . 2>/dev/null || true
-cp "$DIST_DIR/vite.svg" . 2>/dev/null || true
-cp "$DIST_DIR/.htaccess" . 2>/dev/null || true
+if [[ -f "$DIST_DIR/index.html" ]]; then
+    cp "$DIST_DIR/index.html" .
+    echo "✅ Copied index.html"
+else
+    echo "❌ index.html not found in build"
+    exit 1
+fi
+
+if [[ -d "$DIST_DIR/assets" ]]; then
+    cp -r "$DIST_DIR/assets" .
+    echo "✅ Copied assets directory"
+else
+    echo "❌ assets directory not found in build"
+    exit 1
+fi
+
+if [[ -f "$DIST_DIR/vite.svg" ]]; then
+    cp "$DIST_DIR/vite.svg" .
+    echo "✅ Copied vite.svg"
+fi
+
+if [[ -f "$DIST_DIR/.htaccess" ]]; then
+    cp "$DIST_DIR/.htaccess" .
+    echo "✅ Copied .htaccess"
+fi
 
 # Verify the paths are still relative before adding to git
-echo "🔍 Verifying relative paths..."
-if grep -q 'href="./assets/' index.html && grep -q 'src="./assets/' index.html; then
-    echo "✅ Relative paths preserved"
+echo "🔍 Verifying relative paths in copied files..."
+if [[ -f "index.html" ]] && grep -q 'href="./assets/' index.html && grep -q 'src="./assets/' index.html; then
+    echo "✅ Relative paths preserved in copied files"
 else
-    echo "❌ Relative paths were corrupted"
-    cat index.html | grep -E "(href|src)="
+    echo "❌ Relative paths were corrupted during copy"
+    if [[ -f "index.html" ]]; then
+        echo "Current paths in index.html:"
+        cat index.html | grep -E "(href|src)=" | head -5
+    else
+        echo "index.html not found after copy"
+    fi
     exit 1
 fi
 
 # Add only these specific files, not everything
-git add index.html assets/ vite.svg .htaccess
+echo "📝 Adding files to git..."
+git add index.html assets/
+[[ -f "vite.svg" ]] && git add vite.svg
+[[ -f ".htaccess" ]] && git add .htaccess
+echo "✅ Files added to git"
 
 # Check if there are any changes to commit
 if git diff --cached --quiet 2>/dev/null; then
