@@ -75,23 +75,27 @@ cat > dist/.htaccess << 'EOF'
 </IfModule>
 EOF
 
-# Get build statistics and store absolute paths
+# Get build statistics
 BUILD_SIZE=$(du -sh dist/ | cut -f1)
 FILE_COUNT=$(find dist/ -type f | wc -l | tr -d ' ')
 echo "✅ Build completed: $FILE_COUNT files, $BUILD_SIZE total"
 
-# Store absolute paths to build files before switching branches
-CURRENT_DIR=$(pwd)
-DIST_DIR="$CURRENT_DIR/dist"
-
 # Verify relative paths in the build before proceeding
 echo "🔍 Verifying build has relative paths..."
-if ! grep -q 'href="./assets/' "$DIST_DIR/index.html" || ! grep -q 'src="./assets/' "$DIST_DIR/index.html"; then
+if ! grep -q 'href="./assets/' "dist/index.html" || ! grep -q 'src="./assets/' "dist/index.html"; then
     echo "❌ Build doesn't have relative paths! Something is wrong with Vite config."
-    cat "$DIST_DIR/index.html" | grep -E "(href|src)="
+    cat "dist/index.html" | grep -E "(href|src)="
     exit 1
 fi
 echo "✅ Build has correct relative paths"
+
+# Create temporary directory to store build files
+TEMP_DIR=$(mktemp -d)
+echo "📦 Storing build files in temporary location: $TEMP_DIR"
+
+# Copy build files to temp directory to preserve them across branch switches
+cp -r dist/* "$TEMP_DIR/"
+echo "✅ Build files stored safely"
 
 # Switch to dist branch (create if doesn't exist)
 echo "🌿 Switching to dist branch..."
@@ -108,32 +112,32 @@ git rm -rf --cached . >/dev/null 2>&1 || true
 # Remove files but preserve .git directory
 find . -maxdepth 1 ! -name . ! -name .. ! -name .git -exec rm -rf {} + 2>/dev/null || true
 
-# Copy only essential build files to root using absolute paths
+# Copy only essential build files to root from temp directory
 echo "📦 Adding build files to root..."
 # Copy specific files to preserve relative paths exactly as built
-if [[ -f "$DIST_DIR/index.html" ]]; then
-    cp "$DIST_DIR/index.html" .
+if [[ -f "$TEMP_DIR/index.html" ]]; then
+    cp "$TEMP_DIR/index.html" .
     echo "✅ Copied index.html"
 else
-    echo "❌ index.html not found in build"
+    echo "❌ index.html not found in temp directory"
     exit 1
 fi
 
-if [[ -d "$DIST_DIR/assets" ]]; then
-    cp -r "$DIST_DIR/assets" .
+if [[ -d "$TEMP_DIR/assets" ]]; then
+    cp -r "$TEMP_DIR/assets" .
     echo "✅ Copied assets directory"
 else
-    echo "❌ assets directory not found in build"
+    echo "❌ assets directory not found in temp directory"
     exit 1
 fi
 
-if [[ -f "$DIST_DIR/vite.svg" ]]; then
-    cp "$DIST_DIR/vite.svg" .
+if [[ -f "$TEMP_DIR/vite.svg" ]]; then
+    cp "$TEMP_DIR/vite.svg" .
     echo "✅ Copied vite.svg"
 fi
 
-if [[ -f "$DIST_DIR/.htaccess" ]]; then
-    cp "$DIST_DIR/.htaccess" .
+if [[ -f "$TEMP_DIR/.htaccess" ]]; then
+    cp "$TEMP_DIR/.htaccess" .
     echo "✅ Copied .htaccess"
 fi
 
@@ -202,6 +206,10 @@ echo "   • Time: $TIMESTAMP"
 # Return to original branch
 git checkout "$CURRENT_BRANCH"
 echo "🔄 Returned to $CURRENT_BRANCH branch"
+
+# Cleanup temporary directory
+echo "🧹 Cleaning up temporary files..."
+rm -rf "$TEMP_DIR"
 
 echo ""
 echo "🎉 Deployment complete! Your build is now available on the dist branch."
