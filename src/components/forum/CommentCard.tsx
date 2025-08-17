@@ -94,7 +94,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
       {/* User Info */}
       <div className="flex items-start space-x-3 mb-4">
         <UserAvatar 
-          user={comment.users || { id: comment.user_id, username: 'Unbekannt', avatar_url: null }} 
+          user={comment.users || { id: comment.user_id || 'unknown', username: 'Unbekannt', avatar_url: null }} 
           size="small" 
           className="flex-shrink-0"
         />
