@@ -97,7 +97,7 @@ const ForumView: React.FC<ForumViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#1a3442]">
-      <div className="max-w-6xl mx-auto py-6 px-0 md:px-4">
+      <div className="max-w-6xl mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
         <div className="bg-[#203f4a] p-4 mb-4 mx-4 md:mx-0" style={{borderRadius: '20px'}}>
           <div className="flex items-center gap-4">
@@ -141,8 +141,8 @@ const ForumView: React.FC<ForumViewProps> = ({
           </div>
         </div>
 
-        {/* Category Filter */}
-        <div className="flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4">
+        {/* Category Filter - Hidden on mobile */}
+        <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4">
           <button
             onClick={() => handleCategoryFilter(null)}
             className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${

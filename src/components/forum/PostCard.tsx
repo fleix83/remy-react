@@ -75,25 +75,28 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           <span className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium ${getCategoryColor(post.category_id)}`} style={{fontSize: '0.65rem'}}>
             {post.categories?.name_de}
           </span>
+          {/* Canton Flag (pure, no background) */}
+          {post.canton && (
+            <img 
+              src={`/kantone/${post.canton.toLowerCase()}.png`}
+              alt={`${post.canton} flag`}
+              className="w-4 h-auto object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none'
+              }}
+            />
+          )}
+          {/* Canton Abbreviation */}
+          {post.canton && (
+            <span className="text-gray-300 text-xs font-medium">
+              {post.canton}
+            </span>
+          )}
           {/* Banned Status Badge */}
           {(post as any).is_banned && (
             <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-red-600 text-white text-xs">
               ABGELEHNT
             </span>
-          )}
-          {/* Canton Badge with Flag */}
-          {post.canton && (
-            <div className="inline-flex items-center px-2 py-1 rounded bg-gray-600 text-white text-xs space-x-1">
-              <img 
-                src={`/blueprint/assets/kantone/${post.canton.toLowerCase()}.png`}
-                alt={`${post.canton} flag`}
-                className="w-3 h-2 object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none'
-                }}
-              />
-              <span className="text-xs">{post.canton}</span>
-            </div>
           )}
         </div>
         

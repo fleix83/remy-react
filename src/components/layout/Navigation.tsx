@@ -37,20 +37,20 @@ const Navigation: React.FC<NavigationProps> = ({
   }
 
   return (
-    <nav className="bg-[#1a3442] md:bg-white shadow-lg">
+    <nav className="bg-[#1a3442] md:bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
           {/* Logo and Brand */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <div>
-                <h1 className="text-2xl font-headline font-bold text-[#37a653] md:text-primary-600">
-                  Remy Forum
-                </h1>
-                <p className="text-xs text-gray-300 md:text-gray-500 -mt-1">
-                  Psychotherapie Community
-                </p>
+            <Link to="/" className="flex items-center space-x-3">
+              <h1 className="font-headline font-bold text-[#37a653] md:text-primary-600" style={{fontSize: '39px'}}>
+                REMY
+              </h1>
+              <div className="text-white md:text-gray-500 leading-tight text-left uppercase" style={{fontSize: '8px'}}>
+                <div>FORUM FÜR</div>
+                <div>MENSCHEN IN</div>
+                <div>PSYCHOTHERAPIE</div>
               </div>
             </Link>
           </div>
