@@ -65,10 +65,14 @@ cat > dist/.htaccess << 'EOF'
 </IfModule>
 EOF
 
-# Get build statistics
+# Get build statistics and store absolute paths
 BUILD_SIZE=$(du -sh dist/ | cut -f1)
 FILE_COUNT=$(find dist/ -type f | wc -l | tr -d ' ')
 echo "✅ Build completed: $FILE_COUNT files, $BUILD_SIZE total"
+
+# Store absolute paths to build files before switching branches
+CURRENT_DIR=$(pwd)
+DIST_DIR="$CURRENT_DIR/dist"
 
 # Switch to dist branch (create if doesn't exist)
 echo "🌿 Switching to dist branch..."
@@ -85,13 +89,13 @@ git rm -rf --cached . >/dev/null 2>&1 || true
 # Remove files but preserve .git directory
 find . -maxdepth 1 ! -name . ! -name .. ! -name .git -exec rm -rf {} + 2>/dev/null || true
 
-# Copy only essential build files to root
+# Copy only essential build files to root using absolute paths
 echo "📦 Adding build files to root..."
 # Copy specific files to preserve relative paths exactly as built
-cp dist/index.html . 2>/dev/null || true
-cp -r dist/assets . 2>/dev/null || true
-cp dist/vite.svg . 2>/dev/null || true
-cp dist/.htaccess . 2>/dev/null || true
+cp "$DIST_DIR/index.html" . 2>/dev/null || true
+cp -r "$DIST_DIR/assets" . 2>/dev/null || true
+cp "$DIST_DIR/vite.svg" . 2>/dev/null || true
+cp "$DIST_DIR/.htaccess" . 2>/dev/null || true
 
 # Verify the paths are still relative before adding to git
 echo "🔍 Verifying relative paths..."
