@@ -29,13 +29,23 @@ if ! grep -q '"build"' package.json; then
     exit 1
 fi
 
-# Check for uncommitted changes
+# Handle uncommitted changes (auto-commit build files)
 if [[ -n $(git status --porcelain 2>/dev/null) ]]; then
-    echo "⚠️  You have uncommitted changes. Deploy anyway? (y/N)"
-    read -r response
-    if [[ ! "$response" =~ ^[Yy]$ ]]; then
-        echo "❌ Deployment cancelled"
-        exit 1
+    # Check if only build files are uncommitted
+    UNCOMMITTED=$(git status --porcelain 2>/dev/null)
+    if echo "$UNCOMMITTED" | grep -v '^?? ' | grep -v ' dist/' | grep -v ' node_modules/' > /dev/null; then
+        # There are non-build uncommitted changes
+        echo "⚠️  You have uncommitted changes (non-build files). Deploy anyway? (y/N)"
+        read -r response
+        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+            echo "❌ Deployment cancelled"
+            exit 1
+        fi
+    else
+        # Only build files or untracked files - auto-handle
+        echo "📝 Auto-committing build file changes..."
+        git add dist/ node_modules/.tmp/ 2>/dev/null || true
+        git commit -m "Update build files for deployment" 2>/dev/null || true
     fi
 fi
 
@@ -73,6 +83,15 @@ echo "✅ Build completed: $FILE_COUNT files, $BUILD_SIZE total"
 # Store absolute paths to build files before switching branches
 CURRENT_DIR=$(pwd)
 DIST_DIR="$CURRENT_DIR/dist"
+
+# Verify relative paths in the build before proceeding
+echo "🔍 Verifying build has relative paths..."
+if ! grep -q 'href="./assets/' "$DIST_DIR/index.html" || ! grep -q 'src="./assets/' "$DIST_DIR/index.html"; then
+    echo "❌ Build doesn't have relative paths! Something is wrong with Vite config."
+    cat "$DIST_DIR/index.html" | grep -E "(href|src)="
+    exit 1
+fi
+echo "✅ Build has correct relative paths"
 
 # Switch to dist branch (create if doesn't exist)
 echo "🌿 Switching to dist branch..."
