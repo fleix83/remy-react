@@ -187,6 +187,23 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                   {post.categories.name_de}
                                 </span>
                               )}
+                              {/* Canton Flag */}
+                              {post.canton && (
+                                <img 
+                                  src={`/kantone/${post.canton.toLowerCase()}.png`}
+                                  alt={`${post.canton} flag`}
+                                  className="w-4 h-auto object-cover"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).style.display = 'none'
+                                  }}
+                                />
+                              )}
+                              {/* Canton Abbreviation */}
+                              {post.canton && (
+                                <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
+                                  {post.canton}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>

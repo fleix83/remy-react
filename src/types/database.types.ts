@@ -517,6 +517,7 @@ export interface ModerationQueueItem {
   created_at: string
   content?: string
   title?: string
+  canton?: string
   moderation_status?: ModerationStatus
   moderated_by?: string
   moderated_at?: string

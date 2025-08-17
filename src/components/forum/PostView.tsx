@@ -140,19 +140,22 @@ const PostView: React.FC = () => {
               <span className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium ${getCategoryColor(post.category_id)}`} style={{fontSize: '0.65rem'}}>
                 {post.categories?.name_de}
               </span>
-              {/* Canton Badge with Flag */}
+              {/* Canton Flag (pure, no background) */}
               {post.canton && (
-                <div className="inline-flex items-center px-2 py-1 rounded bg-gray-600 text-white text-xs space-x-1">
-                  <img 
-                    src={`/blueprint/assets/kantone/${post.canton.toLowerCase()}.png`}
-                    alt={`${post.canton} flag`}
-                    className="w-3 h-2 object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none'
-                    }}
-                  />
-                  <span className="text-xs">{post.canton}</span>
-                </div>
+                <img 
+                  src={`/kantone/${post.canton.toLowerCase()}.png`}
+                  alt={`${post.canton} flag`}
+                  className="w-4 h-auto object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none'
+                  }}
+                />
+              )}
+              {/* Canton Abbreviation */}
+              {post.canton && (
+                <span className="text-gray-300 text-xs font-medium">
+                  {post.canton}
+                </span>
               )}
             </div>
             

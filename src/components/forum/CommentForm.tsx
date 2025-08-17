@@ -10,6 +10,7 @@ interface CommentFormProps {
   onCommentAdded?: (comment: any) => void
   onCancel?: () => void
   placeholder?: string
+  fullWidth?: boolean
 }
 
 const CommentForm: React.FC<CommentFormProps> = ({
@@ -19,7 +20,8 @@ const CommentForm: React.FC<CommentFormProps> = ({
   onSubmit,
   onCommentAdded,
   onCancel,
-  placeholder = "Schreibe einen Kommentar..."
+  placeholder = "Schreibe einen Kommentar...",
+  fullWidth = false
 }) => {
   const [content, setContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -78,14 +80,14 @@ const CommentForm: React.FC<CommentFormProps> = ({
     if (!selectedText) return null
 
     return (
-      <div className="border-l-4 border-primary-300 pl-3 mb-3 bg-primary-50 p-2 rounded-r">
+      <div className={`border-l-4 border-[#37a653] pl-3 mb-3 bg-[#2a4a57] p-2 ${fullWidth ? 'mx-0' : 'rounded-r'}`}>
         <div className="flex items-start justify-between">
-          <div className="text-sm text-gray-600 italic">
+          <div className="text-sm text-gray-300 italic">
             "{selectedText}"
           </div>
           <button
             onClick={removeQuote}
-            className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="ml-2 text-gray-400 hover:text-gray-300 transition-colors"
             title="Zitat entfernen"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,7 +100,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4">
+    <div className={`${fullWidth ? 'bg-[#203f4a] border-0 rounded-none px-6 py-8' : 'bg-[#1a3442] border border-[#2a4a57] rounded-lg p-4'}`}>
       <form onSubmit={handleSubmit}>
         {/* Quote Display */}
         {renderQuotedText()}
@@ -109,13 +111,13 @@ const CommentForm: React.FC<CommentFormProps> = ({
             content={content}
             onChange={setContent}
             placeholder={placeholder}
-            minHeight="120px"
+            minHeight={fullWidth ? "200px" : "120px"}
           />
         </div>
 
         {/* Character Count */}
-        <div className="flex justify-between items-center mt-2">
-          <span className="text-xs text-gray-500">
+        <div className="flex justify-between items-center mt-3">
+          <span className="text-xs text-gray-400">
             {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
           </span>
           
@@ -125,7 +127,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                className="px-3 py-1.5 text-xs text-gray-300 hover:text-white transition-colors"
                 disabled={submitting}
               >
                 Abbrechen
@@ -135,27 +137,24 @@ const CommentForm: React.FC<CommentFormProps> = ({
             <button
               type="submit"
               disabled={submitting || !content.replace(/<[^>]*>/g, '').trim()}
-              className="px-6 py-2 text-sm font-bold bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 shadow-md"
-              style={{ 
-                backgroundColor: '#0284c7', 
-                fontWeight: 'bold',
-                boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
-              }}
+              className="px-4 py-1.5 text-xs font-bold bg-[#37a653] text-white rounded-md hover:bg-[#2e8844] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {submitting ? '📤 Wird gesendet...' : '💬 Kommentieren'}
+              {submitting ? 'Wird gesendet...' : 'Kommentieren'}
             </button>
           </div>
         </div>
       </form>
 
       {/* Help Text */}
-      <div className="mt-3 text-xs text-gray-500 border-t border-gray-100 pt-3">
-        <div className="flex items-center space-x-4">
-          <span>💡 Tipp: Markiere Text um ihn zu zitieren</span>
-          <span>• Behandle andere respektvoll</span>
-          <span>• Teile keine persönlichen Daten</span>
+      {!fullWidth && (
+        <div className="mt-3 text-xs text-gray-400 border-t border-[#2a4a57] pt-3">
+          <div className="flex items-center space-x-4">
+            <span>💡 Tipp: Markiere Text um ihn zu zitieren</span>
+            <span>• Behandle andere respektvoll</span>
+            <span>• Teile keine persönlichen Daten</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

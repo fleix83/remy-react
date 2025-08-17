@@ -85,10 +85,22 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             </span>
             {/* Header with Canton */}
             <div className="flex items-start justify-end mb-4">
-              {/* Canton Badge - Top Right */}
-              <span className="inline-flex items-center px-2 py-0.5 rounded bg-gray-600 text-white text-xs">
-                BS
-              </span>
+              {/* Canton Flag and Abbreviation */}
+              {item.canton && (
+                <div className="flex items-center space-x-2">
+                  <img 
+                    src={`/kantone/${item.canton.toLowerCase()}.png`}
+                    alt={`${item.canton} flag`}
+                    className="w-4 h-auto object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                  <span className="text-gray-300 text-xs font-medium">
+                    {item.canton}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Category Badge - Above User Block */}

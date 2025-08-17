@@ -8,7 +8,7 @@ export class CommentsService {
       .from('comments')
       .select(`
         *,
-        users!inner(id, username, avatar_url, role)
+        users!comments_user_id_fkey(id, username, avatar_url, role)
       `)
       .eq('post_id', postId)
       .order('created_at', { ascending: true })

@@ -43,6 +43,7 @@ export class ModerationQueueService {
       user_id: post.user_id,
       title: post.title,
       content: post.content,
+      canton: post.canton,
       created_at: post.created_at,
       moderation_status: post.moderation_status,
       moderated_by: post.moderated_by,

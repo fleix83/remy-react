@@ -10,13 +10,25 @@ interface CommentCardProps {
   depth?: number
 }
 
+const stripHtmlTags = (html: string) => {
+  if (!html) return ''
+  return html
+    .replace(/<p[^>]*>/gi, '') // Remove opening p tags
+    .replace(/<\/p>/gi, '\n') // Replace closing p tags with newlines
+    .replace(/<br\s*\/?>/gi, '\n') // Replace br tags with newlines
+    .replace(/<[^>]*>/g, '') // Remove any remaining HTML tags
+    .replace(/\n\s*\n/g, '\n') // Replace multiple newlines with single newline
+    .trim()
+}
+
 const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, depth = 0 }) => {
   const [isEditing, setIsEditing] = useState(false)
-  const [editContent, setEditContent] = useState(comment.content)
+  const [editContent, setEditContent] = useState(stripHtmlTags(comment.content))
   const [showReplies, setShowReplies] = useState(true)
   const [saving, setSaving] = useState(false)
 
   const commentsService = new CommentsService()
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('de-DE', {
@@ -67,8 +79,8 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
 
   const renderQuotedText = (quotedText: string) => {
     return (
-      <div className="border-l-4 border-gray-300 pl-3 mb-3 bg-gray-50 p-2 rounded-r">
-        <div className="text-sm text-gray-600 italic">
+      <div className="border-l-4 border-[#37a653] pl-3 mb-3 bg-[#2a4a57] p-2 rounded-r">
+        <div className="text-sm text-gray-300 italic">
           "{quotedText}"
         </div>
       </div>
@@ -78,30 +90,30 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
   const marginLeft = Math.min(depth * 2, 8) // Max 4 levels deep
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg p-4 ${depth > 0 ? `ml-${marginLeft}` : ''}`}>
-      {/* Comment Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center space-x-2">
-          {comment.users && (
-            <UserAvatar 
-              user={comment.users} 
-              size="small" 
-            />
-          )}
-          <div>
-            <span className="font-medium text-sm text-gray-900">{comment.users?.username}</span>
-            <span className="text-xs text-gray-500 ml-2">{formatDate(comment.created_at)}</span>
+    <div className={`bg-[#203f4a] ${depth > 0 ? `ml-${marginLeft}` : ''}`}>
+      {/* User Info */}
+      <div className="flex items-start space-x-3 mb-4">
+        <UserAvatar 
+          user={comment.users || { id: comment.user_id, username: 'Unbekannt', avatar_url: null }} 
+          size="small" 
+          className="flex-shrink-0"
+        />
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-white text-xs text-left leading-none">
+            {comment.users?.username || 'Unbekannt'}
+          </p>
+          <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>
+            {formatDate(comment.created_at)}
             {comment.updated_at && comment.updated_at !== comment.created_at && (
-              <span className="text-xs text-gray-400 ml-1">(bearbeitet)</span>
+              <span className="text-gray-400 ml-1">(bearbeitet)</span>
             )}
-          </div>
+          </p>
         </div>
-
-        {/* Comment Actions */}
         <div className="flex items-center space-x-2">
+          {/* Comment Actions */}
           <button
             onClick={handleQuoteText}
-            className="text-gray-400 hover:text-primary-600 transition-colors p-1"
+            className="text-gray-400 hover:text-[#37a653] transition-colors p-1"
             title="Zitieren"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,8 +122,11 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           </button>
 
           <button
-            onClick={() => setIsEditing(true)}
-            className="text-gray-400 hover:text-primary-600 transition-colors p-1"
+            onClick={() => {
+              setEditContent(stripHtmlTags(comment.content))
+              setIsEditing(true)
+            }}
+            className="text-gray-400 hover:text-[#37a653] transition-colors p-1"
             title="Bearbeiten"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,7 +136,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
 
           <button
             onClick={handleDelete}
-            className="text-gray-400 hover:text-red-600 transition-colors p-1"
+            className="text-gray-400 hover:text-red-400 transition-colors p-1"
             title="Löschen"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,20 +156,20 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500 resize-vertical"
+              className="w-full px-3 py-2 border border-[#2a4a57] bg-[#203f4a] text-white rounded-md focus:ring-[#37a653] focus:border-[#37a653] resize-vertical"
               rows={4}
             />
             <div className="flex justify-end space-x-2 mt-2">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                className="px-3 py-1 text-sm text-gray-300 hover:text-white"
                 disabled={saving}
               >
                 Abbrechen
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700 disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-[#37a653] text-white rounded hover:bg-[#2e8844] disabled:opacity-50"
                 disabled={saving || !editContent.trim()}
               >
                 {saving ? 'Speichern...' : 'Speichern'}
@@ -162,29 +177,29 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             </div>
           </div>
         ) : (
-          <div className="whitespace-pre-wrap text-gray-700 text-sm leading-relaxed">
-            {comment.content}
+          <div className="whitespace-pre-wrap text-white text-sm leading-relaxed text-left">
+            {stripHtmlTags(comment.content)}
           </div>
         )}
       </div>
 
       {/* Reply Button */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => onReply(comment.id)}
-          className="text-xs text-gray-500 hover:text-primary-600 transition-colors"
-        >
-          Antworten
-        </button>
-
+      <div className="flex items-center justify-end space-x-2">
         {comment.replies && comment.replies.length > 0 && (
           <button
             onClick={() => setShowReplies(!showReplies)}
-            className="text-xs text-gray-500 hover:text-primary-600 transition-colors"
+            className="text-xs text-gray-300 hover:text-[#37a653] transition-colors"
           >
             {showReplies ? 'Antworten ausblenden' : `${comment.replies.length} Antworten anzeigen`}
           </button>
         )}
+        
+        <button
+          onClick={() => onReply(comment.id)}
+          className="px-2 py-0.5 text-xs bg-[#37a653] text-white rounded-lg font-medium hover:bg-[#2e8844] transition-colors"
+        >
+          Antworten
+        </button>
       </div>
 
       {/* Replies */}

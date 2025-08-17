@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CommentsService } from '../../services/comments.service'
 import { getPostDisplayTitle } from '../../utils/therapistHelpers'
 import type { PostWithRelations } from '../../types/database.types'
 import { useAuthStore } from '../../stores/auth.store'
+import { useCommentsStore } from '../../stores/comments.store'
 import ModerationActions from '../ui/ModerationActions'
 import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
@@ -16,22 +16,14 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const [commentCount, setCommentCount] = useState(0)
+  const { getCommentCount, loadComments } = useCommentsStore()
 
-  const commentsService = new CommentsService()
+  const commentCount = getCommentCount(post.id)
 
   useEffect(() => {
-    loadCommentCount()
-  }, [post.id])
-
-  const loadCommentCount = async () => {
-    try {
-      const count = await commentsService.getCommentCount(post.id)
-      setCommentCount(count)
-    } catch (error) {
-      console.error('Error loading comment count:', error)
-    }
-  }
+    // Load comments for this post to ensure accurate count
+    loadComments(post.id)
+  }, [post.id, loadComments])
 
   const handleClick = () => {
     if (onClick) {
