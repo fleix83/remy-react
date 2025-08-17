@@ -79,17 +79,30 @@ else
     git rm -rf --cached . >/dev/null 2>&1 || true
 fi
 
-# Remove all files from git index (clean slate)
+# Remove all files from git index and working directory (clean slate)
 echo "🧹 Cleaning dist branch..."
 git rm -rf --cached . >/dev/null 2>&1 || true
+# Remove files but preserve .git directory
+find . -maxdepth 1 ! -name . ! -name .. ! -name .git -exec rm -rf {} + 2>/dev/null || true
 
 # Copy only essential build files to root
 echo "📦 Adding build files to root..."
-# Copy specific files to preserve relative paths
+# Copy specific files to preserve relative paths exactly as built
 cp dist/index.html . 2>/dev/null || true
 cp -r dist/assets . 2>/dev/null || true
 cp dist/vite.svg . 2>/dev/null || true
 cp dist/.htaccess . 2>/dev/null || true
+
+# Verify the paths are still relative before adding to git
+echo "🔍 Verifying relative paths..."
+if grep -q 'href="./assets/' index.html && grep -q 'src="./assets/' index.html; then
+    echo "✅ Relative paths preserved"
+else
+    echo "❌ Relative paths were corrupted"
+    cat index.html | grep -E "(href|src)="
+    exit 1
+fi
+
 # Add only these specific files, not everything
 git add index.html assets/ vite.svg .htaccess
 
