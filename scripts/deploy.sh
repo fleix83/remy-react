@@ -83,11 +83,15 @@ fi
 echo "🧹 Cleaning dist branch..."
 git rm -rf --cached . >/dev/null 2>&1 || true
 
-# Copy build files (including .htaccess) to root and add them
+# Copy only essential build files to root
 echo "📦 Adding build files to root..."
-cp -r dist/* . 2>/dev/null || true
-cp dist/.htaccess . 2>/dev/null || true  # Ensure .htaccess is copied
-git add .
+# Copy specific files to preserve relative paths
+cp dist/index.html . 2>/dev/null || true
+cp -r dist/assets . 2>/dev/null || true
+cp dist/vite.svg . 2>/dev/null || true
+cp dist/.htaccess . 2>/dev/null || true
+# Add only these specific files, not everything
+git add index.html assets/ vite.svg .htaccess
 
 # Check if there are any changes to commit
 if git diff --cached --quiet 2>/dev/null; then
