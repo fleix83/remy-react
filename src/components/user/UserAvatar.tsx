@@ -3,8 +3,15 @@ import { useAuthStore } from '../../stores/auth.store'
 import AvatarService from '../../services/avatar.service'
 import type { User } from '../../types/database.types'
 
+// Minimal user data needed for avatar display
+interface MinimalUser {
+  id: string
+  username: string
+  avatar_url?: string | null
+}
+
 interface UserAvatarProps {
-  user: User
+  user: User | MinimalUser
   size?: 'small' | 'medium' | 'large'
   showUpload?: boolean
   className?: string
@@ -22,16 +29,27 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   const { updateProfile } = useAuthStore()
 
   const sizeClasses = {
-    small: 'w-12 h-12',
+    small: 'w-6 h-6',
     medium: 'w-16 h-16', 
     large: 'w-32 h-32'
+  }
+  
+  const sizeStyles = {
+    small: { width: '1.6rem', height: '1.6rem' },
+    medium: { width: '4rem', height: '4rem' },
+    large: { width: '8rem', height: '8rem' }
   }
 
   const avatarUrl = user.avatar_url || AvatarService.getDefaultAvatar(user.username)
 
+  // Check if user has full User properties (needed for upload functionality)
+  const isFullUser = (user: User | MinimalUser): user is User => {
+    return 'email' in user && 'role' in user
+  }
+
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (!file) return
+    if (!file || !isFullUser(user)) return
 
     setIsUploading(true)
     setUploadError(null)
@@ -55,7 +73,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   }
 
   const handleRemoveAvatar = async () => {
-    if (!user.avatar_url) return
+    if (!user.avatar_url || !isFullUser(user)) return
 
     setIsUploading(true)
     setUploadError(null)
@@ -72,7 +90,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   }
 
   const handleAvatarClick = () => {
-    if (showUpload && !isUploading && fileInputRef.current) {
+    if (showUpload && !isUploading && isFullUser(user) && fileInputRef.current) {
       fileInputRef.current.click()
     }
   }
@@ -81,10 +99,11 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
     <div className={`relative ${className}`}>
       <div 
         className={`
-          ${sizeClasses[size]} rounded-full overflow-hidden border-4 border-white shadow-lg group
-          ${showUpload ? 'cursor-pointer hover:opacity-80 transition-opacity duration-200' : ''}
+          rounded-full overflow-hidden shadow-lg group
+          ${showUpload && isFullUser(user) ? 'cursor-pointer hover:opacity-80 transition-opacity duration-200' : ''}
           ${isUploading ? 'opacity-50' : ''}
         `}
+        style={sizeStyles[size]}
         onClick={handleAvatarClick}
       >
         <img
@@ -124,7 +143,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       </div>
 
       {/* File input */}
-      {showUpload && (
+      {showUpload && isFullUser(user) && (
         <input
           ref={fileInputRef}
           type="file"
@@ -135,7 +154,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       )}
 
       {/* Remove avatar button */}
-      {showUpload && user.avatar_url && size === 'large' && (
+      {showUpload && isFullUser(user) && user.avatar_url && size === 'large' && (
         <button
           onClick={handleRemoveAvatar}
           disabled={isUploading}
@@ -149,7 +168,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       )}
 
       {/* Upload tooltip */}
-      {showUpload && size === 'large' && (
+      {showUpload && isFullUser(user) && size === 'large' && (
         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
           <p className="text-xs text-gray-500 text-center whitespace-nowrap">
             Click to change avatar

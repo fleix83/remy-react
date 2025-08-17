@@ -9,7 +9,7 @@ export class ModerationQueueService {
       .from('posts')
       .select(`
         *,
-        users!posts_user_id_fkey(id, username, email, role),
+        users!posts_user_id_fkey(id, username, email, role, avatar_url),
         categories!inner(id, name_de, name_fr, name_it)
       `)
       .eq('moderation_status', 'pending')
@@ -25,7 +25,7 @@ export class ModerationQueueService {
       .from('comments')
       .select(`
         *,
-        users!comments_user_id_fkey(id, username, email, role)
+        users!comments_user_id_fkey(id, username, email, role, avatar_url)
       `)
       .eq('moderation_status', 'pending')
       .order('created_at', { ascending: true })
@@ -106,11 +106,10 @@ export class ModerationQueueService {
       updated_at: new Date().toISOString()
     }
     
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('posts')
       .update(updateData)
       .eq('id', postId)
-      .select()
 
     if (error) {
       console.error('Error approving post:', error)
@@ -132,11 +131,10 @@ export class ModerationQueueService {
       updated_at: new Date().toISOString()
     }
     
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('posts')
       .update(updateData)
       .eq('id', postId)
-      .select()
 
     if (error) {
       console.error('Error rejecting post:', error)
@@ -198,7 +196,7 @@ export class ModerationQueueService {
         .from('posts')
         .select(`
           *,
-          users!posts_user_id_fkey(id, username, email)
+          users!posts_user_id_fkey(id, username, email, avatar_url)
         `)
         .eq('moderated_by', moderatorId)
         .not('moderation_status', 'eq', 'pending')
@@ -208,7 +206,7 @@ export class ModerationQueueService {
         .from('comments')
         .select(`
           *,
-          users!comments_user_id_fkey(id, username, email)
+          users!comments_user_id_fkey(id, username, email, avatar_url)
         `)
         .eq('moderated_by', moderatorId)
         .not('moderation_status', 'eq', 'pending')
