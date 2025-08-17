@@ -52,6 +52,10 @@ export class MessagesService {
 
     if (error) {
       console.error('Error fetching conversations:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.messages" does not exist')) {
+        console.warn('Messages table not found - returning empty conversations')
+        return []
+      }
       throw error
     }
 
@@ -129,6 +133,10 @@ export class MessagesService {
 
     if (error) {
       console.error('Error fetching conversation messages:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.messages" does not exist')) {
+        console.warn('Messages table not found - returning empty messages')
+        return []
+      }
       throw error
     }
 
@@ -180,6 +188,9 @@ export class MessagesService {
 
     if (error) {
       console.error('Error sending message:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.messages" does not exist')) {
+        throw new Error('Messaging system is not available')
+      }
       throw error
     }
 
@@ -203,6 +214,10 @@ export class MessagesService {
 
     if (error) {
       console.error('Error marking messages as read:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.messages" does not exist')) {
+        console.warn('Messages table not found - cannot mark as read')
+        return
+      }
       throw error
     }
   }
@@ -220,6 +235,9 @@ export class MessagesService {
 
     if (error) {
       console.error('Error getting unread count:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.messages" does not exist')) {
+        console.warn('Messages table not found - returning 0 unread count')
+      }
       return 0
     }
 
@@ -254,7 +272,7 @@ export class MessagesService {
         .single()
 
       if (sender) {
-        await supabase
+        const { error: notificationError } = await supabase
           .from('notifications')
           .insert([{
             user_id: receiverId,
@@ -263,6 +281,11 @@ export class MessagesService {
             message: `${sender.username} sent you a message`,
             is_read: false
           }])
+        
+        if (notificationError && 
+            !(notificationError.code === 'PGRST116' || notificationError.message.includes('relation "public.notifications" does not exist'))) {
+          console.error('Error creating notification:', notificationError)
+        }
       }
     } catch (error) {
       console.error('Error creating message notification:', error)
@@ -283,6 +306,9 @@ export class MessagesService {
 
     if (error) {
       console.error('Error deleting message:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.messages" does not exist')) {
+        throw new Error('Messaging system is not available')
+      }
       throw error
     }
   }

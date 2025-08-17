@@ -5,6 +5,7 @@ import { usePermissions } from '../../hooks/usePermissions'
 import { useNotificationsStore } from '../../stores/notifications.store'
 import { useMessagesStore } from '../../stores/messages.store'
 import MessagesButton from '../messaging/MessagesButton'
+import UserAvatar from '../user/UserAvatar'
 
 interface NavigationProps {
   onCreatePost: () => void
@@ -15,7 +16,7 @@ const Navigation: React.FC<NavigationProps> = ({
   onCreatePost, 
   showCreatePostButton = true 
 }) => {
-  const { user, logout } = useAuthStore()
+  const { user, userProfile, logout } = useAuthStore()
   const permissions = usePermissions()
   const { unreadCount: notificationCount, loadNotifications } = useNotificationsStore()
   const { unreadCount: messageCount } = useMessagesStore()
@@ -125,11 +126,12 @@ const Navigation: React.FC<NavigationProps> = ({
                   to="/profile" 
                   className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
-                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-primary-600 font-semibold text-sm">
-                      {user.email?.charAt(0)?.toUpperCase() || '?'}
-                    </span>
-                  </div>
+                  {userProfile && (
+                    <UserAvatar 
+                      user={userProfile} 
+                      size="small" 
+                    />
+                  )}
                   <span className="hidden lg:inline">Profil</span>
                 </Link>
                 
@@ -166,11 +168,12 @@ const Navigation: React.FC<NavigationProps> = ({
                 className="relative p-1 rounded-full transition-colors"
               >
                 {/* User Avatar */}
-                <div className="w-8 h-8 bg-[#37a653] rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">
-                    {user.email?.charAt(0)?.toUpperCase() || '?'}
-                  </span>
-                </div>
+                {userProfile && (
+                  <UserAvatar 
+                    user={userProfile} 
+                    size="small" 
+                  />
+                )}
                 
                 {/* Notification Badge */}
                 {totalUnreadCount > 0 && (
@@ -271,11 +274,14 @@ const Navigation: React.FC<NavigationProps> = ({
               {user ? (
                 <div className="border-t border-[#2a4a57] mt-4 pt-4">
                   <div className="flex items-center px-4 py-2 text-sm text-gray-300">
-                    <div className="w-8 h-8 bg-[#37a653] rounded-full flex items-center justify-center mr-3">
-                      <span className="text-white font-semibold">
-                        {user.email?.charAt(0)?.toUpperCase() || '?'}
-                      </span>
-                    </div>
+                    {userProfile && (
+                      <div className="mr-3">
+                        <UserAvatar 
+                          user={userProfile} 
+                          size="small" 
+                        />
+                      </div>
+                    )}
                     <span>{user.email}</span>
                   </div>
                   

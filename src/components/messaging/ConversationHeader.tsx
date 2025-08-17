@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { UserBlocksService } from '../../services/user-blocks.service'
+import UserAvatar from '../user/UserAvatar'
 import type { Conversation } from '../../services/messages.service'
 
 interface ConversationHeaderProps {
@@ -63,11 +64,10 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
           </button>
 
           {/* User Avatar */}
-          <div className="w-10 h-10 bg-[#37a653] rounded-full flex items-center justify-center">
-            <span className="text-white font-semibold">
-              {conversation.participant.username?.charAt(0)?.toUpperCase() || '?'}
-            </span>
-          </div>
+          <UserAvatar 
+            user={conversation.participant} 
+            size="small"
+          />
 
           {/* User Info */}
           <div>

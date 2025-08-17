@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
+import UserAvatar from '../user/UserAvatar'
 import type { MessageWithUser } from '../../services/messages.service'
 
 interface MessageBubbleProps {
@@ -42,12 +43,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   return (
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} items-end space-x-2`}>
       {/* Avatar for received messages */}
-      {!isOwn && showAvatar && (
-        <div className="w-8 h-8 bg-[#37a653] rounded-full flex items-center justify-center flex-shrink-0">
-          <span className="text-white font-semibold text-xs">
-            {message.sender?.username?.charAt(0)?.toUpperCase() || '?'}
-          </span>
-        </div>
+      {!isOwn && showAvatar && message.sender && (
+        <UserAvatar 
+          user={message.sender} 
+          size="small" 
+          className="flex-shrink-0"
+        />
       )}
       
       {/* Spacer when avatar is not shown */}

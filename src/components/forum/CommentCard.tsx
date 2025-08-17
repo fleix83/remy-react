@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import type { CommentWithRelations } from '../../types/database.types'
 import { CommentsService } from '../../services/comments.service'
+import UserAvatar from '../user/UserAvatar'
 
 interface CommentCardProps {
   comment: CommentWithRelations
@@ -81,11 +82,12 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
       {/* Comment Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-            <span className="text-primary-600 font-semibold text-xs">
-              {comment.users?.username?.charAt(0)?.toUpperCase() || '?'}
-            </span>
-          </div>
+          {comment.users && (
+            <UserAvatar 
+              user={comment.users} 
+              size="small" 
+            />
+          )}
           <div>
             <span className="font-medium text-sm text-gray-900">{comment.users?.username}</span>
             <span className="text-xs text-gray-500 ml-2">{formatDate(comment.created_at)}</span>

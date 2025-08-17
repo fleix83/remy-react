@@ -7,6 +7,11 @@ import { testSupabaseConnection } from './utils/test-connection'
 import Layout from './components/layout/Layout'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
+import MessagesPage from './components/messaging/MessagesPage'
+import AdminDashboard from './components/admin/AdminDashboard'
+import ModerationQueue from './components/admin/ModerationQueue'
+import TherapistDirectoryPage from './components/therapist/TherapistDirectoryPage'
+import UserProfile from './components/user/UserProfile'
 import './App.css'
 
 function App() {
@@ -55,6 +60,11 @@ function App() {
             } 
           />
           <Route path="/post/:id" element={<PostView />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/therapists" element={<TherapistDirectoryPage />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/moderation" element={<ModerationQueue />} />
         </Routes>
       </Layout>
     </Router>

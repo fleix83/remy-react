@@ -1,5 +1,6 @@
 import React from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
+import UserAvatar from '../user/UserAvatar'
 
 const MessagesList: React.FC = () => {
   const { 
@@ -89,11 +90,11 @@ const MessagesList: React.FC = () => {
             >
               <div className="flex items-start space-x-3">
                 {/* Avatar */}
-                <div className="w-10 h-10 bg-[#37a653] rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white font-semibold text-sm">
-                    {conversation.participant.username?.charAt(0)?.toUpperCase() || '?'}
-                  </span>
-                </div>
+                <UserAvatar 
+                  user={conversation.participant} 
+                  size="small"
+                  className="flex-shrink-0"
+                />
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">

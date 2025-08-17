@@ -6,6 +6,7 @@ import type { PostWithRelations } from '../../types/database.types'
 import { useAuthStore } from '../../stores/auth.store'
 import ModerationActions from '../ui/ModerationActions'
 import SendMessageButton from '../messaging/SendMessageButton'
+import UserAvatar from '../user/UserAvatar'
 
 interface PostCardProps {
   post: PostWithRelations
@@ -113,11 +114,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
 
       {/* User Info */}
       <div className="flex items-start space-x-3 mb-4">
-        <div className="w-6 h-6 md:w-10 md:h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0" style={{width: '1.6rem', height: '1.6rem'}}>
-          <span className="text-white font-semibold text-xs md:text-sm">
-            {post.users?.username?.charAt(0)?.toUpperCase() || '?'}
-          </span>
-        </div>
+        {post.users && (
+          <UserAvatar 
+            user={post.users} 
+            size="small" 
+            className="flex-shrink-0"
+          />
+        )}
         <div className="flex-1 min-w-0">
           <p className="font-medium text-white text-xs text-left leading-none">{post.users?.username}</p>
           <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>

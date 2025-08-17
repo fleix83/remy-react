@@ -33,6 +33,9 @@ export class UserBlocksService {
 
     if (error) {
       console.error('Error blocking user:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.user_blocks" does not exist')) {
+        throw new Error('User blocking system is not available')
+      }
       throw error
     }
 
@@ -52,6 +55,9 @@ export class UserBlocksService {
 
     if (error) {
       console.error('Error unblocking user:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.user_blocks" does not exist')) {
+        throw new Error('User blocking system is not available')
+      }
       throw error
     }
 
@@ -72,6 +78,9 @@ export class UserBlocksService {
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
       console.error('Error checking block status:', error)
+      if (error.message.includes('relation "public.user_blocks" does not exist')) {
+        console.warn('User blocks table not found - returning false')
+      }
       return false
     }
 
@@ -92,6 +101,9 @@ export class UserBlocksService {
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
       console.error('Error checking if blocked by user:', error)
+      if (error.message.includes('relation "public.user_blocks" does not exist')) {
+        console.warn('User blocks table not found - returning false')
+      }
       return false
     }
 
@@ -118,6 +130,10 @@ export class UserBlocksService {
 
     if (error) {
       console.error('Error fetching blocked users:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.user_blocks" does not exist')) {
+        console.warn('User blocks table not found - returning empty list')
+        return []
+      }
       throw error
     }
 
@@ -143,6 +159,9 @@ export class UserBlocksService {
 
     if (error) {
       console.error('Error getting blocked users count:', error)
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.user_blocks" does not exist')) {
+        console.warn('User blocks table not found - returning 0 count')
+      }
       return 0
     }
 

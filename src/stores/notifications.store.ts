@@ -31,7 +31,18 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
         .order('created_at', { ascending: false })
         .limit(50)
       
-      if (error) throw error
+      if (error) {
+        // If notifications table doesn't exist yet, silently fail
+        if (error.code === 'PGRST116' || error.message.includes('relation "public.notifications" does not exist')) {
+          console.warn('Notifications table not found - skipping notification loading')
+          set({ 
+            notifications: [],
+            unreadCount: 0 
+          })
+          return
+        }
+        throw error
+      }
       
       const unreadCount = data?.filter(n => !n.is_read).length || 0
       
@@ -41,7 +52,11 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
       })
     } catch (error) {
       console.error('Error loading notifications:', error)
-      throw error
+      // Don't throw to prevent cascading errors - just set empty state
+      set({ 
+        notifications: [],
+        unreadCount: 0 
+      })
     } finally {
       set({ loading: false })
     }
@@ -54,7 +69,13 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
         .update({ is_read: true })
         .eq('id', id)
       
-      if (error) throw error
+      if (error) {
+        if (error.code === 'PGRST116' || error.message.includes('relation "public.notifications" does not exist')) {
+          console.warn('Notifications table not found - cannot mark as read')
+          return
+        }
+        throw error
+      }
       
       set(state => ({
         notifications: state.notifications.map(n => 
@@ -64,7 +85,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
       }))
     } catch (error) {
       console.error('Error marking notification as read:', error)
-      throw error
+      // Don't throw to prevent cascading errors
     }
   },
 
@@ -75,7 +96,13 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
         .update({ is_read: true })
         .eq('is_read', false)
       
-      if (error) throw error
+      if (error) {
+        if (error.code === 'PGRST116' || error.message.includes('relation "public.notifications" does not exist')) {
+          console.warn('Notifications table not found - cannot mark all as read')
+          return
+        }
+        throw error
+      }
       
       set(state => ({
         notifications: state.notifications.map(n => ({ ...n, is_read: true })),
@@ -83,7 +110,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
       }))
     } catch (error) {
       console.error('Error marking all notifications as read:', error)
-      throw error
+      // Don't throw to prevent cascading errors
     }
   },
 
@@ -101,7 +128,13 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
         .delete()
         .eq('id', id)
       
-      if (error) throw error
+      if (error) {
+        if (error.code === 'PGRST116' || error.message.includes('relation "public.notifications" does not exist')) {
+          console.warn('Notifications table not found - cannot delete notification')
+          return
+        }
+        throw error
+      }
       
       set(state => {
         const notification = state.notifications.find(n => n.id === id)
@@ -114,7 +147,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
       })
     } catch (error) {
       console.error('Error deleting notification:', error)
-      throw error
+      // Don't throw to prevent cascading errors
     }
   },
 
@@ -175,13 +208,21 @@ export const createNotification = async (notificationData: {
   related_post_id?: number
   related_comment_id?: number
 }) => {
-  const { error } = await supabase
-    .from('notifications')
-    .insert([notificationData])
-  
-  if (error) {
+  try {
+    const { error } = await supabase
+      .from('notifications')
+      .insert([notificationData])
+    
+    if (error) {
+      if (error.code === 'PGRST116' || error.message.includes('relation "public.notifications" does not exist')) {
+        console.warn('Notifications table not found - cannot create notification')
+        return
+      }
+      throw error
+    }
+  } catch (error) {
     console.error('Error creating notification:', error)
-    throw error
+    // Don't throw to prevent cascading errors
   }
 }
 

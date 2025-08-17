@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationService } from '../../services/moderation.service'
+import UserAvatar from '../user/UserAvatar'
 import type { User } from '../../types/database.types'
 
 interface ModerationStats {
@@ -251,10 +252,11 @@ const AdminDashboard: React.FC = () => {
                     <tr key={user.id} className="bg-[#203f4a]">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-8 h-8 bg-[#37a653] rounded-full flex items-center justify-center mr-3">
-                            <span className="text-white font-semibold text-sm">
-                              {user.username.charAt(0).toUpperCase()}
-                            </span>
+                          <div className="mr-3">
+                            <UserAvatar 
+                              user={user} 
+                              size="small"
+                            />
                           </div>
                           <div>
                             <div className="text-sm font-medium text-white">{user.username}</div>

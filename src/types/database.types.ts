@@ -505,3 +505,27 @@ export type CommentWithRelations = Comment & {
 export type TherapistWithPosts = Therapist & {
   posts?: (Post & { users?: User })[]
 }
+
+// Moderation types
+export type ModerationStatus = 'pending' | 'approved' | 'rejected'
+
+export interface ModerationQueueItem {
+  id: number
+  content_type: 'post' | 'comment'
+  content_id: number
+  user_id: string
+  created_at: string
+  content?: string
+  title?: string
+  moderation_status?: ModerationStatus
+  moderated_by?: string
+  moderated_at?: string
+  rejection_reason?: string
+  post_id?: number
+  category_id?: number
+  users?: {
+    id: string
+    username: string
+    avatar_url?: string | null
+  }
+}
