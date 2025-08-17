@@ -28,12 +28,6 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { updateProfile } = useAuthStore()
 
-  const sizeClasses = {
-    small: 'w-6 h-6',
-    medium: 'w-16 h-16', 
-    large: 'w-32 h-32'
-  }
-  
   const sizeStyles = {
     small: { width: '1.6rem', height: '1.6rem' },
     medium: { width: '4rem', height: '4rem' },

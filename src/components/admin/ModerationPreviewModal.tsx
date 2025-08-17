@@ -1,4 +1,5 @@
 import React from 'react'
+import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
 
 interface ModerationPreviewModalProps {
@@ -36,12 +37,6 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
       hour: '2-digit',
       minute: '2-digit'
     })
-  }
-
-  const getCategoryColor = (contentType: string) => {
-    return contentType === 'post' 
-      ? 'bg-[#37a653] text-white' 
-      : 'bg-blue-600 text-white'
   }
 
   const getFirstLineOfComment = (content: string) => {
@@ -107,11 +102,13 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
 
             {/* User Info */}
             <div className="flex items-start space-x-3 mb-4">
-              <div className="w-6 h-6 md:w-10 md:h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0" style={{width: '1.6rem', height: '1.6rem'}}>
-                <span className="text-white font-semibold text-xs md:text-sm">
-                  {item.users?.username?.charAt(0)?.toUpperCase() || '?'}
-                </span>
-              </div>
+              {item.users && (
+                <UserAvatar 
+                  user={item.users} 
+                  size="small" 
+                  className="flex-shrink-0"
+                />
+              )}
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-white text-xs text-left leading-none">{item.users?.username}</p>
                 <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(item.created_at)}</p>
@@ -129,14 +126,14 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                     </h1>
                   )}
                   <div className="prose prose-gray max-w-none text-white leading-tight text-left text-sm">
-                    <div dangerouslySetInnerHTML={{ __html: item.content }} />
+                    <div dangerouslySetInnerHTML={{ __html: item.content || '' }} />
                   </div>
                 </div>
               ) : (
                 // For Comments: Show quoted content + post reference + full content
                 <div>
                   <div className="text-gray-300 text-sm mb-2 italic">
-                    "{getFirstLineOfComment(item.content)}"
+                    "{getFirstLineOfComment(item.content || '')}"
                   </div>
                   {item.post_id && (
                     <div className="text-xs text-gray-400 mb-4">
@@ -146,7 +143,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                     </div>
                   )}
                   <div className="prose prose-gray max-w-none text-white leading-tight text-left text-sm border-l-2 border-gray-600 pl-4">
-                    <div dangerouslySetInnerHTML={{ __html: item.content }} />
+                    <div dangerouslySetInnerHTML={{ __html: item.content || '' }} />
                   </div>
                 </div>
               )}

@@ -39,6 +39,7 @@ export class ModerationQueueService {
     const postItems: ModerationQueueItem[] = (pendingPosts || []).map(post => ({
       content_type: 'post' as const,
       id: post.id,
+      content_id: post.id, // Use post ID as content ID
       user_id: post.user_id,
       title: post.title,
       content: post.content,
@@ -55,6 +56,7 @@ export class ModerationQueueService {
     const commentItems: ModerationQueueItem[] = (pendingComments || []).map(comment => ({
       content_type: 'comment' as const,
       id: comment.id,
+      content_id: comment.id, // Use comment ID as content ID
       user_id: comment.user_id,
       content: comment.content,
       created_at: comment.created_at,

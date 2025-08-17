@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
 
 interface ModerationMessageModalProps {
@@ -106,11 +107,21 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
           <div className="text-sm text-gray-800">
             {item.content_type === 'post' 
               ? item.title || 'Kein Titel'
-              : item.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...'
+              : (item.content || '').replace(/<[^>]*>/g, '').substring(0, 100) + '...'
             }
           </div>
-          <div className="text-xs text-gray-500 mt-1">
-            von {item.users?.username || 'Unbekannt'}
+          <div className="flex items-center mt-2">
+            {item.users && (
+              <div className="mr-2">
+                <UserAvatar 
+                  user={item.users} 
+                  size="small"
+                />
+              </div>
+            )}
+            <div className="text-xs text-gray-500">
+              von {item.users?.username || 'Unbekannt'}
+            </div>
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Deploy to GitHub dist branch - Global deployment script
+# Deploy React build to GitHub dist branch
 # Usage: ./scripts/deploy.sh
 
 set -e  # Exit on any error
@@ -48,6 +48,23 @@ if [[ ! -d "dist" ]]; then
     exit 1
 fi
 
+# Create proper .htaccess file
+echo "📝 Creating .htaccess file..."
+cat > dist/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Erlaube statische Dateien und index.html
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Alle anderen Anfragen gehen an index.html
+  RewriteRule . /index.html [L]
+</IfModule>
+EOF
+
 # Get build statistics
 BUILD_SIZE=$(du -sh dist/ | cut -f1)
 FILE_COUNT=$(find dist/ -type f | wc -l | tr -d ' ')
@@ -66,9 +83,11 @@ fi
 echo "🧹 Cleaning dist branch..."
 git rm -rf --cached . >/dev/null 2>&1 || true
 
-# Add only dist files
-echo "📦 Adding build files..."
-git add dist/
+# Copy build files (including .htaccess) to root and add them
+echo "📦 Adding build files to root..."
+cp -r dist/* . 2>/dev/null || true
+cp dist/.htaccess . 2>/dev/null || true  # Ensure .htaccess is copied
+git add .
 
 # Check if there are any changes to commit
 if git diff --cached --quiet 2>/dev/null; then
@@ -88,7 +107,7 @@ git commit -m "Deploy build - $TIMESTAMP
 🌿 Branch: dist
 📍 From: $CURRENT_BRANCH"
 
-# Push to GitHub
+# Push to GitHub dist branch
 echo "🚁 Pushing to GitHub..."
 if git push -u origin dist 2>/dev/null; then
     echo "✅ Deployment successful!"
@@ -101,7 +120,8 @@ fi
 # Get repository info for URL
 REPO_URL=$(git remote get-url origin 2>/dev/null | sed 's/.*github.com[:/]\([^/]*\/[^/]*\)\.git.*/\1/' | sed 's/\.git$//')
 if [[ -n "$REPO_URL" ]]; then
-    echo "🌐 Live on: https://github.com/$REPO_URL/tree/dist"
+    echo "🌐 Deployed to: https://github.com/$REPO_URL/tree/dist"
+    echo "📁 Build files are now in the root of the dist branch"
 fi
 
 echo "📊 Deployment Summary:"
