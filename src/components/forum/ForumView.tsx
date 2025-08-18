@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useForumStore } from '../../stores/forum.store'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
+import FilterModal from './FilterModal'
 
 interface ForumViewProps {
   showCreatePostDialog?: boolean
@@ -17,6 +18,7 @@ const ForumView: React.FC<ForumViewProps> = ({
   // Remove local showEditor state, use props instead
   const [searchTerm, setSearchTerm] = useState('')
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null)
+  const [showFilterModal, setShowFilterModal] = useState(false)
 
   const {
     posts,
@@ -94,6 +96,16 @@ const ForumView: React.FC<ForumViewProps> = ({
     loadPosts({ category: categoryId || undefined })
   }
 
+  const getActiveFilterCount = () => {
+    let count = 0
+    if (filters.category) count++
+    if (filters.canton) count++
+    if (filters.therapist) count++
+    if (filters.designation) count++
+    if (filters.dateFrom || filters.dateTo) count++
+    return count
+  }
+
 
   return (
     <div className="min-h-screen bg-[#1a3442]">
@@ -115,11 +127,16 @@ const ForumView: React.FC<ForumViewProps> = ({
             
             {/* Filter Button */}
             <button
-              onClick={() => console.log('Filter clicked')}
-              className="bg-[#1a3442] hover:bg-[#0f2329] text-white px-4 py-2 font-medium transition-colors text-sm"
+              onClick={() => setShowFilterModal(true)}
+              className="bg-[#1a3442] hover:bg-[#0f2329] text-white px-4 py-2 font-medium transition-colors text-sm relative flex items-center space-x-2"
               style={{borderRadius: '20px'}}
             >
-              Filter
+              <span>Filter</span>
+              {getActiveFilterCount() > 0 && (
+                <span className="bg-[#37a653] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {getActiveFilterCount()}
+                </span>
+              )}
             </button>
             
             {/* Search Input */}
@@ -140,6 +157,12 @@ const ForumView: React.FC<ForumViewProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Filter Modal */}
+        <FilterModal 
+          isOpen={showFilterModal}
+          onClose={() => setShowFilterModal(false)}
+        />
 
         {/* Category Filter - Hidden on mobile */}
         <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4">

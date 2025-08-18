@@ -1,9 +1,27 @@
 import { supabase } from '../lib/supabase'
-import type { Post, PostWithRelations, Category } from '../types/database.types'
+import type { Post, PostWithRelations, Category, Designation } from '../types/database.types'
+
+interface PostFilters {
+  category?: number
+  canton?: string
+  therapist?: string
+  designation?: string
+  dateFrom?: string
+  dateTo?: string
+  search?: string
+}
 
 export class PostsService {
   // Get all published posts with user and category information
-  async getPosts(categoryId?: number, includeUserBanned = false): Promise<PostWithRelations[]> {
+  async getPosts(filters?: PostFilters | number, includeUserBanned = false): Promise<PostWithRelations[]> {
+    // Handle legacy API (backward compatibility)
+    let postFilters: PostFilters = {}
+    if (typeof filters === 'number') {
+      postFilters.category = filters
+    } else if (filters) {
+      postFilters = filters
+    }
+
     let query = supabase
       .from('posts')
       .select(`
@@ -35,8 +53,39 @@ export class PostsService {
         .eq('moderation_status', 'approved')
     }
 
-    if (categoryId) {
-      query = query.eq('category_id', categoryId)
+    // Apply filters
+    if (postFilters.category) {
+      query = query.eq('category_id', postFilters.category)
+    }
+
+    if (postFilters.canton) {
+      query = query.eq('canton', postFilters.canton)
+    }
+
+    if (postFilters.therapist) {
+      // Search by therapist ID (therapist filter now expects therapist ID)
+      query = query.eq('therapist_id', parseInt(postFilters.therapist))
+    }
+
+    if (postFilters.designation) {
+      query = query.eq('designation', postFilters.designation)
+    }
+
+    if (postFilters.dateFrom) {
+      // Convert to ISO string for proper date comparison
+      const fromDate = new Date(postFilters.dateFrom)
+      query = query.gte('created_at', fromDate.toISOString())
+    }
+
+    if (postFilters.dateTo) {
+      // Add one day to include the entire day
+      const toDate = new Date(postFilters.dateTo)
+      toDate.setDate(toDate.getDate() + 1)
+      query = query.lt('created_at', toDate.toISOString())
+    }
+
+    if (postFilters.search) {
+      query = query.or(`title.ilike.%${postFilters.search}%,content.ilike.%${postFilters.search}%`)
     }
 
     const { data, error } = await query
@@ -247,5 +296,21 @@ export class PostsService {
 
     console.log('✅ PostsService: Post updated successfully:', data)
     return data
+  }
+
+  // Get all designations
+  async getDesignations(): Promise<Designation[]> {
+    const { data, error } = await supabase
+      .from('designations')
+      .select('*')
+      .order('name_de', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching designations:', error)
+      // If designations table doesn't exist, return empty array
+      return []
+    }
+
+    return data || []
   }
 }

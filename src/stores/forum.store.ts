@@ -5,7 +5,10 @@ import type { PostWithRelations, Category } from '../types/database.types'
 interface PostFilters {
   category?: number
   canton?: string
-  therapist?: number
+  therapist?: string
+  designation?: string
+  dateFrom?: string
+  dateTo?: string
   search?: string
 }
 
@@ -78,7 +81,15 @@ export const useForumStore = create<ForumState>((set, get) => ({
       }
       
       const currentFilters = filters || get().filters
-      const data = await postsService.getPosts(currentFilters.category)
+      const data = await postsService.getPosts({
+        category: currentFilters.category,
+        canton: currentFilters.canton,
+        therapist: currentFilters.therapist,
+        designation: currentFilters.designation,
+        dateFrom: currentFilters.dateFrom,
+        dateTo: currentFilters.dateTo,
+        search: currentFilters.search
+      })
       
       set({ 
         posts: data,
@@ -107,7 +118,15 @@ export const useForumStore = create<ForumState>((set, get) => ({
       const nextPage = pagination.page + 1
       // Note: This would need to be implemented in the PostsService
       // For now, we'll just simulate it
-      const newPosts = await postsService.getPosts(filters.category)
+      const newPosts = await postsService.getPosts({
+        category: filters.category,
+        canton: filters.canton,
+        therapist: filters.therapist,
+        designation: filters.designation,
+        dateFrom: filters.dateFrom,
+        dateTo: filters.dateTo,
+        search: filters.search
+      })
       
       set({
         posts: [...posts, ...newPosts],
