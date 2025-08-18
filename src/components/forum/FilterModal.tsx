@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useForumStore } from '../../stores/forum.store'
 import { PostsService } from '../../services/posts.service'
 import { TherapistsService } from '../../services/therapists.service'
-import type { Category, Designation, Therapist } from '../../types/database.types'
+import type { Designation, Therapist } from '../../types/database.types'
 
 interface FilterModalProps {
   isOpen: boolean
@@ -201,11 +201,6 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     }
   }
 
-  const getFilterCount = () => {
-    return Object.values(localFilters).filter(value => 
-      value !== undefined && value !== '' && value !== null
-    ).length
-  }
 
   if (!isOpen) return null
 
