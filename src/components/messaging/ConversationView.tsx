@@ -51,7 +51,7 @@ const ConversationView: React.FC = () => {
       <div className="flex-1 overflow-y-auto p-4 bg-[#1a3442]">
         {loadingMessages ? (
           <div className="flex items-center justify-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#37a653]"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2ebe7a]"></div>
           </div>
         ) : currentMessages.length === 0 ? (
           <div className="flex items-center justify-center h-32">

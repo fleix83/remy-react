@@ -122,7 +122,7 @@ export class AvatarService {
     const firstLetter = username.charAt(0).toUpperCase()
     const colorIndex = username.charCodeAt(0) % 6
     const colors = [
-      '#37a653', '#2563eb', '#dc2626', '#ea580c', 
+      '#2ebe7a', '#2563eb', '#dc2626', '#ea580c', 
       '#7c3aed', '#0891b2'
     ]
     

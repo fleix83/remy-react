@@ -116,7 +116,7 @@ const ProfileSettings: React.FC = () => {
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="text-[#37a653] hover:text-[#2d8544] font-medium text-sm transition-colors duration-200"
+              className="text-[#2ebe7a] hover:text-[#2d8544] font-medium text-sm transition-colors duration-200"
             >
               Edit Settings
             </button>
@@ -145,7 +145,7 @@ const ProfileSettings: React.FC = () => {
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#37a653] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] focus:border-transparent"
                   required
                 />
               ) : (
@@ -163,7 +163,7 @@ const ProfileSettings: React.FC = () => {
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#37a653] focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] focus:border-transparent resize-none"
                   placeholder="Tell us a bit about yourself..."
                 />
               ) : (
@@ -230,8 +230,8 @@ const ProfileSettings: React.FC = () => {
                         onClick={() => setFormData({ ...formData, messages_active: !formData.messages_active })}
                         className={`
                           relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent 
-                          transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#37a653] focus:ring-offset-2
-                          ${formData.messages_active ? 'bg-[#37a653]' : 'bg-gray-200'}
+                          transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] focus:ring-offset-2
+                          ${formData.messages_active ? 'bg-[#2ebe7a]' : 'bg-gray-200'}
                         `}
                       >
                         <span
@@ -262,7 +262,7 @@ const ProfileSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 bg-[#37a653] hover:bg-[#2d8544] text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-[#2ebe7a] hover:bg-[#2d8544] text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Saving...' : 'Save Changes'}
                 </button>

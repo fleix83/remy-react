@@ -46,7 +46,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
     return (
       <div className="bg-[#203f4a] p-6" style={{borderRadius: '20px'}}>
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#37a653]"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2ebe7a]"></div>
         </div>
       </div>
     )
@@ -63,7 +63,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
           
           <button
             onClick={() => setShowCommentForm(!showCommentForm)}
-            className="inline-flex items-center px-3 py-1.5 text-xs font-bold bg-[#37a653] text-white rounded-md hover:bg-[#2e8844] transition-colors"
+            className="inline-flex items-center px-3 py-1.5 text-xs font-bold bg-[#2ebe7a] text-white rounded-md hover:bg-[#2ebe7a] transition-colors"
           >
             {showCommentForm ? 'Abbrechen' : 'Antworten'}
           </button>
@@ -121,7 +121,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
       {/* Load More Comments (placeholder for pagination) */}
       {comments.length > 0 && comments.length >= 10 && (
         <div className="px-6 py-4 border-t border-[#2a4a57] text-center">
-          <button className="text-sm text-gray-300 hover:text-[#37a653] transition-colors">
+          <button className="text-sm text-gray-300 hover:text-[#2ebe7a] transition-colors">
             Weitere Kommentare laden...
           </button>
         </div>

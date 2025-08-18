@@ -47,7 +47,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router basename="/remyreact">
       <Layout onCreatePost={handleCreatePost}>
         <Routes>
           <Route 
@@ -56,6 +56,7 @@ function App() {
               <ForumView 
                 showCreatePostDialog={showCreatePostDialog}
                 onCreatePostDialogClose={() => setShowCreatePostDialog(false)}
+                onCreatePost={handleCreatePost}
               />
             } 
           />

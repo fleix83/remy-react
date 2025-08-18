@@ -114,7 +114,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
                   activeTab === tab.id
-                    ? 'border-[#37a653] text-[#37a653]'
+                    ? 'border-[#2ebe7a] text-[#2ebe7a]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -122,7 +122,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                 {(activeTab === tab.id || tab.count > 0) && (
                   <span className={`ml-2 px-2 py-1 rounded-full text-xs ${
                     activeTab === tab.id
-                      ? 'bg-[#37a653]/10 text-[#37a653]'
+                      ? 'bg-[#2ebe7a]/10 text-[#2ebe7a]'
                       : 'bg-gray-100 text-gray-600'
                   }`}>
                     {tab.count}
@@ -153,7 +153,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#37a653]"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2ebe7a]"></div>
           </div>
         ) : (
           <div>
@@ -176,7 +176,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                           <div className="flex-1">
                             <Link 
                               to={`/post/${post.id}`}
-                              className="text-lg font-medium text-gray-900 hover:text-[#37a653] transition-colors duration-200"
+                              className="text-lg font-medium text-gray-900 hover:text-[#2ebe7a] transition-colors duration-200"
                             >
                               {post.title || 'Untitled Post'}
                             </Link>
@@ -246,7 +246,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                           {comment.posts && (
                             <Link 
                               to={`/post/${comment.posts.id}`}
-                              className="text-sm font-medium text-[#37a653] hover:text-[#2d8544] transition-colors duration-200"
+                              className="text-sm font-medium text-[#2ebe7a] hover:text-[#2d8544] transition-colors duration-200"
                             >
                               Comment on: {comment.posts.title || 'Untitled Post'}
                             </Link>

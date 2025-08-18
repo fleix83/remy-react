@@ -574,7 +574,7 @@ const ModerationQueue: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#1a3442] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#37a653]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
       </div>
     )
   }
@@ -598,7 +598,7 @@ const ModerationQueue: React.FC = () => {
               </span>
               <button
                 onClick={handleBulkApprove}
-                className="bg-[#37a653] hover:bg-[#2e8844] text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                className="bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-2 rounded-lg transition-colors text-sm"
               >
                 Publizieren
               </button>
@@ -627,7 +627,7 @@ const ModerationQueue: React.FC = () => {
         {/* Queue Items */}
         {queueItems.length === 0 ? (
           <div className="bg-[#203f4a] p-8 text-center" style={{borderRadius: '20px'}}>
-            <div className="text-[#37a653] mb-4">
+            <div className="text-[#2ebe7a] mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -641,7 +641,7 @@ const ModerationQueue: React.FC = () => {
               <div 
                 key={`${item.content_type}-${item.id}`} 
                 className={`p-6 mb-4 hover:bg-[#234652] transition-colors cursor-pointer relative ${
-                  selectedItems.has(item.id) ? 'ring-2 ring-[#37a653] bg-[#234652]' : 'bg-[#203f4a]'
+                  selectedItems.has(item.id) ? 'ring-2 ring-[#2ebe7a] bg-[#234652]' : 'bg-[#203f4a]'
                 }`}
                 style={{borderRadius: '20px'}}
                 onClick={() => handleItemClick(item)}
@@ -674,7 +674,7 @@ const ModerationQueue: React.FC = () => {
                           e.stopPropagation()
                           toggleSelection(item.id)
                         }}
-                        className="w-4 h-4 text-[#37a653] bg-gray-100 border-gray-300 rounded focus:ring-[#37a653] focus:ring-2"
+                        className="w-4 h-4 text-[#2ebe7a] bg-gray-100 border-gray-300 rounded focus:ring-[#2ebe7a] focus:ring-2"
                       />
                     </div>
                   </div>
@@ -691,7 +691,7 @@ const ModerationQueue: React.FC = () => {
                             handleCategoryChange(item.id, parseInt(e.target.value))
                           }
                         }}
-                        className="px-2 py-0.5 rounded-lg font-medium bg-[#37a653] text-white border-none outline-none cursor-pointer hover:bg-[#2e8844] transition-colors w-auto"
+                        className="px-2 py-0.5 rounded-lg font-medium bg-[#2ebe7a] text-white border-none outline-none cursor-pointer hover:bg-[#2ebe7a] transition-colors w-auto"
                         style={{fontSize: '0.65rem', minWidth: 'fit-content'}}
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -703,7 +703,7 @@ const ModerationQueue: React.FC = () => {
                         ))}
                       </select>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-lg font-medium bg-[#37a653] text-white w-auto" style={{fontSize: '0.65rem'}}>
+                      <span className="px-2 py-0.5 rounded-lg font-medium bg-[#2ebe7a] text-white w-auto" style={{fontSize: '0.65rem'}}>
                         {item.category_id && categories[item.category_id] ? categories[item.category_id] : 'Keine Kategorie'}
                       </span>
                     )}
@@ -730,7 +730,7 @@ const ModerationQueue: React.FC = () => {
                   {item.content_type === 'post' ? (
                     // For Posts: Show only title
                     item.title && (
-                      <h3 className="text-base md:text-xl font-semibold text-[#37a653] leading-tight text-left">
+                      <h3 className="text-base md:text-xl font-semibold text-[#2ebe7a] leading-tight text-left">
                         {item.title}
                       </h3>
                     )
@@ -818,7 +818,7 @@ const ModerationQueue: React.FC = () => {
                       setShowMessageModal(true)
                     }}
                     disabled={processingId === item.id}
-                    className="bg-[#37a653] hover:bg-[#2e8844] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
+                    className="bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
                     title="Publizieren"
                   >
                     Publizieren

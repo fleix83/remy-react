@@ -80,7 +80,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     if (!selectedText) return null
 
     return (
-      <div className={`border-l-4 border-[#37a653] pl-3 mb-3 bg-[#2a4a57] p-2 ${fullWidth ? 'mx-0' : 'rounded-r'}`}>
+      <div className={`border-l-4 border-[#2ebe7a] pl-3 mb-3 bg-[#2a4a57] p-2 ${fullWidth ? 'mx-0' : 'rounded-r'}`}>
         <div className="flex items-start justify-between">
           <div className="text-sm text-gray-300 italic">
             "{selectedText}"
@@ -137,7 +137,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
             <button
               type="submit"
               disabled={submitting || !content.replace(/<[^>]*>/g, '').trim()}
-              className="px-4 py-1.5 text-xs font-bold bg-[#37a653] text-white rounded-md hover:bg-[#2e8844] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-1.5 text-xs font-bold bg-[#2ebe7a] text-white rounded-md hover:bg-[#2ebe7a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {submitting ? 'Wird gesendet...' : 'Kommentieren'}
             </button>

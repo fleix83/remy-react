@@ -64,7 +64,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         <div
           className={`px-4 py-2 rounded-2xl break-words ${
             isOwn
-              ? 'bg-[#37a653] text-white rounded-br-md'
+              ? 'bg-[#2ebe7a] text-white rounded-br-md'
               : 'bg-[#2a4a57] text-white rounded-bl-md'
           }`}
         >

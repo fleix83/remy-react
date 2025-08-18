@@ -116,7 +116,7 @@ const ForumView: React.FC<ForumViewProps> = ({
             {/* Neu Button */}
             <button
               onClick={onCreatePost}
-              className="bg-[#37a653] hover:bg-[#2e8844] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
+              className="bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
               style={{borderRadius: '20px'}}
             >
               <svg className="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -133,7 +133,7 @@ const ForumView: React.FC<ForumViewProps> = ({
             >
               <span>Filter</span>
               {getActiveFilterCount() > 0 && (
-                <span className="bg-[#37a653] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="bg-[#2ebe7a] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {getActiveFilterCount()}
                 </span>
               )}
@@ -146,11 +146,11 @@ const ForumView: React.FC<ForumViewProps> = ({
                 placeholder="Suche..."
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full pl-4 pr-10 py-2 bg-[#1a3442] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#37a653] text-sm"
+                className="w-full pl-4 pr-10 py-2 bg-[#1a3442] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm"
                 style={{borderRadius: '20px'}}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <svg className="h-4 w-4 text-[#37a653]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 text-[#2ebe7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -170,7 +170,7 @@ const ForumView: React.FC<ForumViewProps> = ({
             onClick={() => handleCategoryFilter(null)}
             className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
               !filters.category
-                ? 'bg-[#37a653] text-white'
+                ? 'bg-[#2ebe7a] text-white'
                 : 'bg-[#203f4a] text-gray-300 hover:bg-[#2a4a57]'
             }`}
             style={{fontSize: '0.65rem'}}
@@ -184,7 +184,7 @@ const ForumView: React.FC<ForumViewProps> = ({
               onClick={() => handleCategoryFilter(category.id)}
               className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
                 filters.category === category.id
-                  ? 'bg-[#37a653] text-white'
+                  ? 'bg-[#2ebe7a] text-white'
                   : 'bg-[#203f4a] text-gray-300 hover:bg-[#2a4a57]'
               }`}
               style={{fontSize: '0.65rem'}}
@@ -200,12 +200,12 @@ const ForumView: React.FC<ForumViewProps> = ({
           <div className="bg-[#1a3442] md:bg-white w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto">
             <div className="sticky top-0 bg-[#1a3442] md:bg-white border-b border-[#2a4a57] md:border-gray-200 px-4 md:px-6 py-3 md:py-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg md:text-xl font-headline font-bold text-[#37a653] md:text-gray-900">
+                <h2 className="text-lg md:text-xl font-headline font-bold text-[#2ebe7a] md:text-gray-900">
                   Neuen Beitrag erstellen
                 </h2>
                 <button
                   onClick={onCreatePostDialogClose}
-                  className="text-[#37a653] md:text-gray-400 hover:text-[#2e8844] md:hover:text-gray-600 transition-colors p-1"
+                  className="text-[#2ebe7a] md:text-gray-400 hover:text-[#2ebe7a] md:hover:text-gray-600 transition-colors p-1"
                 >
                   <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -228,7 +228,7 @@ const ForumView: React.FC<ForumViewProps> = ({
         <div>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#37a653]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-12">

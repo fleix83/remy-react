@@ -106,7 +106,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             {/* Category Badge - Above User Block */}
             {(item as any).category_id && (
               <div className="mb-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-[#37a653] text-white" style={{fontSize: '0.65rem'}}>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-[#2ebe7a] text-white" style={{fontSize: '0.65rem'}}>
                   {categories[(item as any).category_id] || 'Kategorie'}
                 </span>
               </div>
@@ -133,7 +133,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                 // For Posts: Show title and full content
                 <div>
                   {item.title && (
-                    <h1 className="text-base md:text-xl font-semibold text-[#37a653] mb-4 leading-tight text-left">
+                    <h1 className="text-base md:text-xl font-semibold text-[#2ebe7a] mb-4 leading-tight text-left">
                       {item.title}
                     </h1>
                   )}
@@ -191,7 +191,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             <button
               onClick={() => onApprove(item)}
               disabled={isProcessing}
-              className="bg-[#37a653] hover:bg-[#2e8844] text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
+              className="bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
             >
               {isProcessing ? 'Verarbeitung...' : 'Publizieren'}
             </button>

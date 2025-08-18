@@ -58,21 +58,24 @@ if [[ ! -d "dist" ]]; then
     exit 1
 fi
 
-# Create proper .htaccess file
-echo "📝 Creating .htaccess file..."
+# Create proper .htaccess file for subdirectory deployment
+echo "📝 Creating .htaccess file for /remyreact subdirectory..."
 cat > dist/.htaccess << 'EOF'
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
+RewriteEngine On
 
-  # Erlaube statische Dateien und index.html
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
+# Handle React Router for subdirectory deployment
+RewriteBase /remyreact/
 
-  # Alle anderen Anfragen gehen an index.html
-  RewriteRule . /index.html [L]
-</IfModule>
+# Handle client-side routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /remyreact/index.html [L]
+
+# Set cache headers for static assets
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg)$">
+    ExpiresActive on
+    ExpiresDefault "access plus 1 month"
+</FilesMatch>
 EOF
 
 # Get build statistics
@@ -80,14 +83,14 @@ BUILD_SIZE=$(du -sh dist/ | cut -f1)
 FILE_COUNT=$(find dist/ -type f | wc -l | tr -d ' ')
 echo "✅ Build completed: $FILE_COUNT files, $BUILD_SIZE total"
 
-# Verify relative paths in the build before proceeding
-echo "🔍 Verifying build has relative paths..."
-if ! grep -q 'href="./assets/' "dist/index.html" || ! grep -q 'src="./assets/' "dist/index.html"; then
-    echo "❌ Build doesn't have relative paths! Something is wrong with Vite config."
+# Verify subdirectory paths in the build before proceeding
+echo "🔍 Verifying build has correct /remyreact/ paths..."
+if ! grep -q 'href="/remyreact/assets/' "dist/index.html" || ! grep -q 'src="/remyreact/assets/' "dist/index.html"; then
+    echo "❌ Build doesn't have correct /remyreact/ paths! Something is wrong with Vite config."
     cat "dist/index.html" | grep -E "(href|src)="
     exit 1
 fi
-echo "✅ Build has correct relative paths"
+echo "✅ Build has correct /remyreact/ paths"
 
 # Create temporary directory to store build files
 TEMP_DIR=$(mktemp -d)
@@ -141,12 +144,12 @@ if [[ -f "$TEMP_DIR/.htaccess" ]]; then
     echo "✅ Copied .htaccess"
 fi
 
-# Verify the paths are still relative before adding to git
-echo "🔍 Verifying relative paths in copied files..."
-if [[ -f "index.html" ]] && grep -q 'href="./assets/' index.html && grep -q 'src="./assets/' index.html; then
-    echo "✅ Relative paths preserved in copied files"
+# Verify the paths are still correct before adding to git
+echo "🔍 Verifying /remyreact/ paths in copied files..."
+if [[ -f "index.html" ]] && grep -q 'href="/remyreact/assets/' index.html && grep -q 'src="/remyreact/assets/' index.html; then
+    echo "✅ /remyreact/ paths preserved in copied files"
 else
-    echo "❌ Relative paths were corrupted during copy"
+    echo "❌ /remyreact/ paths were corrupted during copy"
     if [[ -f "index.html" ]]; then
         echo "Current paths in index.html:"
         cat index.html | grep -E "(href|src)=" | head -5

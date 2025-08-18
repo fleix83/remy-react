@@ -86,7 +86,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={`Send a message to ${recipientUsername}...`}
-            className="w-full p-3 bg-[#2a4a57] text-white rounded-xl border border-[#3a5a67] focus:border-[#37a653] focus:outline-none resize-none min-h-[44px] max-h-32"
+            className="w-full p-3 bg-[#2a4a57] text-white rounded-xl border border-[#3a5a67] focus:border-[#2ebe7a] focus:outline-none resize-none min-h-[44px] max-h-32"
             rows={1}
             disabled={sending}
           />
@@ -106,7 +106,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
         <button
           type="submit"
           disabled={!message.trim() || sending || message.length > 1000}
-          className="p-3 bg-[#37a653] hover:bg-[#2e8844] disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center min-w-[48px]"
+          className="p-3 bg-[#2ebe7a] hover:bg-[#2ebe7a] disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center min-w-[48px]"
           title="Send message"
         >
           {sending ? (

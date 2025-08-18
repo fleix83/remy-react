@@ -84,7 +84,7 @@ const MessagesList: React.FC = () => {
               onClick={() => setCurrentConversation(conversation)}
               className={`w-full p-4 text-left hover:bg-[#2a4a57] transition-colors border-b border-[#2a4a57]/50 ${
                 currentConversation?.id === conversation.id 
-                  ? 'bg-[#2a4a57] border-l-2 border-l-[#37a653]' 
+                  ? 'bg-[#2a4a57] border-l-2 border-l-[#2ebe7a]' 
                   : ''
               }`}
             >
@@ -109,7 +109,7 @@ const MessagesList: React.FC = () => {
                       </span>
                       {/* Unread count */}
                       {conversation.unreadCount > 0 && (
-                        <div className="bg-[#37a653] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        <div className="bg-[#2ebe7a] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                           {conversation.unreadCount > 9 ? '9+' : conversation.unreadCount}
                         </div>
                       )}

@@ -44,13 +44,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
 
   const getCategoryColor = (categoryId: number) => {
     const colors = {
-      1: 'bg-[#37a653] text-white', // Erfahrung
-      2: 'bg-[#37a653] text-white', // Suche TherapeutIn
-      3: 'bg-[#37a653] text-white', // Gedanken
-      4: 'bg-[#37a653] text-white', // Rant
-      5: 'bg-[#37a653] text-white', // Ressourcen
+      1: 'bg-[#2ebe7a] text-white', // Erfahrung
+      2: 'bg-[#2ebe7a] text-white', // Suche TherapeutIn
+      3: 'bg-[#2ebe7a] text-white', // Gedanken
+      4: 'bg-[#2ebe7a] text-white', // Rant
+      5: 'bg-[#2ebe7a] text-white', // Ressourcen
     }
-    return colors[categoryId as keyof typeof colors] || 'bg-[#37a653] text-white'
+    return colors[categoryId as keyof typeof colors] || 'bg-[#2ebe7a] text-white'
   }
 
 
@@ -94,7 +94,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         
         {/* Comments Count */}
         <div className="relative flex items-center">
-          <div className="relative bg-[#37a653] rounded-full p-1.5">
+          <div className="relative bg-[#2ebe7a] rounded-full p-1.5">
             <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
@@ -143,7 +143,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </div>
 
       {/* Title */}
-      <h3 className="text-base md:text-xl font-semibold text-[#37a653] mb-4 leading-tight text-left">
+      <h3 className="text-base md:text-xl font-semibold text-[#2ebe7a] mb-4 leading-tight text-left">
         {getPostDisplayTitle(post)}
       </h3>
 

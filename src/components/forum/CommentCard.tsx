@@ -79,7 +79,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
 
   const renderQuotedText = (quotedText: string) => {
     return (
-      <div className="border-l-4 border-[#37a653] pl-3 mb-3 bg-[#2a4a57] p-2 rounded-r">
+      <div className="border-l-4 border-[#2ebe7a] pl-3 mb-3 bg-[#2a4a57] p-2 rounded-r">
         <div className="text-sm text-gray-300 italic">
           "{quotedText}"
         </div>
@@ -113,7 +113,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           {/* Comment Actions */}
           <button
             onClick={handleQuoteText}
-            className="text-gray-400 hover:text-[#37a653] transition-colors p-1"
+            className="text-gray-400 hover:text-[#2ebe7a] transition-colors p-1"
             title="Zitieren"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +126,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
               setEditContent(stripHtmlTags(comment.content))
               setIsEditing(true)
             }}
-            className="text-gray-400 hover:text-[#37a653] transition-colors p-1"
+            className="text-gray-400 hover:text-[#2ebe7a] transition-colors p-1"
             title="Bearbeiten"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +156,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full px-3 py-2 border border-[#2a4a57] bg-[#203f4a] text-white rounded-md focus:ring-[#37a653] focus:border-[#37a653] resize-vertical"
+              className="w-full px-3 py-2 border border-[#2a4a57] bg-[#203f4a] text-white rounded-md focus:ring-[#2ebe7a] focus:border-[#2ebe7a] resize-vertical"
               rows={4}
             />
             <div className="flex justify-end space-x-2 mt-2">
@@ -169,7 +169,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="px-3 py-1 text-sm bg-[#37a653] text-white rounded hover:bg-[#2e8844] disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-[#2ebe7a] text-white rounded hover:bg-[#2ebe7a] disabled:opacity-50"
                 disabled={saving || !editContent.trim()}
               >
                 {saving ? 'Speichern...' : 'Speichern'}
@@ -188,7 +188,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
         {comment.replies && comment.replies.length > 0 && (
           <button
             onClick={() => setShowReplies(!showReplies)}
-            className="text-xs text-gray-300 hover:text-[#37a653] transition-colors"
+            className="text-xs text-gray-300 hover:text-[#2ebe7a] transition-colors"
           >
             {showReplies ? 'Antworten ausblenden' : `${comment.replies.length} Antworten anzeigen`}
           </button>
@@ -196,7 +196,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
         
         <button
           onClick={() => onReply(comment.id)}
-          className="px-2 py-0.5 text-xs bg-[#37a653] text-white rounded-lg font-medium hover:bg-[#2e8844] transition-colors"
+          className="px-2 py-0.5 text-xs bg-[#2ebe7a] text-white rounded-lg font-medium hover:bg-[#2ebe7a] transition-colors"
         >
           Antworten
         </button>

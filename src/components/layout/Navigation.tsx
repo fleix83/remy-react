@@ -44,7 +44,7 @@ const Navigation: React.FC<NavigationProps> = ({
           {/* Logo and Brand */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3">
-              <h1 className="font-headline font-bold text-[#37a653] md:text-primary-600" style={{fontSize: '39px'}}>
+              <h1 className="font-headline font-bold text-[#2ebe7a] md:text-primary-600" style={{fontSize: '39px'}}>
                 REMY
               </h1>
               <div className="text-white md:text-gray-500 leading-tight text-left uppercase" style={{fontSize: '8px'}}>
@@ -186,7 +186,7 @@ const Navigation: React.FC<NavigationProps> = ({
               // Fallback to hamburger menu for non-logged in users
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-[#37a653] hover:text-[#2e8844] p-2 rounded-md transition-colors"
+                className="text-[#2ebe7a] hover:text-[#2ebe7a] p-2 rounded-md transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMobileMenuOpen ? (
@@ -206,7 +206,7 @@ const Navigation: React.FC<NavigationProps> = ({
             <div className="flex flex-col space-y-2">
               <Link 
                 to="/" 
-                className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                className="text-gray-300 hover:text-[#2ebe7a] px-4 py-3 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🏠 Forum
@@ -214,7 +214,7 @@ const Navigation: React.FC<NavigationProps> = ({
               
               <Link 
                 to="/therapists" 
-                className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                className="text-gray-300 hover:text-[#2ebe7a] px-4 py-3 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 👩‍⚕️ Therapeuten
@@ -226,7 +226,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <MessagesButton 
-                    className="text-gray-300 hover:text-[#37a653] text-base font-medium transition-colors"
+                    className="text-gray-300 hover:text-[#2ebe7a] text-base font-medium transition-colors"
                     showLabel={true}
                   />
                 </div>
@@ -237,7 +237,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 <>
                   <Link 
                     to="/admin/moderation" 
-                    className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="text-gray-300 hover:text-[#2ebe7a] px-4 py-3 rounded-md text-base font-medium transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     🛡️ Moderation
@@ -245,7 +245,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   {permissions.isAdmin && (
                     <Link 
                       to="/admin" 
-                      className="text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                      className="text-gray-300 hover:text-[#2ebe7a] px-4 py-3 rounded-md text-base font-medium transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       ⚙️ Admin
@@ -261,7 +261,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     onCreatePost()
                     setIsMobileMenuOpen(false)
                   }}
-                  className="mx-4 mt-2 bg-[#37a653] hover:bg-[#2e8844] text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                  className="mx-4 mt-2 bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -287,7 +287,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   
                   <Link 
                     to="/profile" 
-                    className="block text-gray-300 hover:text-[#37a653] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="block text-gray-300 hover:text-[#2ebe7a] px-4 py-3 rounded-md text-base font-medium transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     👤 Profil
@@ -307,14 +307,14 @@ const Navigation: React.FC<NavigationProps> = ({
                 <div className="border-t border-[#2a4a57] mt-4 pt-4 flex flex-col space-y-2 px-4">
                   <Link 
                     to="/login" 
-                    className="text-center bg-[#2a4a57] hover:bg-[#37a653] text-gray-300 hover:text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="text-center bg-[#2a4a57] hover:bg-[#2ebe7a] text-gray-300 hover:text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Anmelden
                   </Link>
                   <Link 
                     to="/register" 
-                    className="text-center bg-[#37a653] hover:bg-[#2e8844] text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="text-center bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Registrieren
