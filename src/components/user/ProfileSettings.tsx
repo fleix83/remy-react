@@ -2,9 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { useAuthStore } from '../../stores/auth.store'
 import BadgeDropdown from '../ui/BadgeDropdown'
 
-const ProfileSettings: React.FC = () => {
+interface ProfileSettingsProps {
+  isEditing?: boolean
+  onEditingChange?: (editing: boolean) => void
+}
+
+const ProfileSettings: React.FC<ProfileSettingsProps> = ({ 
+  isEditing: propIsEditing = false, 
+  onEditingChange 
+}) => {
   const { userProfile, updateProfile } = useAuthStore()
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(propIsEditing)
   const [formData, setFormData] = useState({
     username: '',
     bio: '',
@@ -63,6 +71,10 @@ const ProfileSettings: React.FC = () => {
     }
   }, [userProfile])
 
+  useEffect(() => {
+    setIsEditing(propIsEditing)
+  }, [propIsEditing])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!userProfile) return
@@ -81,6 +93,7 @@ const ProfileSettings: React.FC = () => {
 
       setMessage({ type: 'success', text: 'Settings updated successfully!' })
       setIsEditing(false)
+      if (onEditingChange) onEditingChange(false)
     } catch (error) {
       console.error('Profile update error:', error)
       setMessage({ 
@@ -104,6 +117,7 @@ const ProfileSettings: React.FC = () => {
     }
     setIsEditing(false)
     setMessage(null)
+    if (onEditingChange) onEditingChange(false)
   }
 
   if (!userProfile) return null
@@ -111,16 +125,8 @@ const ProfileSettings: React.FC = () => {
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Profile Settings</h2>
-          {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="text-[#2ebe7a] hover:text-[#2d8544] font-medium text-sm transition-colors duration-200"
-            >
-              Edit Settings
-            </button>
-          )}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 text-left">Profile Settings</h2>
         </div>
 
         {message && (
@@ -137,7 +143,7 @@ const ProfileSettings: React.FC = () => {
           <div className="space-y-6">
             {/* Username */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
                 Username
               </label>
               {isEditing ? (
@@ -145,17 +151,17 @@ const ProfileSettings: React.FC = () => {
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-left"
                   required
                 />
               ) : (
-                <p className="text-gray-900">{userProfile.username}</p>
+                <p className="text-gray-900 text-left">{userProfile.username}</p>
               )}
             </div>
 
             {/* Bio */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
                 Bio
               </label>
               {isEditing ? (
@@ -163,11 +169,11 @@ const ProfileSettings: React.FC = () => {
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent resize-none text-left"
                   placeholder="Tell us a bit about yourself..."
                 />
               ) : (
-                <p className="text-gray-900 whitespace-pre-wrap">
+                <p className="text-gray-900 whitespace-pre-wrap text-left">
                   {userProfile.bio || <span className="text-gray-500 italic">No bio provided</span>}
                 </p>
               )}
@@ -175,63 +181,72 @@ const ProfileSettings: React.FC = () => {
 
             {/* Private Settings Section */}
             <div className="border-t pt-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Private Settings</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4 text-left">Private Settings</h3>
               
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {/* Default Canton */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Default Canton
-                  </label>
-                  {isEditing ? (
-                    <BadgeDropdown
-                      value={formData.default_canton}
-                      options={cantons}
-                      onChange={(value) => setFormData({ ...formData, default_canton: value as string })}
-                      badgeClassName="bg-gray-100 text-gray-800 hover:bg-gray-200"
-                      placeholder="Select canton..."
-                    />
-                  ) : (
-                    <p className="text-gray-900">
-                      {cantons.find(c => c.value === userProfile.default_canton)?.label || 
-                       <span className="text-gray-500 italic">No default canton set</span>}
-                    </p>
-                  )}
+                <div className="flex items-center">
+                  <div className="w-40 text-left">
+                    <span className="text-sm font-medium text-gray-700">
+                      Standard Kanton:
+                    </span>
+                  </div>
+                  <div className="flex-1 text-left">
+                    {isEditing ? (
+                      <BadgeDropdown
+                        value={formData.default_canton}
+                        options={cantons}
+                        onChange={(value) => setFormData({ ...formData, default_canton: value as string })}
+                        badgeClassName="bg-blue-100 text-blue-800 hover:bg-blue-200"
+                        placeholder="Alle Kantone"
+                      />
+                    ) : (
+                      <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                        {cantons.find(c => c.value === userProfile.default_canton)?.label || "Alle Kantone"}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Language Preference */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Language
-                  </label>
-                  {isEditing ? (
-                    <BadgeDropdown
-                      value={formData.language_preference}
-                      options={languages}
-                      onChange={(value) => setFormData({ ...formData, language_preference: value as string })}
-                      badgeClassName="bg-blue-100 text-blue-800 hover:bg-blue-200"
-                    />
-                  ) : (
-                    <p className="text-gray-900">
-                      {languages.find(l => l.value === userProfile.language_preference)?.label || 'Deutsch'}
-                    </p>
-                  )}
+                <div className="flex items-center">
+                  <div className="w-40 text-left">
+                    <span className="text-sm font-medium text-gray-700">
+                      Bevorzugte Sprache:
+                    </span>
+                  </div>
+                  <div className="flex-1 text-left">
+                    {isEditing ? (
+                      <BadgeDropdown
+                        value={formData.language_preference}
+                        options={languages}
+                        onChange={(value) => setFormData({ ...formData, language_preference: value as string })}
+                        badgeClassName="bg-gray-100 text-gray-800 hover:bg-gray-200"
+                      />
+                    ) : (
+                      <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
+                        {languages.find(l => l.value === userProfile.language_preference)?.label || 'Deutsch'}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Messages Toggle */}
-                <div>
-                  <label className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-40 text-left">
                     <span className="text-sm font-medium text-gray-700">
-                      Allow private messages
+                      Private Nachrichten:
                     </span>
+                  </div>
+                  <div className="flex-1 text-left">
                     {isEditing ? (
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, messages_active: !formData.messages_active })}
                         className={`
                           relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent 
-                          transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] focus:ring-offset-2
-                          ${formData.messages_active ? 'bg-[#2ebe7a]' : 'bg-gray-200'}
+                          transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2
+                          ${formData.messages_active ? 'bg-[var(--primary)]' : 'bg-gray-200'}
                         `}
                       >
                         <span
@@ -243,15 +258,15 @@ const ProfileSettings: React.FC = () => {
                         />
                       </button>
                     ) : (
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         userProfile.messages_active 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-gray-100 text-gray-800'
                       }`}>
-                        {userProfile.messages_active ? 'Enabled' : 'Disabled'}
+                        {userProfile.messages_active ? 'An' : 'Aus'}
                       </span>
                     )}
-                  </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -262,7 +277,7 @@ const ProfileSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 bg-[#2ebe7a] hover:bg-[#2d8544] text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-[var(--primary)] hover:bg-[#2d8544] text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Saving...' : 'Save Changes'}
                 </button>
