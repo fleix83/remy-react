@@ -24,7 +24,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   const [showEditModal, setShowEditModal] = useState(false)
   
   const navigate = useNavigate()
-  const { deletePost, updatePost } = useForumStore()
+  const { updatePost } = useForumStore()
   const { user } = useAuthStore()
 
   useEffect(() => {
