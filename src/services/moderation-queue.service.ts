@@ -129,7 +129,6 @@ export class ModerationQueueService {
       moderated_by: moderatorId,
       moderated_at: new Date().toISOString(),
       rejection_reason: reason || null,
-      is_banned: true, // Ban the post - only author can see it
       is_published: false, // Ensure it's not publicly visible
       updated_at: new Date().toISOString()
     }
@@ -144,7 +143,7 @@ export class ModerationQueueService {
       throw error
     }
 
-    console.log(`❌ Post ${postId} rejected and banned by moderator ${moderatorId}`)
+    console.log(`❌ Post ${postId} rejected by moderator ${moderatorId}`)
   }
 
   // Approve a comment
@@ -176,7 +175,6 @@ export class ModerationQueueService {
         moderated_by: moderatorId,
         moderated_at: new Date().toISOString(),
         rejection_reason: reason || null,
-        is_banned: true, // Ban the comment - only author can see it
         is_published: false // Ensure it's not publicly visible
       })
       .eq('id', commentId)
@@ -186,7 +184,7 @@ export class ModerationQueueService {
       throw error
     }
 
-    console.log(`❌ Comment ${commentId} rejected and banned by moderator ${moderatorId}`)
+    console.log(`❌ Comment ${commentId} rejected by moderator ${moderatorId}`)
   }
 
   // Get moderation history for a specific moderator

@@ -1,21 +1,29 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&family=Nunito+Sans:opsz,wght@6..12,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
 
-/* Custom CSS variables matching the existing PHP theme */
+/* Global CSS Custom Properties for Dark Theme */
 :root {
-  --background-body: #fafafa;
-  --background-element: #ffffff;
-  --primary: #007bff;
-  --type-meta: #6c757d;
-  --tags-color: #495057;
-  --tags-bg: #e9ecef;
-  --border-color: #dee2e6;
-  --text-muted: #6c757d;
+  /* Core Theme Colors */
+  --primary: #2ebe7a;           /* Green - buttons, links, accents */
+  --salmon: #e85a4f;            /* Salmon - filter buttons, badges */
+  --salmon-hover: #d14940;      /* Salmon hover state */
+  --type: #ffffff;              /* White text */
+  --bg-body: #1a3442;          /* Dark body background */
+  --bg-element: #203f4a;       /* Semi-dark element backgrounds */
+  --bg-element-hover: #2a4a57; /* Element hover states */
+  
+  /* Category Badge Colors */
+  --bg-erfahrung: #3b82f6;     /* Blue - Experience/Stories */
+  --bg-suche: #8b5cf6;         /* Purple - Search for Therapist */
+  --bg-gedanken: #06b6d4;      /* Cyan - Thoughts/Reflections */
+  --bg-rant: #f59e0b;          /* Amber - Rants/Venting */
+  --bg-ressourcen: #10b981;    /* Emerald - Resources/Tips */
 }
 
 body {
   font-family: "Nunito Sans", sans-serif;
-  background-color: var(--background-body);
+  background-color: var(--bg-body);
   margin: 0;
   line-height: 1.6;
 }
@@ -32,7 +40,7 @@ h1, h2, h3, h4, h5, h6 {
   padding-left: 1rem;
   font-style: italic;
   margin: 1rem 0;
-  background-color: #f8f9fa;
+  background-color: var(--bg-element);
   padding: 0.75rem 1rem;
   border-radius: 0.375rem;
 }

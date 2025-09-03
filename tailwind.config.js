@@ -32,11 +32,25 @@ export default {
           800: '#1e293b',
           900: '#0f172a',
           950: '#020617',
-        }
+        },
+        // CSS Custom Property Support
+        'css-primary': 'var(--primary)',
+        'css-salmon': 'var(--salmon)',
+        'css-salmon-hover': 'var(--salmon-hover)',
+        'css-type': 'var(--type)',
+        'css-bg-body': 'var(--bg-body)',
+        'css-bg-element': 'var(--bg-element)',
+        'css-bg-element-hover': 'var(--bg-element-hover)',
+        'css-erfahrung': 'var(--bg-erfahrung)',
+        'css-suche': 'var(--bg-suche)',
+        'css-gedanken': 'var(--bg-gedanken)',
+        'css-rant': 'var(--bg-rant)',
+        'css-ressourcen': 'var(--bg-ressourcen)'
       },
       fontFamily: {
         'body': ['"Nunito Sans"', 'sans-serif'],
         'headline': ['"Nunito"', 'sans-serif'],
+        'gaegu': ['"Gaegu"', 'cursive'],
         sans: ['"Nunito Sans"', 'sans-serif'],
       },
     },

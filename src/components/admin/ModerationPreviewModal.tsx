@@ -51,16 +51,13 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-[#1a3442] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-[var(--bg-body)] w-full h-full overflow-y-auto">
         {/* Modal Header */}
-        <div className="sticky top-0 bg-[#1a3442] border-b border-gray-600 p-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <h2 className="text-xl font-semibold text-white">Moderation Vorschau</h2>
-            <span className="inline-flex items-center px-3 py-1 rounded-lg font-medium bg-yellow-600 text-white text-sm">
-              🔍 PREVIEW MODE
-            </span>
-          </div>
+        <div className="sticky top-0 bg-[var(--bg-body)] border-b border-gray-600 p-4 flex items-center justify-between">
+          <span className="inline-flex items-center px-2 py-1 rounded-lg font-medium bg-pink-500 text-white text-xs">
+            Moderation Vorschau
+          </span>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -74,7 +71,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
         {/* Content */}
         <div className="p-6">
           {/* Post Card Style Content */}
-          <div className="bg-[#203f4a] p-6 relative" style={{borderRadius: '20px'}}>
+          <div className="bg-[var(--bg-element)] p-6 relative" style={{borderRadius: '20px'}}>
             {/* Content Type Badge - Overlapping */}
             <span className={`absolute -top-2 left-4 z-10 inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-lg ${
               item.content_type === 'post' 
@@ -106,7 +103,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             {/* Category Badge - Above User Block */}
             {(item as any).category_id && (
               <div className="mb-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-[#2ebe7a] text-white" style={{fontSize: '0.65rem'}}>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white" style={{fontSize: '0.65rem'}}>
                   {categories[(item as any).category_id] || 'Kategorie'}
                 </span>
               </div>
@@ -133,7 +130,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                 // For Posts: Show title and full content
                 <div>
                   {item.title && (
-                    <h1 className="text-base md:text-xl font-semibold text-[#2ebe7a] mb-4 leading-tight text-left">
+                    <h1 className="text-base md:text-xl font-semibold text-[var(--primary)] mb-4 leading-tight text-left">
                       {item.title}
                     </h1>
                   )}
@@ -163,35 +160,54 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="mt-6 flex items-center justify-center space-x-3">
+          <div className="mt-6 flex items-center justify-center space-x-1">
             <button
               onClick={() => onMessage(item)}
               disabled={isProcessing}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+              title="Message"
             >
-              Message
+              <span className="md:hidden">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </span>
+              <span className="hidden md:inline text-xs">Message</span>
             </button>
             
             <button
               onClick={() => onDelete(item)}
               disabled={isProcessing}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+              title="Löschen"
             >
-              Löschen
+              <span className="md:hidden">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </span>
+              <span className="hidden md:inline text-xs">Löschen</span>
             </button>
             
             <button
               onClick={() => onReject(item)}
               disabled={isProcessing}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
+              className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+              title="Ablehnen"
             >
-              Ablehnen
+              <span className="md:hidden">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </span>
+              <span className="hidden md:inline text-xs">Ablehnen</span>
             </button>
             
             <button
               onClick={() => onApprove(item)}
               disabled={isProcessing}
-              className="bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
+              className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
+              title="Publizieren"
             >
               {isProcessing ? 'Verarbeitung...' : 'Publizieren'}
             </button>
