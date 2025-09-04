@@ -50,7 +50,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
   }
 
   return (
-    <div className="bg-[#203f4a] border-b border-[#2a4a57] p-4">
+    <div className="bg-[var(--bg-element)] border-b border-gray-300 p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           {/* Back button (mobile only) */}

@@ -44,19 +44,19 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
 
   const getCategoryColor = (categoryId: number) => {
     const colors = {
-      1: 'bg-[#2ebe7a] text-white', // Erfahrung
-      2: 'bg-[#2ebe7a] text-white', // Suche TherapeutIn
-      3: 'bg-[#2ebe7a] text-white', // Gedanken
-      4: 'bg-[#2ebe7a] text-white', // Rant
-      5: 'bg-[#2ebe7a] text-white', // Ressourcen
+      1: 'bg-[#4785ff] text-white', // Erfahrung
+      2: 'bg-[#4785ff] text-white', // Suche TherapeutIn
+      3: 'bg-[#4785ff] text-white', // Gedanken
+      4: 'bg-[#4785ff] text-white', // Rant
+      5: 'bg-[#4785ff] text-white', // Ressourcen
     }
-    return colors[categoryId as keyof typeof colors] || 'bg-[#2ebe7a] text-white'
+    return colors[categoryId as keyof typeof colors] || 'bg-[#4785ff] text-white'
   }
 
 
   return (
     <div 
-      className="bg-[#203f4a] p-6 mb-4 hover:bg-[#234652] transition-colors cursor-pointer"
+      className="bg-[var(--bg-element)] p-6 mb-4 hover:bg-[var(--bg-element-hover)] transition-colors cursor-pointer"
       style={{borderRadius: '20px'}}
       onClick={handleClick}
     >
@@ -70,7 +70,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           {/* Canton Flag (pure, no background) */}
           {post.canton && (
             <img 
-              src={`/kantone/${post.canton.toLowerCase()}.png`}
+              src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
               alt={`${post.canton} flag`}
               className="w-4 h-auto object-cover"
               onError={(e) => {
@@ -80,7 +80,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           )}
           {/* Canton Abbreviation */}
           {post.canton && (
-            <span className="text-gray-300 text-xs font-medium">
+            <span className="text-gray-500 text-xs font-medium">
               {post.canton}
             </span>
           )}
@@ -94,9 +94,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         
         {/* Comments Count */}
         <div className="relative flex items-center">
-          <div className="relative bg-[#2ebe7a] rounded-full p-1.5">
-            <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          <div className="relative bg-[var(--primary)] rounded-full p-1.5">
+            <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
             </svg>
           </div>
           {commentCount > 0 && (
@@ -117,8 +117,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
           />
         )}
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-white text-xs text-left leading-none">{post.users?.username}</p>
-          <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>
+          <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{post.users?.username}</p>
+          <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>
         </div>
         <div className="flex items-center space-x-2">
           {/* Send Message Button */}
@@ -129,7 +129,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
               postTitle={getPostDisplayTitle(post)}
               postId={post.id}
               variant="icon-only"
-              className="hover:bg-[#2a4a57] rounded p-1"
+              className="hover:bg-[var(--bg-element-hover)] rounded p-1"
             />
           )}
           {/* Moderation Actions */}
@@ -143,7 +143,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </div>
 
       {/* Title */}
-      <h3 className="text-base md:text-xl font-semibold text-[#2ebe7a] mb-4 leading-tight text-left">
+      <h3 className="text-base md:text-xl font-semibold text-[var(--type)] mb-4 leading-tight text-left">
         {getPostDisplayTitle(post)}
       </h3>
 
@@ -159,7 +159,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       {/* Content Tags */}
       {post.content && (
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center px-3 py-1 rounded-lg bg-[#2a4a57] text-white text-xs md:text-sm">
+          <span className="inline-flex items-center px-3 py-1 rounded-lg bg-[var(--salmon)] text-white text-xs md:text-sm">
             Minimalismus
           </span>
         </div>

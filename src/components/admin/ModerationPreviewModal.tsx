@@ -60,7 +60,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
           </span>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -86,14 +86,14 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
               {item.canton && (
                 <div className="flex items-center space-x-2">
                   <img 
-                    src={`/kantone/${item.canton.toLowerCase()}.png`}
+                    src={`/remyreact/kantone/${item.canton.toLowerCase()}.png`}
                     alt={`${item.canton} flag`}
                     className="w-4 h-auto object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none'
                     }}
                   />
-                  <span className="text-gray-300 text-xs font-medium">
+                  <span className="text-gray-500 text-xs font-medium">
                     {item.canton}
                   </span>
                 </div>
@@ -119,8 +119,8 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                 />
               )}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-white text-xs text-left leading-none">{item.users?.username}</p>
-                <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(item.created_at)}</p>
+                <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{item.users?.username}</p>
+                <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(item.created_at)}</p>
               </div>
             </div>
 
@@ -130,23 +130,23 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                 // For Posts: Show title and full content
                 <div>
                   {item.title && (
-                    <h1 className="text-base md:text-xl font-semibold text-[var(--primary)] mb-4 leading-tight text-left">
+                    <h1 className="text-base md:text-xl font-semibold text-[var(--type)] mb-4 leading-tight text-left">
                       {item.title}
                     </h1>
                   )}
-                  <div className="prose prose-gray max-w-none text-white leading-tight text-left text-sm">
+                  <div className="prose prose-gray max-w-none text-[var(--type)] leading-tight text-left text-sm">
                     <div dangerouslySetInnerHTML={{ __html: item.content || '' }} />
                   </div>
                 </div>
               ) : (
                 // For Comments: Show quoted content + post reference + full content
                 <div>
-                  <div className="text-gray-300 text-sm mb-2 italic">
+                  <div className="text-gray-600 text-sm mb-2 italic">
                     "{getFirstLineOfComment(item.content || '')}"
                   </div>
                   {item.post_id && (
-                    <div className="text-xs text-gray-400 mb-4">
-                      Kommentar zu: <span className="text-white">
+                    <div className="text-xs text-gray-500 mb-4">
+                      Kommentar zu: <span className="text-[var(--type)]">
                         {postTitles[item.post_id] ? truncateTitle(postTitles[item.post_id]) : `Post #${item.post_id}`}
                       </span>
                     </div>

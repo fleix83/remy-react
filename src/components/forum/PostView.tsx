@@ -40,13 +40,13 @@ const PostView: React.FC = () => {
 
   const getCategoryColor = (categoryId: number) => {
     const colors = {
-      1: 'bg-[#2ebe7a] text-white', // Erfahrung
-      2: 'bg-[#2ebe7a] text-white', // Suche TherapeutIn
-      3: 'bg-[#2ebe7a] text-white', // Gedanken
-      4: 'bg-[#2ebe7a] text-white', // Rant
-      5: 'bg-[#2ebe7a] text-white', // Ressourcen
+      1: 'bg-[var(--primary)] text-white', // Erfahrung
+      2: 'bg-[var(--primary)] text-white', // Suche TherapeutIn
+      3: 'bg-[var(--primary)] text-white', // Gedanken
+      4: 'bg-[var(--primary)] text-white', // Rant
+      5: 'bg-[var(--primary)] text-white', // Ressourcen
     }
-    return colors[categoryId as keyof typeof colors] || 'bg-[#2ebe7a] text-white'
+    return colors[categoryId as keyof typeof colors] || 'bg-[var(--primary)] text-white'
   }
 
   const handleEditPost = async (postData: any) => {
@@ -76,7 +76,7 @@ const PostView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1a3442]">
+      <div className="min-h-screen bg-[var(--bg-body)]">
         <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
@@ -89,7 +89,7 @@ const PostView: React.FC = () => {
 
   if (!post && !loading) {
     return (
-      <div className="min-h-screen bg-[#1a3442]">
+      <div className="min-h-screen bg-[var(--bg-body)]">
         <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
           <div className="text-center py-12">
             <div className="text-red-400 mb-4">
@@ -98,12 +98,12 @@ const PostView: React.FC = () => {
               </svg>
             </div>
             <h3 className="text-lg font-medium text-white">Beitrag nicht gefunden</h3>
-            <p className="text-gray-300 mt-1">
+            <p className="text-gray-500 mt-1">
               Der angeforderte Beitrag existiert nicht oder wurde entfernt.
             </p>
             <button
               onClick={() => navigate('/')}
-              className="mt-4 bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-2 rounded-md transition-colors"
+              className="mt-4 bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 rounded-md transition-colors"
             >
               Zurück zum Forum
             </button>
@@ -116,13 +116,13 @@ const PostView: React.FC = () => {
   if (!post) return null
 
   return (
-    <div className="min-h-screen bg-[#1a3442]">
+    <div className="min-h-screen bg-[var(--bg-body)]">
       <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
         {/* Back Button */}
         <div className="mb-6">
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center text-gray-300 hover:text-white transition-colors"
+            className="inline-flex items-center text-gray-500 hover:text-white transition-colors"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -132,7 +132,7 @@ const PostView: React.FC = () => {
         </div>
 
         {/* Post Content */}
-        <div className="bg-[#203f4a] p-6 mb-4" style={{borderRadius: '20px'}}>
+        <div className="bg-[var(--bg-element)] p-6 mb-4" style={{borderRadius: '20px'}}>
           {/* Header with Category Badge and Comments */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-2">
@@ -143,7 +143,7 @@ const PostView: React.FC = () => {
               {/* Canton Flag (pure, no background) */}
               {post.canton && (
                 <img 
-                  src={`/kantone/${post.canton.toLowerCase()}.png`}
+                  src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
                   alt={`${post.canton} flag`}
                   className="w-4 h-auto object-cover"
                   onError={(e) => {
@@ -153,7 +153,7 @@ const PostView: React.FC = () => {
               )}
               {/* Canton Abbreviation */}
               {post.canton && (
-                <span className="text-gray-300 text-xs font-medium">
+                <span className="text-gray-500 text-xs font-medium">
                   {post.canton}
                 </span>
               )}
@@ -165,7 +165,7 @@ const PostView: React.FC = () => {
               {isPostAuthor() && (
                 <button
                   onClick={() => setShowEditModal(true)}
-                  className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors"
+                  className="flex items-center space-x-1 text-gray-500 hover:text-white transition-colors"
                   title="Beitrag bearbeiten"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,9 +188,9 @@ const PostView: React.FC = () => {
               
               {/* Comments Count */}
               <div className="relative flex items-center">
-                <div className="relative bg-[#2ebe7a] rounded-full p-1.5">
-                  <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                <div className="relative bg-[var(--primary)] rounded-full p-1.5">
+                  <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
                 </div>
               </div>
@@ -207,20 +207,20 @@ const PostView: React.FC = () => {
               />
             )}
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-white text-xs text-left leading-none">{post.users?.username}</p>
-              <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>
+              <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{post.users?.username}</p>
+              <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>
             </div>
           </div>
 
           {/* Title */}
-          <h1 className="text-base md:text-xl font-semibold text-[#2ebe7a] mb-4 leading-tight text-left">
+          <h1 className="text-base md:text-xl font-semibold text-[var(--type)] mb-4 leading-tight text-left">
             {getPostDisplayTitle(post)}
           </h1>
           
           {/* Post Content */}
           <SelectableText onTextSelect={() => {}}>
             <div 
-              className="prose prose-gray max-w-none text-white leading-tight text-left text-sm"
+              className="prose prose-gray max-w-none text-[var(--type)] leading-tight text-left text-sm"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </SelectableText>

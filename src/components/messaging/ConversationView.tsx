@@ -48,7 +48,7 @@ const ConversationView: React.FC = () => {
       />
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 bg-[#1a3442]">
+      <div className="flex-1 overflow-y-auto p-4 bg-[var(--bg-body)]">
         {loadingMessages ? (
           <div className="flex items-center justify-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2ebe7a]"></div>
@@ -90,7 +90,7 @@ const ConversationView: React.FC = () => {
       </div>
 
       {/* Message Composer */}
-      <div className="border-t border-[#2a4a57] bg-[#203f4a]">
+      <div className="border-t border-gray-300 bg-[var(--bg-element)]">
         <MessageComposer 
           recipientId={currentConversation.id}
           recipientUsername={currentConversation.participant.username}

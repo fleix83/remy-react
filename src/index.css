@@ -2,23 +2,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&family=Nunito+Sans:opsz,wght@6..12,200..1000&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
 
-/* Global CSS Custom Properties for Dark Theme */
+/* Global CSS Custom Properties for Light Theme */
 :root {
   /* Core Theme Colors */
-  --primary: #2ebe7a;           /* Green - buttons, links, accents */
-  --salmon: #e85a4f;            /* Salmon - filter buttons, badges */
-  --salmon-hover: #d14940;      /* Salmon hover state */
-  --type: #ffffff;              /* White text */
-  --bg-body: #1a3442;          /* Dark body background */
-  --bg-element: #203f4a;       /* Semi-dark element backgrounds */
-  --bg-element-hover: #2a4a57; /* Element hover states */
+  --primary: #4785ff;           /* Blue - buttons, links, accents */
+  --salmon: #ff6b6b;            /* Coral - filter buttons, badges */
+  --salmon-hover: #ff5252;      /* Coral hover state */
+  --type: #1a1a1a;              /* Dark text */
+  --bg-body: #f8f6f3;          /* Light cream body background */
+  --bg-element: #d1f2d7;       /* Light green element backgrounds */
+  --bg-element-hover: #c1e2c7; /* Element hover states */
   
   /* Category Badge Colors */
-  --bg-erfahrung: #3b82f6;     /* Blue - Experience/Stories */
-  --bg-suche: #8b5cf6;         /* Purple - Search for Therapist */
-  --bg-gedanken: #06b6d4;      /* Cyan - Thoughts/Reflections */
-  --bg-rant: #f59e0b;          /* Amber - Rants/Venting */
-  --bg-ressourcen: #10b981;    /* Emerald - Resources/Tips */
+  --bg-erfahrung: #4785ff;     /* Blue - Experience/Stories */
+  --bg-suche: #4785ff;         /* Blue - Search for Therapist */
+  --bg-gedanken: #4785ff;      /* Blue - Thoughts/Reflections */
+  --bg-rant: #4785ff;          /* Blue - Rants/Venting */
+  --bg-ressourcen: #4785ff;    /* Blue - Resources/Tips */
 }
 
 body {

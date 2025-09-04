@@ -37,7 +37,7 @@ const Navigation: React.FC<NavigationProps> = ({
   }
 
   return (
-    <nav className="bg-[var(--bg-body)] md:bg-white">
+    <nav className="bg-white md:bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
@@ -49,12 +49,13 @@ const Navigation: React.FC<NavigationProps> = ({
                 style={{ 
                   fontFamily: 'Gaegu, cursive',
                   fontWeight: 700,
-                  fontSize: '60px'
+                  fontSize: '60px',
+                  letterSpacing: '-2.1px'
                 }}
               >
                 REMY
               </div>
-              <div className="text-white md:text-gray-500 leading-tight text-left uppercase self-center" style={{fontSize: '10px', letterSpacing: '0.5px'}}>
+              <div className="text-gray-500 md:text-gray-500 leading-tight text-left uppercase self-center" style={{fontSize: '10px', letterSpacing: '0.5px'}}>
                 <div>FORUM FÜR</div>
                 <div>MENSCHEN IN</div>
                 <div>PSYCHOTHERAPIE</div>
@@ -213,7 +214,7 @@ const Navigation: React.FC<NavigationProps> = ({
             <div className="flex flex-col space-y-2">
               <Link 
                 to="/" 
-                className="text-gray-300 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                className="text-gray-700 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🏠 Forum
@@ -221,7 +222,7 @@ const Navigation: React.FC<NavigationProps> = ({
               
               <Link 
                 to="/therapists" 
-                className="text-gray-300 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                className="text-gray-700 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 👩‍⚕️ Therapeuten
@@ -233,7 +234,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <MessagesButton 
-                    className="text-gray-300 hover:text-[var(--primary)] text-base font-medium transition-colors"
+                    className="text-gray-700 hover:text-[var(--primary)] text-base font-medium transition-colors"
                     showLabel={true}
                   />
                 </div>
@@ -244,7 +245,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 <>
                   <Link 
                     to="/admin/moderation" 
-                    className="text-gray-300 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                    className="text-gray-700 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     🛡️ Moderation
@@ -252,7 +253,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   {permissions.isAdmin && (
                     <Link 
                       to="/admin" 
-                      className="text-gray-300 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
+                      className="text-gray-700 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       ⚙️ Admin

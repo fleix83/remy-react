@@ -79,8 +79,8 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
 
   const renderQuotedText = (quotedText: string) => {
     return (
-      <div className="border-l-4 border-[#2ebe7a] pl-3 mb-3 bg-[#2a4a57] p-2 rounded-r">
-        <div className="text-sm text-gray-300 italic">
+      <div className="border-l-4 border-[var(--primary)] pl-3 mb-3 bg-[var(--bg-element-hover)] p-2 rounded-r">
+        <div className="text-sm text-gray-600 italic">
           "{quotedText}"
         </div>
       </div>
@@ -90,7 +90,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
   const marginLeft = Math.min(depth * 2, 8) // Max 4 levels deep
 
   return (
-    <div className={`bg-[#203f4a] ${depth > 0 ? `ml-${marginLeft}` : ''}`}>
+    <div className={`bg-[var(--bg-element)] ${depth > 0 ? `ml-${marginLeft}` : ''}`}>
       {/* User Info */}
       <div className="flex items-start space-x-3 mb-4">
         <UserAvatar 
@@ -99,13 +99,13 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           className="flex-shrink-0"
         />
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-white text-xs text-left leading-none">
+          <p className="font-medium text-[var(--type)] text-xs text-left leading-none">
             {comment.users?.username || 'Unbekannt'}
           </p>
-          <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>
+          <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>
             {formatDate(comment.created_at)}
             {comment.updated_at && comment.updated_at !== comment.created_at && (
-              <span className="text-gray-400 ml-1">(bearbeitet)</span>
+              <span className="text-gray-500 ml-1">(bearbeitet)</span>
             )}
           </p>
         </div>
@@ -113,7 +113,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           {/* Comment Actions */}
           <button
             onClick={handleQuoteText}
-            className="text-gray-400 hover:text-[#2ebe7a] transition-colors p-1"
+            className="text-gray-500 hover:text-[var(--primary)] transition-colors p-1"
             title="Zitieren"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +126,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
               setEditContent(stripHtmlTags(comment.content))
               setIsEditing(true)
             }}
-            className="text-gray-400 hover:text-[#2ebe7a] transition-colors p-1"
+            className="text-gray-500 hover:text-[var(--primary)] transition-colors p-1"
             title="Bearbeiten"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
 
           <button
             onClick={handleDelete}
-            className="text-gray-400 hover:text-red-400 transition-colors p-1"
+            className="text-gray-500 hover:text-red-500 transition-colors p-1"
             title="Löschen"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,20 +156,20 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full px-3 py-2 border border-[#2a4a57] bg-[#203f4a] text-white rounded-md focus:ring-[#2ebe7a] focus:border-[#2ebe7a] resize-vertical"
+              className="w-full px-3 py-2 border border-gray-300 bg-white text-[var(--type)] rounded-md focus:ring-[var(--primary)] focus:border-[var(--primary)] resize-vertical"
               rows={4}
             />
             <div className="flex justify-end space-x-2 mt-2">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-3 py-1 text-sm text-gray-300 hover:text-white"
+                className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700"
                 disabled={saving}
               >
                 Abbrechen
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="px-3 py-1 text-sm bg-[#2ebe7a] text-white rounded hover:bg-[#2ebe7a] disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-[var(--primary)] text-white rounded hover:bg-[var(--primary)] disabled:opacity-50"
                 disabled={saving || !editContent.trim()}
               >
                 {saving ? 'Speichern...' : 'Speichern'}
@@ -177,7 +177,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             </div>
           </div>
         ) : (
-          <div className="whitespace-pre-wrap text-white text-sm leading-relaxed text-left">
+          <div className="whitespace-pre-wrap text-[var(--type)] text-sm leading-relaxed text-left">
             {stripHtmlTags(comment.content)}
           </div>
         )}
@@ -188,7 +188,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
         {comment.replies && comment.replies.length > 0 && (
           <button
             onClick={() => setShowReplies(!showReplies)}
-            className="text-xs text-gray-300 hover:text-[#2ebe7a] transition-colors"
+            className="text-xs text-gray-500 hover:text-[var(--primary)] transition-colors"
           >
             {showReplies ? 'Antworten ausblenden' : `${comment.replies.length} Antworten anzeigen`}
           </button>
@@ -196,7 +196,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
         
         <button
           onClick={() => onReply(comment.id)}
-          className="px-2 py-0.5 text-xs bg-[#2ebe7a] text-white rounded-lg font-medium hover:bg-[#2ebe7a] transition-colors"
+          className="px-2 py-0.5 text-xs bg-[var(--primary)] text-white rounded-lg font-medium hover:bg-[var(--primary)] transition-colors"
         >
           Antworten
         </button>

@@ -1,9 +1,6 @@
 # Deploy Command
 
-Deploy the React application to GitHub Pages using the dist branch.
-
-Run the deployment script to build and deploy the application.
-
-```bash
-./scripts/deploy.sh
-```
+1) run the build
+2) switch to /dist branche
+3) deploy /build to /dist
+4) switch back to /main

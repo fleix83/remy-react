@@ -44,26 +44,26 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
   if (loading) {
     return (
-      <div className="bg-[#203f4a] p-6" style={{borderRadius: '20px'}}>
+      <div className="bg-[var(--bg-element)] p-6" style={{borderRadius: '20px'}}>
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2ebe7a]"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary)]"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-[#203f4a] overflow-hidden" style={{borderRadius: '20px'}}>
+    <div className="bg-[var(--bg-element)] overflow-hidden" style={{borderRadius: '20px'}}>
       {/* Comments Header */}
-      <div className="px-6 py-4 border-b border-[#2a4a57]">
+      <div className="px-6 py-4 border-b border-gray-300">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">
+          <h3 className="text-lg font-semibold text-[var(--type)]">
             Antworten ({commentCount})
           </h3>
           
           <button
             onClick={() => setShowCommentForm(!showCommentForm)}
-            className="inline-flex items-center px-3 py-1.5 text-xs font-bold bg-[#2ebe7a] text-white rounded-md hover:bg-[#2ebe7a] transition-colors"
+            className="inline-flex items-center px-3 py-1.5 text-xs font-bold bg-[var(--primary)] text-white rounded-md hover:bg-[var(--primary)] transition-colors"
           >
             {showCommentForm ? 'Abbrechen' : 'Antworten'}
           </button>
@@ -72,7 +72,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
       {/* Main Comment Form */}
       {showCommentForm && (
-        <div className="border-b border-[#2a4a57] -mx-4 md:mx-0">
+        <div className="border-b border-gray-300 -mx-4 md:mx-0">
           <CommentForm
             postId={postId}
             quotedText={selectedText}
@@ -94,10 +94,10 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
       )}
 
       {/* Comments List */}
-      <div className="divide-y divide-[#2a4a57]">
+      <div className="divide-y divide-gray-300">
         {comments.length === 0 ? (
           <div className="px-6 py-8">
-            <p className="text-center text-gray-300">
+            <p className="text-center text-gray-500">
               Noch keine Antworten vorhanden. Sei der erste der antwortet!
             </p>
           </div>
@@ -120,8 +120,8 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
       {/* Load More Comments (placeholder for pagination) */}
       {comments.length > 0 && comments.length >= 10 && (
-        <div className="px-6 py-4 border-t border-[#2a4a57] text-center">
-          <button className="text-sm text-gray-300 hover:text-[#2ebe7a] transition-colors">
+        <div className="px-6 py-4 border-t border-gray-300 text-center">
+          <button className="text-sm text-gray-500 hover:text-[var(--primary)] transition-colors">
             Weitere Kommentare laden...
           </button>
         </div>

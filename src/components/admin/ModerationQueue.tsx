@@ -562,7 +562,7 @@ const ModerationQueue: React.FC = () => {
   // Redirect if no permissions
   if (!permissions.canModerate) {
     return (
-      <div className="min-h-screen bg-[#1a3442] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center">
         <div className="text-white text-center">
           <h1 className="text-2xl font-bold mb-4">Zugriff verweigert</h1>
           <p className="text-gray-300">Sie haben keine Berechtigung für die Moderationsqueue.</p>
@@ -573,14 +573,14 @@ const ModerationQueue: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1a3442] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#1a3442]">
+    <div className="min-h-screen bg-[var(--bg-body)]">
       <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -598,7 +598,7 @@ const ModerationQueue: React.FC = () => {
               </span>
               <button
                 onClick={handleBulkApprove}
-                className="bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 rounded-lg transition-colors text-sm"
               >
                 Publizieren
               </button>
@@ -626,7 +626,7 @@ const ModerationQueue: React.FC = () => {
 
         {/* Queue Items */}
         {queueItems.length === 0 ? (
-          <div className="bg-[#203f4a] p-8 text-center" style={{borderRadius: '20px'}}>
+          <div className="bg-[var(--bg-element)] p-8 text-center" style={{borderRadius: '20px'}}>
             <div className="text-[#2ebe7a] mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -640,8 +640,8 @@ const ModerationQueue: React.FC = () => {
             {queueItems.map((item) => (
               <div 
                 key={`${item.content_type}-${item.id}`} 
-                className={`p-6 mb-4 hover:bg-[#234652] transition-colors cursor-pointer relative ${
-                  selectedItems.has(item.id) ? 'ring-2 ring-[#2ebe7a] bg-[#234652]' : 'bg-[#203f4a]'
+                className={`p-6 mb-4 hover:bg-[var(--bg-element-hover)] transition-colors cursor-pointer relative ${
+                  selectedItems.has(item.id) ? 'ring-2 ring-[var(--primary)] bg-[#234652]' : 'bg-[var(--bg-element)]'
                 }`}
                 style={{borderRadius: '20px'}}
                 onClick={() => handleItemClick(item)}
@@ -660,10 +660,22 @@ const ModerationQueue: React.FC = () => {
                 {/* Header with Canton */}
                 <div className="flex items-start justify-end mb-4">
                   <div className="flex items-center space-x-2">
-                    {/* Canton Badge - Top Right */}
-                    <span className="inline-flex items-center px-2 py-0.5 rounded bg-gray-600 text-white text-xs">
-                      BS
-                    </span>
+                    {/* Canton Flag and Abbreviation */}
+                    {item.canton && (
+                      <>
+                        <img 
+                          src={`/remyreact/kantone/${item.canton.toLowerCase()}.png`}
+                          alt={`${item.canton} flag`}
+                          className="w-4 h-auto object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none'
+                          }}
+                        />
+                        <span className="text-gray-500 text-xs font-medium">
+                          {item.canton}
+                        </span>
+                      </>
+                    )}
                     
                     {/* Selection Checkbox */}
                     <div className="hidden md:block">
@@ -674,7 +686,7 @@ const ModerationQueue: React.FC = () => {
                           e.stopPropagation()
                           toggleSelection(item.id)
                         }}
-                        className="w-4 h-4 text-[#2ebe7a] bg-gray-100 border-gray-300 rounded focus:ring-[#2ebe7a] focus:ring-2"
+                        className="w-4 h-4 text-[#2ebe7a] bg-gray-100 border-gray-300 rounded focus:ring-[var(--primary)] focus:ring-2"
                       />
                     </div>
                   </div>
@@ -691,7 +703,7 @@ const ModerationQueue: React.FC = () => {
                             handleCategoryChange(item.id, parseInt(e.target.value))
                           }
                         }}
-                        className="px-2 py-0.5 rounded-lg font-medium bg-[#2ebe7a] text-white border-none outline-none cursor-pointer hover:bg-[#2ebe7a] transition-colors w-auto"
+                        className="px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white border-none outline-none cursor-pointer hover:bg-[var(--primary)] transition-colors w-auto"
                         style={{fontSize: '0.65rem', minWidth: 'fit-content'}}
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -703,7 +715,7 @@ const ModerationQueue: React.FC = () => {
                         ))}
                       </select>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-lg font-medium bg-[#2ebe7a] text-white w-auto" style={{fontSize: '0.65rem'}}>
+                      <span className="px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white w-auto" style={{fontSize: '0.65rem'}}>
                         {item.category_id && categories[item.category_id] ? categories[item.category_id] : 'Keine Kategorie'}
                       </span>
                     )}
@@ -720,8 +732,8 @@ const ModerationQueue: React.FC = () => {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-white text-xs text-left leading-none">{item.users?.username}</p>
-                    <p className="text-xs text-gray-300 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(item.created_at)}</p>
+                    <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{item.users?.username}</p>
+                    <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(item.created_at)}</p>
                   </div>
                 </div>
 
@@ -730,19 +742,19 @@ const ModerationQueue: React.FC = () => {
                   {item.content_type === 'post' ? (
                     // For Posts: Show only title
                     item.title && (
-                      <h3 className="text-base md:text-xl font-semibold text-[#2ebe7a] leading-tight text-left">
+                      <h3 className="text-base md:text-xl font-semibold text-[var(--type)] leading-tight text-left">
                         {item.title}
                       </h3>
                     )
                   ) : (
                     // For Comments: Show first line in quotes + post reference
                     <div>
-                      <div className="text-gray-300 text-sm mb-2 italic text-left">
+                      <div className="text-gray-600 text-sm mb-2 italic text-left">
                         "{getFirstLineOfComment(item.content || '')}"
                       </div>
                       {item.post_id && (
-                        <div className="text-xs text-gray-400 text-left">
-                          Kommentar zu: <span className="text-white">
+                        <div className="text-xs text-gray-500 text-left">
+                          Kommentar zu: <span className="text-[var(--type)]">
                             {postTitles[item.post_id] ? 
                               truncateText(postTitles[item.post_id], 40) : 
                               `Post #${item.post_id}`
@@ -818,7 +830,7 @@ const ModerationQueue: React.FC = () => {
                       setShowMessageModal(true)
                     }}
                     disabled={processingId === item.id}
-                    className="bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
+                    className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
                     title="Publizieren"
                   >
                     Publizieren

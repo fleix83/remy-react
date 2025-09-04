@@ -73,7 +73,7 @@ const AdminDashboard: React.FC = () => {
   // Redirect if no permissions
   if (!permissions.canModerate) {
     return (
-      <div className="min-h-screen bg-[#1a3442] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center">
         <div className="text-white text-center">
           <h1 className="text-2xl font-bold mb-4">Zugriff verweigert</h1>
           <p className="text-gray-300">Sie haben keine Berechtigung für diese Seite.</p>
@@ -84,14 +84,14 @@ const AdminDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1a3442] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#1a3442]">
+    <div className="min-h-screen bg-[var(--bg-body)]">
       <div className="max-w-7xl mx-auto py-6 px-4">
         {/* Header */}
         <div className="mb-8">
@@ -104,7 +104,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="mb-6 border-b border-[#2a4a57]">
+        <div className="mb-6 border-b border-gray-300">
           <nav className="flex space-x-8">
             <button
               onClick={() => setActiveTab('overview')}
@@ -142,9 +142,9 @@ const AdminDashboard: React.FC = () => {
         {/* Overview Tab */}
         {activeTab === 'overview' && stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-[#203f4a] rounded-lg p-6">
+            <div className="bg-[var(--bg-element)] rounded-lg p-6">
               <div className="flex items-center">
-                <div className="p-2 bg-[#2ebe7a] rounded-lg">
+                <div className="p-2 bg-[var(--primary)] rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                   </svg>
@@ -156,7 +156,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-[#203f4a] rounded-lg p-6">
+            <div className="bg-[var(--bg-element)] rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-red-500 rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,7 +170,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-[#203f4a] rounded-lg p-6">
+            <div className="bg-[var(--bg-element)] rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-blue-500 rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +184,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-[#203f4a] rounded-lg p-6">
+            <div className="bg-[var(--bg-element)] rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-yellow-500 rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,9 +198,9 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-[#203f4a] rounded-lg p-6">
+            <div className="bg-[var(--bg-element)] rounded-lg p-6">
               <div className="flex items-center">
-                <div className="p-2 bg-[#2ebe7a] rounded-lg">
+                <div className="p-2 bg-[var(--primary)] rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
@@ -212,7 +212,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-[#203f4a] rounded-lg p-6">
+            <div className="bg-[var(--bg-element)] rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-purple-500 rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,13 +230,13 @@ const AdminDashboard: React.FC = () => {
 
         {/* Users Tab */}
         {activeTab === 'users' && (
-          <div className="bg-[#203f4a] rounded-lg">
-            <div className="px-6 py-4 border-b border-[#2a4a57]">
+          <div className="bg-[var(--bg-element)] rounded-lg">
+            <div className="px-6 py-4 border-b border-gray-300">
               <h2 className="text-lg font-semibold text-white">Benutzerverwaltung</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full">
-                <thead className="bg-[#1a3442]">
+                <thead className="bg-[var(--bg-body)]">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Benutzer</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Rolle</th>
@@ -249,7 +249,7 @@ const AdminDashboard: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-[#2a4a57]">
                   {users.map((user) => (
-                    <tr key={user.id} className="bg-[#203f4a]">
+                    <tr key={user.id} className="bg-[var(--bg-element)]">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="mr-3">
@@ -306,7 +306,7 @@ const AdminDashboard: React.FC = () => {
                             <select
                               value={user.role}
                               onChange={(e) => handleUserRoleChange(user.id, e.target.value as 'user' | 'moderator' | 'admin')}
-                              className="bg-[#1a3442] text-white text-sm rounded px-2 py-1 border border-[#2a4a57]"
+                              className="bg-[var(--bg-body)] text-white text-sm rounded px-2 py-1 border border-gray-300"
                             >
                               <option value="user">Benutzer</option>
                               <option value="moderator">Moderator</option>
@@ -325,7 +325,7 @@ const AdminDashboard: React.FC = () => {
 
         {/* Content Tab */}
         {activeTab === 'content' && (
-          <div className="bg-[#203f4a] rounded-lg p-6">
+          <div className="bg-[var(--bg-element)] rounded-lg p-6">
             <h2 className="text-lg font-semibold text-white mb-4">Inhaltsverwaltung</h2>
             <div className="text-gray-300">
               <p className="mb-4">Die Moderation von Beiträgen und Kommentaren erfolgt direkt über die jeweiligen Moderationsbuttons in den Inhalten.</p>

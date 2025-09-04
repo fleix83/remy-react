@@ -108,15 +108,15 @@ const ForumView: React.FC<ForumViewProps> = ({
 
 
   return (
-    <div className="min-h-screen bg-[#1a3442]">
+    <div className="min-h-screen bg-[var(--bg-body)]">
       <div className="max-w-6xl mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className="bg-[#203f4a] p-4 mb-4 mx-4 md:mx-0" style={{borderRadius: '20px'}}>
+        <div className="bg-[var(--bg-element)] p-4 mb-4 mx-4 md:mx-0" style={{borderRadius: '20px'}}>
           <div className="flex items-center gap-4">
             {/* Neu Button */}
             <button
               onClick={onCreatePost}
-              className="bg-[#2ebe7a] hover:bg-[#2ebe7a] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
+              className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
               style={{borderRadius: '20px'}}
             >
               <svg className="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,12 +128,12 @@ const ForumView: React.FC<ForumViewProps> = ({
             {/* Filter Button */}
             <button
               onClick={() => setShowFilterModal(true)}
-              className="bg-[#1a3442] hover:bg-[#0f2329] text-white px-4 py-2 font-medium transition-colors text-sm relative flex items-center space-x-2"
+              className="bg-[var(--bg-body)] hover:bg-[var(--bg-element-hover)] text-white px-4 py-2 font-medium transition-colors text-sm relative flex items-center space-x-2"
               style={{borderRadius: '20px'}}
             >
               <span>Filter</span>
               {getActiveFilterCount() > 0 && (
-                <span className="bg-[#2ebe7a] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="bg-[var(--primary)] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {getActiveFilterCount()}
                 </span>
               )}
@@ -146,7 +146,7 @@ const ForumView: React.FC<ForumViewProps> = ({
                 placeholder="Suche..."
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full pl-4 pr-10 py-2 bg-[#1a3442] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm"
+                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm"
                 style={{borderRadius: '20px'}}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -170,8 +170,8 @@ const ForumView: React.FC<ForumViewProps> = ({
             onClick={() => handleCategoryFilter(null)}
             className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
               !filters.category
-                ? 'bg-[#2ebe7a] text-white'
-                : 'bg-[#203f4a] text-gray-300 hover:bg-[#2a4a57]'
+                ? 'bg-[var(--primary)] text-white'
+                : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
             }`}
             style={{fontSize: '0.65rem'}}
           >
@@ -184,8 +184,8 @@ const ForumView: React.FC<ForumViewProps> = ({
               onClick={() => handleCategoryFilter(category.id)}
               className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
                 filters.category === category.id
-                  ? 'bg-[#2ebe7a] text-white'
-                  : 'bg-[#203f4a] text-gray-300 hover:bg-[#2a4a57]'
+                  ? 'bg-[var(--primary)] text-white'
+                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
               }`}
               style={{fontSize: '0.65rem'}}
             >
@@ -197,8 +197,8 @@ const ForumView: React.FC<ForumViewProps> = ({
       {/* Post Editor Dialog */}
       {showCreatePostDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-50">
-          <div className="bg-[#1a3442] md:bg-white w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto">
-            <div className="sticky top-0 bg-[#1a3442] md:bg-white border-b border-[#2a4a57] md:border-gray-200 px-4 md:px-6 py-3 md:py-4">
+          <div className="bg-[var(--bg-body)] md:bg-white w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto">
+            <div className="sticky top-0 bg-[var(--bg-body)] md:bg-white border-b border-gray-300 md:border-gray-200 px-4 md:px-6 py-3 md:py-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg md:text-xl font-headline font-bold text-[#2ebe7a] md:text-gray-900">
                   Neuen Beitrag erstellen
@@ -238,7 +238,7 @@ const ForumView: React.FC<ForumViewProps> = ({
                 </svg>
               </div>
               <h3 className="text-lg font-medium text-white">Keine Beiträge gefunden</h3>
-              <p className="text-gray-300 mt-1">
+              <p className="text-gray-700 mt-1">
                 {filters.category
                   ? 'In dieser Kategorie wurden noch keine Beiträge erstellt.'
                   : 'Es wurden noch keine Beiträge erstellt.'}
@@ -258,7 +258,7 @@ const ForumView: React.FC<ForumViewProps> = ({
           {/* Load More Button (placeholder for pagination) */}
           {posts.length > 0 && (
             <div className="text-center mt-8">
-              <button className="bg-[#203f4a] hover:bg-[#2a4a57] text-white px-6 py-3 rounded-md font-medium transition-colors">
+              <button className="bg-[var(--bg-element)] hover:bg-[var(--bg-element-hover)] text-white px-6 py-3 rounded-md font-medium transition-colors">
                 Weitere Beiträge laden
               </button>
             </div>

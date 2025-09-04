@@ -205,7 +205,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null
 
   return (
-    <div className="bg-[#203f4a] rounded-lg mb-4 mx-4 md:mx-0" style={{borderRadius: '20px'}}>
+    <div className="bg-[var(--bg-element)] rounded-lg mb-4 mx-4 md:mx-0" style={{borderRadius: '20px'}}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[#2a4a57]">
           <h2 className="text-xl font-semibold text-white">Filter</h2>
