@@ -250,7 +250,7 @@ const ForumView: React.FC<ForumViewProps> = ({
                 <PostCard 
                   key={post.id} 
                   post={post}
-                  className={index === 0 ? 'mt-[120px]' : ''}
+                  className={index === 0 ? 'mt-32' : ''}
                 />
               ))}
             </div>
