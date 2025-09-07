@@ -108,10 +108,10 @@ const ForumView: React.FC<ForumViewProps> = ({
 
 
   return (
-    <div className="min-h-screen bg-[var(--bg-body)]">
+    <div className="min-h-screen">
       <div className="max-w-6xl mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className="bg-[var(--bg-element)] p-4 mb-4 mx-4 md:mx-0" style={{borderRadius: '20px'}}>
+        <div className="p-4 mb-4 mx-4 md:mx-0" style={{borderRadius: '20px', backgroundColor: '#d1f2d794'}}>
           <div className="flex items-center gap-4">
             {/* Neu Button */}
             <button
@@ -128,7 +128,7 @@ const ForumView: React.FC<ForumViewProps> = ({
             {/* Filter Button */}
             <button
               onClick={() => setShowFilterModal(true)}
-              className="bg-[var(--bg-body)] hover:bg-[var(--bg-element-hover)] text-white px-4 py-2 font-medium transition-colors text-sm relative flex items-center space-x-2"
+              className="bg-[var(--bg-body)] hover:bg-[var(--bg-element-hover)] text-gray-400 px-4 py-2 font-medium transition-colors text-sm relative flex items-center space-x-2"
               style={{borderRadius: '20px'}}
             >
               <span>Filter</span>
@@ -246,10 +246,11 @@ const ForumView: React.FC<ForumViewProps> = ({
             </div>
           ) : (
             <div className="space-y-4 px-4 md:px-0">
-              {posts.map((post) => (
+              {posts.map((post, index) => (
                 <PostCard 
                   key={post.id} 
-                  post={post} 
+                  post={post}
+                  className={index === 0 ? 'mt-[120px]' : ''}
                 />
               ))}
             </div>

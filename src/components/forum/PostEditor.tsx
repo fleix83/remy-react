@@ -38,6 +38,18 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
   const postsService = new PostsService()
 
+  // Category color functions (matching PostCard and PostView)
+  const getCategoryBackground = (categoryId: number) => {
+    const backgrounds = {
+      1: 'var(--bg-erfahrung)',     // Yellow
+      2: 'var(--bg-suche)',         // Light Pink
+      3: 'var(--bg-gedanken)',      // Light Blue
+      4: 'var(--bg-rant)',          // Light Purple
+      5: 'var(--bg-ressourcen)',    // Light Green
+    }
+    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
+  }
+
   const cantons = [
     { code: '', name: 'Kanton auswählen' },
     { code: 'AG', name: 'Aargau' },
@@ -189,7 +201,9 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   options={categories.map(cat => ({ value: cat.id, label: cat.name_de }))}
                   onChange={(value) => setCategoryId(Number(value))}
                   placeholder="Kategorie"
-                  badgeClassName="bg-[#5a9f51] text-white hover:bg-[#4a8542]"
+                  badgeClassName="text-black hover:opacity-80"
+                  className="category-badge-dropdown"
+                  style={{ backgroundColor: getCategoryBackground(categoryId) }}
                   required
                 />
 
@@ -201,7 +215,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                     label: c.name,
                     icon: c.code ? (
                       <img 
-                        src={`/blueprint/assets/kantone/${c.code.toLowerCase()}.png`}
+                        src={`/remyreact/kantone/${c.code.toLowerCase()}.png`}
                         alt={`${c.code} flag`}
                         className="w-3 h-2 object-cover"
                         onError={(e) => {

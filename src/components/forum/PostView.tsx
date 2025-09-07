@@ -38,15 +38,19 @@ const PostView: React.FC = () => {
     })
   }
 
-  const getCategoryColor = (categoryId: number) => {
-    const colors = {
-      1: 'bg-[var(--primary)] text-white', // Erfahrung
-      2: 'bg-[var(--primary)] text-white', // Suche TherapeutIn
-      3: 'bg-[var(--primary)] text-white', // Gedanken
-      4: 'bg-[var(--primary)] text-white', // Rant
-      5: 'bg-[var(--primary)] text-white', // Ressourcen
+  const getCategoryColor = () => {
+    return 'text-black' // Always black text for category badges
+  }
+
+  const getCategoryBackground = (categoryId: number) => {
+    const backgrounds = {
+      1: 'var(--bg-erfahrung)',     // Yellow
+      2: 'var(--bg-suche)',         // Light Pink
+      3: 'var(--bg-gedanken)',      // Light Blue
+      4: 'var(--bg-rant)',          // Light Purple
+      5: 'var(--bg-ressourcen)',    // Light Green
     }
-    return colors[categoryId as keyof typeof colors] || 'bg-[var(--primary)] text-white'
+    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
   }
 
   const handleEditPost = async (postData: any) => {
@@ -132,12 +136,35 @@ const PostView: React.FC = () => {
         </div>
 
         {/* Post Content */}
-        <div className="bg-[var(--bg-element)] p-6 mb-4" style={{borderRadius: '20px'}}>
+        <div 
+          className="p-6 mb-4 relative"
+          style={{
+            borderRadius: '20px',
+            background: '#ecffef',
+            outline: '1px solid #95c7ff',
+            outlineOffset: '-11px'
+          }}
+        >
           {/* Header with Category Badge and Comments */}
           <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center space-x-2">
+            {/* Meta Group - positioned with negative margin and backdrop blur */}
+            <div 
+              className="flex items-center space-x-2 relative"
+              style={{
+                marginTop: '-25px',
+                zIndex: 2000,
+                padding: '2px 6px',
+                backdropFilter: 'blur(10px)'
+              }}
+            >
               {/* Category Badge */}
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium ${getCategoryColor(post.category_id)}`} style={{fontSize: '0.65rem'}}>
+              <span 
+                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium transition-opacity ${getCategoryColor()}`} 
+                style={{
+                  fontSize: '0.65rem',
+                  backgroundColor: getCategoryBackground(post.category_id)
+                }}
+              >
                 {post.categories?.name_de}
               </span>
               {/* Canton Flag (pure, no background) */}
@@ -188,8 +215,8 @@ const PostView: React.FC = () => {
               
               {/* Comments Count */}
               <div className="relative flex items-center">
-                <div className="relative bg-[var(--primary)] rounded-full p-1.5">
-                  <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <div className="relative bg-white rounded-full p-1.5">
+                  <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
                 </div>
@@ -213,7 +240,7 @@ const PostView: React.FC = () => {
           </div>
 
           {/* Title */}
-          <h1 className="text-base md:text-xl font-semibold text-[var(--type)] mb-4 leading-tight text-left">
+          <h1 className="text-base md:text-xl font-semibold mb-4 leading-tight text-left" style={{color: '#626262'}}>
             {getPostDisplayTitle(post)}
           </h1>
           

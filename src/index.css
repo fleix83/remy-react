@@ -14,16 +14,23 @@
   --bg-element-hover: #c1e2c7; /* Element hover states */
   
   /* Category Badge Colors */
-  --bg-erfahrung: #4785ff;     /* Blue - Experience/Stories */
-  --bg-suche: #4785ff;         /* Blue - Search for Therapist */
-  --bg-gedanken: #4785ff;      /* Blue - Thoughts/Reflections */
-  --bg-rant: #4785ff;          /* Blue - Rants/Venting */
-  --bg-ressourcen: #4785ff;    /* Blue - Resources/Tips */
+  --bg-erfahrung: #ffeb99;     /* Yellow - Experience/Stories */
+  --bg-suche: #FFC8C8;         /* Light Pink - Search for Therapist */
+  --bg-gedanken: #C5D0FF;      /* Light Blue - Thoughts/Reflections */
+  --bg-rant: #edd3ff;          /* Light Purple - Rants/Venting */
+  --bg-ressourcen: #98FFC7;    /* Light Green - Resources/Tips */
+  
+  /* Category Badge Hover Colors */
+  --bg-erfahrung-hover: #3b71e6;    /* Darker blue */
+  --bg-suche-hover: #2e8b47;        /* Darker green */
+  --bg-gedanken-hover: #7b1fa2;     /* Darker purple */
+  --bg-rant-hover: #f55252;         /* Darker coral */
+  --bg-ressourcen-hover: #e68900;   /* Darker orange */
 }
 
 body {
   font-family: "Nunito Sans", sans-serif;
-  background-color: var(--bg-body);
+  background: url('/remyreact/background.svg') center top / 100vw auto no-repeat;
   margin: 0;
   line-height: 1.6;
 }

@@ -11,9 +11,10 @@ import UserAvatar from '../user/UserAvatar'
 interface PostCardProps {
   post: PostWithRelations
   onClick?: () => void
+  className?: string
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, onClick, className = '' }) => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const { getCommentCount, loadComments } = useCommentsStore()
@@ -42,29 +43,53 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
     })
   }
 
-  const getCategoryColor = (categoryId: number) => {
-    const colors = {
-      1: 'bg-[#4785ff] text-white', // Erfahrung
-      2: 'bg-[#4785ff] text-white', // Suche TherapeutIn
-      3: 'bg-[#4785ff] text-white', // Gedanken
-      4: 'bg-[#4785ff] text-white', // Rant
-      5: 'bg-[#4785ff] text-white', // Ressourcen
+  const getCategoryColor = () => {
+    return 'text-black' // Always black text for category badges
+  }
+
+  const getCategoryBackground = (categoryId: number) => {
+    const backgrounds = {
+      1: 'var(--bg-erfahrung)',     // Yellow
+      2: 'var(--bg-suche)',         // Light Pink
+      3: 'var(--bg-gedanken)',      // Light Blue
+      4: 'var(--bg-rant)',          // Light Purple
+      5: 'var(--bg-ressourcen)',    // Light Green
     }
-    return colors[categoryId as keyof typeof colors] || 'bg-[#4785ff] text-white'
+    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
   }
 
 
   return (
     <div 
-      className="bg-[var(--bg-element)] p-6 mb-4 hover:bg-[var(--bg-element-hover)] transition-colors cursor-pointer"
-      style={{borderRadius: '20px'}}
+      className={`p-6 mb-4 hover:opacity-80 transition-opacity cursor-pointer relative ${className}`}
+      style={{
+        borderRadius: '20px',
+        background: '#ecffef',
+        outline: '1px solid #95c7ff',
+        outlineOffset: '-11px'
+      }}
       onClick={handleClick}
     >
       {/* Header with Category Badge and Comments */}
       <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center space-x-2">
+        {/* Meta Group - positioned with negative margin and backdrop blur */}
+        <div 
+          className="flex items-center space-x-2 relative"
+          style={{
+            marginTop: '-25px',
+            zIndex: 2000,
+            padding: '2px 6px',
+            backdropFilter: 'blur(10px)'
+          }}
+        >
           {/* Category Badge */}
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium ${getCategoryColor(post.category_id)}`} style={{fontSize: '0.65rem'}}>
+          <span 
+            className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium transition-opacity ${getCategoryColor()}`} 
+            style={{
+              fontSize: '0.65rem',
+              backgroundColor: getCategoryBackground(post.category_id)
+            }}
+          >
             {post.categories?.name_de}
           </span>
           {/* Canton Flag (pure, no background) */}
@@ -94,8 +119,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         
         {/* Comments Count */}
         <div className="relative flex items-center">
-          <div className="relative bg-[var(--primary)] rounded-full p-1.5">
-            <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <div className="relative bg-white rounded-full p-1.5">
+            <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
             </svg>
           </div>
@@ -143,7 +168,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </div>
 
       {/* Title */}
-      <h3 className="text-base md:text-xl font-semibold text-[var(--type)] mb-4 leading-tight text-left">
+      <h3 className="text-base md:text-xl font-semibold mb-4 leading-tight text-left" style={{color: '#626262'}}>
         {getPostDisplayTitle(post)}
       </h3>
 
@@ -159,7 +184,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       {/* Content Tags */}
       {post.content && (
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center px-3 py-1 rounded-lg bg-[var(--salmon)] text-white text-xs md:text-sm">
+          <span 
+            className="inline-flex items-center px-3 py-1 rounded-lg text-xs md:text-sm"
+            style={{
+              color: 'grey',
+              background: '#fbfffc'
+            }}
+          >
             Minimalismus
           </span>
         </div>
