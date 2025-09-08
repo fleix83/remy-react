@@ -182,7 +182,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
           onKeyDown={handleKeyDown}
           placeholder="Therapeut/in suchen oder klicken um zu erstellen..."
           disabled={disabled}
-          className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 pr-10 rounded-md bg-white focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
         />
         
         {/* Clear button */}

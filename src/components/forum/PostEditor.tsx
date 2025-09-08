@@ -174,17 +174,62 @@ const PostEditor: React.FC<PostEditorProps> = ({
   return (
     <div className="relative">
       <form onSubmit={(e) => handleSubmit(e, true)}>
-        {/* Content First - Priority for mobile */}
+        {/* Mobile Optimized Layout - Reordered as requested */}
         {mobileOptimized ? (
           <>
-            {/* Title for non-Erfahrung categories */}
+            {/* 1. Category Badge Dropdown - First */}
+            <div className="mb-4">
+              <BadgeDropdown
+                value={categoryId}
+                options={categories.map(cat => ({ value: cat.id, label: cat.name_de }))}
+                onChange={(value) => setCategoryId(Number(value))}
+                placeholder="Kategorie"
+                badgeClassName="text-black hover:opacity-80"
+                className="category-badge-dropdown w-full"
+                style={{ backgroundColor: getCategoryBackground(categoryId) }}
+                required
+              />
+            </div>
+
+            {/* 2. Canton Badge Dropdown - Second with max height to 2/3 screen */}
+            <div className="mb-4">
+              <BadgeDropdown
+                value={canton}
+                options={cantons.filter(c => c.code).map(c => ({
+                  value: c.code,
+                  label: c.name,
+                  icon: c.code ? (
+                    <img 
+                      src={`/remyreact/kantone/${c.code.toLowerCase()}.png`}
+                      alt={`${c.code} flag`}
+                      className="w-3 h-2 object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none'
+                      }}
+                    />
+                  ) : undefined
+                }))}
+                onChange={(value) => setCanton(String(value))}
+                placeholder="Kanton"
+                badgeClassName="bg-gray-600 text-white hover:bg-gray-700"
+                dropdownClassName="max-h-[66vh] overflow-y-auto"
+                className="w-full"
+                required
+              />
+            </div>
+
+            {/* 3. Title Input - Third (for non-Erfahrung categories) */}
             {categoryId !== 1 && (
               <div className="mb-4">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                  Titel *
+                </label>
                 <input
                   type="text"
+                  id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0284c7] focus:border-transparent text-base"
+                  className="w-full px-3 py-3 rounded-lg bg-white focus:outline-none text-base"
                   placeholder="Titel eingeben..."
                   maxLength={255}
                   required
@@ -192,63 +237,23 @@ const PostEditor: React.FC<PostEditorProps> = ({
               </div>
             )}
 
-            {/* Badge-Based Metadata Bar */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between space-x-3 mb-2">
-                {/* Category Badge Dropdown */}
-                <BadgeDropdown
-                  value={categoryId}
-                  options={categories.map(cat => ({ value: cat.id, label: cat.name_de }))}
-                  onChange={(value) => setCategoryId(Number(value))}
-                  placeholder="Kategorie"
-                  badgeClassName="text-black hover:opacity-80"
-                  className="category-badge-dropdown"
-                  style={{ backgroundColor: getCategoryBackground(categoryId) }}
-                  required
-                />
-
-                {/* Canton Badge Dropdown */}
-                <BadgeDropdown
-                  value={canton}
-                  options={cantons.filter(c => c.code).map(c => ({
-                    value: c.code,
-                    label: c.name,
-                    icon: c.code ? (
-                      <img 
-                        src={`/remyreact/kantone/${c.code.toLowerCase()}.png`}
-                        alt={`${c.code} flag`}
-                        className="w-3 h-2 object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none'
-                        }}
-                      />
-                    ) : undefined
-                  }))}
-                  onChange={(value) => setCanton(String(value))}
-                  placeholder="Kanton"
-                  badgeClassName="bg-gray-600 text-white hover:bg-gray-700"
-                  required
+            {/* Therapist Selector - Only for Erfahrung category */}
+            {categoryId === 1 && (
+              <div className="mb-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-md p-2 mb-2">
+                  <p className="text-xs text-blue-800">
+                    Therapeut/in für Ihre Erfahrung auswählen
+                  </p>
+                </div>
+                <TherapistSelector
+                  selectedTherapist={selectedTherapist}
+                  onTherapistSelect={setSelectedTherapist}
+                  canton={canton}
                 />
               </div>
+            )}
 
-              {/* Therapist Selector - Only for Erfahrung category */}
-              {categoryId === 1 && (
-                <div className="mt-2">
-                  <div className="bg-blue-50 border border-blue-200 rounded-md p-2 mb-2">
-                    <p className="text-xs text-blue-800">
-                      Therapeut/in für Ihre Erfahrung auswählen
-                    </p>
-                  </div>
-                  <TherapistSelector
-                    selectedTherapist={selectedTherapist}
-                    onTherapistSelect={setSelectedTherapist}
-                    canton={canton}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Content */}
+            {/* 4. Content - Fourth */}
             <div className="mb-6">
               <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
                 Inhalt *
@@ -302,7 +307,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-3 py-2 rounded-md bg-white focus:outline-none"
                   placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
                   maxLength={255}
                   required
@@ -406,34 +411,15 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
         {/* Action Buttons */}
         {mobileOptimized ? (
-          /* Mobile: Single primary action with secondary actions in dropdown */
-          <div className="relative">
-            {/* Primary Action */}
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <button
-                type="submit"
-                disabled={publishing || isLoading}
-                className="flex-1 px-6 py-4 text-lg font-bold text-white bg-primary-600 border border-transparent rounded-lg shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                style={{ 
-                  backgroundColor: '#0284c7', 
-                  fontSize: '18px',
-                  fontWeight: 'bold'
-                }}
-              >
-                {publishing || isLoading 
-                  ? (editMode ? '📝 Wird aktualisiert...' : '📤 Wird veröffentlicht...')
-                  : (editMode ? '📝 Aktualisieren' : '🚀 Veröffentlichen')
-                }
-              </button>
-            </div>
-
-            {/* Secondary Actions */}
-            <div className="flex items-center justify-between space-x-2">
+          /* Mobile: Buttons styled like navbar buttons */
+          <div className="flex items-center justify-between space-x-2">
+            {/* Left side buttons */}
+            <div className="flex items-center space-x-2">
               {onCancel && (
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="flex-1 px-4 py-3 text-sm font-medium text-gray-600 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                   disabled={publishing}
                 >
                   Abbrechen
@@ -443,12 +429,28 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e, false)}
-                className="flex-1 px-4 py-3 text-sm font-medium text-gray-600 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 disabled={publishing}
               >
-                📄 Als Entwurf
+                Als Entwurf
               </button>
             </div>
+
+            {/* Right side: Speichern button matching navbar style */}
+            <button
+              type="submit"
+              disabled={publishing || isLoading}
+              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-all transform hover:scale-105 shadow-md"
+              style={{ 
+                backgroundColor: '#4785ff',
+                boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              {publishing || isLoading 
+                ? 'Wird gespeichert...'
+                : 'Speichern'
+              }
+            </button>
           </div>
         ) : (
           /* Desktop: Traditional button layout */

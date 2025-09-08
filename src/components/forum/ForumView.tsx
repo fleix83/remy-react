@@ -111,7 +111,7 @@ const ForumView: React.FC<ForumViewProps> = ({
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className="p-4 mb-4 mx-4 md:mx-0" style={{borderRadius: '20px', backgroundColor: '#d1f2d794'}}>
+        <div className="p-4 mb-4 mx-4 md:mx-0 relative" style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 60}}>
           <div className="flex items-center gap-4">
             {/* Neu Button */}
             <button
@@ -196,16 +196,16 @@ const ForumView: React.FC<ForumViewProps> = ({
 
       {/* Post Editor Dialog */}
       {showCreatePostDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-50">
-          <div className="bg-[var(--bg-body)] md:bg-white w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto">
-            <div className="sticky top-0 bg-[var(--bg-body)] md:bg-white border-b border-gray-300 md:border-gray-200 px-4 md:px-6 py-3 md:py-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-[70]">
+          <div className="w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto" style={{backgroundColor: '#ecffef'}}>
+            <div className="sticky top-0 border-b border-gray-300 md:border-gray-200 px-4 md:px-6 py-3 md:py-4" style={{backgroundColor: '#ecffef', paddingTop: 'max(1rem, env(safe-area-inset-top))'}}>
               <div className="flex items-center justify-between">
-                <h2 className="text-lg md:text-xl font-headline font-bold text-[#2ebe7a] md:text-gray-900">
+                <h2 className="text-base md:text-xl font-headline font-bold text-[var(--type)]">
                   Neuen Beitrag erstellen
                 </h2>
                 <button
                   onClick={onCreatePostDialogClose}
-                  className="text-[#2ebe7a] md:text-gray-400 hover:text-[#2ebe7a] md:hover:text-gray-600 transition-colors p-1"
+                  className="text-gray-500 hover:text-gray-700 transition-colors p-1"
                 >
                   <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

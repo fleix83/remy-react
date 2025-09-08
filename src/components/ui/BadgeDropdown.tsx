@@ -77,12 +77,12 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
         onKeyDown={handleKeyDown}
         disabled={disabled}
         className={`
-          inline-flex items-center px-2 py-1 rounded-lg font-medium text-xs
+          inline-flex items-center px-3 py-2 rounded-lg font-medium text-sm w-full justify-between
           transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80'}
           ${badgeClassName}
         `}
-        style={{ fontSize: '0.65rem', ...style }}
+        style={{ fontSize: '0.75rem', ...style }}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-required={required}
@@ -92,11 +92,11 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
             {selectedOption.icon}
           </span>
         )}
-        <span className="truncate">
+        <span className="truncate flex-1 text-left">
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <svg
-          className={`ml-1 w-3 h-3 transition-transform duration-200 ${
+          className={`ml-2 w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
             isOpen ? 'transform rotate-180' : ''
           }`}
           fill="none"
@@ -111,7 +111,7 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
       {isOpen && (
         <div
           className={`
-            absolute top-full left-0 z-50 mt-1 min-w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow-lg
+            absolute top-full left-0 z-[60] mt-1 w-full min-w-[200px] bg-white border border-gray-200 rounded-lg shadow-lg
             max-h-48 overflow-y-auto
             ${dropdownClassName}
           `}
