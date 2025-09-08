@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getPostDisplayTitle } from '../../utils/therapistHelpers'
 import type { PostWithRelations } from '../../types/database.types'
 import { useAuthStore } from '../../stores/auth.store'
-import { useCommentsStore } from '../../stores/comments.store'
 import ModerationActions from '../ui/ModerationActions'
 import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
@@ -14,17 +13,19 @@ interface PostCardProps {
   className?: string
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, onClick, className = '' }) => {
+const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className = '' }) => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const { getCommentCount, loadComments } = useCommentsStore()
 
-  const commentCount = getCommentCount(post.id)
-
-  useEffect(() => {
-    // Load comments for this post to ensure accurate count
-    loadComments(post.id)
-  }, [post.id, loadComments])
+  // Get comment count from post data (from batched query) or fallback to 0
+  const commentCount = useMemo(() => {
+    if (post.comments && Array.isArray(post.comments) && post.comments.length > 0) {
+      // If comments is an array with count objects
+      const countObj = post.comments[0] as { count?: number }
+      return countObj.count || 0
+    }
+    return post.comment_count || 0
+  }, [post.comments, post.comment_count])
 
   const handleClick = () => {
     if (onClick) {
@@ -197,6 +198,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick, className = '' }) =>
       )}
     </div>
   )
-}
+})
+
+PostCard.displayName = 'PostCard'
 
 export default PostCard

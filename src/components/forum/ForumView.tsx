@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useForumStore } from '../../stores/forum.store'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import { useInfinitePosts, useCategories, useCreatePost, useSearchPosts } from '../../hooks/usePosts'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
@@ -10,58 +10,65 @@ interface ForumViewProps {
   onCreatePost?: () => void
 }
 
-const ForumView: React.FC<ForumViewProps> = ({ 
+interface PostFilters {
+  category?: number
+  canton?: string
+  therapist?: string
+  designation?: string
+  dateFrom?: string
+  dateTo?: string
+  search?: string
+}
+
+const ForumView: React.FC<ForumViewProps> = React.memo(({ 
   showCreatePostDialog = false, 
   onCreatePostDialogClose = () => {},
   onCreatePost = () => {}
 }) => {
-  // Remove local showEditor state, use props instead
+  const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null)
   const [showFilterModal, setShowFilterModal] = useState(false)
+  const [filters, setFiltersState] = useState<PostFilters>({})
 
-  const {
-    posts,
-    categories,
-    loading,
-    filters,
-    loadPosts,
-    createPost,
-    setFilters,
-    searchPosts,
-    loadCategories
-  } = useForumStore()
+  // React Query hooks - use searchTerm when it exists, otherwise use filters
+  const isSearchMode = Boolean(searchTerm.trim())
+  
+  const { 
+    data: postsData, 
+    isLoading: postsLoading, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage 
+  } = useInfinitePosts(isSearchMode ? {} : filters) // Don't apply filters when searching
+  
+  const { data: searchResults = [], isLoading: searchLoading } = useSearchPosts(searchTerm)
+  const { data: categories = [] } = useCategories()
+  const createPostMutation = useCreatePost()
 
-  useEffect(() => {
-    loadPosts()
-    loadCategories() // Ensure categories are loaded
-  }, [])
+  // Flatten infinite query pages
+  const posts = useMemo(() => 
+    postsData?.pages.flatMap(page => page) || [], 
+    [postsData]
+  )
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (searchTimeout) {
-        clearTimeout(searchTimeout)
-      }
-    }
-  }, [searchTimeout])
+  // Determine which posts to show and loading state
+  const displayPosts = isSearchMode ? searchResults : posts
+  const loading = isSearchMode ? searchLoading : postsLoading
 
-  const handleSearch = async (term: string) => {
+  const handleSearch = useCallback((term: string) => {
     if (!term.trim()) {
-      loadPosts()
+      setSearchTerm('')
       return
     }
+    // Clear filters when searching
+    setFiltersState({})
+    setSearchTerm(term.trim())
+  }, [])
 
-    try {
-      await searchPosts(term.trim())
-    } catch (error) {
-      console.error('Error searching posts:', error)
-    }
-  }
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setSearchTerm(value)
+    setSearchInput(value) // Update input immediately
     
     // Clear existing timeout
     if (searchTimeout) {
@@ -74,29 +81,29 @@ const ForumView: React.FC<ForumViewProps> = ({
     }, 300)
     
     setSearchTimeout(newTimeout)
-  }
+  }, [searchTimeout, handleSearch])
 
-  const handleCreatePost = async (postData: any) => {
+  const handleCreatePost = useCallback(async (postData: any) => {
     try {
       console.log('🚀 ForumView: Attempting to create post with data:', postData)
-      await createPost(postData)
+      await createPostMutation.mutateAsync(postData)
       console.log('✅ ForumView: Post created successfully')
       onCreatePostDialogClose() // Close dialog using prop
-      // Reload posts to show the new one
-      await loadPosts()
     } catch (error) {
       console.error('❌ ForumView: Error creating post:', error)
       alert('Fehler beim Erstellen des Beitrags: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
       throw error
     }
-  }
+  }, [createPostMutation, onCreatePostDialogClose])
 
-  const handleCategoryFilter = (categoryId: number | null) => {
-    setFilters({ category: categoryId || undefined })
-    loadPosts({ category: categoryId || undefined })
-  }
+  const handleCategoryFilter = useCallback((categoryId: number | null) => {
+    // Clear search when applying filters
+    setSearchInput('')
+    setSearchTerm('')
+    setFiltersState({ category: categoryId || undefined })
+  }, [])
 
-  const getActiveFilterCount = () => {
+  const getActiveFilterCount = useMemo(() => {
     let count = 0
     if (filters.category) count++
     if (filters.canton) count++
@@ -104,7 +111,25 @@ const ForumView: React.FC<ForumViewProps> = ({
     if (filters.designation) count++
     if (filters.dateFrom || filters.dateTo) count++
     return count
-  }
+  }, [filters])
+
+  // Infinite scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >= 
+        document.documentElement.offsetHeight - 1000 && // Load more when 1000px from bottom
+        hasNextPage && 
+        !isFetchingNextPage &&
+        !loading
+      ) {
+        fetchNextPage()
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [hasNextPage, isFetchingNextPage, loading, fetchNextPage])
 
 
   return (
@@ -132,9 +157,9 @@ const ForumView: React.FC<ForumViewProps> = ({
               style={{borderRadius: '20px'}}
             >
               <span>Filter</span>
-              {getActiveFilterCount() > 0 && (
+              {getActiveFilterCount > 0 && (
                 <span className="bg-[var(--primary)] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {getActiveFilterCount()}
+                  {getActiveFilterCount}
                 </span>
               )}
             </button>
@@ -144,7 +169,7 @@ const ForumView: React.FC<ForumViewProps> = ({
               <input
                 type="text"
                 placeholder="Suche..."
-                value={searchTerm}
+                value={searchInput}
                 onChange={handleSearchChange}
                 className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm"
                 style={{borderRadius: '20px'}}
@@ -162,6 +187,8 @@ const ForumView: React.FC<ForumViewProps> = ({
         <FilterModal 
           isOpen={showFilterModal}
           onClose={() => setShowFilterModal(false)}
+          filters={filters}
+          onFiltersChange={setFiltersState}
         />
 
         {/* Category Filter - Hidden on mobile */}
@@ -230,7 +257,7 @@ const ForumView: React.FC<ForumViewProps> = ({
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
             </div>
-          ) : posts.length === 0 ? (
+          ) : displayPosts.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-400 mb-4">
                 <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +273,7 @@ const ForumView: React.FC<ForumViewProps> = ({
             </div>
           ) : (
             <div className="space-y-4 px-4 md:px-0">
-              {posts.map((post, index) => (
+              {displayPosts.map((post, index) => (
                 <PostCard 
                   key={post.id} 
                   post={post}
@@ -256,18 +283,32 @@ const ForumView: React.FC<ForumViewProps> = ({
             </div>
           )}
 
-          {/* Load More Button (placeholder for pagination) */}
-          {posts.length > 0 && (
+          {/* Load More Button / Infinite Scroll Loading */}
+          {displayPosts.length > 0 && !isSearchMode && (
             <div className="text-center mt-8">
-              <button className="bg-[var(--bg-element)] hover:bg-[var(--bg-element-hover)] text-white px-6 py-3 rounded-md font-medium transition-colors">
-                Weitere Beiträge laden
-              </button>
+              {isFetchingNextPage ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2ebe7a]"></div>
+                  <span className="ml-2 text-gray-600">Lade weitere Beiträge...</span>
+                </div>
+              ) : hasNextPage ? (
+                <button 
+                  onClick={() => fetchNextPage()}
+                  className="bg-[var(--bg-element)] hover:bg-[var(--bg-element-hover)] text-white px-6 py-3 rounded-md font-medium transition-colors"
+                >
+                  Weitere Beiträge laden
+                </button>
+              ) : (
+                <p className="text-gray-500 text-sm">Keine weiteren Beiträge verfügbar</p>
+              )}
             </div>
           )}
         </div>
       </div>
     </div>
   )
-}
+})
+
+ForumView.displayName = 'ForumView'
 
 export default ForumView

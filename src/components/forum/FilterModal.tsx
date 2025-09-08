@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { useForumStore } from '../../stores/forum.store'
 import { PostsService } from '../../services/posts.service'
 import { TherapistsService } from '../../services/therapists.service'
+import { useCategories } from '../../hooks/usePosts'
 import type { Designation, Therapist } from '../../types/database.types'
+
+interface PostFilters {
+  category?: number
+  canton?: string
+  therapist?: string
+  designation?: string
+  dateFrom?: string
+  dateTo?: string
+}
 
 interface FilterModalProps {
   isOpen: boolean
   onClose: () => void
+  filters: PostFilters
+  onFiltersChange: (filters: PostFilters) => void
 }
 
 interface FilterState {
@@ -47,8 +58,8 @@ const CANTONS = [
   { name: 'Zürich', code: 'ZH' }
 ]
 
-const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
-  const { categories, filters, setFilters, clearFilters, loadPosts } = useForumStore()
+const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onFiltersChange }) => {
+  const { data: categories = [] } = useCategories()
   const [localFilters, setLocalFilters] = useState<FilterState>({})
   const [designations, setDesignations] = useState<Designation[]>([])
   const [loading, setLoading] = useState(false)
@@ -161,20 +172,18 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
   const handleApplyFilters = async () => {
     setLoading(true)
     try {
-      // Convert local filters to store filter format
-      const storeFilters = {
+      // Convert local filters to the correct format
+      const newFilters = {
         category: localFilters.category,
         canton: localFilters.canton,
         therapist: localFilters.therapist,
         designation: localFilters.designation,
         dateFrom: localFilters.dateFrom,
         dateTo: localFilters.dateTo,
-        search: filters.search // Preserve existing search
       }
 
-      // Apply filters and reload posts
-      setFilters(storeFilters)
-      await loadPosts(storeFilters)
+      // Apply filters using the passed callback
+      onFiltersChange(newFilters)
       onClose()
     } catch (error) {
       console.error('Error applying filters:', error)
@@ -191,8 +200,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
       setSelectedTherapist(null)
       setShowTherapistDropdown(false)
       setIsTherapistExpanded(false)
-      clearFilters()
-      await loadPosts({})
+      
+      // Clear filters using the passed callback
+      onFiltersChange({})
       onClose()
     } catch (error) {
       console.error('Error clearing filters:', error)

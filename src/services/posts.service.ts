@@ -9,6 +9,8 @@ interface PostFilters {
   dateFrom?: string
   dateTo?: string
   search?: string
+  page?: number
+  limit?: number
 }
 
 export class PostsService {
@@ -28,7 +30,8 @@ export class PostsService {
         *,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton),
+        comments(count)
       `)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
@@ -88,6 +91,14 @@ export class PostsService {
       query = query.or(`title.ilike.%${postFilters.search}%,content.ilike.%${postFilters.search}%`)
     }
 
+    // Add pagination
+    const page = postFilters.page || 1
+    const limit = postFilters.limit || 20
+    const from = (page - 1) * limit
+    const to = from + limit - 1
+
+    query = query.range(from, to)
+
     const { data, error } = await query
 
     if (error) {
@@ -106,7 +117,8 @@ export class PostsService {
         *,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton),
+        comments(count)
       `)
       .eq('id', id)
       .eq('is_active', true)
@@ -213,7 +225,8 @@ export class PostsService {
         *,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton),
+        comments(count)
       `)
       .eq('is_published', true)
       .eq('is_active', true)

@@ -489,8 +489,9 @@ export type PostWithRelations = Post & {
   categories?: Category
   users?: User
   therapists?: Therapist
-  comments?: Comment[]
+  comments?: Comment[] | { count: number }[]
   post_tags?: (PostTag & { tags: Tag })[]
+  comment_count?: number
 }
 
 export type CommentWithUser = Comment & {

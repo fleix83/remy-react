@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useAuthStore } from './stores/auth.store'
 import { useNotificationsRealtime } from './hooks/useNotificationsRealtime'
@@ -7,12 +7,14 @@ import { testSupabaseConnection } from './utils/test-connection'
 import Layout from './components/layout/Layout'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
-import MessagesPage from './components/messaging/MessagesPage'
-import AdminDashboard from './components/admin/AdminDashboard'
-import ModerationQueue from './components/admin/ModerationQueue'
-import TherapistDirectoryPage from './components/therapist/TherapistDirectoryPage'
-import UserProfile from './components/user/UserProfile'
 import './App.css'
+
+// Lazy load heavy components
+const MessagesPage = lazy(() => import('./components/messaging/MessagesPage'))
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'))
+const ModerationQueue = lazy(() => import('./components/admin/ModerationQueue'))
+const TherapistDirectoryPage = lazy(() => import('./components/therapist/TherapistDirectoryPage'))
+const UserProfile = lazy(() => import('./components/user/UserProfile'))
 
 function App() {
   const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
@@ -49,24 +51,33 @@ function App() {
   return (
     <Router basename="/remyreact">
       <Layout onCreatePost={handleCreatePost}>
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <ForumView 
-                showCreatePostDialog={showCreatePostDialog}
-                onCreatePostDialogClose={() => setShowCreatePostDialog(false)}
-                onCreatePost={handleCreatePost}
-              />
-            } 
-          />
-          <Route path="/post/:id" element={<PostView />} />
-          <Route path="/messages" element={<MessagesPage />} />
-          <Route path="/therapists" element={<TherapistDirectoryPage />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/moderation" element={<ModerationQueue />} />
-        </Routes>
+        <Suspense fallback={
+          <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading...</p>
+            </div>
+          </div>
+        }>
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <ForumView 
+                  showCreatePostDialog={showCreatePostDialog}
+                  onCreatePostDialogClose={() => setShowCreatePostDialog(false)}
+                  onCreatePost={handleCreatePost}
+                />
+              } 
+            />
+            <Route path="/post/:id" element={<PostView />} />
+            <Route path="/messages" element={<MessagesPage />} />
+            <Route path="/therapists" element={<TherapistDirectoryPage />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/moderation" element={<ModerationQueue />} />
+          </Routes>
+        </Suspense>
       </Layout>
     </Router>
   )
