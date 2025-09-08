@@ -6,6 +6,7 @@ import { useNotificationsStore } from '../../stores/notifications.store'
 import { useMessagesStore } from '../../stores/messages.store'
 import MessagesButton from '../messaging/MessagesButton'
 import UserAvatar from '../user/UserAvatar'
+import MobileSlideMenu from './MobileSlideMenu'
 
 interface NavigationProps {
   onCreatePost: () => void
@@ -208,130 +209,13 @@ const Navigation: React.FC<NavigationProps> = ({
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-[var(--bg-element-hover)] py-4">
-            <div className="flex flex-col space-y-2">
-              <Link 
-                to="/" 
-                className="text-gray-700 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🏠 Forum
-              </Link>
-              
-              <Link 
-                to="/therapists" 
-                className="text-gray-700 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                👩‍⚕️ Therapeuten
-              </Link>
-              
-              {user && (
-                <div 
-                  className="px-4 py-3"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <MessagesButton 
-                    className="text-gray-700 hover:text-[var(--primary)] text-base font-medium transition-colors"
-                    showLabel={true}
-                  />
-                </div>
-              )}
-
-              {/* Mobile Admin & Moderation Links - Only for moderators and admins */}
-              {permissions.canModerate && (
-                <>
-                  <Link 
-                    to="/admin/moderation" 
-                    className="text-gray-700 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    🛡️ Moderation
-                  </Link>
-                  {permissions.isAdmin && (
-                    <Link 
-                      to="/admin" 
-                      className="text-gray-700 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      ⚙️ Admin
-                    </Link>
-                  )}
-                </>
-              )}
-
-              {/* Mobile Create Post Button */}
-              {showCreatePostButton && (
-                <button
-                  onClick={() => {
-                    onCreatePost()
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="mx-4 mt-2 bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  <span>Beitrag erstellen</span>
-                </button>
-              )}
-
-              {/* Mobile User Menu */}
-              {user ? (
-                <div className="border-t border-[var(--bg-element-hover)] mt-4 pt-4">
-                  <div className="flex items-center px-4 py-2 text-sm text-gray-300">
-                    {userProfile && (
-                      <div className="mr-3">
-                        <UserAvatar 
-                          user={userProfile} 
-                          size="small" 
-                        />
-                      </div>
-                    )}
-                    <span>{user.email}</span>
-                  </div>
-                  
-                  <Link 
-                    to="/profile" 
-                    className="block text-gray-300 hover:text-[var(--primary)] px-4 py-3 rounded-md text-base font-medium transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    👤 Profil
-                  </Link>
-                  
-                  <button
-                    onClick={() => {
-                      handleSignOut()
-                      setIsMobileMenuOpen(false)
-                    }}
-                    className="w-full text-left text-gray-300 hover:text-red-400 px-4 py-3 rounded-md text-base font-medium transition-colors"
-                  >
-                    🚪 Abmelden
-                  </button>
-                </div>
-              ) : (
-                <div className="border-t border-[var(--bg-element-hover)] mt-4 pt-4 flex flex-col space-y-2 px-4">
-                  <Link 
-                    to="/login" 
-                    className="text-center bg-[var(--bg-element-hover)] hover:bg-[var(--primary)] text-gray-300 hover:text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Anmelden
-                  </Link>
-                  <Link 
-                    to="/register" 
-                    className="text-center bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-3 rounded-md text-base font-medium transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Registrieren
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        {/* Mobile Slide-in Menu */}
+        <MobileSlideMenu
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          userRole={userProfile?.role}
+          onLogout={handleSignOut}
+        />
       </div>
     </nav>
   )
