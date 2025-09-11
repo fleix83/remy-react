@@ -9,22 +9,34 @@ import PostEditModal from './PostEditModal'
 import { SelectableText } from '../ui/RichTextEditor'
 import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
+import MobileSlideMenu from '../layout/MobileSlideMenu'
 
 const PostView: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const postId = id ? parseInt(id) : null
   const [showEditModal, setShowEditModal] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
   const { currentPost: post, loading, loadPost, updatePost } = useForumStore()
-  const { user } = useAuthStore()
+  const { user, userProfile, logout } = useAuthStore()
   
   // Set up real-time comments for this post
   useCommentsRealtime(postId!)
 
   useEffect(() => {
     if (postId) {
-      loadPost(postId)
+      loadPost(postId).then(() => {
+        // Debug: Log the post data after loading
+        console.log('PostView: Post loaded:', post)
+        if (post?.users) {
+          console.log('PostView: User data:', post.users)
+        } else {
+          console.log('PostView: No user data in post')
+        }
+      }).catch(error => {
+        console.error('PostView: Error loading post:', error)
+      })
     }
   }, [postId, loadPost])
 
@@ -78,6 +90,10 @@ const PostView: React.FC = () => {
     return user && post && user.id === post.user_id
   }
 
+  const handleSignOut = async () => {
+    await logout()
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-body)]">
@@ -120,24 +136,42 @@ const PostView: React.FC = () => {
   if (!post) return null
 
   return (
-    <div className="min-h-screen bg-[var(--bg-body)]">
-      <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
-        {/* Back Button */}
-        <div className="mb-6">
+    <div className="min-h-screen bg-[var(--bg-body)] relative z-10">
+      <div className="max-w-6xl mx-auto py-6 px-4 md:px-0 relative z-20">
+        {/* Simplified Navigation - Centered Back + Avatar on Right */}
+        <div className="flex justify-between items-center mb-16 relative z-30">
+          {/* Invisible spacer to balance the avatar and center the back button */}
+          <div className="w-6 h-6"></div>
+          
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center text-gray-500 hover:text-white transition-colors"
+            className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
+            style={{ color: 'var(--primary)' }}
           >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Zurück zum Forum
           </button>
+          
+          {user && (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden relative p-1 rounded-full transition-colors"
+            >
+              {userProfile && (
+                <UserAvatar 
+                  user={userProfile} 
+                  size="small" 
+                />
+              )}
+            </button>
+          )}
         </div>
 
         {/* Post Content */}
         <div 
-          className="p-6 mb-4 relative"
+          className="p-6 mb-4 relative z-30"
           style={{
             borderRadius: '20px',
             background: '#ecffef',
@@ -226,21 +260,35 @@ const PostView: React.FC = () => {
 
           {/* User Info */}
           <div className="flex items-start space-x-3 mb-4">
-            {post.users && (
+            {post.users ? (
               <UserAvatar 
                 user={post.users} 
                 size="small" 
                 className="flex-shrink-0"
               />
+            ) : (
+              <div className="w-6 h-6 bg-gray-300 rounded-full flex-shrink-0 flex items-center justify-center">
+                <span className="text-xs text-gray-600">?</span>
+              </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{post.users?.username}</p>
-              <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>
+              <p className="font-medium text-[var(--type)] text-xs text-left leading-none">
+                {post.users?.username || 'Unknown User'}
+              </p>
+              <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>
+                {formatDate(post.created_at)}
+              </p>
+              {/* Debug info - remove later */}
+              {!post.users && (
+                <p className="text-xs text-red-500 mt-1">
+                  Debug: No user data loaded for post {post.id}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Title */}
-          <h1 className="text-base md:text-xl font-semibold mb-4 leading-tight text-left" style={{color: '#626262'}}>
+          <h1 className="text-base md:text-xl mb-4 leading-tight text-left" style={{color: '#626262', fontWeight: 700}}>
             {getPostDisplayTitle(post)}
           </h1>
           
@@ -267,6 +315,14 @@ const PostView: React.FC = () => {
             onUpdate={handleEditPost}
           />
         )}
+
+        {/* Mobile Slide-in Menu */}
+        <MobileSlideMenu
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          userRole={userProfile?.role}
+          onLogout={handleSignOut}
+        />
       </div>
     </div>
   )
