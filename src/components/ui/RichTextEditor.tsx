@@ -343,7 +343,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       <div className="relative">
         <EditorContent 
           editor={editor}
-          className="focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-opacity-50 rounded-b-lg overflow-hidden"
+          className="focus-within:ring-2 focus-within:ring-[#aedfb7] focus-within:ring-opacity-50 rounded-b-lg overflow-hidden"
         />
         
         {editor.isEmpty && (

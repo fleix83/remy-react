@@ -156,7 +156,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 bg-white text-[var(--type)] rounded-md focus:ring-[var(--primary)] focus:border-[var(--primary)] resize-vertical"
+              className="w-full px-3 py-2 border border-gray-300 bg-white text-[var(--type)] rounded-md focus:ring-[#aedfb7] focus:border-[#aedfb7] resize-vertical"
               rows={4}
             />
             <div className="flex justify-end space-x-2 mt-2">
@@ -177,9 +177,10 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             </div>
           </div>
         ) : (
-          <div className="whitespace-pre-wrap text-[var(--type)] text-sm leading-relaxed text-left">
-            {stripHtmlTags(comment.content)}
-          </div>
+          <div 
+            className="prose prose-sm max-w-none text-[var(--type)] text-sm leading-relaxed text-left"
+            dangerouslySetInnerHTML={{ __html: comment.content }}
+          />
         )}
       </div>
 
