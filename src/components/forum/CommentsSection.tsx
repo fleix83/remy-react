@@ -10,6 +10,7 @@ interface CommentsSectionProps {
 const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [selectedText, setSelectedText] = useState('')
+  const [replyingToUsername, setReplyingToUsername] = useState('')
 
   const {
     comments: allComments,
@@ -44,7 +45,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
   if (loading) {
     return (
-      <div className="bg-[var(--bg-element)] p-6" style={{borderRadius: '20px'}}>
+      <div className="p-6" style={{borderRadius: '20px', background: '#ecffef'}}>
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary)]"></div>
         </div>
@@ -53,9 +54,9 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   }
 
   return (
-    <div className="bg-[var(--bg-element)] overflow-hidden" style={{borderRadius: '20px'}}>
+    <div className="overflow-hidden" style={{borderRadius: '20px', background: '#ecffef'}}>
       {/* Comments Header */}
-      <div className="px-6 py-4 border-b border-gray-300">
+      <div className="px-6 py-4" style={{background: '#d9f2de'}}>
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-[var(--type)]">
             Antworten ({commentCount})
@@ -72,10 +73,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
       {/* Main Comment Form */}
       {showCommentForm && (
-        <div className="border-b border-gray-300 -mx-4 md:mx-0">
+        <div className="-mx-4 md:mx-0">
           <CommentForm
             postId={postId}
             quotedText={selectedText}
+            replyingToUsername={replyingToUsername}
             onCommentAdded={(comment) => {
               handleCommentSubmit({
                 post_id: postId,
@@ -86,6 +88,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
             onCancel={() => {
               setShowCommentForm(false)
               setSelectedText('')
+              setReplyingToUsername('')
             }}
             placeholder="Teile deine Gedanken zu diesem Beitrag..."
             fullWidth={true}
@@ -94,7 +97,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
       )}
 
       {/* Comments List */}
-      <div className="divide-y divide-gray-300">
+      <div>
         {comments.length === 0 ? (
           <div className="px-6 py-8">
             <p className="text-center text-gray-500">
@@ -109,6 +112,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
                 comment={comment}
                 onReply={(_parentId, quotedText) => {
                   setSelectedText(quotedText || '')
+                  setReplyingToUsername(comment.users?.username || '')
                   setShowCommentForm(true)
                 }}
                 onUpdate={() => loadComments(postId)}
@@ -120,7 +124,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
       {/* Load More Comments (placeholder for pagination) */}
       {comments.length > 0 && comments.length >= 10 && (
-        <div className="px-6 py-4 border-t border-gray-300 text-center">
+        <div className="px-6 py-4 text-center">
           <button className="text-sm text-gray-500 hover:text-[var(--primary)] transition-colors">
             Weitere Kommentare laden...
           </button>

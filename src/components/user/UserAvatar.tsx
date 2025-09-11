@@ -34,7 +34,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
     large: { width: '8rem', height: '8rem' }
   }
 
-  const avatarUrl = user.avatar_url || AvatarService.getDefaultAvatar(user.username)
+  const avatarUrl = user.avatar_url || AvatarService.getDefaultAvatar(user?.username || 'User')
 
   // Check if user has full User properties (needed for upload functionality)
   const isFullUser = (user: User | MinimalUser): user is User => {
@@ -109,7 +109,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
             console.error('Avatar failed to load:', avatarUrl)
             // Fallback to default avatar on error
             const target = e.target as HTMLImageElement
-            target.src = AvatarService.getDefaultAvatar(user.username)
+            target.src = AvatarService.getDefaultAvatar(user?.username || 'User')
           }}
         />
         

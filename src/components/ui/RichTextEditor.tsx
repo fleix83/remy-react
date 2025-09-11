@@ -165,9 +165,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             }`}
             title="Bold"
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8.21 13c2.106 0 3.412-1.087 3.412-2.823 0-1.306-.984-2.283-2.324-2.386v-.055a2.176 2.176 0 0 0 1.852-2.14c0-1.51-1.162-2.46-3.014-2.46H3.843V13H8.21zM5.908 4.674h1.696c.963 0 1.517.451 1.517 1.244 0 .834-.629 1.32-1.73 1.32H5.908V4.674zm0 6.788V8.598h1.73c1.217 0 1.88.492 1.88 1.415 0 .943-.643 1.449-1.832 1.449H5.908z"/>
-            </svg>
+            <span className="text-sm font-bold">B</span>
           </button>
           
           <button
@@ -178,9 +176,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             }`}
             title="Italic"
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M7.991 11.674L9.53 4.455c.123-.595.246-.71 1.347-.807l.11-.52H7.211l-.11.52c1.06.096 1.128.212 1.005.807L6.57 11.674c-.123.595-.246.71-1.346.806l-.11.52h3.774l.11-.52c-1.06-.095-1.129-.211-1.006-.806z"/>
-            </svg>
+            <span className="text-sm font-bold italic">I</span>
           </button>
           
           <button
@@ -191,9 +187,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             }`}
             title="Bullet List"
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-            </svg>
+            <span className="text-sm">•••</span>
           </button>
         </div>
       )
@@ -211,9 +205,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Bold"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M3 5a1 1 0 011-1h5.5a2.5 2.5 0 010 5H4v2.5h4.5a2.5 2.5 0 010 5H4a1 1 0 01-1-1V5z"/>
-          </svg>
+          <span className="text-sm font-bold">B</span>
         </button>
         
         <button
@@ -224,9 +216,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Italic"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M8 5v14l4-2V9h5l-2-4H8z"/>
-          </svg>
+          <span className="text-sm font-bold italic">I</span>
         </button>
         
         <button
@@ -237,9 +227,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Underline"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M5 3v8c0 2.761 2.239 5 5 5s5-2.239 5-5V3h-2v8c0 1.657-1.343 3-3 3s-3-1.343-3-3V3H5zM3 17h14v2H3v-2z"/>
-          </svg>
+          <span className="text-sm font-bold underline">U</span>
         </button>
         
         <div className="w-px h-6 bg-gray-300 mx-1"></div>
@@ -253,9 +241,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Quote"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M3 17V7c0-1.1.9-2 2-2h3l-2 4v8H3zM14 17V7c0-1.1.9-2 2-2h3l-2 4v8h-3z"/>
-          </svg>
+          <span className="text-sm">"</span>
         </button>
         
         <button
@@ -266,9 +252,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Bullet List"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M3 4a1 1 0 100 2 1 1 0 000-2zM6 4h11a1 1 0 110 2H6a1 1 0 110-2zM3 9a1 1 0 100 2 1 1 0 000-2zM6 9h11a1 1 0 110 2H6a1 1 0 110-2zM3 14a1 1 0 100 2 1 1 0 000-2zM6 14h11a1 1 0 110 2H6a1 1 0 110-2z"/>
-          </svg>
+          <span className="text-sm">•••</span>
         </button>
         
         <button
@@ -279,9 +263,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Numbered List"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M3 4a1 1 0 100 2 1 1 0 000-2zM6 4h11a1 1 0 110 2H6a1 1 0 110-2zM3 9a1 1 0 100 2 1 1 0 000-2zM6 9h11a1 1 0 110 2H6a1 1 0 110-2zM3 14a1 1 0 100 2 1 1 0 000-2zM6 14h11a1 1 0 110 2H6a1 1 0 110-2z"/>
-          </svg>
+          <span className="text-sm">123</span>
         </button>
         
         <div className="w-px h-6 bg-gray-300 mx-1"></div>
@@ -295,9 +277,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Add Link"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"/>
-          </svg>
+          <span className="text-sm">🔗</span>
         </button>
         
         {editor.isActive('link') && (
@@ -307,9 +287,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             className="p-2 rounded hover:bg-gray-100 transition-colors text-red-600"
             title="Remove Link"
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414L11.414 10l2.293 2.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10 6.293 7.707a1 1 0 010-1.414z"/>
-            </svg>
+            <span className="text-sm">❌</span>
           </button>
         )}
         
@@ -323,9 +301,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               className="px-3 py-1 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 transition-colors"
               title="Quote Selected Text"
             >
-              <svg className="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 17V7c0-1.1.9-2 2-2h3l-2 4v8H3zM14 17V7c0-1.1.9-2 2-2h3l-2 4v8h-3z"/>
-              </svg>
+              <span className="text-sm inline mr-1">”</span>
               Quote
             </button>
           </div>
@@ -364,9 +340,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               className="hover:text-gray-200 transition-colors"
               title="Clear selection"
             >
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414L11.414 10l2.293 2.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10 6.293 7.707a1 1 0 010-1.414z"/>
-              </svg>
+              <span className="text-xs">✕</span>
             </button>
           </div>
         </div>

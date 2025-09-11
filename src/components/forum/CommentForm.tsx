@@ -6,6 +6,7 @@ interface CommentFormProps {
   postId: number
   parentCommentId?: number
   quotedText?: string
+  replyingToUsername?: string
   onSubmit?: () => void
   onCommentAdded?: (comment: any) => void
   onCancel?: () => void
@@ -17,6 +18,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
   postId,
   parentCommentId: _parentCommentId, // Unused in current implementation
   quotedText,
+  replyingToUsername,
   onSubmit,
   onCommentAdded,
   onCancel,
@@ -48,9 +50,15 @@ const CommentForm: React.FC<CommentFormProps> = ({
     setSubmitting(true)
     
     try {
+      // Add @username reference if replying to someone
+      let finalContent = content.trim()
+      if (replyingToUsername) {
+        finalContent = `<p><strong>@${replyingToUsername}</strong></p>${finalContent}`
+      }
+      
       const newComment = await commentsService.createComment({
         post_id: postId,
-        content: content.trim()
+        content: finalContent
       })
 
       // Reset form

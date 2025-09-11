@@ -90,7 +90,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
   const marginLeft = Math.min(depth * 2, 8) // Max 4 levels deep
 
   return (
-    <div className={`bg-[var(--bg-element)] ${depth > 0 ? `ml-${marginLeft}` : ''}`}>
+    <div className={`${depth > 0 ? `ml-${marginLeft}` : ''}`} style={{borderRadius: '16px', background: '#ecffef', padding: '16px'}}>
       {/* User Info */}
       <div className="flex items-start space-x-3 mb-4">
         <UserAvatar 

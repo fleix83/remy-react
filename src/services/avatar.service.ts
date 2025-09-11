@@ -119,8 +119,10 @@ export class AvatarService {
 
   static getDefaultAvatar(username: string): string {
     // Generate a simple identicon-style avatar based on username
-    const firstLetter = username.charAt(0).toUpperCase()
-    const colorIndex = username.charCodeAt(0) % 6
+    // Handle undefined/null username gracefully
+    const safeUsername = username || 'User'
+    const firstLetter = safeUsername.charAt(0).toUpperCase()
+    const colorIndex = safeUsername.charCodeAt(0) % 6
     const colors = [
       '#2ebe7a', '#2563eb', '#dc2626', '#ea580c', 
       '#7c3aed', '#0891b2'

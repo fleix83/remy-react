@@ -50,35 +50,38 @@ function App() {
 
   return (
     <Router basename="/remyreact">
-      <Layout onCreatePost={handleCreatePost}>
-        <Suspense fallback={
-          <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading...</p>
-            </div>
+      <Suspense fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
           </div>
-        }>
-          <Routes>
-            <Route 
-              path="/" 
-              element={
+        </div>
+      }>
+        <Routes>
+          {/* PostView without Layout to avoid double navigation */}
+          <Route path="/post/:id" element={<PostView />} />
+          
+          {/* All other routes use Layout */}
+          <Route 
+            path="/" 
+            element={
+              <Layout onCreatePost={handleCreatePost}>
                 <ForumView 
                   showCreatePostDialog={showCreatePostDialog}
                   onCreatePostDialogClose={() => setShowCreatePostDialog(false)}
                   onCreatePost={handleCreatePost}
                 />
-              } 
-            />
-            <Route path="/post/:id" element={<PostView />} />
-            <Route path="/messages" element={<MessagesPage />} />
-            <Route path="/therapists" element={<TherapistDirectoryPage />} />
-            <Route path="/profile" element={<UserProfile />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/moderation" element={<ModerationQueue />} />
-          </Routes>
-        </Suspense>
-      </Layout>
+              </Layout>
+            } 
+          />
+          <Route path="/messages" element={<Layout onCreatePost={handleCreatePost}><MessagesPage /></Layout>} />
+          <Route path="/therapists" element={<Layout onCreatePost={handleCreatePost}><TherapistDirectoryPage /></Layout>} />
+          <Route path="/profile" element={<Layout onCreatePost={handleCreatePost}><UserProfile /></Layout>} />
+          <Route path="/admin" element={<Layout onCreatePost={handleCreatePost}><AdminDashboard /></Layout>} />
+          <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost}><ModerationQueue /></Layout>} />
+        </Routes>
+      </Suspense>
     </Router>
   )
 }
