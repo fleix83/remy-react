@@ -29,6 +29,7 @@ const PostView: React.FC = () => {
       loadPost(postId).then(() => {
         // Debug: Log the post data after loading
         console.log('PostView: Post loaded:', post)
+        console.log('Build timestamp:', new Date().toISOString())
         if (post?.users) {
           console.log('PostView: User data:', post.users)
         } else {
