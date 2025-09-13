@@ -136,7 +136,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className="p-4 mb-4 mx-4 md:mx-0 relative" style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 60}}>
+        <div className="p-4 mb-4 mx-4 md:mx-0 relative" style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
           <div className="flex items-center gap-4">
             {/* Neu Button */}
             <button
@@ -223,7 +223,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 
       {/* Post Editor Dialog */}
       {showCreatePostDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-[70]">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-40">
           <div className="w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto" style={{backgroundColor: '#ecffef'}}>
             <div className="sticky top-0 border-b border-gray-300 md:border-gray-200 px-4 md:px-6 py-3 md:py-4" style={{backgroundColor: '#ecffef', paddingTop: 'max(1rem, env(safe-area-inset-top))'}}>
               <div className="flex items-center justify-between">

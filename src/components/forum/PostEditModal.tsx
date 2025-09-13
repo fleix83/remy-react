@@ -28,7 +28,7 @@ const PostEditModal: React.FC<PostEditModalProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-[60]">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-40">
       <div className="w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto" style={{backgroundColor: '#ecffef'}}>
         <div className="sticky top-0 border-b border-gray-300 md:border-gray-200 px-4 md:px-6 py-3 md:py-4" style={{backgroundColor: '#ecffef', paddingTop: 'max(1rem, env(safe-area-inset-top))'}}>
           <div className="flex items-center justify-between">

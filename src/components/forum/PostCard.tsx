@@ -78,7 +78,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
           className="flex items-center space-x-2 relative"
           style={{
             marginTop: '-25px',
-            zIndex: 60,
+            zIndex: 30,
             padding: '2px 6px',
             backdropFilter: 'blur(10px)'
           }}

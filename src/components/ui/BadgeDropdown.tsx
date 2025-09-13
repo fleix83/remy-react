@@ -111,7 +111,7 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
       {isOpen && (
         <div
           className={`
-            absolute top-full left-0 z-[60] mt-1 w-full min-w-[200px] bg-white border border-gray-200 rounded-lg shadow-lg
+            absolute top-full left-0 z-40 mt-1 w-full min-w-[200px] bg-white border border-gray-200 rounded-lg shadow-lg
             max-h-48 overflow-y-auto
             ${dropdownClassName}
           `}

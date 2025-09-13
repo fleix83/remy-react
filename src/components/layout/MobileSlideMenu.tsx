@@ -64,7 +64,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-[100] md:hidden"
+      className="fixed inset-0 z-50 md:hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Mobile navigation menu"

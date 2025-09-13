@@ -187,7 +187,7 @@ const PostView: React.FC = () => {
               className="flex items-center space-x-2 relative"
               style={{
                 marginTop: '-25px',
-                zIndex: 60,
+                zIndex: 30,
                 padding: '2px 6px',
                 backdropFilter: 'blur(10px)'
               }}

@@ -320,7 +320,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
               
               {/* Therapist Suggestions Dropdown */}
               {showTherapistDropdown && therapistSuggestions.length > 0 && (
-                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-40 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                   {therapistSuggestions.map((therapist) => (
                     <div
                       key={therapist.id}
