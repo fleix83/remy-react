@@ -54,10 +54,10 @@ const MessagesList: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b border-[#2a4a57]">
-        <h2 className="text-lg font-semibold text-white">Messages</h2>
+      <div className="p-4">
+        <h2 className="text-lg font-semibold text-[var(--primary)]">Messages</h2>
         {conversations.length > 0 && (
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs mt-1" style={{color: '#535353'}}>
             {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
           </p>
         )}
@@ -82,11 +82,12 @@ const MessagesList: React.FC = () => {
             <button
               key={conversation.id}
               onClick={() => setCurrentConversation(conversation)}
-              className={`w-full p-4 text-left hover:bg-[var(--bg-element-hover)] transition-colors border-b border-[#2a4a57]/50 ${
+              className={`w-full p-4 text-left hover:opacity-80 transition-colors ${
                 currentConversation?.id === conversation.id 
-                  ? 'bg-[var(--bg-element-hover)] border-l-2 border-l-[var(--primary)]' 
+                  ? 'border-l-2 border-l-[var(--primary)]' 
                   : ''
               }`}
+              style={{backgroundColor: '#e7ffeb'}}
             >
               <div className="flex items-start space-x-3">
                 {/* Avatar */}
@@ -99,7 +100,7 @@ const MessagesList: React.FC = () => {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-sm font-medium text-white truncate">
+                    <h3 className="text-sm font-medium truncate" style={{color: '#5a5a5a'}}>
                       {conversation.participant.username}
                     </h3>
                     <div className="flex items-center space-x-2">
@@ -117,7 +118,7 @@ const MessagesList: React.FC = () => {
                   </div>
                   
                   {/* Last message preview */}
-                  <p className="text-xs text-gray-300 truncate">
+                  <p className="text-xs truncate text-[var(--primary)]">
                     {truncateMessage(conversation.lastMessage.content)}
                   </p>
                 </div>

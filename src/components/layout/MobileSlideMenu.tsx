@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useMessagesStore } from '../../stores/messages.store'
 
 interface MobileSlideMenuProps {
   isOpen: boolean
@@ -15,6 +16,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate()
+  const { unreadCount: messageCount } = useMessagesStore()
 
   // Handle clicking outside the menu
   const handleBackdropClick = useCallback((event: React.MouseEvent) => {
@@ -62,7 +64,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-[99999] md:hidden"
+      className="fixed inset-0 z-[100] md:hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Mobile navigation menu"
@@ -150,7 +152,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
               <li>
                 <button
                   onClick={() => handleNavigation('/messages')}
-                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
+                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80 flex items-center"
                   style={{ 
                     fontFamily: 'Gaegu, cursive',
                     fontSize: '38px',
@@ -158,6 +160,19 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   }}
                 >
                   MESSAGES
+                  {messageCount > 0 && (
+                    <div 
+                      className="ml-3 flex items-center justify-center text-white font-bold rounded-full"
+                      style={{
+                        backgroundColor: '#ff6467',
+                        width: '24px',
+                        height: '24px',
+                        fontSize: '14px'
+                      }}
+                    >
+                      {messageCount > 9 ? '9+' : messageCount}
+                    </div>
+                  )}
                 </button>
               </li>
 

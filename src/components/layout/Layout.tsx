@@ -13,7 +13,15 @@ const Layout: React.FC<LayoutProps> = ({
   showCreatePostButton = true 
 }) => {
   return (
-    <div className="min-h-screen">
+    <div 
+      className="min-h-screen"
+      style={{ 
+        backgroundColor: '#f6fff7',
+        backgroundImage: 'url(background.svg)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: '0 0'
+      }}
+    >
       <Navigation 
         onCreatePost={onCreatePost}
         showCreatePostButton={showCreatePostButton}

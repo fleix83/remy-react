@@ -24,6 +24,7 @@ function App() {
   useNotificationsRealtime()
   usePostsRealtime()
   
+  
   // Test connection on startup
   useEffect(() => {
     testSupabaseConnection()
@@ -50,15 +51,15 @@ function App() {
 
   return (
     <Router basename="/remyreact">
-      <Suspense fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading...</p>
-          </div>
-        </div>
-      }>
-        <Routes>
+          <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Loading...</p>
+              </div>
+            </div>
+          }>
+            <Routes>
           {/* PostView without Layout to avoid double navigation */}
           <Route path="/post/:id" element={<PostView />} />
           
@@ -80,9 +81,9 @@ function App() {
           <Route path="/profile" element={<Layout onCreatePost={handleCreatePost}><UserProfile /></Layout>} />
           <Route path="/admin" element={<Layout onCreatePost={handleCreatePost}><AdminDashboard /></Layout>} />
           <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost}><ModerationQueue /></Layout>} />
-        </Routes>
-      </Suspense>
-    </Router>
+            </Routes>
+          </Suspense>
+      </Router>
   )
 }
 
