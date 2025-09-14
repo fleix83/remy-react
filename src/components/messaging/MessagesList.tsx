@@ -93,7 +93,7 @@ const MessagesList: React.FC = () => {
                 {/* Avatar */}
                 <UserAvatar 
                   user={conversation.participant} 
-                  size="small"
+                  size="message"
                   className="flex-shrink-0"
                 />
 

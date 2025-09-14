@@ -12,7 +12,7 @@ interface MinimalUser {
 
 interface UserAvatarProps {
   user: User | MinimalUser
-  size?: 'small' | 'medium' | 'large'
+  size?: 'small' | 'medium' | 'large' | 'message'
   showUpload?: boolean
   className?: string
 }
@@ -31,7 +31,8 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   const sizeStyles = {
     small: { width: '1.6rem', height: '1.6rem' },
     medium: { width: '4rem', height: '4rem' },
-    large: { width: '8rem', height: '8rem' }
+    large: { width: '8rem', height: '8rem' },
+    message: { width: '2.6rem', height: '2.6rem' }
   }
 
   const avatarUrl = user.avatar_url || AvatarService.getDefaultAvatar(user?.username || 'User')
