@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { withPerformanceTracking } from '../utils/performance-monitor'
 import type { Post, PostWithRelations, Category, Designation } from '../types/database.types'
 
 interface PostFilters {
@@ -15,7 +16,8 @@ interface PostFilters {
 
 export class PostsService {
   // Get all published posts with user and category information
-  async getPosts(filters?: PostFilters | number, includeUserBanned = false): Promise<PostWithRelations[]> {
+  getPosts = withPerformanceTracking(
+    async (filters?: PostFilters | number, includeUserBanned = false): Promise<PostWithRelations[]> => {
     // Handle legacy API (backward compatibility)
     let postFilters: PostFilters = {}
     if (typeof filters === 'number') {
@@ -24,14 +26,14 @@ export class PostsService {
       postFilters = filters
     }
 
+    // Use optimized query with selective fields and better JOIN strategy
     let query = supabase
       .from('posts')
       .select(`
-        *,
+        id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton),
-        comments(count)
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
@@ -106,19 +108,21 @@ export class PostsService {
       throw error
     }
 
-    return data || []
-  }
+    // Fetch comment counts separately for better performance
+    const postsWithComments = await this.addCommentCounts(data || [])
+    return postsWithComments
+  }, 'posts.getPosts')
 
   // Get a single post with full details
-  async getPost(id: number, includeUserBanned = false): Promise<PostWithRelations | null> {
+  getPost = withPerformanceTracking(
+    async (id: number, includeUserBanned = false): Promise<PostWithRelations | null> => {
     let query = supabase
       .from('posts')
       .select(`
-        *,
+        id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, designation, is_published, is_banned, moderation_status,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton),
-        comments(count)
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
       .eq('id', id)
       .eq('is_active', true)
@@ -148,8 +152,14 @@ export class PostsService {
       throw error
     }
 
-    return data
-  }
+    if (data) {
+      // Add comment count separately
+      const [postWithComments] = await this.addCommentCounts([data])
+      return postWithComments
+    }
+
+    return null
+  }, 'posts.getPost')
 
   // Create a new post
   async createPost(postData: {
@@ -202,7 +212,8 @@ export class PostsService {
   }
 
   // Get all categories
-  async getCategories(): Promise<Category[]> {
+  getCategories = withPerformanceTracking(
+    async (): Promise<Category[]> => {
     const { data, error } = await supabase
       .from('categories')
       .select('*')
@@ -215,18 +226,18 @@ export class PostsService {
     }
 
     return data || []
-  }
+  }, 'posts.getCategories')
 
   // Search posts
-  async searchPosts(searchTerm: string): Promise<PostWithRelations[]> {
+  searchPosts = withPerformanceTracking(
+    async (searchTerm: string): Promise<PostWithRelations[]> => {
     const { data, error } = await supabase
       .from('posts')
       .select(`
-        *,
+        id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton),
-        comments(count)
+        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
       `)
       .eq('is_published', true)
       .eq('is_active', true)
@@ -240,8 +251,10 @@ export class PostsService {
       throw error
     }
 
-    return data || []
-  }
+    // Add comment counts separately
+    const postsWithComments = await this.addCommentCounts(data || [])
+    return postsWithComments
+  }, 'posts.searchPosts')
 
   // Update an existing post
   async updatePost(id: number, updates: {
@@ -295,7 +308,7 @@ export class PostsService {
       .update(updateData)
       .eq('id', id)
       .select(`
-        *,
+        id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, designation, is_published, is_banned, moderation_status,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
@@ -325,5 +338,38 @@ export class PostsService {
     }
 
     return data || []
+  }
+
+  // Helper method to add comment counts efficiently
+  private async addCommentCounts(posts: any[]): Promise<PostWithRelations[]> {
+    if (!posts || posts.length === 0) return []
+
+    // Get all post IDs
+    const postIds = posts.map(post => post.id)
+
+    // Fetch comment counts in a single query
+    const { data: commentCounts, error } = await supabase
+      .from('comments')
+      .select('post_id')
+      .in('post_id', postIds)
+
+    if (error) {
+      console.error('Error fetching comment counts:', error)
+      // Return posts without comment counts rather than failing
+      return posts.map(post => ({ ...post, comments: [] }))
+    }
+
+    // Count comments per post
+    const countMap = new Map<number, number>()
+    commentCounts?.forEach(comment => {
+      const currentCount = countMap.get(comment.post_id) || 0
+      countMap.set(comment.post_id, currentCount + 1)
+    })
+
+    // Add comment counts to posts
+    return posts.map(post => ({
+      ...post,
+      comments: [{ count: countMap.get(post.id) || 0 }]
+    }))
   }
 }

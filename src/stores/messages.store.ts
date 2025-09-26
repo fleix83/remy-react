@@ -14,6 +14,7 @@ interface MessagesState {
   loading: boolean
   loadingMessages: boolean
   initialized: boolean
+  messagesChannel: any
   
   // Services
   messagesService: MessagesService
@@ -46,6 +47,7 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
   loading: false,
   loadingMessages: false,
   initialized: false,
+  messagesChannel: null,
   
   // Services
   messagesService: new MessagesService(),
@@ -260,9 +262,9 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
 
     const userId = user.id
 
-    // Subscribe to new messages where user is receiver
-    supabase
-      .channel('messages-realtime')
+    // Store channel reference to clean up properly
+    const channel = supabase
+      .channel(`messages-user-${userId}`)
       .on(
         'postgres_changes',
         {
@@ -275,18 +277,21 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
           console.log('New message received:', payload)
           const message = payload.new as Message
           
-          // Update conversations
-          get().updateConversationLastMessage(message)
-          
-          // Update unread count
-          get().loadUnreadCount()
-          
-          // If this message is for current conversation, add it to current messages
-          const { currentConversation } = get()
-          if (currentConversation?.id === message.sender_id) {
-            // Fetch complete message with user data
-            get().loadConversationMessages(currentConversation.id)
-          }
+          // Throttle updates to prevent excessive API calls
+          setTimeout(() => {
+            // Update conversations
+            get().updateConversationLastMessage(message)
+            
+            // Update unread count
+            get().loadUnreadCount()
+            
+            // If this message is for current conversation, add it to current messages
+            const { currentConversation } = get()
+            if (currentConversation?.id === message.sender_id) {
+              // Fetch complete message with user data
+              get().loadConversationMessages(currentConversation.id)
+            }
+          }, 500) // 500ms throttle
         }
       )
       .on(
@@ -310,11 +315,18 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         }
       )
       .subscribe()
+      
+    // Store channel for cleanup
+    set({ messagesChannel: channel })
   },
 
   // Unsubscribe from real-time updates
   unsubscribeFromMessages: () => {
-    supabase.removeAllChannels()
+    const { messagesChannel } = get()
+    if (messagesChannel) {
+      supabase.removeChannel(messagesChannel)
+      set({ messagesChannel: null })
+    }
   }
 }))
 

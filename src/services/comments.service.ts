@@ -1,25 +1,28 @@
 import { supabase } from '../lib/supabase'
+import { withPerformanceTracking } from '../utils/performance-monitor'
 import type { Comment, CommentWithRelations } from '../types/database.types'
 
 export class CommentsService {
   // Get all comments for a post with user information
-  async getComments(postId: number): Promise<CommentWithRelations[]> {
-    const { data, error } = await supabase
-      .from('comments')
-      .select(`
-        *,
-        users!comments_user_id_fkey(id, username, avatar_url, role)
-      `)
-      .eq('post_id', postId)
-      .order('created_at', { ascending: true })
+  getComments = withPerformanceTracking(
+    async (postId: number): Promise<CommentWithRelations[]> => {
+      const { data, error } = await supabase
+        .from('comments')
+        .select(`
+          id, content, created_at, user_id, post_id,
+          users!comments_user_id_fkey(id, username, avatar_url, role)
+        `)
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true })
 
-    if (error) {
-      console.error('Error fetching comments:', error)
-      throw error
-    }
+      if (error) {
+        console.error('Error fetching comments:', error)
+        throw error
+      }
 
-    return data || []
-  }
+      return data || []
+    }, 'comments.getComments'
+  )
 
   // Get replies to a specific comment (not supported in current schema)
   async getReplies(_parentCommentId: number): Promise<CommentWithRelations[]> {
