@@ -155,7 +155,7 @@ export class PostsService {
     if (data) {
       // Add comment count separately
       const [postWithComments] = await this.addCommentCounts([data])
-      return postWithComments as PostWithRelations
+      return postWithComments as unknown as PostWithRelations
     }
 
     return null
@@ -330,7 +330,7 @@ export class PostsService {
       therapists: Array.isArray(data.therapists) ? data.therapists[0] : data.therapists
     }
     
-    return normalizedData as PostWithRelations
+    return normalizedData as unknown as PostWithRelations
   }
 
   // Get all designations
@@ -371,7 +371,7 @@ export class PostsService {
         categories: Array.isArray(post.categories) ? post.categories[0] : post.categories,
         therapists: Array.isArray(post.therapists) ? post.therapists[0] : post.therapists,
         comments: [] 
-      })) as PostWithRelations[]
+      })) as unknown as PostWithRelations[]
     }
 
     // Count comments per post

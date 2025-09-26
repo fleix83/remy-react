@@ -24,7 +24,7 @@ export class CommentsService {
       return (data || []).map(comment => ({
         ...comment,
         users: Array.isArray(comment.users) ? comment.users[0] : comment.users
-      })) as CommentWithRelations[]
+      })) as unknown as CommentWithRelations[]
     }, 'comments.getComments'
   )
 
