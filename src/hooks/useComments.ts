@@ -45,7 +45,7 @@ export function useCreateComment() {
       post_id: number
       content: string
     }) => commentsService.createComment(commentData),
-    onSuccess: (newComment, variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate comments list for this post
       queryClient.invalidateQueries({ 
         queryKey: commentsKeys.list(variables.post_id) 

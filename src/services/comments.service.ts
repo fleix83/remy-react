@@ -20,7 +20,11 @@ export class CommentsService {
         throw error
       }
 
-      return data || []
+      // Normalize the user relationship from array to object
+      return (data || []).map(comment => ({
+        ...comment,
+        users: Array.isArray(comment.users) ? comment.users[0] : comment.users
+      })) as CommentWithRelations[]
     }, 'comments.getComments'
   )
 

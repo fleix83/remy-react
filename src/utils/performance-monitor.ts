@@ -129,7 +129,6 @@ class PerformanceMonitor {
   // Monitor React Query operations
   setupReactQueryMonitoring(queryClient: any) {
     const originalQuery = queryClient.getQueryData
-    const originalMutate = queryClient.mutateAsync
 
     // Monitor queries
     queryClient.getQueryData = (...args: any[]) => {

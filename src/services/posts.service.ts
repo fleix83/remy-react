@@ -155,7 +155,7 @@ export class PostsService {
     if (data) {
       // Add comment count separately
       const [postWithComments] = await this.addCommentCounts([data])
-      return postWithComments
+      return postWithComments as PostWithRelations
     }
 
     return null
@@ -356,7 +356,13 @@ export class PostsService {
     if (error) {
       console.error('Error fetching comment counts:', error)
       // Return posts without comment counts rather than failing
-      return posts.map(post => ({ ...post, comments: [] }))
+      return posts.map(post => ({ 
+        ...post, 
+        users: Array.isArray(post.users) ? post.users[0] : post.users,
+        categories: Array.isArray(post.categories) ? post.categories[0] : post.categories,
+        therapists: Array.isArray(post.therapists) ? post.therapists[0] : post.therapists,
+        comments: [] 
+      })) as PostWithRelations[]
     }
 
     // Count comments per post
@@ -366,10 +372,13 @@ export class PostsService {
       countMap.set(comment.post_id, currentCount + 1)
     })
 
-    // Add comment counts to posts
+    // Add comment counts to posts and normalize relationship arrays to objects
     return posts.map(post => ({
       ...post,
+      users: Array.isArray(post.users) ? post.users[0] : post.users,
+      categories: Array.isArray(post.categories) ? post.categories[0] : post.categories,
+      therapists: Array.isArray(post.therapists) ? post.therapists[0] : post.therapists,
       comments: [{ count: countMap.get(post.id) || 0 }]
-    }))
+    })) as PostWithRelations[]
   }
 }
