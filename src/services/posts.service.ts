@@ -321,7 +321,16 @@ export class PostsService {
     }
 
     console.log('✅ PostsService: Post updated successfully:', data)
-    return data
+    
+    // Normalize the JOIN arrays to objects to match PostWithRelations type
+    const normalizedData = {
+      ...data,
+      users: Array.isArray(data.users) ? data.users[0] : data.users,
+      categories: Array.isArray(data.categories) ? data.categories[0] : data.categories,
+      therapists: Array.isArray(data.therapists) ? data.therapists[0] : data.therapists
+    }
+    
+    return normalizedData as PostWithRelations
   }
 
   // Get all designations
