@@ -97,8 +97,8 @@ const PostView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-body)]">
-        <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
+      <div className="min-h-screen bg-[var(--bg-element)]">
+        <div className="max-w-6xl mx-auto py-6 md:px-0">
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
           </div>
@@ -110,8 +110,8 @@ const PostView: React.FC = () => {
 
   if (!post && !loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-body)]">
-        <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
+      <div className="min-h-screen bg-[var(--bg-element)]">
+        <div className="max-w-6xl mx-auto py-6 md:px-0">
           <div className="text-center py-12">
             <div className="text-red-400 mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,8 +137,8 @@ const PostView: React.FC = () => {
   if (!post) return null
 
   return (
-    <div className="min-h-screen bg-[var(--bg-body)] relative z-10">
-      <div className="max-w-6xl mx-auto py-6 px-4 md:px-0 relative z-20">
+    <div className="min-h-screen bg-[var(--bg-element)] relative z-10">
+      <div className="max-w-6xl mx-auto py-6 md:px-0 relative z-20">
         {/* Simplified Navigation - Centered Back + Avatar on Right */}
         <div className="flex justify-between items-center mb-16 relative z-30">
           {/* Invisible spacer to balance the avatar and center the back button */}
@@ -158,7 +158,7 @@ const PostView: React.FC = () => {
           {user && (
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden relative p-1 rounded-full transition-colors"
+              className="md:hidden relative p-1 rounded-full transition-colors mr-2.5"
             >
               {userProfile && (
                 <UserAvatar 
@@ -175,59 +175,20 @@ const PostView: React.FC = () => {
           className="p-6 mb-4 relative z-30"
           style={{
             borderRadius: '20px',
-            background: '#ecffef',
+            background: 'white',
             outline: '1px solid #95c7ff',
             outlineOffset: '-11px'
           }}
         >
-          {/* Header with Category Badge and Comments */}
-          <div className="flex items-start justify-between mb-4">
-            {/* Meta Group - positioned with negative margin and backdrop blur */}
-            <div 
-              className="flex items-center space-x-2 relative"
-              style={{
-                marginTop: '-25px',
-                zIndex: 30,
-                padding: '2px 6px',
-                backdropFilter: 'blur(10px)'
-              }}
-            >
-              {/* Category Badge */}
-              <span 
-                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium transition-opacity ${getCategoryColor()}`} 
-                style={{
-                  fontSize: '0.65rem',
-                  backgroundColor: getCategoryBackground(post.category_id)
-                }}
-              >
-                {post.categories?.name_de}
-              </span>
-              {/* Canton Flag (pure, no background) */}
-              {post.canton && (
-                <img 
-                  src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
-                  alt={`${post.canton} flag`}
-                  className="w-4 h-auto object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              )}
-              {/* Canton Abbreviation */}
-              {post.canton && (
-                <span className="text-gray-500 text-xs font-medium">
-                  {post.canton}
-                </span>
-              )}
-            </div>
-            
+          {/* Header with Actions */}
+          <div className="flex items-start justify-end mb-4">
             {/* Actions: Edit button and Comments Count */}
             <div className="flex items-center space-x-3">
               {/* Edit Button - Only for post author */}
               {isPostAuthor() && (
                 <button
                   onClick={() => setShowEditModal(true)}
-                  className="flex items-center space-x-1 text-gray-500 hover:text-white transition-colors"
+                  className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 transition-colors"
                   title="Beitrag bearbeiten"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,7 +211,7 @@ const PostView: React.FC = () => {
               
               {/* Comments Count */}
               <div className="relative flex items-center">
-                <div className="relative bg-white rounded-full p-1.5">
+                <div className="relative bg-gray-100 rounded-full p-1.5">
                   <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
@@ -259,8 +220,44 @@ const PostView: React.FC = () => {
             </div>
           </div>
 
+          {/* Meta Group - Category and Canton */}
+          <div className="flex items-center space-x-2 mb-3">
+            {/* Category Badge */}
+            <span 
+              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium transition-opacity ${getCategoryColor()}`} 
+              style={{
+                fontSize: '0.65rem',
+                backgroundColor: getCategoryBackground(post.category_id)
+              }}
+            >
+              {post.categories?.name_de}
+            </span>
+            {/* Canton Flag */}
+            {post.canton && (
+              <img 
+                src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
+                alt={`${post.canton} flag`}
+                className="w-4 h-auto object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none'
+                }}
+              />
+            )}
+            {/* Canton Abbreviation */}
+            {post.canton && (
+              <span className="text-gray-500 text-xs font-medium">
+                {post.canton}
+              </span>
+            )}
+          </div>
+
+          {/* Title */}
+          <h1 className="leading-tight text-left mb-4" style={{color: '#626262', fontSize: '20px', fontWeight: 700}}>
+            {getPostDisplayTitle(post)}
+          </h1>
+
           {/* User Info */}
-          <div className="flex items-start space-x-3 mb-4">
+          <div className="flex items-start space-x-3 mb-6">
             {post.users ? (
               <UserAvatar 
                 user={post.users} 
@@ -287,16 +284,12 @@ const PostView: React.FC = () => {
               )}
             </div>
           </div>
-
-          {/* Title */}
-          <h1 className="text-base md:text-xl mb-4 leading-tight text-left" style={{color: '#626262', fontWeight: 700}}>
-            {getPostDisplayTitle(post)}
-          </h1>
           
           {/* Post Content */}
           <SelectableText onTextSelect={() => {}}>
             <div 
-              className="prose prose-gray max-w-none text-[var(--type)] leading-tight text-left text-sm"
+              className="prose prose-gray max-w-none text-[var(--type)] leading-tight text-left"
+              style={{ fontSize: '15px' }}
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </SelectableText>
