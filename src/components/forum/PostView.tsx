@@ -20,7 +20,7 @@ const PostView: React.FC = () => {
   const [openCommentForm, setOpenCommentForm] = useState(false)
   const [replyToPostAuthor, setReplyToPostAuthor] = useState(false)
   
-  const { currentPost: post, loading, error, loadPost, updatePost } = useForumStore()
+  const { currentPost: post, loading, loadPost, updatePost } = useForumStore()
   const { user, userProfile, logout } = useAuthStore()
 
   // Set up real-time comments for this post
@@ -99,7 +99,7 @@ const PostView: React.FC = () => {
   }
 
 
-  if (error || (!post && !loading)) {
+  if (!post && !loading) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: '#f6fff7' }}>
         <div className="max-w-6xl mx-auto py-6 md:px-0">
@@ -111,7 +111,7 @@ const PostView: React.FC = () => {
             </div>
             <h3 className="text-lg font-medium text-white">Beitrag nicht gefunden</h3>
             <p className="text-gray-500 mt-1">
-              {error || 'Der angeforderte Beitrag existiert nicht oder wurde entfernt.'}
+              Der angeforderte Beitrag existiert nicht oder wurde entfernt.
             </p>
             <button
               onClick={() => navigate('/')}

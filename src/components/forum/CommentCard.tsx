@@ -69,15 +69,6 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
     }
   }
 
-  const handleQuoteText = () => {
-    const selectedText = window.getSelection()?.toString()
-    if (selectedText) {
-      onReply(comment.id, selectedText.trim())
-    } else {
-      onReply(comment.id)
-    }
-  }
-
   const renderQuotedText = (quotedText: string) => {
     return (
       <div className="border-l-4 border-[var(--primary)] pl-3 mb-3 bg-[var(--bg-element-hover)] p-2 rounded-r">

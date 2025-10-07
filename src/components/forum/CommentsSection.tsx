@@ -37,7 +37,6 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
   // Get comments for this specific post
   const comments = allComments[postId.toString()] || []
   const loading = commentsLoading[postId.toString()] || false
-  const commentCount = getCommentCount(postId)
 
   useEffect(() => {
     console.log('CommentsSection: Loading comments for postId:', postId)
