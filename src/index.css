@@ -10,7 +10,7 @@
   --salmon-hover: #ff5252;      /* Coral hover state */
   --type: #1a1a1a;              /* Dark text */
   --bg-body: #f8f6f3;          /* Light cream body background */
-  --bg-element: #d1f2d7;       /* Light green element backgrounds */
+  --bg-element: rgb(217 247 222); /* Light green element backgrounds */
   --bg-element-hover: #c1e2c7; /* Element hover states */
   
   /* Category Badge Colors */

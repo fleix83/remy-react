@@ -17,27 +17,18 @@ const PostView: React.FC = () => {
   const postId = id ? parseInt(id) : null
   const [showEditModal, setShowEditModal] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [openCommentForm, setOpenCommentForm] = useState(false)
+  const [replyToPostAuthor, setReplyToPostAuthor] = useState(false)
   
-  const { currentPost: post, loading, loadPost, updatePost } = useForumStore()
+  const { currentPost: post, loading, error, loadPost, updatePost } = useForumStore()
   const { user, userProfile, logout } = useAuthStore()
-  
+
   // Set up real-time comments for this post
   useCommentsRealtime(postId!)
 
   useEffect(() => {
     if (postId) {
-      loadPost(postId).then(() => {
-        // Debug: Log the post data after loading
-        console.log('PostView: Post loaded:', post)
-        console.log('Build timestamp:', new Date().toISOString())
-        if (post?.users) {
-          console.log('PostView: User data:', post.users)
-        } else {
-          console.log('PostView: No user data in post')
-        }
-      }).catch(error => {
-        console.error('PostView: Error loading post:', error)
-      })
+      loadPost(postId)
     }
   }, [postId, loadPost])
 
@@ -97,7 +88,7 @@ const PostView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-element)]">
+      <div className="min-h-screen" style={{ backgroundColor: '#f6fff7' }}>
         <div className="max-w-6xl mx-auto py-6 md:px-0">
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
@@ -108,9 +99,9 @@ const PostView: React.FC = () => {
   }
 
 
-  if (!post && !loading) {
+  if (error || (!post && !loading)) {
     return (
-      <div className="min-h-screen bg-[var(--bg-element)]">
+      <div className="min-h-screen" style={{ backgroundColor: '#f6fff7' }}>
         <div className="max-w-6xl mx-auto py-6 md:px-0">
           <div className="text-center py-12">
             <div className="text-red-400 mb-4">
@@ -120,7 +111,7 @@ const PostView: React.FC = () => {
             </div>
             <h3 className="text-lg font-medium text-white">Beitrag nicht gefunden</h3>
             <p className="text-gray-500 mt-1">
-              Der angeforderte Beitrag existiert nicht oder wurde entfernt.
+              {error || 'Der angeforderte Beitrag existiert nicht oder wurde entfernt.'}
             </p>
             <button
               onClick={() => navigate('/')}
@@ -137,13 +128,18 @@ const PostView: React.FC = () => {
   if (!post) return null
 
   return (
-    <div className="min-h-screen bg-[var(--bg-element)] relative z-10">
-      <div className="max-w-6xl mx-auto py-6 md:px-0 relative z-20">
-        {/* Simplified Navigation - Centered Back + Avatar on Right */}
-        <div className="flex justify-between items-center mb-16 relative z-30">
+    <div className="min-h-screen relative z-10" style={{ backgroundColor: 'rgb(238 250 240)' }}>
+      {/* Header bar - no background */}
+      <div
+        className="w-full flex items-center justify-center relative"
+        style={{
+          height: '65px'
+        }}
+      >
+        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
           {/* Invisible spacer to balance the avatar and center the back button */}
           <div className="w-6 h-6"></div>
-          
+
           <button
             onClick={() => navigate('/')}
             className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
@@ -154,77 +150,39 @@ const PostView: React.FC = () => {
             </svg>
             Zurück zum Forum
           </button>
-          
+
           {user && (
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden relative p-1 rounded-full transition-colors mr-2.5"
             >
               {userProfile && (
-                <UserAvatar 
-                  user={userProfile} 
-                  size="small" 
+                <UserAvatar
+                  user={userProfile}
+                  size="small"
                 />
               )}
             </button>
           )}
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '24px' }}>
 
         {/* Post Content */}
-        <div 
-          className="p-6 mb-4 relative z-30"
+        <div
+          className="p-6 mb-4 relative"
           style={{
-            borderRadius: '20px',
-            background: 'white',
-            outline: '1px solid #95c7ff',
-            outlineOffset: '-11px'
+            borderRadius: '30px',
+            backgroundColor: 'rgb(217 247 222)',
+            zIndex: 1,
+            paddingTop: '66px'
           }}
         >
-          {/* Header with Actions */}
-          <div className="flex items-start justify-end mb-4">
-            {/* Actions: Edit button and Comments Count */}
-            <div className="flex items-center space-x-3">
-              {/* Edit Button - Only for post author */}
-              {isPostAuthor() && (
-                <button
-                  onClick={() => setShowEditModal(true)}
-                  className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 transition-colors"
-                  title="Beitrag bearbeiten"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  <span className="text-xs">Bearbeiten</span>
-                </button>
-              )}
-
-              {/* Send Message Button - Only for other users' posts */}
-              {!isPostAuthor() && user && post.users && (
-                <SendMessageButton
-                  recipientId={post.user_id}
-                  recipientUsername={post.users.username}
-                  postTitle={getPostDisplayTitle(post)}
-                  postId={post.id}
-                  variant="small"
-                />
-              )}
-              
-              {/* Comments Count */}
-              <div className="relative flex items-center">
-                <div className="relative bg-gray-100 rounded-full p-1.5">
-                  <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Meta Group - Category and Canton */}
-          <div className="flex items-center space-x-2 mb-3">
-            {/* Category Badge */}
-            <span 
-              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium transition-opacity ${getCategoryColor()}`} 
+          {/* Category Badge and Canton - Overlapping top edge */}
+          <div className="absolute z-10 flex items-center space-x-2" style={{ top: '21px', marginLeft: '4px' }}>
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-lg ${getCategoryColor()}`}
               style={{
                 fontSize: '0.65rem',
                 backgroundColor: getCategoryBackground(post.category_id)
@@ -232,36 +190,41 @@ const PostView: React.FC = () => {
             >
               {post.categories?.name_de}
             </span>
-            {/* Canton Flag */}
             {post.canton && (
-              <img 
-                src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
-                alt={`${post.canton} flag`}
-                className="w-4 h-auto object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none'
-                }}
-              />
-            )}
-            {/* Canton Abbreviation */}
-            {post.canton && (
-              <span className="text-gray-500 text-xs font-medium">
-                {post.canton}
-              </span>
+              <>
+                <img
+                  src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
+                  alt={`${post.canton} flag`}
+                  className="w-4 h-auto object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none'
+                  }}
+                />
+                <span className="text-gray-500 text-xs font-medium">
+                  {post.canton}
+                </span>
+              </>
             )}
           </div>
 
+          {/* Therapist Info */}
+          {post.therapists && (
+            <p className="text-left" style={{color: '#4785ff', fontSize: '15px', lineHeight: '1.2'}}>
+              Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.designation}
+            </p>
+          )}
+
           {/* Title */}
-          <h1 className="leading-tight text-left mb-4" style={{color: '#626262', fontSize: '20px', fontWeight: 700}}>
+          <h1 className="text-left" style={{color: '#626262', fontSize: '20px', fontWeight: 700, lineHeight: '1.25', marginBottom: '24px'}}>
             {getPostDisplayTitle(post)}
           </h1>
 
           {/* User Info */}
-          <div className="flex items-start space-x-3 mb-6">
+          <div className="flex items-center" style={{ marginBottom: '32px' }}>
             {post.users ? (
-              <UserAvatar 
-                user={post.users} 
-                size="small" 
+              <UserAvatar
+                user={post.users}
+                size="small"
                 className="flex-shrink-0"
               />
             ) : (
@@ -269,35 +232,87 @@ const PostView: React.FC = () => {
                 <span className="text-xs text-gray-600">?</span>
               </div>
             )}
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-[var(--type)] text-xs text-left leading-none">
+            <div className="ml-3 flex-1 min-w-0">
+              <p className="font-semibold text-[var(--type)] text-sm text-left leading-tight">
                 {post.users?.username || 'Unknown User'}
               </p>
-              <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>
+              <p className="text-xs text-gray-500 text-left leading-tight mt-0.5">
                 {formatDate(post.created_at)}
               </p>
-              {/* Debug info - remove later */}
-              {!post.users && (
-                <p className="text-xs text-red-500 mt-1">
-                  Debug: No user data loaded for post {post.id}
-                </p>
-              )}
             </div>
+
+            {/* Actions on the right side of user info */}
+            {isPostAuthor() && (
+              <div className="flex items-center ml-auto">
+                {/* Edit Button - Only for post author */}
+                <button
+                  onClick={() => setShowEditModal(true)}
+                  className="flex items-center space-x-1 text-gray-600 hover:text-gray-800 transition-colors"
+                  title="Beitrag bearbeiten"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  <span className="text-sm">Bearbeiten</span>
+                </button>
+              </div>
+            )}
           </div>
-          
+
           {/* Post Content */}
           <SelectableText onTextSelect={() => {}}>
-            <div 
+            <div
               className="prose prose-gray max-w-none text-[var(--type)] leading-tight text-left"
               style={{ fontSize: '15px' }}
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </SelectableText>
+
+          {/* Reply and Message Links */}
+          <div className="flex items-center space-x-4 mt-6">
+            {/* Reply Link */}
+            <button
+              onClick={() => {
+                setOpenCommentForm(true)
+                setReplyToPostAuthor(true)
+                setTimeout(() => {
+                  document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })
+                }, 100)
+              }}
+              className="inline-flex items-center space-x-1 text-sm text-[var(--primary)] hover:opacity-80 transition-opacity"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+              <span>Antworten</span>
+            </button>
+
+            {/* Private Message Link */}
+            {!isPostAuthor() && user && post.users && (
+              <SendMessageButton
+                recipientId={post.user_id}
+                recipientUsername={post.users.username}
+                postTitle={getPostDisplayTitle(post)}
+                postId={post.id}
+                variant="text-link"
+              />
+            )}
+          </div>
         </div>
 
         {/* Comments Section */}
-        <div className="mt-8">
-          <CommentsSection postId={parseInt(id!)} />
+        <div className="-mt-3" id="comments">
+          <CommentsSection
+            postId={parseInt(id!)}
+            shouldOpenForm={openCommentForm}
+            replyToUsername={replyToPostAuthor && post?.users?.username ? post.users.username : undefined}
+            onFormStateChange={(isOpen) => {
+              if (isOpen) {
+                setOpenCommentForm(false)
+                setReplyToPostAuthor(false)
+              }
+            }}
+          />
         </div>
 
         {/* Edit Modal */}

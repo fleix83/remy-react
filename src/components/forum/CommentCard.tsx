@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import type { CommentWithRelations } from '../../types/database.types'
 import { CommentsService } from '../../services/comments.service'
 import UserAvatar from '../user/UserAvatar'
+import SendMessageButton from '../messaging/SendMessageButton'
 
 interface CommentCardProps {
   comment: CommentWithRelations
@@ -112,16 +113,6 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
         <div className="flex items-center space-x-2">
           {/* Comment Actions */}
           <button
-            onClick={handleQuoteText}
-            className="text-gray-500 hover:text-[var(--primary)] transition-colors p-1"
-            title="Zitieren"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </button>
-
-          <button
             onClick={() => {
               setEditContent(stripHtmlTags(comment.content))
               setIsEditing(true)
@@ -184,8 +175,31 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
         )}
       </div>
 
-      {/* Reply Button */}
-      <div className="flex items-center justify-end space-x-2">
+      {/* Reply and Message Links */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          {/* Reply Link */}
+          <button
+            onClick={() => onReply(comment.id)}
+            className="inline-flex items-center space-x-1 text-sm text-gray-600 hover:text-[var(--primary)] transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            </svg>
+            <span>Antworten</span>
+          </button>
+
+          {/* Private Message Link */}
+          {comment.users && comment.user_id && (
+            <SendMessageButton
+              recipientId={comment.user_id}
+              recipientUsername={comment.users.username}
+              variant="text-link"
+            />
+          )}
+        </div>
+
+        {/* Show/Hide Replies Toggle */}
         {comment.replies && comment.replies.length > 0 && (
           <button
             onClick={() => setShowReplies(!showReplies)}
@@ -194,13 +208,6 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             {showReplies ? 'Antworten ausblenden' : `${comment.replies.length} Antworten anzeigen`}
           </button>
         )}
-        
-        <button
-          onClick={() => onReply(comment.id)}
-          className="px-2 py-0.5 text-xs bg-[var(--primary)] text-white rounded-lg font-medium hover:bg-[var(--primary)] transition-colors"
-        >
-          Antworten
-        </button>
       </div>
 
       {/* Replies */}

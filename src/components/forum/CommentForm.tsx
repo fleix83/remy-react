@@ -110,6 +110,14 @@ const CommentForm: React.FC<CommentFormProps> = ({
   return (
     <div className={`${fullWidth ? 'bg-[var(--bg-element)] border-0 rounded-none px-6 py-8' : 'bg-[var(--bg-body)] border border-gray-300 rounded-lg p-4'}`}>
       <form onSubmit={handleSubmit}>
+        {/* Replying To Display */}
+        {replyingToUsername && (
+          <div className="mb-3 flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Antwort an:</span>
+            <span className="text-sm font-semibold text-[var(--primary)]">@{replyingToUsername}</span>
+          </div>
+        )}
+
         {/* Quote Display */}
         {renderQuotedText()}
 
@@ -120,6 +128,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
             onChange={setContent}
             placeholder={placeholder}
             minHeight={fullWidth ? "200px" : "120px"}
+            autoFocus={!!replyingToUsername}
           />
         </div>
 

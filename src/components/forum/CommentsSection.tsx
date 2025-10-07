@@ -5,12 +5,26 @@ import CommentForm from './CommentForm'
 
 interface CommentsSectionProps {
   postId: number
+  shouldOpenForm?: boolean
+  replyToUsername?: string
+  onFormStateChange?: (isOpen: boolean) => void
 }
 
-const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
+const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenForm = false, replyToUsername, onFormStateChange }) => {
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [selectedText, setSelectedText] = useState('')
   const [replyingToUsername, setReplyingToUsername] = useState('')
+
+  // Open form when parent requests it
+  useEffect(() => {
+    if (shouldOpenForm && !showCommentForm) {
+      setShowCommentForm(true)
+      if (replyToUsername) {
+        setReplyingToUsername(replyToUsername)
+      }
+      onFormStateChange?.(true)
+    }
+  }, [shouldOpenForm, showCommentForm, replyToUsername, onFormStateChange])
 
   const {
     comments: allComments,
@@ -55,25 +69,9 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
   return (
     <div className="overflow-hidden" style={{borderRadius: '20px', background: '#ecffef'}}>
-      {/* Comments Header */}
-      <div className="px-6 py-4" style={{background: '#d9f2de'}}>
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[var(--type)]">
-            Antworten ({commentCount})
-          </h3>
-          
-          <button
-            onClick={() => setShowCommentForm(!showCommentForm)}
-            className="inline-flex items-center px-3 py-1.5 text-xs font-bold bg-[var(--primary)] text-white rounded-md hover:bg-[var(--primary)] transition-colors"
-          >
-            {showCommentForm ? 'Abbrechen' : 'Antworten'}
-          </button>
-        </div>
-      </div>
-
       {/* Main Comment Form */}
       {showCommentForm && (
-        <div className="-mx-4 md:mx-0">
+        <div className="-mx-4 md:mx-0" id="comment-form">
           <CommentForm
             postId={postId}
             quotedText={selectedText}
@@ -114,6 +112,10 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
                   setSelectedText(quotedText || '')
                   setReplyingToUsername(comment.users?.username || '')
                   setShowCommentForm(true)
+                  // Scroll to comment form
+                  setTimeout(() => {
+                    document.getElementById('comment-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                  }, 100)
                 }}
                 onUpdate={() => loadComments(postId)}
               />

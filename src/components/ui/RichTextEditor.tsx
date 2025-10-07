@@ -14,6 +14,7 @@ interface RichTextEditorProps {
   className?: string
   minHeight?: string
   mobileOptimized?: boolean
+  autoFocus?: boolean
 }
 
 // Citation manager hook
@@ -95,13 +96,14 @@ const SelectableText: React.FC<{ children: React.ReactNode; onTextSelect: () => 
   return <div className="selectable-content">{children}</div>
 }
 
-const RichTextEditor: React.FC<RichTextEditorProps> = ({ 
-  content, 
-  onChange, 
+const RichTextEditor: React.FC<RichTextEditorProps> = ({
+  content,
+  onChange,
   placeholder = "Write your content...",
   className = "",
   minHeight = "150px",
-  mobileOptimized = false
+  mobileOptimized = false,
+  autoFocus = false
 }) => {
   const { selectedText, citationMode, insertCitation, clearSelection } = useCitationManager()
   
@@ -135,9 +137,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         class: `prose prose-sm max-w-none focus:outline-none p-4 text-left ${className}`,
         style: `min-height: ${dynamicMinHeight}; text-align: left;`
       }
-    }
+    },
+    autofocus: autoFocus
   })
-  
+
+  // Focus editor when autoFocus changes
+  useEffect(() => {
+    if (autoFocus && editor) {
+      editor.commands.focus()
+    }
+  }, [autoFocus, editor])
+
   if (!editor) return null
 
   const addLink = () => {
@@ -187,7 +197,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             }`}
             title="Bullet List"
           >
-            <span className="text-sm">•••</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="5" cy="8" r="1" fill="currentColor"/>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 8h10"/>
+              <circle cx="5" cy="12" r="1" fill="currentColor"/>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h10"/>
+              <circle cx="5" cy="16" r="1" fill="currentColor"/>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 16h10"/>
+            </svg>
           </button>
         </div>
       )
@@ -241,9 +258,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Quote"
         >
-          <span className="text-sm">"</span>
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
+          </svg>
         </button>
-        
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -252,7 +271,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Bullet List"
         >
-          <span className="text-sm">•••</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="5" cy="8" r="1" fill="currentColor"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 8h10"/>
+            <circle cx="5" cy="12" r="1" fill="currentColor"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h10"/>
+            <circle cx="5" cy="16" r="1" fill="currentColor"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 16h10"/>
+          </svg>
         </button>
         
         <button
@@ -316,10 +342,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       {renderToolbar()}
       
       {/* Editor content */}
-      <div className="relative">
-        <EditorContent 
+      <div className="relative editor-wrapper">
+        <style>{`
+          .editor-wrapper:focus-within {
+            box-shadow: 2px 0 0 0 #aedfb7, -2px 0 0 0 #aedfb7, 0 2px 0 0 #aedfb7;
+          }
+        `}</style>
+        <EditorContent
           editor={editor}
-          className="focus-within:ring-2 focus-within:ring-[#aedfb7] focus-within:ring-opacity-50 rounded-b-lg overflow-hidden"
+          className="rounded-b-lg overflow-hidden"
         />
         
         {editor.isEmpty && (
