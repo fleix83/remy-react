@@ -30,8 +30,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
     comments: allComments,
     loading: commentsLoading,
     loadComments,
-    createComment,
-    getCommentCount
+    createComment
   } = useCommentsStore()
   
   // Get comments for this specific post
