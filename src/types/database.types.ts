@@ -10,6 +10,7 @@ export type Database = {
           biography: string | null
           registration_date: string
           avatar_url: string | null
+          background_image_url: string | null
           bio: string | null
           role: 'user' | 'moderator' | 'admin'
           is_banned: boolean
@@ -27,6 +28,7 @@ export type Database = {
           biography?: string | null
           registration_date?: string
           avatar_url?: string | null
+          background_image_url?: string | null
           bio?: string | null
           role?: 'user' | 'moderator' | 'admin'
           is_banned?: boolean
@@ -44,6 +46,7 @@ export type Database = {
           biography?: string | null
           registration_date?: string
           avatar_url?: string | null
+          background_image_url?: string | null
           bio?: string | null
           role?: 'user' | 'moderator' | 'admin'
           is_banned?: boolean
