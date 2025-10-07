@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
 
@@ -54,7 +55,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[var(--bg-body)] w-full h-full overflow-y-auto">
         {/* Modal Header */}
-        <div className="sticky top-0 bg-[var(--bg-body)] border-b border-gray-600 p-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--bg-body)] p-4 flex items-center justify-between">
           <span className="inline-flex items-center px-2 py-1 rounded-lg font-medium bg-pink-500 text-white text-xs">
             Moderation Vorschau
           </span>
@@ -69,9 +70,9 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="py-6 px-0.5">
           {/* Post Card Style Content */}
-          <div className="bg-[var(--bg-element)] p-6 relative" style={{borderRadius: '20px'}}>
+          <div className="bg-[#fff0b5] p-6 relative" style={{borderRadius: '20px'}}>
             {/* Content Type Badge - Overlapping */}
             <span className={`absolute -top-2 left-4 z-10 inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-lg ${
               item.content_type === 'post' 
@@ -102,7 +103,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
 
             {/* Category Badge - Above User Block */}
             {(item as any).category_id && (
-              <div className="mb-2">
+              <div className="mb-2 flex justify-start">
                 <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white" style={{fontSize: '0.65rem'}}>
                   {categories[(item as any).category_id] || 'Kategorie'}
                 </span>
@@ -112,9 +113,9 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             {/* User Info */}
             <div className="flex items-start space-x-3 mb-4">
               {item.users && (
-                <UserAvatar 
-                  user={item.users} 
-                  size="small" 
+                <UserAvatar
+                  user={item.users}
+                  size="small"
                   className="flex-shrink-0"
                 />
               )}
@@ -146,9 +147,12 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                   </div>
                   {item.post_id && (
                     <div className="text-xs text-gray-500 mb-4">
-                      Kommentar zu: <span className="text-[var(--type)]">
+                      Kommentar zu: <Link
+                        to={`/post/${item.post_id}`}
+                        className="text-[var(--primary)] hover:underline"
+                      >
                         {postTitles[item.post_id] ? truncateTitle(postTitles[item.post_id]) : `Post #${item.post_id}`}
-                      </span>
+                      </Link>
                     </div>
                   )}
                   <div className="prose prose-gray max-w-none text-white leading-tight text-left text-sm border-l-2 border-gray-600 pl-4">

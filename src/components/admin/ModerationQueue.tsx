@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationQueueService } from '../../services/moderation-queue.service'
 import { supabase } from '../../lib/supabase'
@@ -25,7 +26,8 @@ const ModerationQueue: React.FC = () => {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [messageAction, setMessageAction] = useState<'approve' | 'reject' | 'message' | null>(null)
   const [messageItem, setMessageItem] = useState<ModerationQueueItem | null>(null)
-  
+  const [contentFilter, setContentFilter] = useState<'alle' | 'beiträge' | 'kommentare'>('alle')
+
   const moderationService = new ModerationQueueService()
 
   useEffect(() => {
@@ -579,69 +581,110 @@ const ModerationQueue: React.FC = () => {
     )
   }
 
+  // Filter queue items based on content type
+  const filteredQueueItems = queueItems.filter(item => {
+    if (contentFilter === 'beiträge') return item.content_type === 'post'
+    if (contentFilter === 'kommentare') return item.content_type === 'comment'
+    return true // 'alle'
+  })
+
   return (
-    <div className="min-h-screen bg-[var(--bg-body)]">
+    <div className="min-h-screen bg-[#fff9de]">
       <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-white mb-2">Moderationsqueue</h1>
-            <p className="text-gray-300">
-              {queueItems.length} Elemente warten auf Moderation
-            </p>
+        <div className="mb-6 bg-[#fff0b5] pt-6 px-6 pb-1 rounded-[20px]">
+          {/* Top Row: Title and Bulk Actions */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-left">
+              <h1 className="text-2xl font-bold text-[var(--primary)] mb-2 text-left">Moderation</h1>
+              <p className="text-[var(--primary)] text-left flex items-center gap-2">
+                <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold" style={{fontSize: '22px', color: '#fa8072'}}>
+                  {filteredQueueItems.length}
+                </span>
+                Elemente warten auf Moderation
+              </p>
+            </div>
+
+            {selectedItems.size > 0 && (
+              <div className="flex items-center space-x-3">
+                <span className="text-gray-300 text-sm">
+                  {selectedItems.size} ausgewählt
+                </span>
+                <button
+                  onClick={handleBulkApprove}
+                  className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                >
+                  Publizieren
+                </button>
+                <button
+                  onClick={handleBulkReject}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                >
+                  Ablehnen
+                </button>
+                <button
+                  onClick={handleBulkDelete}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                >
+                  Löschen
+                </button>
+                <button
+                  onClick={() => setSelectedItems(new Set())}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                >
+                  Auswahl aufheben
+                </button>
+              </div>
+            )}
           </div>
-          
-          {selectedItems.size > 0 && (
-            <div className="flex items-center space-x-3">
-              <span className="text-gray-300 text-sm">
-                {selectedItems.size} ausgewählt
-              </span>
+
+          {/* Bottom Row: Filter (Right aligned) */}
+          <div className="flex justify-end">
+            <div className="flex items-center space-x-3 text-sm text-[var(--primary)]">
               <button
-                onClick={handleBulkApprove}
-                className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                onClick={() => setContentFilter('alle')}
+                className={`underline ${contentFilter === 'alle' ? 'font-bold' : ''}`}
               >
-                Publizieren
+                Alle
               </button>
               <button
-                onClick={handleBulkReject}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                onClick={() => setContentFilter('beiträge')}
+                className={`underline ${contentFilter === 'beiträge' ? 'font-bold' : ''}`}
               >
-                Ablehnen
+                Beiträge
               </button>
               <button
-                onClick={handleBulkDelete}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                onClick={() => setContentFilter('kommentare')}
+                className={`underline ${contentFilter === 'kommentare' ? 'font-bold' : ''}`}
               >
-                Löschen
-              </button>
-              <button
-                onClick={() => setSelectedItems(new Set())}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm"
-              >
-                Auswahl aufheben
+                Kommentare
               </button>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Queue Items */}
-        {queueItems.length === 0 ? (
-          <div className="bg-[var(--bg-element)] p-8 text-center" style={{borderRadius: '20px'}}>
+        {filteredQueueItems.length === 0 ? (
+          <div className="bg-[#fff0b5] p-8 text-center" style={{borderRadius: '20px'}}>
             <div className="text-[#2ebe7a] mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Queue ist leer</h3>
-            <p className="text-gray-300">Alle Inhalte wurden moderiert!</p>
+            <h3 className="text-lg font-semibold text-[var(--primary)] mb-2">
+              {contentFilter === 'alle' ? 'Queue ist leer' : `Keine ${contentFilter}`}
+            </h3>
+            <p className="text-[var(--primary)]">
+              {contentFilter === 'alle' ? 'Alle Inhalte wurden moderiert!' : 'Keine Inhalte in diesem Filter.'}
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {queueItems.map((item) => (
-              <div 
-                key={`${item.content_type}-${item.id}`} 
-                className={`p-6 mb-4 hover:bg-[var(--bg-element-hover)] transition-colors cursor-pointer relative ${
-                  selectedItems.has(item.id) ? 'ring-2 ring-[var(--primary)] bg-[#234652]' : 'bg-[var(--bg-element)]'
+            {filteredQueueItems.map((item) => (
+              <div
+                key={`${item.content_type}-${item.id}`}
+                className={`p-6 mb-4 hover:bg-[#ffe580] transition-colors cursor-pointer relative ${
+                  selectedItems.has(item.id) ? 'ring-2 ring-[var(--primary)] bg-[#ffd966]' : 'bg-[#fff0b5]'
                 }`}
                 style={{borderRadius: '20px'}}
                 onClick={() => handleItemClick(item)}
@@ -696,26 +739,48 @@ const ModerationQueue: React.FC = () => {
                 {item.content_type === 'post' && (
                   <div className="mb-2 flex justify-start">
                     {permissions.canModerate ? (
-                      <select
-                        value={item.category_id || ''}
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            handleCategoryChange(item.id, parseInt(e.target.value))
-                          }
-                        }}
-                        className="px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white border-none outline-none cursor-pointer hover:bg-[var(--primary)] transition-colors w-auto"
-                        style={{fontSize: '0.65rem', minWidth: 'fit-content'}}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <option value="" disabled>Kategorie wählen</option>
-                        {allCategories.map(cat => (
-                          <option key={cat.id} value={cat.id} style={{backgroundColor: '#1a3442', color: 'white'}}>
-                            {cat.name_de}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="inline-grid" style={{ gridTemplateColumns: '1fr' }}>
+                        <select
+                          value={item.category_id || ''}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              handleCategoryChange(item.id, parseInt(e.target.value))
+                            }
+                          }}
+                          className="px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white border-none outline-none cursor-pointer hover:bg-[var(--primary)] transition-colors"
+                          style={{
+                            fontSize: '0.65rem',
+                            gridColumn: '1',
+                            gridRow: '1',
+                            width: 'auto',
+                            minWidth: '0'
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <option value="" disabled>Kategorie wählen</option>
+                          {allCategories.map(cat => (
+                            <option key={cat.id} value={cat.id} style={{backgroundColor: '#1a3442', color: 'white'}}>
+                              {cat.name_de}
+                            </option>
+                          ))}
+                        </select>
+                        {/* Hidden span to size the select based on current selection */}
+                        <span
+                          className="px-2 py-0.5 font-medium invisible whitespace-pre"
+                          style={{
+                            fontSize: '0.65rem',
+                            gridColumn: '1',
+                            gridRow: '1',
+                            pointerEvents: 'none'
+                          }}
+                        >
+                          {item.category_id && categories[item.category_id]
+                            ? categories[item.category_id]
+                            : 'Kategorie wählen'}
+                        </span>
+                      </div>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white w-auto" style={{fontSize: '0.65rem'}}>
+                      <span className="px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white inline-block" style={{fontSize: '0.65rem'}}>
                         {item.category_id && categories[item.category_id] ? categories[item.category_id] : 'Keine Kategorie'}
                       </span>
                     )}
@@ -754,12 +819,16 @@ const ModerationQueue: React.FC = () => {
                       </div>
                       {item.post_id && (
                         <div className="text-xs text-gray-500 text-left">
-                          Kommentar zu: <span className="text-[var(--type)]">
-                            {postTitles[item.post_id] ? 
-                              truncateText(postTitles[item.post_id], 40) : 
+                          Kommentar zu: <Link
+                            to={`/post/${item.post_id}`}
+                            className="text-[var(--primary)] hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {postTitles[item.post_id] ?
+                              truncateText(postTitles[item.post_id], 40) :
                               `Post #${item.post_id}`
                             }
-                          </span>
+                          </Link>
                         </div>
                       )}
                     </div>
