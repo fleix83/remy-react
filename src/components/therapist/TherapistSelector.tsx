@@ -180,9 +180,9 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
           onBlur={handleInputBlur}
           onClick={handleInputFocus}
           onKeyDown={handleKeyDown}
-          placeholder="Therapeut/in suchen oder klicken um zu erstellen..."
+          placeholder="Therapeut* suchen"
           disabled={disabled}
-          className="w-full px-3 py-2 pr-10 rounded-md bg-white focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 pr-10 border border-[#ebebeb] rounded-md bg-white focus:outline-none focus:border-[#37a653] disabled:bg-gray-100 disabled:text-gray-500"
         />
         
         {/* Clear button */}
@@ -225,7 +225,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
 
           {/* Therapist options */}
           {filteredTherapists.length === 0 && searchTerm ? (
-            <div className="px-4 py-3 text-gray-500 text-sm">
+            <div className="px-4 py-3 text-gray-500 text-sm text-left">
               Keine Therapeuten gefunden für "{searchTerm}"
               {therapists.length > 0 && (
                 <div className="text-xs mt-1">
@@ -234,11 +234,11 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
               )}
             </div>
           ) : filteredTherapists.length === 0 && therapists.length === 0 ? (
-            <div className="px-4 py-3 text-gray-500 text-sm">
+            <div className="px-4 py-3 text-gray-500 text-sm text-left">
               Noch keine Therapeuten vorhanden. Erstellen Sie den ersten Therapeuten.
             </div>
           ) : filteredTherapists.length === 0 ? (
-            <div className="px-4 py-3 text-gray-500 text-sm">
+            <div className="px-4 py-3 text-gray-500 text-sm text-left">
               Keine Therapeuten für diesen Kanton gefunden
               {therapists.length > 0 && (
                 <div className="text-xs mt-1">
@@ -251,14 +251,14 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
               <div
                 key={therapist.id}
                 onClick={() => handleTherapistSelect(therapist)}
-                className={`px-4 py-3 cursor-pointer hover:bg-gray-50 ${
+                className={`px-4 py-3 cursor-pointer hover:bg-gray-50 text-left ${
                   index === selectedIndex ? 'bg-primary-50' : ''
                 } ${selectedTherapist?.id === therapist.id ? 'bg-primary-100' : ''}`}
               >
-                <div className="font-medium text-gray-900">
+                <div className="font-semibold text-[#37a653]">
                   {therapistsService.formatTherapistName(therapist)}
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600 mt-1">
                   {therapist.designation}
                   {therapist.institution && ` • ${therapist.institution}`}
                   {therapist.canton && ` • ${therapist.canton}`}

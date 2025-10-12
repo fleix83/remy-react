@@ -60,27 +60,27 @@ function App() {
             </div>
           }>
             <Routes>
-          {/* PostView without Layout to avoid double navigation */}
+          {/* PostView and TherapistDirectoryPage without Layout to avoid double navigation */}
           <Route path="/post/:id" element={<PostView />} />
-          
+          <Route path="/therapists" element={<TherapistDirectoryPage />} />
+
           {/* All other routes use Layout */}
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
               <Layout onCreatePost={handleCreatePost}>
-                <ForumView 
+                <ForumView
                   showCreatePostDialog={showCreatePostDialog}
                   onCreatePostDialogClose={() => setShowCreatePostDialog(false)}
                   onCreatePost={handleCreatePost}
                 />
               </Layout>
-            } 
+            }
           />
           <Route path="/messages" element={<Layout onCreatePost={handleCreatePost}><MessagesPage /></Layout>} />
-          <Route path="/therapists" element={<Layout onCreatePost={handleCreatePost}><TherapistDirectoryPage /></Layout>} />
           <Route path="/profile" element={<Layout onCreatePost={handleCreatePost}><UserProfile /></Layout>} />
           <Route path="/admin" element={<Layout onCreatePost={handleCreatePost}><AdminDashboard /></Layout>} />
-          <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost}><ModerationQueue /></Layout>} />
+          <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost} headerBg="#fff0b5"><ModerationQueue /></Layout>} />
             </Routes>
           </Suspense>
       </Router>

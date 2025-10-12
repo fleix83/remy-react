@@ -24,15 +24,16 @@ interface ForumState {
   posts: PostWithRelations[]
   currentPost: PostWithRelations | null
   loading: boolean
-  
+  error: string | null
+
   // Filters & Pagination
   filters: PostFilters
   pagination: PaginationState
-  
+
   // Categories
   categories: Category[]
   categoriesLoading: boolean
-  
+
   // Actions
   loadPosts: (filters?: PostFilters) => Promise<void>
   loadMorePosts: () => Promise<void>
@@ -66,6 +67,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
   posts: [],
   currentPost: null,
   loading: false,
+  error: null,
   filters: {},
   pagination: initialPagination,
   categories: [],
@@ -147,14 +149,19 @@ export const useForumStore = create<ForumState>((set, get) => ({
   // Load single post
   loadPost: async (id: number) => {
     try {
-      set({ loading: true })
+      set({ loading: true, error: null, currentPost: null })
       const post = await postsService.getPost(id)
-      set({ currentPost: post })
+
+      if (!post) {
+        set({ currentPost: null, error: 'Post not found', loading: false })
+        return
+      }
+
+      set({ currentPost: post, error: null, loading: false })
     } catch (error) {
       console.error('Error loading post:', error)
-      throw error
-    } finally {
-      set({ loading: false })
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load post'
+      set({ currentPost: null, error: errorMessage, loading: false })
     }
   },
 

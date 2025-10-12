@@ -134,7 +134,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
     // Validate therapist selection for "Erfahrung" category
     if (categoryId === 1 && !selectedTherapist) {
-      alert('Bitte wählen Sie einen Therapeuten für Ihre Erfahrung aus')
+      alert('Bitte wählen Sie einen Therapeut* für Ihre Erfahrung aus')
       return
     }
 
@@ -178,7 +178,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
         {mobileOptimized ? (
           <>
             {/* 1. Category Badge Dropdown - First */}
-            <div className="mb-4">
+            <div className="mb-4" style={{ marginTop: '12px' }}>
               <BadgeDropdown
                 value={categoryId}
                 options={categories.map(cat => ({ value: cat.id, label: cat.name_de }))}
@@ -199,10 +199,10 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   value: c.code,
                   label: c.name,
                   icon: c.code ? (
-                    <img 
+                    <img
                       src={`/remyreact/kantone/${c.code.toLowerCase()}.png`}
                       alt={`${c.code} flag`}
-                      className="w-3 h-2 object-cover"
+                      className="w-5 h-3 object-contain"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none'
                       }}
@@ -211,7 +211,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 }))}
                 onChange={(value) => setCanton(String(value))}
                 placeholder="Kanton"
-                badgeClassName="bg-gray-600 text-white hover:bg-gray-700"
+                badgeClassName="bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                 dropdownClassName="max-h-[66vh] overflow-y-auto"
                 className="w-full"
                 required
@@ -240,11 +240,9 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* Therapist Selector - Only for Erfahrung category */}
             {categoryId === 1 && (
               <div className="mb-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-md p-2 mb-2">
-                  <p className="text-xs text-blue-800">
-                    Therapeut/in für Ihre Erfahrung auswählen
-                  </p>
-                </div>
+                <label className="block mb-2 text-left" style={{ fontSize: '0.75rem', color: '#4785ff' }}>
+                  Therapeut* für Erfahrung wählen
+                </label>
                 <TherapistSelector
                   selectedTherapist={selectedTherapist}
                   onTherapistSelect={setSelectedTherapist}
@@ -255,8 +253,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
             {/* 4. Content - Fourth */}
             <div className="mb-6">
-              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-                Inhalt *
+              <label htmlFor="content" className="block mb-1 text-left" style={{ fontSize: '0.75rem', color: '#4785ff' }}>
+                Inhalt
               </label>
               <RichTextEditor
                 content={content}
@@ -368,14 +366,14 @@ const PostEditor: React.FC<PostEditorProps> = ({
                     </div>
                     <div className="ml-3">
                       <p className="text-sm text-blue-800">
-                        Der Titel wird automatisch basierend auf dem ausgewählten Therapeuten erstellt.
+                        Der Titel wird automatisch basierend auf dem ausgewählten Therapeut* erstellt.
                       </p>
                     </div>
                   </div>
                 </div>
                 
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Therapeut/in *
+                  Therapeut* *
                 </label>
                 <TherapistSelector
                   selectedTherapist={selectedTherapist}
@@ -383,7 +381,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   canton={canton}
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Wählen Sie den Therapeuten/die Therapeutin aus, mit dem/der Sie eine Erfahrung gemacht haben.
+                  Wählen Sie den Therapeut* aus, mit dem Sie eine Erfahrung gemacht haben.
                 </p>
               </div>
             )}
@@ -419,17 +417,17 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3.5 py-2 rounded-md font-medium transition-colors"
                   disabled={publishing}
                 >
                   Abbrechen
                 </button>
               )}
-              
+
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e, false)}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3.5 py-2 rounded-md font-medium transition-colors"
                 disabled={publishing}
               >
                 Als Entwurf
@@ -440,15 +438,15 @@ const PostEditor: React.FC<PostEditorProps> = ({
             <button
               type="submit"
               disabled={publishing || isLoading}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-all transform hover:scale-105 shadow-md"
-              style={{ 
+              className="text-white px-3.5 py-2 rounded-md font-medium transition-all transform hover:scale-105 shadow-md"
+              style={{
                 backgroundColor: '#4785ff',
                 boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
               }}
             >
-              {publishing || isLoading 
-                ? 'Wird gespeichert...'
-                : 'Speichern'
+              {publishing || isLoading
+                ? 'Wird veröffentlicht...'
+                : 'Veröffentlichen'
               }
             </button>
           </div>

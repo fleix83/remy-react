@@ -77,7 +77,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
 
   return (
     <form onSubmit={handleSendMessage} className="p-4">
-      <div className="flex items-end space-x-3">
+      <div className="flex items-center space-x-3">
         {/* Message Input */}
         <div className="flex-1">
           <textarea
@@ -90,33 +90,33 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
             rows={1}
             disabled={sending}
           />
-          
-          {/* Helper text */}
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-400">
-              Press Enter to send, Shift+Enter for new line
-            </span>
-            <span className="text-xs text-gray-400">
-              {message.length}/1000
-            </span>
-          </div>
         </div>
 
         {/* Send Button */}
         <button
           type="submit"
           disabled={!message.trim() || sending || message.length > 1000}
-          className="p-3 bg-[var(--primary)] hover:bg-[var(--primary)] disabled:bg-gray-600 disabled:cursor-not-allowed text-[var(--type)] rounded-xl transition-colors flex items-center justify-center min-w-[48px]"
+          className="p-3 bg-[var(--primary)] hover:bg-[var(--primary)] disabled:bg-[#c8c8c8b3] disabled:cursor-not-allowed text-[var(--type)] rounded-xl transition-colors flex items-center justify-center min-w-[48px] min-h-[48px] flex-shrink-0"
           title="Send message"
         >
           {sending ? (
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
           ) : (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
           )}
         </button>
+      </div>
+
+      {/* Helper text */}
+      <div className="flex items-center justify-between mt-2">
+        <span className="text-xs text-gray-400">
+          Press Enter to send, Shift+Enter for new line
+        </span>
+        <span className="text-xs text-gray-400">
+          {message.length}/1000
+        </span>
       </div>
     </form>
   )

@@ -65,7 +65,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           className={`px-4 py-2 rounded-2xl break-words ${
             isOwn
               ? 'bg-[var(--primary)] text-white rounded-br-md'
-              : 'bg-[var(--bg-element-hover)] text-white rounded-bl-md'
+              : 'bg-[var(--bg-erfahrung)] text-black rounded-bl-md'
           }`}
         >
           <p className="text-sm leading-relaxed whitespace-pre-wrap">

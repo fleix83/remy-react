@@ -5,29 +5,30 @@ interface LayoutProps {
   children: React.ReactNode
   onCreatePost?: () => void
   showCreatePostButton?: boolean
+  headerBg?: string
 }
 
-const Layout: React.FC<LayoutProps> = ({ 
-  children, 
-  onCreatePost = () => {}, 
-  showCreatePostButton = true 
+const Layout: React.FC<LayoutProps> = ({
+  children,
+  onCreatePost = () => {},
+  showCreatePostButton = true,
+  headerBg
 }) => {
   return (
-    <div 
-      className="min-h-screen"
-      style={{ 
-        backgroundColor: '#f6fff7',
-        backgroundImage: 'url(background.svg)',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: '0 0'
+    <div
+      className="min-h-screen relative"
+      style={{
+        background: '#f6fff7 url(/remyreact/background.svg) no-repeat 0 0',
+        zIndex: 1
       }}
     >
-      <Navigation 
+      <Navigation
         onCreatePost={onCreatePost}
         showCreatePostButton={showCreatePostButton}
+        headerBg={headerBg}
       />
-      
-      <main className="flex-1">
+
+      <main className="flex-1 relative" style={{ zIndex: 2 }}>
         {children}
       </main>
       

@@ -174,7 +174,7 @@ const PostView: React.FC = () => {
           className="p-6 mb-4 relative"
           style={{
             borderRadius: '30px',
-            backgroundColor: 'rgb(217 247 222)',
+            backgroundColor: '#e4fce8',
             zIndex: 1,
             paddingTop: '66px'
           }}
@@ -209,9 +209,13 @@ const PostView: React.FC = () => {
 
           {/* Therapist Info */}
           {post.therapists && (
-            <p className="text-left" style={{color: '#4785ff', fontSize: '15px', lineHeight: '1.2'}}>
+            <button
+              onClick={() => navigate(`/therapists?therapist=${post.therapists!.id}`)}
+              className="text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0"
+              style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2'}}
+            >
               Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.designation}
-            </p>
+            </button>
           )}
 
           {/* Title */}

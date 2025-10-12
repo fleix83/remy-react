@@ -50,7 +50,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
   }
 
   return (
-    <div className="bg-[var(--bg-element)] border-b border-gray-300 p-4">
+    <div className="bg-[#e7e2d7] border-b border-gray-300 p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           {/* Back button (mobile only) */}
@@ -71,7 +71,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
 
           {/* User Info */}
           <div>
-            <h2 className="font-semibold text-white">
+            <h2 className="font-semibold text-black">
               {conversation.participant.username}
             </h2>
             {isBlocked && (

@@ -90,7 +90,7 @@ const ConversationView: React.FC = () => {
       </div>
 
       {/* Message Composer */}
-      <div className="border-t border-gray-300 bg-[var(--bg-element)]">
+      <div className="border-t border-gray-300 bg-[#e7e2d7]">
         <MessageComposer 
           recipientId={currentConversation.id}
           recipientUsername={currentConversation.participant.username}

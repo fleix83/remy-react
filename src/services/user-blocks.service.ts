@@ -74,7 +74,7 @@ export class UserBlocksService {
       .select('blocker_id')
       .eq('blocker_id', user.id)
       .eq('blocked_id', userId)
-      .single()
+      .maybeSingle()
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
       console.error('Error checking block status:', error)
@@ -97,7 +97,7 @@ export class UserBlocksService {
       .select('blocker_id')
       .eq('blocker_id', userId)
       .eq('blocked_id', user.id)
-      .single()
+      .maybeSingle()
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
       console.error('Error checking if blocked by user:', error)
@@ -179,13 +179,13 @@ export class UserBlocksService {
         .select('blocker_id')
         .eq('blocker_id', userId1)
         .eq('blocked_id', userId2)
-        .single(),
+        .maybeSingle(),
       supabase
         .from('user_blocks')
         .select('blocker_id')
         .eq('blocker_id', userId2)
         .eq('blocked_id', userId1)
-        .single()
+        .maybeSingle()
     ])
 
     return {

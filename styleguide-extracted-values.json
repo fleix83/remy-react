@@ -1,0 +1,160 @@
+{
+  "extractedAt": "2025-09-14T00:00:00Z",
+  "projectName": "Remy React Forum",
+  "description": "Design system extracted from React + Tailwind CSS psychotherapy patient forum",
+  "colors": {
+    "cssVariables": {
+      "primary": "#4785ff",
+      "salmon": "#ff6b6b",
+      "salmon-hover": "#ff5252",
+      "type": "#1a1a1a",
+      "bg-body": "#f8f6f3",
+      "bg-element": "#d1f2d7",
+      "bg-element-hover": "#c1e2c7",
+      "bg-erfahrung": "#ffeb99",
+      "bg-suche": "#FFC8C8",
+      "bg-gedanken": "#C5D0FF",
+      "bg-rant": "#edd3ff",
+      "bg-ressourcen": "#98FFC7",
+      "bg-erfahrung-hover": "#3b71e6",
+      "bg-suche-hover": "#2e8b47",
+      "bg-gedanken-hover": "#7b1fa2",
+      "bg-rant-hover": "#f55252",
+      "bg-ressourcen-hover": "#e68900"
+    },
+    "tailwindPrimary": {
+      "50": "#f0f9ff",
+      "100": "#e0f2fe",
+      "200": "#bae6fd",
+      "300": "#7dd3fc",
+      "400": "#38bdf8",
+      "500": "#0ea5e9",
+      "600": "#0284c7",
+      "700": "#0369a1",
+      "800": "#075985",
+      "900": "#0c4a6e",
+      "950": "#082f49"
+    },
+    "tailwindSecondary": {
+      "50": "#f8fafc",
+      "100": "#f1f5f9",
+      "200": "#e2e8f0",
+      "300": "#cbd5e1",
+      "400": "#94a3b8",
+      "500": "#64748b",
+      "600": "#475569",
+      "700": "#334155",
+      "800": "#1e293b",
+      "900": "#0f172a",
+      "950": "#020617"
+    },
+    "semantic": {
+      "success": "#10b981",
+      "warning": "#f59e0b",
+      "error": "#ef4444",
+      "info": "#3b82f6"
+    }
+  },
+  "buttons": {
+    "primary": {
+      "name": "Primary Button",
+      "base": "bg-primary-600 text-white px-4 py-2 rounded-md font-medium transition-colors",
+      "hover": "hover:bg-primary-700",
+      "focus": "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500",
+      "disabled": "disabled:opacity-50 disabled:cursor-not-allowed"
+    },
+    "primaryCss": {
+      "name": "Primary CSS Variable Button",
+      "base": "bg-[var(--primary)] text-white px-4 py-2 rounded-md font-medium transition-colors",
+      "hover": "hover:bg-[var(--primary)]",
+      "disabled": "disabled:bg-gray-600 disabled:cursor-not-allowed"
+    },
+    "secondary": {
+      "name": "Secondary Button",
+      "base": "bg-gray-600 text-white px-4 py-2 rounded transition-colors",
+      "hover": "hover:bg-gray-700",
+      "disabled": "disabled:opacity-50 disabled:cursor-not-allowed"
+    },
+    "danger": {
+      "name": "Danger Button",
+      "base": "bg-red-600 text-white px-4 py-2 rounded transition-colors",
+      "hover": "hover:bg-red-700"
+    },
+    "success": {
+      "name": "Success Button",
+      "base": "bg-green-600 text-white px-4 py-2 rounded transition-colors",
+      "hover": "hover:bg-green-700"
+    },
+    "warning": {
+      "name": "Warning Button",
+      "base": "bg-yellow-600 text-black px-4 py-2 rounded font-medium transition-colors",
+      "hover": "hover:bg-yellow-700",
+      "disabled": "disabled:opacity-50 disabled:cursor-not-allowed"
+    },
+    "link": {
+      "name": "Link Button",
+      "base": "text-primary-600 hover:text-primary-500 underline transition-colors"
+    },
+    "ghost": {
+      "name": "Ghost Button",
+      "base": "text-gray-300 hover:text-white transition-colors border border-gray-600 hover:border-gray-500 rounded-md px-3 py-2"
+    },
+    "badge": {
+      "name": "Badge Button",
+      "base": "inline-flex items-center px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer hover:opacity-80"
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "body": "\"Nunito Sans\", sans-serif",
+      "headline": "\"Nunito\", sans-serif",
+      "gaegu": "\"Gaegu\", cursive"
+    },
+    "headings": {
+      "base": "font-headline font-weight-600"
+    },
+    "prose": {
+      "color": "var(--type)",
+      "strong": "font-weight: 700",
+      "link": "color: var(--primary); text-decoration: underline"
+    }
+  },
+  "spacing": {
+    "common": ["px-2", "px-3", "px-4", "px-6", "py-1", "py-2", "py-3", "py-4"],
+    "margins": ["m-1", "m-2", "m-4", "mb-2", "mb-4", "mt-2", "mt-4"],
+    "padding": ["p-1", "p-2", "p-3", "p-4", "p-6"]
+  },
+  "borderRadius": {
+    "common": ["rounded", "rounded-md", "rounded-lg", "rounded-xl", "rounded-full"]
+  },
+  "shadows": {
+    "common": ["shadow-sm", "shadow", "shadow-lg"]
+  },
+  "categoryColors": {
+    "erfahrung": {
+      "name": "Experience/Stories",
+      "background": "#ffeb99",
+      "hover": "#3b71e6"
+    },
+    "suche": {
+      "name": "Search for Therapist",
+      "background": "#FFC8C8",
+      "hover": "#2e8b47"
+    },
+    "gedanken": {
+      "name": "Thoughts/Reflections",
+      "background": "#C5D0FF",
+      "hover": "#7b1fa2"
+    },
+    "rant": {
+      "name": "Rants/Venting",
+      "background": "#edd3ff",
+      "hover": "#f55252"
+    },
+    "ressourcen": {
+      "name": "Resources/Tips",
+      "background": "#98FFC7",
+      "hover": "#e68900"
+    }
+  }
+}

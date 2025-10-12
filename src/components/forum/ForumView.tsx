@@ -171,7 +171,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 placeholder="Suche..."
                 value={searchInput}
                 onChange={handleSearchChange}
-                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm"
+                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm"
                 style={{borderRadius: '20px'}}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -225,11 +225,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
       {showCreatePostDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-40">
           <div className="w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto" style={{backgroundColor: '#ecffef'}}>
-            <div className="sticky top-0 border-b border-gray-300 md:border-gray-200 px-4 md:px-6 py-3 md:py-4" style={{backgroundColor: '#ecffef', paddingTop: 'max(1rem, env(safe-area-inset-top))'}}>
-              <div className="flex items-center justify-between">
-                <h2 className="text-base md:text-xl font-headline font-bold text-[var(--type)]">
-                  Neuen Beitrag erstellen
-                </h2>
+            <div className="px-4 md:px-6 pb-0" style={{paddingTop: 'max(16px, calc(16px + env(safe-area-inset-top)))'}}>
+              <div className="flex justify-end mb-10">
                 <button
                   onClick={onCreatePostDialogClose}
                   className="text-gray-500 hover:text-gray-700 transition-colors p-1"
@@ -239,8 +236,11 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                   </svg>
                 </button>
               </div>
+              <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
+                Neuen Beitrag erstellen
+              </h2>
             </div>
-            <div className="p-4 md:p-6 pb-20 md:pb-6">
+            <div className="px-4 md:px-6 pb-20 md:pb-6">
               <PostEditor 
                 onSubmit={handleCreatePost}
                 onCancel={onCreatePostDialogClose}

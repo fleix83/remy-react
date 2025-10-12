@@ -11,11 +11,13 @@ import MobileSlideMenu from './MobileSlideMenu'
 interface NavigationProps {
   onCreatePost: () => void
   showCreatePostButton?: boolean
+  headerBg?: string
 }
 
-const Navigation: React.FC<NavigationProps> = ({ 
-  onCreatePost, 
-  showCreatePostButton = true 
+const Navigation: React.FC<NavigationProps> = ({
+  onCreatePost,
+  showCreatePostButton = true,
+  headerBg
 }) => {
   const { user, userProfile, logout } = useAuthStore()
   const permissions = usePermissions()
@@ -38,7 +40,7 @@ const Navigation: React.FC<NavigationProps> = ({
   }
 
   return (
-    <nav className="relative">
+    <nav className="relative" style={headerBg ? { backgroundColor: headerBg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
