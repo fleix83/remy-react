@@ -20,12 +20,13 @@ export function formatTherapistForTitle(therapist: Therapist): string {
   
   // Build the description parts
   const descriptionParts = []
-  
-  // Add designation
-  if (therapist.designation) {
-    descriptionParts.push(therapist.designation)
+
+  // Add designation (use short version if available, otherwise full)
+  const designation = therapist.short_designation || therapist.designation
+  if (designation) {
+    descriptionParts.push(designation)
   }
-  
+
   // Add institution if available
   if (therapist.institution) {
     descriptionParts.push(therapist.institution)

@@ -165,6 +165,7 @@ export type Database = {
           last_name: string
           institution: string | null
           designation: string
+          short_designation: string | null
           description: string | null
           canton: string | null
           created_at: string
@@ -177,6 +178,7 @@ export type Database = {
           last_name: string
           institution?: string | null
           designation: string
+          short_designation?: string | null
           description?: string | null
           canton?: string | null
           created_at?: string
@@ -189,6 +191,7 @@ export type Database = {
           last_name?: string
           institution?: string | null
           designation?: string
+          short_designation?: string | null
           description?: string | null
           canton?: string | null
           created_at?: string

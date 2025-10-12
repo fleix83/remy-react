@@ -30,7 +30,7 @@ export class TherapistsService {
     const { data, error } = await supabase
       .from('therapists')
       .select('*')
-      .or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,institution.ilike.%${searchTerm}%,designation.ilike.%${searchTerm}%`)
+      .or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,institution.ilike.%${searchTerm}%,designation.ilike.%${searchTerm}%,short_designation.ilike.%${searchTerm}%`)
       .order('last_name', { ascending: true })
       .order('first_name', { ascending: true })
 
@@ -66,6 +66,7 @@ export class TherapistsService {
     last_name: string
     institution?: string
     designation: string
+    short_designation?: string
     description?: string
     canton?: string
   }): Promise<Therapist> {
@@ -73,12 +74,12 @@ export class TherapistsService {
 
     // Check authentication first
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError) {
       console.error('❌ TherapistsService: Auth error:', authError)
       throw new Error('Authentication failed: ' + authError.message)
     }
-    
+
     if (!user) {
       console.error('❌ TherapistsService: No authenticated user')
       throw new Error('User not authenticated')
@@ -92,6 +93,7 @@ export class TherapistsService {
       last_name: therapistData.last_name.trim(),
       institution: therapistData.institution?.trim() || null,
       designation: therapistData.designation,
+      short_designation: therapistData.short_designation?.trim() || null,
       description: therapistData.description?.trim() || null,
       canton: therapistData.canton || null
     }

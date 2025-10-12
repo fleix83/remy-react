@@ -259,7 +259,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
                   {therapistsService.formatTherapistName(therapist)}
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
-                  {therapist.designation}
+                  {therapist.short_designation || therapist.designation}
                   {therapist.institution && ` • ${therapist.institution}`}
                   {therapist.canton && ` • ${therapist.canton}`}
                 </div>

@@ -332,7 +332,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                         {therapistsService.formatTherapistName(therapist)}
                       </div>
                       <div className="text-xs text-gray-600">
-                        {therapist.designation}
+                        {therapist.short_designation || therapist.designation}
                         {therapist.institution && ` • ${therapist.institution}`}
                       </div>
                     </div>

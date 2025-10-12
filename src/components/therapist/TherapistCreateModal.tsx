@@ -26,6 +26,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     first_name: '',
     last_name: '',
     designation: '',
+    short_designation: '',
     institution: '',
     description: ''
   })
@@ -43,6 +44,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
         first_name: therapist.first_name || '',
         last_name: therapist.last_name || '',
         designation: therapist.designation || '',
+        short_designation: therapist.short_designation || '',
         institution: therapist.institution || '',
         description: therapist.description || ''
       })
@@ -160,6 +162,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           first_name: formData.first_name,
           last_name: formData.last_name,
           designation: formData.designation,
+          short_designation: formData.short_designation || null,
           institution: formData.institution || null,
           description: formData.description || null
         })
@@ -171,6 +174,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           first_name: formData.first_name,
           last_name: formData.last_name,
           designation: formData.designation,
+          short_designation: formData.short_designation || undefined,
           institution: formData.institution || undefined,
           description: formData.description || undefined
         })
@@ -188,6 +192,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           first_name: '',
           last_name: '',
           designation: '',
+          short_designation: '',
           institution: '',
           description: ''
         })
@@ -317,10 +322,31 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
               />
             </div>
 
-            {/* Berufsbezeichnung */}
+            {/* Berufsbezeichnung kurz */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Berufsbezeichnung
+                Berufsbezeichnung kurz
+              </label>
+              <select
+                value={formData.short_designation}
+                onChange={(e) => handleInputChange('short_designation', e.target.value)}
+                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                style={{ borderColor: '#ebebeb' }}
+                disabled={isSubmitting}
+              >
+                <option value="" className="bg-white">Kurze Bezeichnung auswählen</option>
+                {designations.map((designation) => (
+                  <option key={designation} value={designation} className="bg-white">
+                    {designation}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Berufsbezeichnung vollständig */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
+                Berufsbezeichnung vollständig
               </label>
               <select
                 value={formData.designation}
