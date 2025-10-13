@@ -59,16 +59,17 @@ const PostView: React.FC = () => {
 
   const handleEditPost = async (postData: any) => {
     if (!post) return
-    
+
     try {
       await updatePost(post.id, {
         title: postData.title,
         content: postData.content,
         category_id: postData.category_id,
         canton: postData.canton,
-        therapist_id: postData.therapist_id
+        therapist_id: postData.therapist_id,
+        tags: postData.tags
       })
-      
+
       // Reload the post to get fresh data
       await loadPost(post.id)
     } catch (error) {
@@ -271,6 +272,25 @@ const PostView: React.FC = () => {
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </SelectableText>
+
+          {/* Content Tags */}
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-6">
+              {post.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-3 py-1 rounded-lg text-xs md:text-sm"
+                  style={{
+                    color: 'grey',
+                    background: '#fbfffc',
+                    border: '1px solid #e5e5e5'
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Reply and Message Links */}
           <div className="flex items-center space-x-4 mt-6">

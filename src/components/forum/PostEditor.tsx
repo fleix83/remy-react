@@ -4,6 +4,7 @@ import { PostsService } from '../../services/posts.service'
 import RichTextEditor from '../ui/RichTextEditor'
 import TherapistSelector from '../therapist/TherapistSelector'
 import BadgeDropdown from '../ui/BadgeDropdown'
+import TagInput from '../ui/TagInput'
 
 interface PostEditorProps {
   onSubmit?: (postData: any) => Promise<void>
@@ -17,6 +18,7 @@ interface PostEditorProps {
     category_id?: number
     canton?: string
     therapist_id?: number
+    tags?: string[]
   }
 }
 
@@ -34,6 +36,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
   const [canton, setCanton] = useState(initialData?.canton || '')
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
   const [categories, setCategories] = useState<Category[]>([])
+  const [tags, setTags] = useState<string[]>(initialData?.tags || [])
   const [publishing, setPublishing] = useState(false)
 
   const postsService = new PostsService()
@@ -150,6 +153,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
         category_id: categoryId,
         canton,
         is_published: publish,
+        tags,
         ...(selectedTherapist && { therapist_id: selectedTherapist.id })
       }
 
@@ -163,6 +167,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
       setCategoryId(1)
       setCanton('')
       setSelectedTherapist(null)
+      setTags([])
     } catch (error) {
       console.error('Error submitting post:', error)
       alert('Fehler beim Speichern des Beitrags')
@@ -266,6 +271,15 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <p className="text-sm text-gray-500 mt-1">
                 {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
               </p>
+            </div>
+
+            {/* 5. Tags - Fifth */}
+            <div className="mb-6">
+              <TagInput
+                tags={tags}
+                onChange={setTags}
+                placeholder="Tag hinzufügen..."
+              />
             </div>
           </>
         ) : (
@@ -390,21 +404,32 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
         {/* Content for Desktop (not mobile optimized) */}
         {!mobileOptimized && (
-          <div className="mb-6">
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-              Inhalt *
-            </label>
-            <RichTextEditor
-              content={content}
-              onChange={setContent}
-              placeholder="Teile deine Gedanken, Erfahrungen oder Fragen mit der Community..."
-              minHeight="200px"
-              mobileOptimized={mobileOptimized}
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
-            </p>
-          </div>
+          <>
+            <div className="mb-6">
+              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+                Inhalt *
+              </label>
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
+                placeholder="Teile deine Gedanken, Erfahrungen oder Fragen mit der Community..."
+                minHeight="200px"
+                mobileOptimized={mobileOptimized}
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
+              </p>
+            </div>
+
+            {/* Tags */}
+            <div className="mb-6">
+              <TagInput
+                tags={tags}
+                onChange={setTags}
+                placeholder="Tag hinzufügen..."
+              />
+            </div>
+          </>
         )}
 
         {/* Action Buttons */}

@@ -54,7 +54,8 @@ const PostEditModal: React.FC<PostEditModalProps> = ({
               content: post.content,
               category_id: post.category_id,
               canton: post.canton || '',
-              therapist_id: post.therapist_id || undefined
+              therapist_id: post.therapist_id || undefined,
+              tags: post.tags || []
             }}
             onSubmit={handleSubmit}
             onCancel={onClose}

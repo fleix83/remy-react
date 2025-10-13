@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase'
 import { withPerformanceTracking } from '../utils/performance-monitor'
 import type { Post, PostWithRelations, Category, Designation } from '../types/database.types'
+import { TagsService } from './tags.service'
 
 interface PostFilters {
   category?: number
@@ -169,16 +170,17 @@ export class PostsService {
     canton: string
     therapist_id?: number
     is_published?: boolean
+    tags?: string[]
   }): Promise<Post> {
     console.log('🔧 PostsService: Starting createPost with data:', postData)
-    
+
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError) {
       console.error('❌ PostsService: Auth error:', authError)
       throw new Error('Authentication failed: ' + authError.message)
     }
-    
+
     if (!user) {
       console.error('❌ PostsService: No authenticated user')
       throw new Error('User not authenticated')
@@ -186,14 +188,15 @@ export class PostsService {
 
     console.log('👤 PostsService: Authenticated user:', user.email, 'ID:', user.id)
 
+    const { tags, ...postDataWithoutTags } = postData
     const insertData = {
-      ...postData,
+      ...postDataWithoutTags,
       user_id: user.id,
       is_published: false, // Always start as unpublished - requires moderation approval
       moderation_status: 'pending' as const,
       designation: 'Allgemein' // Provide default designation since it's required by DB
     }
-    
+
     console.log('📤 PostsService: Inserting data:', insertData)
 
     const { data, error } = await supabase
@@ -208,6 +211,14 @@ export class PostsService {
     }
 
     console.log('✅ PostsService: Post created successfully:', data)
+
+    // Save tags if provided
+    if (tags && tags.length > 0) {
+      const tagsService = new TagsService()
+      await tagsService.addTagsToPost(data.id, tags)
+      console.log('✅ PostsService: Tags saved successfully for post:', data.id)
+    }
+
     return data
   }
 
@@ -263,16 +274,17 @@ export class PostsService {
     category_id?: number
     canton?: string
     therapist_id?: number | null
+    tags?: string[]
   }): Promise<PostWithRelations> {
     console.log('🔧 PostsService: Starting updatePost for ID:', id, 'with updates:', updates)
-    
+
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError) {
       console.error('❌ PostsService: Auth error:', authError)
       throw new Error('Authentication failed: ' + authError.message)
     }
-    
+
     if (!user) {
       console.error('❌ PostsService: No authenticated user')
       throw new Error('User not authenticated')
@@ -295,12 +307,13 @@ export class PostsService {
       throw new Error('Not authorized to edit this post')
     }
 
-    // Prepare update data
+    // Prepare update data (exclude tags from post update)
+    const { tags, ...updatesWithoutTags } = updates
     const updateData = {
-      ...updates,
+      ...updatesWithoutTags,
       updated_at: new Date().toISOString()
     }
-    
+
     console.log('📤 PostsService: Updating post with data:', updateData)
 
     const { data, error } = await supabase
@@ -321,7 +334,14 @@ export class PostsService {
     }
 
     console.log('✅ PostsService: Post updated successfully:', data)
-    
+
+    // Update tags if provided
+    if (tags !== undefined) {
+      const tagsService = new TagsService()
+      await tagsService.addTagsToPost(id, tags)
+      console.log('✅ PostsService: Tags updated successfully for post:', id)
+    }
+
     // Normalize the JOIN arrays to objects to match PostWithRelations type
     const normalizedData = {
       ...data,
@@ -329,7 +349,7 @@ export class PostsService {
       categories: Array.isArray(data.categories) ? data.categories[0] : data.categories,
       therapists: Array.isArray(data.therapists) ? data.therapists[0] : data.therapists
     }
-    
+
     return normalizedData as unknown as PostWithRelations
   }
 
@@ -365,12 +385,13 @@ export class PostsService {
     if (error) {
       console.error('Error fetching comment counts:', error)
       // Return posts without comment counts rather than failing
-      return posts.map(post => ({ 
-        ...post, 
+      return posts.map(post => ({
+        ...post,
         users: Array.isArray(post.users) ? post.users[0] : post.users,
         categories: Array.isArray(post.categories) ? post.categories[0] : post.categories,
         therapists: Array.isArray(post.therapists) ? post.therapists[0] : post.therapists,
-        comments: [] 
+        comments: [],
+        tags: []
       })) as unknown as PostWithRelations[]
     }
 
@@ -381,13 +402,51 @@ export class PostsService {
       countMap.set(comment.post_id, currentCount + 1)
     })
 
-    // Add comment counts to posts and normalize relationship arrays to objects
+    // Fetch tags for all posts
+    const tagsMap = await this.fetchTagsForPosts(postIds)
+
+    // Add comment counts and tags to posts and normalize relationship arrays to objects
     return posts.map(post => ({
       ...post,
       users: Array.isArray(post.users) ? post.users[0] : post.users,
       categories: Array.isArray(post.categories) ? post.categories[0] : post.categories,
       therapists: Array.isArray(post.therapists) ? post.therapists[0] : post.therapists,
-      comments: [{ count: countMap.get(post.id) || 0 }]
+      comments: [{ count: countMap.get(post.id) || 0 }],
+      tags: tagsMap.get(post.id) || []
     })) as PostWithRelations[]
+  }
+
+  // Helper method to fetch tags for multiple posts efficiently
+  private async fetchTagsForPosts(postIds: number[]): Promise<Map<number, string[]>> {
+    const tagsService = new TagsService()
+    const tagsMap = new Map<number, string[]>()
+
+    try {
+      // Fetch all post_tags relationships for these posts
+      const { data: postTagsData, error } = await supabase
+        .from('post_tags')
+        .select('post_id, tags(name)')
+        .in('post_id', postIds)
+
+      if (error) {
+        console.error('Error fetching tags for posts:', error)
+        return tagsMap
+      }
+
+      // Group tags by post_id
+      postTagsData?.forEach((pt: any) => {
+        const postId = pt.post_id
+        const tagName = pt.tags?.name
+
+        if (tagName) {
+          const existingTags = tagsMap.get(postId) || []
+          tagsMap.set(postId, [...existingTags, tagName])
+        }
+      })
+    } catch (error) {
+      console.error('Error in fetchTagsForPosts:', error)
+    }
+
+    return tagsMap
   }
 }
