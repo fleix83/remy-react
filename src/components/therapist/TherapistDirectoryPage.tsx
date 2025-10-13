@@ -210,7 +210,8 @@ const TherapistDirectoryPage: React.FC = () => {
                 ) : therapistPosts.length > 0 ? (
                   <div className="space-y-4">
                     {therapistPosts.map((post) => {
-                      const commentCount = post.comments?.[0]?.count || post.comment_count || 0
+                      // Access comment count safely - posts service adds it as { count: number }
+                      const commentCount = (post.comments?.[0] as any)?.count || (post as any).comment_count || 0
 
                       return (
                         <Link

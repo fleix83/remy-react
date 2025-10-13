@@ -40,8 +40,8 @@ export class TherapistImportService {
         header: true,
         skipEmptyLines: true,
         transformHeader: (header: string) => header.trim().toLowerCase(),
-        complete: (results) => resolve(results),
-        error: (error) => reject(error)
+        complete: (results: Papa.ParseResult<TherapistCSVRow>) => resolve(results),
+        error: (error: Error) => reject(error)
       })
     })
   }
@@ -72,7 +72,7 @@ export class TherapistImportService {
 
     // Check for parsing errors
     if (parseResult.errors && parseResult.errors.length > 0) {
-      parseResult.errors.forEach(error => {
+      parseResult.errors.forEach((error: Papa.ParseError) => {
         errors.push(`Row ${error.row}: ${error.message}`)
       })
     }
@@ -86,7 +86,7 @@ export class TherapistImportService {
   /**
    * Validate individual row data
    */
-  validateRow(row: any, rowIndex: number): { valid: boolean; error?: string } {
+  validateRow(row: any): { valid: boolean; error?: string } {
     const requiredFields = ['first_name', 'last_name', 'designation']
 
     for (const field of requiredFields) {
@@ -185,7 +185,7 @@ export class TherapistImportService {
       const rowIndex = index + 2 // +2 because of 0-based index and header row
 
       // Validate row
-      const validation = this.validateRow(row, rowIndex)
+      const validation = this.validateRow(row)
       if (!validation.valid) {
         errors.push({
           row: rowIndex,
@@ -259,7 +259,7 @@ export class TherapistImportService {
           success: false,
           imported: 0,
           skipped: 0,
-          errors: validation.errors.map((error, index) => ({
+          errors: validation.errors.map((error) => ({
             row: 0,
             data: {},
             error
