@@ -221,15 +221,15 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* 3. Title Input - Third (for non-Erfahrung categories) */}
             {categoryId !== 1 && (
               <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Titel *
+                <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                  Titel
                 </label>
                 <input
                   type="text"
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-3 rounded-lg bg-white focus:outline-none text-base"
+                  className="w-full px-3 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none text-base"
                   placeholder="Titel eingeben..."
                   maxLength={255}
                   required
@@ -273,15 +273,15 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* Title - Hidden for Erfahrung category */}
             {categoryId !== 1 && (
               <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Titel *
+                <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                  Titel
                 </label>
                 <input
                   type="text"
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
                   placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
                   maxLength={255}
                   required
@@ -297,15 +297,15 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* Title - Hidden for Erfahrung category */}
             {categoryId !== 1 && (
               <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Titel *
+                <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                  Titel
                 </label>
                 <input
                   type="text"
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-md bg-white focus:outline-none"
+                  className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none"
                   placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
                   maxLength={255}
                   required
@@ -410,14 +410,14 @@ const PostEditor: React.FC<PostEditorProps> = ({
         {/* Action Buttons */}
         {mobileOptimized ? (
           /* Mobile: Buttons styled like navbar buttons */
-          <div className="flex items-center justify-between space-x-2">
+          <div className="flex items-center justify-between gap-2">
             {/* Left side buttons */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               {onCancel && (
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3.5 py-2 rounded-md font-medium transition-colors"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm"
                   disabled={publishing}
                 >
                   Abbrechen
@@ -427,10 +427,10 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e, false)}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3.5 py-2 rounded-md font-medium transition-colors"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm"
                 disabled={publishing}
               >
-                Als Entwurf
+                Entwurf
               </button>
             </div>
 
@@ -438,14 +438,14 @@ const PostEditor: React.FC<PostEditorProps> = ({
             <button
               type="submit"
               disabled={publishing || isLoading}
-              className="text-white px-3.5 py-2 rounded-md font-medium transition-all transform hover:scale-105 shadow-md"
+              className="text-white px-2.5 py-1.5 rounded-md font-medium transition-all transform hover:scale-105 shadow-md text-sm"
               style={{
                 backgroundColor: '#4785ff',
                 boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
               }}
             >
               {publishing || isLoading
-                ? 'Wird veröffentlicht...'
+                ? 'Speichern...'
                 : 'Veröffentlichen'
               }
             </button>
