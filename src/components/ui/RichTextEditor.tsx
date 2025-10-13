@@ -164,7 +164,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   // Render simplified toolbar for mobile
   const renderToolbar = () => {
     if (mobileOptimized) {
-      // Simplified mobile toolbar with only essential tools
+      // Mobile toolbar with all essential tools
       return (
         <div className="border-b border-gray-200 p-2 flex items-center gap-1 flex-wrap">
           <button
@@ -177,7 +177,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           >
             <span className="text-sm font-bold">B</span>
           </button>
-          
+
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -188,7 +188,22 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           >
             <span className="text-sm font-bold italic">I</span>
           </button>
-          
+
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+              editor.isActive('blockquote') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'
+            }`}
+            title="Quote"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
+            </svg>
+          </button>
+
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -206,6 +221,41 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 16h10"/>
             </svg>
           </button>
+
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+              editor.isActive('orderedList') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'
+            }`}
+            title="Numbered List"
+          >
+            <span className="text-sm">123</span>
+          </button>
+
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+
+          <button
+            type="button"
+            onClick={addLink}
+            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+              editor.isActive('link') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'
+            }`}
+            title="Add Link"
+          >
+            <span className="text-sm">🔗</span>
+          </button>
+
+          {editor.isActive('link') && (
+            <button
+              type="button"
+              onClick={removeLink}
+              className="p-2 rounded hover:bg-gray-100 transition-colors text-red-600"
+              title="Remove Link"
+            >
+              <span className="text-sm">❌</span>
+            </button>
+          )}
         </div>
       )
     }
@@ -337,17 +387,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
   
   return (
-    <div className="relative rounded-lg bg-white">
+    <div className="relative rounded-lg bg-white border border-gray-300">
       {/* Toolbar */}
       {renderToolbar()}
-      
+
       {/* Editor content */}
       <div className="relative editor-wrapper">
-        <style>{`
-          .editor-wrapper:focus-within {
-            box-shadow: 2px 0 0 0 #aedfb7, -2px 0 0 0 #aedfb7, 0 2px 0 0 #aedfb7;
-          }
-        `}</style>
         <EditorContent
           editor={editor}
           className="rounded-b-lg overflow-hidden"
