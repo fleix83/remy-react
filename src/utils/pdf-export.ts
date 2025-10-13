@@ -26,11 +26,10 @@ export class PDFExporter {
 
       // Create canvas from HTML element
       const canvas = await html2canvas(element, {
-        scale: quality,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff'
-      })
+      } as any)
 
       // Create PDF
       const pdf = new jsPDF({
