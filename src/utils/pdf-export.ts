@@ -3,7 +3,6 @@ import html2canvas from 'html2canvas'
 
 interface ExportOptions {
   filename?: string
-  quality?: number
   format?: 'a4' | 'letter' | 'legal'
   orientation?: 'portrait' | 'landscape'
 }
