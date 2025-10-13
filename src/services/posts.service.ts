@@ -33,7 +33,7 @@ export class PostsService {
         id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
+        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
       `)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
@@ -122,7 +122,7 @@ export class PostsService {
         id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, designation, is_published, is_banned, moderation_status,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
+        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
       `)
       .eq('id', id)
       .eq('is_active', true)
@@ -237,7 +237,7 @@ export class PostsService {
         id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
+        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
       `)
       .eq('is_published', true)
       .eq('is_active', true)
@@ -311,7 +311,7 @@ export class PostsService {
         id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, designation, is_published, is_banned, moderation_status,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, institution, canton)
+        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
       `)
       .single()
 

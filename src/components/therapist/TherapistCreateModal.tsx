@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { TherapistsService } from '../../services/therapists.service'
+import { TherapistImportService, type ImportResult } from '../../services/therapist-import.service'
+import { downloadTherapistCSVTemplate } from '../../utils/therapist-csv-template'
+import { usePermissions } from '../../hooks/usePermissions'
 import type { Therapist } from '../../types/database.types'
 
 interface TherapistCreateModalProps {
@@ -33,7 +36,18 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
+  // CSV Import state
+  const [isImporting, setIsImporting] = useState(false)
+  const [importResult, setImportResult] = useState<ImportResult | null>(null)
+  const [showImportSection, setShowImportSection] = useState(false)
+
+  // Delete confirmation state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
   const therapistsService = new TherapistsService()
+  const importService = new TherapistImportService()
+  const permissions = usePermissions()
 
   // Initialize form data when therapist prop changes (edit mode)
   useEffect(() => {
@@ -118,6 +132,75 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     }))
     // Clear error when user starts typing
     if (error) setError('')
+  }
+
+  const handleCSVImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsImporting(true)
+    setError('')
+    setImportResult(null)
+
+    try {
+      console.log('📂 Starting CSV import:', file.name)
+
+      const result = await importService.importFromCSV(
+        file,
+        (therapists) => therapistsService.bulkImportTherapists(therapists)
+      )
+
+      setImportResult(result)
+
+      if (result.success && result.imported > 0) {
+        // Notify parent component about new therapists
+        // We'll pass the first therapist to trigger a refresh
+        if (result.importedTherapists.length > 0) {
+          onTherapistCreated(result.importedTherapists[0])
+        }
+      }
+
+      // Clear file input
+      event.target.value = ''
+    } catch (error) {
+      console.error('❌ CSV import error:', error)
+      setError(error instanceof Error ? error.message : 'CSV import failed')
+    } finally {
+      setIsImporting(false)
+    }
+  }
+
+  const handleDownloadTemplate = () => {
+    downloadTherapistCSVTemplate()
+  }
+
+  const handleDelete = async () => {
+    if (!therapist || !isEditMode) return
+
+    setIsDeleting(true)
+    setError('')
+
+    try {
+      console.log('🗑️ TherapistCreateModal: Deleting therapist ID:', therapist.id)
+
+      await therapistsService.deleteTherapist(therapist.id)
+
+      console.log('✅ TherapistCreateModal: Therapist deleted successfully')
+
+      // Close the confirmation dialog
+      setShowDeleteConfirm(false)
+
+      // Notify parent and close modal
+      // We pass the deleted therapist to trigger a refresh
+      onTherapistCreated(therapist)
+      onClose()
+    } catch (error) {
+      console.error('❌ TherapistCreateModal: Error deleting therapist:', error)
+      setError(error instanceof Error ? error.message : 'Fehler beim Löschen')
+      setShowDeleteConfirm(false)
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const validateForm = () => {
@@ -235,8 +318,110 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
         {/* Form */}
         <div className="p-6">
+          {/* CSV Import Section - Admin Only */}
+          {permissions.isAdmin && !isEditMode && (
+            <div className="mb-6 pb-6 border-b" style={{ borderBottomColor: '#ebebeb' }}>
+              <button
+                type="button"
+                onClick={() => setShowImportSection(!showImportSection)}
+                className="flex items-center justify-between w-full text-left mb-3"
+              >
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--primary)' }}>
+                  CSV Import (Admin)
+                </h3>
+                <svg
+                  className={`w-5 h-5 transition-transform ${showImportSection ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {showImportSection && (
+                <div className="space-y-3">
+                  <p className="text-sm" style={{ color: 'var(--primary)' }}>
+                    Importieren Sie mehrere Therapeuten gleichzeitig aus einer CSV-Datei.
+                  </p>
+
+                  {/* Template Download */}
+                  <button
+                    type="button"
+                    onClick={handleDownloadTemplate}
+                    className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>CSV-Vorlage herunterladen</span>
+                  </button>
+
+                  {/* File Upload */}
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept=".csv"
+                      onChange={handleCSVImport}
+                      disabled={isImporting || isSubmitting}
+                      className="w-full px-3 py-2 bg-white border rounded text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ borderColor: '#ebebeb' }}
+                    />
+                  </div>
+
+                  {/* Import Status */}
+                  {isImporting && (
+                    <div className="bg-blue-500 bg-opacity-20 border border-blue-500 text-blue-700 px-4 py-3 rounded flex items-center">
+                      <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Importiere Therapeuten...
+                    </div>
+                  )}
+
+                  {/* Import Results */}
+                  {importResult && (
+                    <div className={`border px-4 py-3 rounded ${
+                      importResult.success
+                        ? 'bg-green-500 bg-opacity-20 border-green-500 text-green-700'
+                        : 'bg-red-500 bg-opacity-20 border-red-500 text-red-700'
+                    }`}>
+                      <div className="font-semibold mb-2">
+                        {importResult.success ? '✓ Import erfolgreich' : '✗ Import fehlgeschlagen'}
+                      </div>
+                      <div className="text-sm space-y-1">
+                        <div>Importiert: {importResult.imported}</div>
+                        <div>Duplikate übersprungen: {importResult.skipped}</div>
+                        {importResult.errors.length > 0 && (
+                          <div>
+                            <div className="font-semibold mt-2">Fehler ({importResult.errors.length}):</div>
+                            <ul className="list-disc list-inside max-h-32 overflow-y-auto">
+                              {importResult.errors.slice(0, 5).map((err, idx) => (
+                                <li key={idx}>
+                                  Zeile {err.row}: {err.error}
+                                </li>
+                              ))}
+                              {importResult.errors.length > 5 && (
+                                <li>... und {importResult.errors.length - 5} weitere Fehler</li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-xs" style={{ color: '#888' }}>
+                    <p>Hinweis: Bei Duplikaten (gleicher Name + Kanton) wird der Eintrag mit mehr ausgefüllten Feldern behalten.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            
+
             {/* Error Message */}
             {error && (
               <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 px-4 py-3 rounded">
@@ -400,25 +585,72 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end space-x-3 pt-4">
-              <button
-                type="button"
-                onClick={handleClose}
-                disabled={isSubmitting}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Abbrechen
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="px-4 py-2 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ backgroundColor: '#4785ff' }}
-              >
-                {isSubmitting ? 'Speichern...' : 'Speichern'}
-              </button>
+            <div className="flex justify-between items-center pt-4">
+              {/* Delete Button - Left Side (Admin Only, Edit Mode Only) */}
+              {permissions.isAdmin && isEditMode && (
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  disabled={isSubmitting || isDeleting}
+                  className="px-3 py-1.5 text-sm bg-red-500 hover:bg-red-600 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Löschen
+                </button>
+              )}
+
+              {/* Right Side Buttons */}
+              <div className={`flex gap-3 ${!permissions.isAdmin || !isEditMode ? 'ml-auto' : ''}`}>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  disabled={isSubmitting || isDeleting}
+                  className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isDeleting}
+                  className="px-3 py-1.5 text-sm text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ backgroundColor: '#4785ff' }}
+                >
+                  {isSubmitting ? 'Speichern...' : 'Speichern'}
+                </button>
+              </div>
             </div>
           </form>
+
+          {/* Delete Confirmation Dialog */}
+          {showDeleteConfirm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
+              <div className="bg-white rounded-lg max-w-sm w-full p-6 shadow-xl">
+                <h3 className="text-lg font-bold mb-3" style={{ color: 'var(--primary)' }}>
+                  Therapeut löschen?
+                </h3>
+                <p className="mb-6 text-gray-700">
+                  Sind Sie sicher, dass Sie <strong>{formData.first_name} {formData.last_name}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors disabled:opacity-50"
+                  >
+                    Abbrechen
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 text-sm bg-red-500 hover:bg-red-600 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isDeleting ? 'Löschen...' : 'Löschen'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>,

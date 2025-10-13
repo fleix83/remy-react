@@ -143,12 +143,13 @@ const TherapistDirectoryPage: React.FC = () => {
           />
 
           {selectedTherapist && (
-            <div className="mt-8 relative">
+            <div className="mt-8 pt-[30px] relative">
               {/* Edit button - top right corner (moderator/admin only) */}
               {isModeratorOrAdmin && (
                 <button
                   onClick={() => setShowEditModal(true)}
-                  className="absolute top-0 right-0 text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1 text-sm"
+                  className="absolute right-0 text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1 text-sm"
+                  style={{ top: '-10px' }}
                   title="Therapeut bearbeiten"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

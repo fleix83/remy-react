@@ -10,7 +10,7 @@ export class UserContentService {
         .select(`
           *,
           categories(id, name_de),
-          therapists(id, form_of_address, first_name, last_name, designation, institution)
+          therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
         `)
         .eq('user_id', userId)
         .order('created_at', { ascending: false })

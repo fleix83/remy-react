@@ -157,6 +157,23 @@ export class TherapistsService {
     return data
   }
 
+  // Delete a therapist
+  async deleteTherapist(id: number): Promise<void> {
+    console.log('🔧 TherapistsService: Deleting therapist ID:', id)
+
+    const { error } = await supabase
+      .from('therapists')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('❌ TherapistsService: Error deleting therapist:', error)
+      throw error
+    }
+
+    console.log('✅ TherapistsService: Therapist deleted successfully')
+  }
+
   // Format therapist display name
   formatTherapistName(therapist: Therapist): string {
     const nameparts = [
@@ -172,23 +189,86 @@ export class TherapistsService {
   formatTherapistDisplay(therapist: Therapist): string {
     const name = this.formatTherapistName(therapist)
     const details = []
-    
+
     if (therapist.designation) {
       details.push(therapist.designation)
     }
-    
+
     if (therapist.institution) {
       details.push(therapist.institution)
     }
-    
+
     if (therapist.canton) {
       details.push(therapist.canton)
     }
-    
+
     if (details.length > 0) {
       return `${name} (${details.join(', ')})`
     }
-    
+
     return name
+  }
+
+  // Bulk import therapists
+  async bulkImportTherapists(therapists: Array<{
+    canton: string | null
+    form_of_address: string
+    first_name: string
+    last_name: string
+    designation: string
+    short_designation: string | null
+    institution: string | null
+    description: string | null
+  }>): Promise<Therapist[]> {
+    console.log('🔧 TherapistsService: Bulk importing', therapists.length, 'therapists...')
+
+    // Check authentication first
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError) {
+      console.error('❌ TherapistsService: Auth error:', authError)
+      throw new Error('Authentication failed: ' + authError.message)
+    }
+
+    if (!user) {
+      console.error('❌ TherapistsService: No authenticated user')
+      throw new Error('User not authenticated')
+    }
+
+    console.log('👤 TherapistsService: Authenticated user:', user.email, 'ID:', user.id)
+
+    // Prepare data for insertion
+    const insertData = therapists.map(t => ({
+      form_of_address: t.form_of_address,
+      first_name: t.first_name.trim(),
+      last_name: t.last_name.trim(),
+      institution: t.institution?.trim() || null,
+      designation: t.designation,
+      short_designation: t.short_designation?.trim() || null,
+      description: t.description?.trim() || null,
+      canton: t.canton || null
+    }))
+
+    console.log('📤 TherapistsService: Inserting', insertData.length, 'therapist records...')
+
+    // Use upsert to handle potential duplicates in database
+    const { data, error } = await supabase
+      .from('therapists')
+      .insert(insertData)
+      .select()
+
+    if (error) {
+      console.error('❌ TherapistsService: Database error during bulk import:', error)
+      console.error('❌ TherapistsService: Error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      })
+      throw new Error('Database error: ' + error.message)
+    }
+
+    console.log('✅ TherapistsService: Bulk import successful -', data?.length || 0, 'therapists imported')
+    return data || []
   }
 }
