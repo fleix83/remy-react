@@ -121,7 +121,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-primary-600 hover:text-primary-800 underline'
+          class: 'text-blue-600 hover:text-blue-800 underline cursor-pointer'
         }
       }),
       Bold,
@@ -151,9 +151,20 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   if (!editor) return null
 
   const addLink = () => {
+    // Check if there's text selected
+    const { from, to } = editor.state.selection
+    const hasSelection = from !== to
+
+    if (!hasSelection) {
+      alert('Please select some text first to add a link')
+      return
+    }
+
     const url = window.prompt('Enter URL:')
     if (url) {
-      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+      // Add http:// if no protocol specified
+      const formattedUrl = url.match(/^https?:\/\//) ? url : `https://${url}`
+      editor.chain().focus().extendMarkRange('link').setLink({ href: formattedUrl }).run()
     }
   }
 

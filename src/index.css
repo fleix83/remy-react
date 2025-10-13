@@ -121,10 +121,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .prose a {
-  color: var(--primary);
+  color: #2563eb;  /* Blue-600 */
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .prose a:hover {
-  opacity: 0.8;
+  color: #1d4ed8;  /* Blue-700 */
 }
