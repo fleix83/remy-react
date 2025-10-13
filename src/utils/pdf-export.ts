@@ -19,7 +19,6 @@ export class PDFExporter {
     try {
       const {
         filename = 'document.pdf',
-        quality = 1.0,
         format = 'a4',
         orientation = 'portrait'
       } = options
