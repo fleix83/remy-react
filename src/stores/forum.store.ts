@@ -45,6 +45,7 @@ interface ForumState {
     category_id?: number
     canton?: string
     therapist_id?: number | null
+    tags?: string[]
   }) => Promise<void>
   deletePost: (id: number) => Promise<void>
   setFilters: (filters: Partial<PostFilters>) => void
@@ -187,6 +188,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
     category_id?: number
     canton?: string
     therapist_id?: number | null
+    tags?: string[]
   }) => {
     try {
       console.log('🔧 ForumStore: Updating post:', id, updates)

@@ -497,6 +497,7 @@ export type PostWithRelations = Post & {
   therapists?: Therapist
   comments?: Comment[] | { count: number }[]
   post_tags?: (PostTag & { tags: Tag })[]
+  tags?: string[]
   comment_count?: number
 }
 

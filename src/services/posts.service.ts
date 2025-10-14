@@ -418,7 +418,6 @@ export class PostsService {
 
   // Helper method to fetch tags for multiple posts efficiently
   private async fetchTagsForPosts(postIds: number[]): Promise<Map<number, string[]>> {
-    const tagsService = new TagsService()
     const tagsMap = new Map<number, string[]>()
 
     try {
