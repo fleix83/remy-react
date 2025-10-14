@@ -58,7 +58,7 @@ export function getExperiencePostTitle(therapist: Therapist): string {
  * Check if a post should use the therapist-based title
  * @deprecated No longer auto-generating titles. All posts now have regular titles.
  */
-export function shouldUseTherapistTitle(therapist?: Therapist | null): boolean {
+export function shouldUseTherapistTitle(_therapist?: Therapist | null): boolean {
   return false // Always return false - no longer auto-generating titles
 }
 
