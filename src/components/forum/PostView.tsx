@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCommentsRealtime } from '../../hooks/useCommentsRealtime'
-import { getPostDisplayTitle } from '../../utils/therapistHelpers'
 import CommentsSection from './CommentsSection'
 import PostEditModal from './PostEditModal'
 import { SelectableText } from '../ui/RichTextEditor'
@@ -221,7 +220,7 @@ const PostView: React.FC = () => {
 
           {/* Title */}
           <h1 className="text-left" style={{color: '#626262', fontSize: '20px', fontWeight: 700, lineHeight: '1.25', marginBottom: '24px'}}>
-            {getPostDisplayTitle(post)}
+            {post.title}
           </h1>
 
           {/* User Info */}
@@ -316,7 +315,7 @@ const PostView: React.FC = () => {
               <SendMessageButton
                 recipientId={post.user_id}
                 recipientUsername={post.users.username}
-                postTitle={getPostDisplayTitle(post)}
+                postTitle={post.title}
                 postId={post.id}
                 variant="text-link"
               />

@@ -116,14 +116,13 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
   const handleSubmit = async (e: React.FormEvent, publish = true) => {
     e.preventDefault()
-    
-    // For Erfahrung category, title is optional (will be auto-generated)
-    // For other categories, title is required
-    if (categoryId !== 1 && !title.trim()) {
+
+    // Title is required for ALL categories
+    if (!title.trim()) {
       alert('Bitte Titel ausfüllen')
       return
     }
-    
+
     if (!content.trim()) {
       alert('Bitte Inhalt ausfüllen')
       return
@@ -142,13 +141,10 @@ const PostEditor: React.FC<PostEditorProps> = ({
     }
 
     setPublishing(true)
-    
+
     try {
-      // For Erfahrung category, provide default title if empty (will be replaced by therapist info)
-      const finalTitle = categoryId === 1 && !title.trim() ? 'Erfahrung' : title.trim()
-      
       const postData = {
-        title: finalTitle,
+        title: title.trim(),
         content: content.trim(),
         category_id: categoryId,
         canton,
@@ -223,24 +219,22 @@ const PostEditor: React.FC<PostEditorProps> = ({
               />
             </div>
 
-            {/* 3. Title Input - Third (for non-Erfahrung categories) */}
-            {categoryId !== 1 && (
-              <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                  Titel
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none text-base"
-                  placeholder="Titel eingeben..."
-                  maxLength={255}
-                  required
-                />
-              </div>
-            )}
+            {/* 3. Title Input - Third (for all categories) */}
+            <div className="mb-4">
+              <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                Titel *
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-3 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none text-base"
+                placeholder="Titel eingeben..."
+                maxLength={255}
+                required
+              />
+            </div>
 
             {/* Therapist Selector - Only for Erfahrung category */}
             {categoryId === 1 && (
@@ -283,49 +277,28 @@ const PostEditor: React.FC<PostEditorProps> = ({
             </div>
           </>
         ) : (
-          <>
-            {/* Title - Hidden for Erfahrung category */}
-            {categoryId !== 1 && (
-              <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                  Titel
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
-                  placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
-                  maxLength={255}
-                  required
-                />
-              </div>
-            )}
-          </>
+          <></>
         )}
 
         {/* Desktop: Traditional form layout */}
         {!mobileOptimized && (
           <div className="mb-6">
-            {/* Title - Hidden for Erfahrung category */}
-            {categoryId !== 1 && (
-              <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                  Titel
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none"
-                  placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
-                  maxLength={255}
-                  required
-                />
-              </div>
-            )}
+            {/* Title - Required for all categories */}
+            <div className="mb-4">
+              <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                Titel *
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none"
+                placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
+                maxLength={255}
+                required
+              />
+            </div>
 
             {/* Category and Canton */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -371,20 +344,6 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* Therapist Selection - Only show for "Erfahrung" category */}
             {categoryId === 1 && (
               <div className="mb-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm text-blue-800">
-                        Der Titel wird automatisch basierend auf dem ausgewählten Therapeut* erstellt.
-                      </p>
-                    </div>
-                  </div>
-                </div>
                 
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Therapeut* *

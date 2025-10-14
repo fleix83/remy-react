@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getPostDisplayTitle } from '../../utils/therapistHelpers'
 import type { PostWithRelations } from '../../types/database.types'
 import { useAuthStore } from '../../stores/auth.store'
 import ModerationActions from '../ui/ModerationActions'
@@ -152,7 +151,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
             <SendMessageButton
               recipientId={post.user_id}
               recipientUsername={post.users.username}
-              postTitle={getPostDisplayTitle(post)}
+              postTitle={post.title}
               postId={post.id}
               variant="icon-only"
               className="hover:bg-[var(--bg-element-hover)] rounded p-1"
@@ -168,9 +167,23 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
         </div>
       </div>
 
+      {/* Therapist Info - Only for posts with therapists */}
+      {post.therapists && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            navigate(`/therapists?therapist=${post.therapists!.id}`)
+          }}
+          className="text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full mb-0"
+          style={{color: '#4785ff', fontSize: '12px', lineHeight: '1.2'}}
+        >
+          Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
+        </button>
+      )}
+
       {/* Title */}
       <h3 className="text-base md:text-xl font-semibold mb-4 leading-tight text-left" style={{color: '#626262'}}>
-        {getPostDisplayTitle(post)}
+        {post.title}
       </h3>
 
       {/* Rejection Reason (for banned posts) */}

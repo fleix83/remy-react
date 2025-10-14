@@ -56,21 +56,20 @@ export function getExperiencePostTitle(therapist: Therapist): string {
 
 /**
  * Check if a post should use the therapist-based title
+ * @deprecated No longer auto-generating titles. All posts now have regular titles.
  */
 export function shouldUseTherapistTitle(categoryId: number, therapist?: Therapist | null): boolean {
-  return categoryId === 1 && !!therapist
+  return false // Always return false - no longer auto-generating titles
 }
 
 /**
- * Get the display title for a post (either original title or therapist-based)
+ * Get the display title for a post
+ * @deprecated Use post.title directly instead
  */
-export function getPostDisplayTitle(post: { 
+export function getPostDisplayTitle(post: {
   title: string
   category_id: number
-  therapists?: Therapist | null 
+  therapists?: Therapist | null
 }): string {
-  if (shouldUseTherapistTitle(post.category_id, post.therapists)) {
-    return getExperiencePostTitle(post.therapists!)
-  }
   return post.title
 }
