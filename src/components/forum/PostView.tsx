@@ -47,13 +47,13 @@ const PostView: React.FC = () => {
 
   const getCategoryBackground = (categoryId: number) => {
     const backgrounds = {
-      1: 'var(--bg-erfahrung)',     // Yellow
+      1: '#dbe2ff',                 // Light Blue
       2: 'var(--bg-suche)',         // Light Pink
       3: 'var(--bg-gedanken)',      // Light Blue
       4: 'var(--bg-rant)',          // Light Purple
       5: 'var(--bg-ressourcen)',    // Light Green
     }
-    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
+    return backgrounds[categoryId as keyof typeof backgrounds] || '#dbe2ff'
   }
 
   const handleEditPost = async (postData: any) => {
@@ -180,7 +180,7 @@ const PostView: React.FC = () => {
           }}
         >
           {/* Category Badge and Canton - Overlapping top edge */}
-          <div className="absolute z-10 flex items-center space-x-2" style={{ top: '21px', marginLeft: '4px' }}>
+          <div className="absolute z-10 flex items-center space-x-2" style={{ top: '36px' }}>
             <span
               className={`inline-flex items-center px-2 py-0.5 font-medium shadow-lg ${getCategoryColor()}`}
               style={{
@@ -220,7 +220,7 @@ const PostView: React.FC = () => {
           )}
 
           {/* Title */}
-          <h1 className="text-left" style={{color: '#626262', fontSize: '20px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
+          <h1 className="text-left" style={{color: '#626262', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
             {post.title}
           </h1>
 
