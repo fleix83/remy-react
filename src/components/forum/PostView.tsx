@@ -182,10 +182,11 @@ const PostView: React.FC = () => {
           {/* Category Badge and Canton - Overlapping top edge */}
           <div className="absolute z-10 flex items-center space-x-2" style={{ top: '21px', marginLeft: '4px' }}>
             <span
-              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-lg ${getCategoryColor()}`}
+              className={`inline-flex items-center px-2 py-0.5 font-medium shadow-lg ${getCategoryColor()}`}
               style={{
                 fontSize: '0.65rem',
-                backgroundColor: getCategoryBackground(post.category_id)
+                backgroundColor: getCategoryBackground(post.category_id),
+                borderRadius: '3px'
               }}
             >
               {post.categories?.name_de}
@@ -219,7 +220,7 @@ const PostView: React.FC = () => {
           )}
 
           {/* Title */}
-          <h1 className="text-left" style={{color: '#626262', fontSize: '20px', fontWeight: 700, lineHeight: '1.25', marginBottom: '24px'}}>
+          <h1 className="text-left" style={{color: '#626262', fontSize: '20px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
             {post.title}
           </h1>
 
@@ -237,10 +238,10 @@ const PostView: React.FC = () => {
               </div>
             )}
             <div className="ml-3 flex-1 min-w-0">
-              <p className="font-semibold text-[var(--type)] text-sm text-left leading-tight">
+              <p className="font-semibold text-[var(--type)] text-left leading-tight" style={{ fontSize: '11px' }}>
                 {post.users?.username || 'Unknown User'}
               </p>
-              <p className="text-xs text-gray-500 text-left leading-tight mt-0.5">
+              <p className="text-gray-500 text-left leading-tight" style={{ fontSize: '10px' }}>
                 {formatDate(post.created_at)}
               </p>
             </div>
@@ -266,8 +267,8 @@ const PostView: React.FC = () => {
           {/* Post Content */}
           <SelectableText onTextSelect={() => {}}>
             <div
-              className="prose prose-gray max-w-none text-[var(--type)] leading-tight text-left"
-              style={{ fontSize: '15px' }}
+              className="prose prose-gray max-w-none text-[var(--type)] text-left"
+              style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px' }}
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </SelectableText>

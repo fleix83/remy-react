@@ -52,8 +52,8 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[var(--bg-body)] w-full h-full overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-x-hidden">
+      <div className="bg-[var(--bg-body)] w-full h-full overflow-y-auto overflow-x-hidden">
         {/* Modal Header */}
         <div className="sticky top-0 bg-[var(--bg-body)] p-4 flex items-center justify-between">
           <span className="inline-flex items-center px-2 py-1 rounded-lg font-medium bg-pink-500 text-white text-xs">
@@ -70,7 +70,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="py-6 px-0.5">
+        <div className="py-6 px-4 max-w-6xl mx-auto">
           {/* Post Card Style Content */}
           <div className="bg-[#fff0b5] p-6 relative" style={{borderRadius: '20px'}}>
             {/* Content Type Badge - Overlapping */}
@@ -104,7 +104,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             {/* Category Badge - Above User Block */}
             {(item as any).category_id && (
               <div className="mb-2 flex justify-start">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white" style={{fontSize: '0.65rem'}}>
+                <span className="inline-flex items-center px-2 py-0.5 font-medium bg-[var(--primary)] text-white" style={{fontSize: '0.65rem', borderRadius: '3px'}}>
                   {categories[(item as any).category_id] || 'Kategorie'}
                 </span>
               </div>

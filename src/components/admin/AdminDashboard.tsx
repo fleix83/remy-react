@@ -95,12 +95,9 @@ const AdminDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto py-6 px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bristol text-blue-500 mb-2 text-left">
             {permissions.isAdmin ? 'Admin Dashboard' : 'Moderator Dashboard'}
           </h1>
-          <p className="text-gray-300">
-            Verwalten Sie Benutzer, Inhalte und Einstellungen des Forums
-          </p>
         </div>
 
         {/* Navigation Tabs */}
@@ -141,87 +138,87 @@ const AdminDashboard: React.FC = () => {
 
         {/* Overview Tab */}
         {activeTab === 'overview' && stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-[var(--bg-element)] rounded-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-white rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-[var(--primary)] rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                   </svg>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-300">Benutzer gesamt</p>
-                  <p className="text-2xl font-bold text-white">{stats.totalUsers}</p>
+                <div style={{ marginLeft: '60px' }}>
+                  <p className="text-sm font-medium text-gray-600">Benutzer gesamt</p>
+                  <p className="text-2xl font-bold text-blue-500">{stats.totalUsers}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-element)] rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-red-500 rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636" />
                   </svg>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-300">Gesperrte Benutzer</p>
-                  <p className="text-2xl font-bold text-white">{stats.bannedUsers}</p>
+                <div style={{ marginLeft: '60px' }}>
+                  <p className="text-sm font-medium text-gray-600">Gesperrte Benutzer</p>
+                  <p className="text-2xl font-bold text-blue-500">{stats.bannedUsers}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-element)] rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-blue-500 rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-300">Beiträge gesamt</p>
-                  <p className="text-2xl font-bold text-white">{stats.totalPosts}</p>
+                <div style={{ marginLeft: '60px' }}>
+                  <p className="text-sm font-medium text-gray-600">Beiträge gesamt</p>
+                  <p className="text-2xl font-bold text-blue-500">{stats.totalPosts}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-element)] rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-yellow-500 rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-300">Kommentare gesamt</p>
-                  <p className="text-2xl font-bold text-white">{stats.totalComments}</p>
+                <div style={{ marginLeft: '60px' }}>
+                  <p className="text-sm font-medium text-gray-600">Kommentare gesamt</p>
+                  <p className="text-2xl font-bold text-blue-500">{stats.totalComments}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-element)] rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-[var(--primary)] rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-300">Moderatoren</p>
-                  <p className="text-2xl font-bold text-white">{stats.moderators}</p>
+                <div style={{ marginLeft: '60px' }}>
+                  <p className="text-sm font-medium text-gray-600">Moderatoren</p>
+                  <p className="text-2xl font-bold text-blue-500">{stats.moderators}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-element)] rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-purple-500 rounded-lg">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-300">Admins</p>
-                  <p className="text-2xl font-bold text-white">{stats.admins}</p>
+                <div style={{ marginLeft: '60px' }}>
+                  <p className="text-sm font-medium text-gray-600">Admins</p>
+                  <p className="text-2xl font-bold text-blue-500">{stats.admins}</p>
                 </div>
               </div>
             </div>
@@ -230,75 +227,75 @@ const AdminDashboard: React.FC = () => {
 
         {/* Users Tab */}
         {activeTab === 'users' && (
-          <div className="bg-[var(--bg-element)] rounded-lg">
+          <div className="bg-white rounded-lg">
             <div className="px-6 py-4 border-b border-gray-300">
-              <h2 className="text-lg font-semibold text-white">Benutzerverwaltung</h2>
+              <h2 className="text-lg font-semibold text-gray-300">Benutzerverwaltung</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full">
-                <thead className="bg-[var(--bg-body)]">
+                <thead className="bg-white">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Benutzer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Rolle</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Registriert</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Benutzer</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Rolle</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Registriert</th>
                     {permissions.isAdmin && (
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Aktionen</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Aktionen</th>
                     )}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#2a4a57]">
+                <tbody className="divide-y divide-gray-200">
                   {users.map((user) => (
-                    <tr key={user.id} className="bg-[var(--bg-element)]">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                    <tr key={user.id} className="bg-white">
+                      <td className="px-4 py-4 whitespace-nowrap text-left">
                         <div className="flex items-center">
                           <div className="mr-3">
-                            <UserAvatar 
-                              user={user} 
+                            <UserAvatar
+                              user={user}
                               size="small"
                             />
                           </div>
                           <div>
-                            <div className="text-sm font-medium text-white">{user.username}</div>
-                            <div className="text-sm text-gray-300">{user.email}</div>
+                            <div className="text-sm font-medium text-gray-900">{user.username}</div>
+                            <div className="text-sm text-gray-600">{user.email}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.role === 'admin' 
-                            ? 'bg-purple-100 text-purple-800' 
-                            : user.role === 'moderator' 
-                            ? 'bg-blue-100 text-blue-800' 
+                          user.role === 'admin'
+                            ? 'bg-purple-100 text-purple-800'
+                            : user.role === 'moderator'
+                            ? 'bg-blue-100 text-blue-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}>
                           {user.role === 'admin' ? 'Admin' : user.role === 'moderator' ? 'Moderator' : 'Benutzer'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           user.is_banned ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
                         }`}>
                           {user.is_banned ? 'Gesperrt' : 'Aktiv'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
                         {new Date(user.created_at).toLocaleDateString('de-DE')}
                       </td>
                       {permissions.isAdmin && (
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <td className="px-4 py-4 whitespace-nowrap text-sm">
                           <div className="flex space-x-2">
                             {!user.is_banned ? (
                               <button
                                 onClick={() => handleBanUser(user.id, true)}
-                                className="text-red-400 hover:text-red-300 transition-colors"
+                                className="text-red-600 hover:text-red-800 transition-colors"
                               >
                                 Sperren
                               </button>
                             ) : (
                               <button
                                 onClick={() => handleBanUser(user.id, false)}
-                                className="text-green-400 hover:text-green-300 transition-colors"
+                                className="text-green-600 hover:text-green-800 transition-colors"
                               >
                                 Entsperren
                               </button>
@@ -306,7 +303,7 @@ const AdminDashboard: React.FC = () => {
                             <select
                               value={user.role}
                               onChange={(e) => handleUserRoleChange(user.id, e.target.value as 'user' | 'moderator' | 'admin')}
-                              className="bg-[var(--bg-body)] text-white text-sm rounded px-2 py-1 border border-gray-300"
+                              className="bg-white text-gray-900 text-sm rounded px-2 py-1 border border-gray-300"
                             >
                               <option value="user">Benutzer</option>
                               <option value="moderator">Moderator</option>

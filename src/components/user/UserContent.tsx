@@ -285,7 +285,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               
                               {/* Category */}
                               {post.categories && (
-                                <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
+                                <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600" style={{ borderRadius: '3px' }}>
                                   {post.categories.name_de}
                                 </span>
                               )}

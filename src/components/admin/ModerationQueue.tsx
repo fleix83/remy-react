@@ -589,8 +589,8 @@ const ModerationQueue: React.FC = () => {
   })
 
   return (
-    <div className="min-h-screen bg-[#fff9de]">
-      <div className="max-w-6xl mx-auto py-6 px-4 md:px-0">
+    <div className="min-h-screen bg-[#fff9de] overflow-x-hidden">
+      <div className="max-w-6xl mx-auto py-6 px-4">
         {/* Header */}
         <div className="mb-6 bg-[#fff0b5] pt-6 px-6 pb-1 rounded-[20px]">
           {/* Top Row: Title and Bulk Actions */}
@@ -747,13 +747,14 @@ const ModerationQueue: React.FC = () => {
                               handleCategoryChange(item.id, parseInt(e.target.value))
                             }
                           }}
-                          className="px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white border-none outline-none cursor-pointer hover:bg-[var(--primary)] transition-colors"
+                          className="px-2 py-0.5 font-medium bg-[var(--primary)] text-white border-none outline-none cursor-pointer hover:bg-[var(--primary)] transition-colors"
                           style={{
                             fontSize: '0.65rem',
                             gridColumn: '1',
                             gridRow: '1',
                             width: 'auto',
-                            minWidth: '0'
+                            minWidth: '0',
+                            borderRadius: '3px'
                           }}
                           onClick={(e) => e.stopPropagation()}
                         >
@@ -780,7 +781,7 @@ const ModerationQueue: React.FC = () => {
                         </span>
                       </div>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-lg font-medium bg-[var(--primary)] text-white inline-block" style={{fontSize: '0.65rem'}}>
+                      <span className="px-2 py-0.5 font-medium bg-[var(--primary)] text-white inline-block" style={{fontSize: '0.65rem', borderRadius: '3px'}}>
                         {item.category_id && categories[item.category_id] ? categories[item.category_id] : 'Keine Kategorie'}
                       </span>
                     )}

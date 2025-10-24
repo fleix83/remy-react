@@ -83,11 +83,12 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
           }}
         >
           {/* Category Badge */}
-          <span 
-            className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium transition-opacity ${getCategoryColor()}`} 
+          <span
+            className={`inline-flex items-center px-2 py-0.5 font-medium transition-opacity ${getCategoryColor()}`}
             style={{
               fontSize: '0.65rem',
-              backgroundColor: getCategoryBackground(post.category_id)
+              backgroundColor: getCategoryBackground(post.category_id),
+              borderRadius: '3px'
             }}
           >
             {post.categories?.name_de}
