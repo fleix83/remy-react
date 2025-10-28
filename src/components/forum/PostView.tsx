@@ -129,11 +129,12 @@ const PostView: React.FC = () => {
 
   return (
     <div className="min-h-screen relative z-10" style={{ backgroundColor: 'rgb(238 250 240)' }}>
-      {/* Header bar - no background */}
+      {/* Header bar */}
       <div
         className="w-full flex items-center justify-center relative"
         style={{
-          height: '65px'
+          height: '65px',
+          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
         }}
       >
         <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
