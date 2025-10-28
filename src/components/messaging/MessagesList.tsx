@@ -54,7 +54,7 @@ const MessagesList: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4">
+      <div className="p-4 bg-[var(--bg-element)]">
         <h2 className="text-lg font-semibold text-[var(--primary)]">Messages</h2>
         {conversations.length > 0 && (
           <p className="text-xs mt-1" style={{color: '#535353'}}>
@@ -64,7 +64,7 @@ const MessagesList: React.FC = () => {
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsla(129, 41%, 93%, 1) 0%, hsla(36, 26%, 96%, 1) 81%, hsla(36, 26%, 96%, 1) 100%)' }}>
         {conversations.length === 0 ? (
           <div className="p-6 text-center">
             <div className="text-gray-400 mb-4">
@@ -82,12 +82,11 @@ const MessagesList: React.FC = () => {
             <button
               key={conversation.id}
               onClick={() => setCurrentConversation(conversation)}
-              className={`w-full p-4 text-left hover:opacity-80 transition-colors ${
-                currentConversation?.id === conversation.id 
-                  ? 'border-l-2 border-l-[var(--primary)]' 
-                  : ''
+              className={`w-full p-4 text-left hover:bg-opacity-80 transition-colors ${
+                currentConversation?.id === conversation.id
+                  ? 'bg-white bg-opacity-50 border-l-2 border-l-[var(--primary)]'
+                  : 'hover:bg-white hover:bg-opacity-30'
               }`}
-              style={{backgroundColor: '#e7ffeb'}}
             >
               <div className="flex items-start space-x-3">
                 {/* Avatar */}
