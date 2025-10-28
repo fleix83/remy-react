@@ -183,7 +183,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       )}
 
       {/* Title */}
-      <h3 className="text-base md:text-xl font-semibold mb-4 leading-tight text-left" style={{color: '#626262'}}>
+      <h3 className="text-base md:text-xl font-semibold mb-4 leading-tight text-left" style={{color: 'var(--post-title)'}}>
         {post.title}
       </h3>
 

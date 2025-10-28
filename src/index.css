@@ -12,6 +12,7 @@
   --bg-body: #f8f6f3;          /* Light cream body background */
   --bg-element: rgb(217 247 222); /* Light green element backgrounds */
   --bg-element-hover: #c1e2c7; /* Element hover states */
+  --post-title: #2d7940;        /* Green - post titles */
   
   /* Category Badge Colors */
   --bg-erfahrung: #ffeb99;     /* Yellow - Experience/Stories */

@@ -220,7 +220,7 @@ const PostView: React.FC = () => {
           )}
 
           {/* Title */}
-          <h1 className="text-left" style={{color: '#626262', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
+          <h1 className="text-left" style={{color: 'var(--post-title)', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
             {post.title}
           </h1>
 

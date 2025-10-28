@@ -334,7 +334,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                         </div>
                         
                         {/* Title */}
-                        <h3 className="text-lg font-medium text-gray-900 mb-2 text-left">
+                        <h3 className="text-lg font-medium mb-2 text-left" style={{color: 'var(--post-title)'}}>
                           {post.title || 'Untitled Post'}
                         </h3>
                         
