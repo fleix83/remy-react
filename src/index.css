@@ -12,7 +12,8 @@
   --bg-body: #f8f6f3;          /* Light cream body background */
   --bg-element: rgb(217 247 222); /* Light green element backgrounds */
   --bg-element-hover: #c1e2c7; /* Element hover states */
-  --post-title: #1f602f;        /* Green - post titles */
+  --post-title: #144220;        /* Green - post titles */
+  --post-text: #144220;         /* Green - post content text */
   
   /* Category Badge Colors */
   --bg-erfahrung: #ffeb99;     /* Yellow - Experience/Stories */
@@ -67,12 +68,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Rich text content styling for comments */
 .prose {
-  color: var(--type);
+  color: var(--post-text);
 }
 
 .prose strong {
   font-weight: 700;
-  color: var(--type);
+  color: var(--post-text);
 }
 
 .prose em {

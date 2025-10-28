@@ -47,13 +47,13 @@ const PostView: React.FC = () => {
 
   const getCategoryBackground = (categoryId: number) => {
     const backgrounds = {
-      1: '#dbe2ff',                 // Light Blue
+      1: 'var(--bg-erfahrung)',     // Yellow
       2: 'var(--bg-suche)',         // Light Pink
       3: 'var(--bg-gedanken)',      // Light Blue
       4: 'var(--bg-rant)',          // Light Purple
       5: 'var(--bg-ressourcen)',    // Light Green
     }
-    return backgrounds[categoryId as keyof typeof backgrounds] || '#dbe2ff'
+    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
   }
 
   const handleEditPost = async (postData: any) => {
@@ -179,45 +179,48 @@ const PostView: React.FC = () => {
             paddingTop: '66px'
           }}
         >
-          {/* Category Badge and Canton - Overlapping top edge */}
-          <div className="absolute z-10 flex items-center space-x-2" style={{ top: '36px' }}>
-            <span
-              className={`inline-flex items-center px-2 py-0.5 font-medium shadow-lg ${getCategoryColor()}`}
-              style={{
-                fontSize: '0.65rem',
-                backgroundColor: getCategoryBackground(post.category_id),
-                borderRadius: '3px'
-              }}
-            >
-              {post.categories?.name_de}
-            </span>
-            {post.canton && (
-              <>
-                <img
-                  src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
-                  alt={`${post.canton} flag`}
-                  className="w-4 h-auto object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-                <span className="text-gray-500 text-xs font-medium">
-                  {post.canton}
-                </span>
-              </>
+          {/* Content wrapper - ensures consistent spacing for badge relative to content below */}
+          <div className="relative" style={{ minHeight: '0px' }}>
+            {/* Category Badge and Canton - Positioned relative to this wrapper */}
+            <div className="absolute z-10 flex items-center space-x-2" style={{ top: '-53px' }}>
+              <span
+                className={`inline-flex items-center px-2 py-0.5 font-medium ${getCategoryColor()}`}
+                style={{
+                  fontSize: '0.65rem',
+                  backgroundColor: getCategoryBackground(post.category_id),
+                  borderRadius: '3px'
+                }}
+              >
+                {post.categories?.name_de}
+              </span>
+              {post.canton && (
+                <>
+                  <img
+                    src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
+                    alt={`${post.canton} flag`}
+                    className="w-4 h-auto object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                  <span className="text-gray-500 text-xs font-medium">
+                    {post.canton}
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* Therapist Info */}
+            {post.therapists && (
+              <button
+                onClick={() => navigate(`/therapists?therapist=${post.therapists!.id}`)}
+                className="text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
+                style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2'}}
+              >
+                Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
+              </button>
             )}
           </div>
-
-          {/* Therapist Info */}
-          {post.therapists && (
-            <button
-              onClick={() => navigate(`/therapists?therapist=${post.therapists!.id}`)}
-              className="text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
-              style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2'}}
-            >
-              Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
-            </button>
-          )}
 
           {/* Title */}
           <h1 className="text-left" style={{color: 'var(--post-title)', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
@@ -267,8 +270,8 @@ const PostView: React.FC = () => {
           {/* Post Content */}
           <SelectableText onTextSelect={() => {}}>
             <div
-              className="prose prose-gray max-w-none text-[var(--type)] text-left"
-              style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px' }}
+              className="prose prose-gray max-w-none text-left"
+              style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px', color: 'var(--post-text)' }}
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </SelectableText>
