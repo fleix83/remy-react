@@ -86,7 +86,8 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={`Send a message to ${recipientUsername}...`}
-            className="w-full p-3 bg-white text-[var(--type)] rounded-xl border border-gray-300 focus:border-[var(--primary)] focus:outline-none resize-none min-h-[44px] max-h-32"
+            className="w-full p-3 bg-white text-[var(--type)] rounded-xl border border-gray-300 focus:border-[var(--primary)] focus:outline-none resize-none min-h-[44px] max-h-32 scrollbar-hide"
+            style={{ WebkitAppearance: 'none', appearance: 'none' }}
             rows={1}
             disabled={sending}
           />
