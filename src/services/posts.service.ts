@@ -376,33 +376,28 @@ export class PostsService {
     // Get all post IDs
     const postIds = posts.map(post => post.id)
 
-    // Fetch comment counts in a single query
-    const { data: commentCounts, error } = await supabase
-      .from('comments')
-      .select('post_id')
-      .in('post_id', postIds)
+    // Optimized: Use head: true with count to avoid fetching data, only get counts
+    // Execute all count queries in parallel for better performance
+    const countPromises = postIds.map(async (postId) => {
+      const { count, error } = await supabase
+        .from('comments')
+        .select('*', { count: 'exact', head: true })
+        .eq('post_id', postId)
 
-    if (error) {
-      console.error('Error fetching comment counts:', error)
-      // Return posts without comment counts rather than failing
-      return posts.map(post => ({
-        ...post,
-        users: Array.isArray(post.users) ? post.users[0] : post.users,
-        categories: Array.isArray(post.categories) ? post.categories[0] : post.categories,
-        therapists: Array.isArray(post.therapists) ? post.therapists[0] : post.therapists,
-        comments: [],
-        tags: []
-      })) as unknown as PostWithRelations[]
-    }
-
-    // Count comments per post
-    const countMap = new Map<number, number>()
-    commentCounts?.forEach(comment => {
-      const currentCount = countMap.get(comment.post_id) || 0
-      countMap.set(comment.post_id, currentCount + 1)
+      if (error) {
+        console.error(`Error counting comments for post ${postId}:`, error)
+        return { postId, count: 0 }
+      }
+      return { postId, count: count || 0 }
     })
 
-    // Fetch tags for all posts
+    const countResults = await Promise.all(countPromises)
+    const countMap = new Map<number, number>()
+    countResults.forEach(({ postId, count }) => {
+      countMap.set(postId, count)
+    })
+
+    // Fetch tags for all posts in parallel
     const tagsMap = await this.fetchTagsForPosts(postIds)
 
     // Add comment counts and tags to posts and normalize relationship arrays to objects

@@ -8,7 +8,8 @@ interface AuthState {
   userProfile: UserProfile | null
   session: Session | null
   loading: boolean
-  
+  authUnsubscribe: (() => void) | null
+
   // Actions
   initialize: () => Promise<void>
   login: (email: string, password: string) => Promise<void>
@@ -24,30 +25,41 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   userProfile: null,
   session: null,
   loading: true,
+  authUnsubscribe: null,
 
   initialize: async () => {
     try {
-      // Get initial session
+      // Step 1: Restore session from localStorage
       const { data: { session } } = await supabase.auth.getSession()
-      
+
       if (session?.user) {
         set({ user: session.user, session })
         await get().loadUserProfile()
       }
-      
-      // Listen for auth changes
-      supabase.auth.onAuthStateChange(async (_event, session) => {
-        if (session?.user) {
-          set({ user: session.user, session })
-          await get().loadUserProfile()
-        } else {
-          set({ user: null, session: null, userProfile: null })
+
+      // Step 2: Set up listener for auth state changes
+      // This listener will handle login/logout/token refresh
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (_event, session) => {
+          if (session?.user) {
+            set({ user: session.user, session })
+            await get().loadUserProfile()
+          } else {
+            set({ user: null, session: null, userProfile: null })
+          }
         }
-      })
-      
+      )
+
+      // Store subscription for cleanup
+      if (subscription) {
+        set({ authUnsubscribe: () => subscription.unsubscribe() })
+      }
+
     } catch (error) {
       console.error('Auth initialization error:', error)
     } finally {
+      // Step 3: Mark loading as complete
+      // This only happens after session restoration is attempted
       set({ loading: false })
     }
   },
@@ -86,7 +98,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
-    
+
+    // Clean up auth subscription
+    const { authUnsubscribe } = get()
+    if (authUnsubscribe) {
+      authUnsubscribe()
+      set({ authUnsubscribe: null })
+    }
+
     set({ user: null, session: null, userProfile: null })
   },
 
