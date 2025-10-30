@@ -145,10 +145,10 @@ function AuthForm() {
         {/* Welcome Text */}
         {!showLoginForm && (
           <div className="mb-8" style={{ textAlign: 'left' }}>
-            <p className="font-body text-[26px] font-semibold" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.5', hyphens: 'auto' } as React.CSSProperties}>
-              Du bist in Psychotherapie? Auf <span className="text-[70px]" style={{ fontFamily: 'Gaegu, cursive', color: 'var(--primary)', fontWeight: 'bold', display: 'inline-block', lineHeight: '0.6', verticalAlign: 'middle' }}>REMY</span> kannst du dich anonym mit Gleichgesinnten austauschen, deine Erfahrungen mit Therapeuten teilen oder nach neuen Therapeuten suchen.
+            <p className="font-body text-[27px] font-semibold" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.3', hyphens: 'auto' } as React.CSSProperties}>
+              Du bist in Psychotherapie? Auf <span className="text-[60px]" style={{ fontFamily: 'Gaegu, cursive', color: 'var(--primary)', fontWeight: 'bold', display: 'inline-block', lineHeight: '0.5', verticalAlign: 'middle' }}>REMY</span> kannst du dich anonym mit Gleichgesinnten austauschen, deine Erfahrungen mit Therapeuten teilen oder nach neuen Therapeuten suchen.
             </p>
-            <p className="font-body text-[26px] font-semibold mt-6" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.5', hyphens: 'auto' } as React.CSSProperties}>
+            <p className="font-body text-[27px] font-semibold mt-6" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.3', hyphens: 'auto', textDecoration: 'underline', textDecorationColor: 'var(--primary)', textDecorationThickness: '3px', textUnderlineOffset: '4px' } as React.CSSProperties}>
               Melde dich jetzt anonym an und schau rein
             </p>
           </div>
