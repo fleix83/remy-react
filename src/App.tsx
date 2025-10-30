@@ -95,7 +95,7 @@ function AuthForm() {
   const [showRegisterForm, setShowRegisterForm] = useState(false)
   const [showLoginForm, setShowLoginForm] = useState(false)
   const [message, setMessage] = useState('')
-  const formRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
 
   const { login, register } = useAuthStore()
 
