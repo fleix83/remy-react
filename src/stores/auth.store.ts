@@ -88,9 +88,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         }
       }
     })
-    
-    if (error) throw error
-    
+
+    if (error) {
+      // Translate Supabase error messages to German
+      let message = error.message
+      if (message.includes('at least 6 characters')) {
+        message = 'Das Passwort muss mindestens 6 Zeichen lang sein.'
+      }
+      const translatedError = new Error(message)
+      throw translatedError
+    }
+
     // Note: User won't be set until email is confirmed
     // Return void as expected by interface
   },

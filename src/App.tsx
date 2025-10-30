@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy } from 'react'
+import { useState, useEffect, Suspense, lazy, useRef } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useAuthStore } from './stores/auth.store'
 import { useNotificationsRealtime } from './hooks/useNotificationsRealtime'
@@ -95,6 +95,7 @@ function AuthForm() {
   const [showRegisterForm, setShowRegisterForm] = useState(false)
   const [showLoginForm, setShowLoginForm] = useState(false)
   const [message, setMessage] = useState('')
+  const formRef = useRef<HTMLDivElement>(null)
 
   const { login, register } = useAuthStore()
 
@@ -105,7 +106,7 @@ function AuthForm() {
 
     try {
       await register(email, password, username || email.split('@')[0])
-      setMessage('Check your email for the confirmation link!')
+      setMessage('Du hast eine Bestätigungsmail erhalten. Bitte überprüfe deinen Posteingang.')
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'An error occurred')
     } finally {
@@ -131,6 +132,9 @@ function AuthForm() {
     setShowRegisterForm(true)
     setShowLoginForm(false)
     setMessage('')
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }, 0)
   }
 
   const handleLoginClick = () => {
@@ -146,10 +150,10 @@ function AuthForm() {
         {!showLoginForm && (
           <div className="mb-8" style={{ textAlign: 'left' }}>
             <p className="font-body text-[27px] font-semibold" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.3', hyphens: 'auto' } as React.CSSProperties}>
-              Du bist in Psychotherapie? Auf <span className="text-[60px]" style={{ fontFamily: 'Gaegu, cursive', color: 'var(--primary)', fontWeight: 'bold', display: 'inline-block', lineHeight: '0.5', verticalAlign: 'middle' }}>REMY</span> kannst du dich anonym mit Gleichgesinnten austauschen, deine Erfahrungen mit Therapeuten teilen oder nach neuen Therapeuten suchen.
+              Du machst eine Psychotherapie? Auf <span className="text-[60px]" style={{ fontFamily: 'Gaegu, cursive', color: 'var(--primary)', fontWeight: 'bold', display: 'inline-block', lineHeight: '0.5', verticalAlign: 'middle' }}>REMY</span> kannst du dich anonym mit Gleichgesinnten austauschen, deine Erfahrungen mit Therapeuten teilen oder nach neuen Therapeuten suchen.
             </p>
-            <p className="font-body text-[27px] font-semibold mt-6" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.3', hyphens: 'auto', textDecoration: 'underline', textDecorationColor: 'var(--primary)', textDecorationThickness: '3px', textUnderlineOffset: '4px' } as React.CSSProperties}>
-              Melde dich jetzt anonym an und schau rein
+            <p className="font-body text-[20px] font-semibold" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.3', hyphens: 'auto', textDecoration: 'underline', textDecorationColor: 'var(--primary)', textDecorationThickness: '3px', textUnderlineOffset: '4px', marginTop: '20px', marginBottom: '30px' } as React.CSSProperties}>
+              Melde dich jetzt anonym an und schau herein!
             </p>
           </div>
         )}
@@ -168,14 +172,14 @@ function AuthForm() {
             </button>
             <div className="mt-4">
               <span className="font-body text-[16px]" style={{ color: '#144220' }}>
-                Schon registriert?{' '}
+                Schon registriert? Weiter zum{' '}
               </span>
               <button
                 onClick={handleLoginClick}
                 className="font-body text-[16px] underline"
                 style={{ color: 'var(--primary)' }}
               >
-                einloggen
+                Login
               </button>
             </div>
           </div>
@@ -183,7 +187,7 @@ function AuthForm() {
 
         {/* Registration Form */}
         {showRegisterForm && (
-          <form onSubmit={handleRegister} className="space-y-4">
+          <form ref={formRef} onSubmit={handleRegister} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
                 Benutzername
@@ -214,6 +218,9 @@ function AuthForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              <p className="text-left text-xs mt-2" style={{ color: 'var(--primary)' }}>
+                Verwende eine anonyme Emailadresse ohne deinen Namen für komplette Anonymität.
+              </p>
             </div>
 
             <div>
@@ -263,7 +270,7 @@ function AuthForm() {
                 className="font-body text-[16px] underline"
                 style={{ color: 'var(--primary)' }}
               >
-                einloggen
+                Login
               </button>
             </div>
           </form>
@@ -273,7 +280,7 @@ function AuthForm() {
         {showLoginForm && (
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="text-center mb-8">
-              <h2 style={{ fontFamily: 'Gaegu, cursive', fontWeight: 'bold', fontSize: '60px', color: 'var(--primary)', fontStyle: 'italic', lineHeight: '0.9', marginBottom: '4px' }}>
+              <h2 style={{ fontFamily: 'Gaegu, cursive', fontWeight: 'bold', fontSize: '60px', color: 'var(--primary)', lineHeight: '0.9', marginBottom: '4px' }}>
                 REMY
               </h2>
               <p className="font-body text-[18px]" style={{ color: '#144220', marginBottom: '24px' }}>
@@ -344,7 +351,7 @@ function AuthForm() {
                 className="font-body text-[16px] underline"
                 style={{ color: 'var(--primary)' }}
               >
-                registrieren
+                Registrieren
               </button>
             </div>
           </form>
