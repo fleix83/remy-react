@@ -78,7 +78,7 @@ function App() {
             }
           />
           <Route path="/messages" element={<Layout onCreatePost={handleCreatePost}><MessagesPage /></Layout>} />
-          <Route path="/profile" element={<Layout onCreatePost={handleCreatePost}><UserProfile /></Layout>} />
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/admin" element={<Layout onCreatePost={handleCreatePost}><AdminDashboard /></Layout>} />
           <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost} headerBg="#fff0b5"><ModerationQueue /></Layout>} />
             </Routes>
@@ -90,24 +90,22 @@ function App() {
 function AuthForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
-  const [isSignUp, setIsSignUp] = useState(false)
+  const [showRegisterForm, setShowRegisterForm] = useState(false)
+  const [showLoginForm, setShowLoginForm] = useState(false)
   const [message, setMessage] = useState('')
-  
+
   const { login, register } = useAuthStore()
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setMessage('')
 
     try {
-      if (isSignUp) {
-        await register(email, password, email.split('@')[0])
-        setMessage('Check your email for the confirmation link!')
-      } else {
-        await login(email, password)
-      }
+      await register(email, password, username || email.split('@')[0])
+      setMessage('Check your email for the confirmation link!')
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'An error occurred')
     } finally {
@@ -115,84 +113,243 @@ function AuthForm() {
     }
   }
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+
+    try {
+      await login(email, password)
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'An error occurred')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRegisterClick = () => {
+    setShowRegisterForm(true)
+    setShowLoginForm(false)
+    setMessage('')
+  }
+
+  const handleLoginClick = () => {
+    setShowLoginForm(true)
+    setShowRegisterForm(false)
+    setMessage('')
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h1 className="text-4xl font-headline font-bold text-center text-primary-600 mb-2">
-            Remy Forum
-          </h1>
-          <h2 className="text-2xl font-headline font-semibold text-center text-gray-900">
-            {isSignUp ? 'Create your account' : 'Sign in to your account'}
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            A safe space for psychotherapy patient experiences
-          </p>
-        </div>
-
-        <form className="mt-8 space-y-6" onSubmit={handleAuth}>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#d5f4da' }}>
+      <div className="max-w-md w-full" style={{ padding: '9px' }}>
+        {/* Welcome Text */}
+        {!showLoginForm && (
+          <div className="mb-8" style={{ textAlign: 'left' }}>
+            <p className="font-body text-[26px] font-semibold" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.5', hyphens: 'auto', lang: 'de' }}>
+              Du bist in Psychotherapie? Auf <span className="text-[70px]" style={{ fontFamily: 'Gaegu, cursive', color: 'var(--primary)', fontWeight: 'bold', display: 'inline-block', lineHeight: '0.6', verticalAlign: 'middle' }}>REMY</span> kannst du dich anonym mit Gleichgesinnten austauschen, deine Erfahrungen mit Therapeuten teilen oder nach neuen Therapeuten suchen.
+            </p>
+            <p className="font-body text-[26px] font-semibold mt-6" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.5', hyphens: 'auto', lang: 'de' }}>
+              Melde dich jetzt anonym an und schau rein
+            </p>
           </div>
+        )}
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          {message && (
-            <div className={`rounded-md p-4 ${
-              message.includes('error') || message.includes('Error') 
-                ? 'bg-red-50 border border-red-200 text-red-700'
-                : 'bg-green-50 border border-green-200 text-green-700'
-            }`}>
-              {message}
+        {/* Registration Button - Initial State */}
+        {!showRegisterForm && !showLoginForm && (
+          <div style={{ textAlign: 'left' }}>
+            <button
+              onClick={handleRegisterClick}
+              className="w-full px-8 py-3 text-white font-medium text-lg rounded-lg transition-colors"
+              style={{ backgroundColor: 'var(--primary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              Registrieren
+            </button>
+            <div className="mt-4">
+              <span className="font-body text-[16px]" style={{ color: '#144220' }}>
+                Schon registriert?{' '}
+              </span>
+              <button
+                onClick={handleLoginClick}
+                className="font-body text-[16px] underline"
+                style={{ color: 'var(--primary)' }}
+              >
+                einloggen
+              </button>
             </div>
-          )}
+          </div>
+        )}
 
-          <div>
+        {/* Registration Form */}
+        {showRegisterForm && (
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
+                Benutzername
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
+                style={{ focusRingColor: 'var(--primary)' }}
+                placeholder="Benutzername wählen"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
+                E-Mail
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
+                placeholder="deine@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
+                Passwort
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            {message && (
+              <div className={`rounded-lg p-4 ${
+                message.includes('error') || message.includes('Error')
+                  ? 'bg-red-50 border border-red-200 text-red-700'
+                  : 'bg-green-50 border border-green-200 text-green-700'
+              }`}>
+                {message}
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 text-white font-medium text-lg rounded-lg transition-colors disabled:opacity-50"
+              style={{ backgroundColor: 'var(--primary)' }}
+              onMouseEnter={(e) => !loading && (e.currentTarget.style.opacity = '0.9')}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             >
-              {loading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+              {loading ? 'Loading...' : 'Bestätigen'}
             </button>
-          </div>
 
-          <div className="text-center">
+            <div className="text-center mt-4">
+              <span className="font-body text-[16px]" style={{ color: '#144220' }}>
+                Schon registriert?{' '}
+              </span>
+              <button
+                type="button"
+                onClick={handleLoginClick}
+                className="font-body text-[16px] underline"
+                style={{ color: 'var(--primary)' }}
+              >
+                einloggen
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Login Form */}
+        {showLoginForm && (
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="text-center mb-8">
+              <h2 style={{ fontFamily: 'Gaegu, cursive', fontWeight: 'bold', fontSize: '60px', color: 'var(--primary)', fontStyle: 'italic', lineHeight: '0.9', marginBottom: '4px' }}>
+                REMY
+              </h2>
+              <p className="font-body text-[18px]" style={{ color: '#144220', marginBottom: '24px' }}>
+                Willkommen zurück
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="login-email" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
+                E-Mail
+              </label>
+              <input
+                id="login-email"
+                name="email"
+                type="email"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
+                placeholder="deine@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="login-password" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
+                Passwort
+              </label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            {message && (
+              <div className={`rounded-lg p-4 ${
+                message.includes('error') || message.includes('Error')
+                  ? 'bg-red-50 border border-red-200 text-red-700'
+                  : 'bg-green-50 border border-green-200 text-green-700'
+              }`}>
+                {message}
+              </div>
+            )}
+
             <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-primary-600 hover:text-primary-500"
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 text-white font-medium text-lg rounded-lg transition-colors disabled:opacity-50"
+              style={{ backgroundColor: 'var(--primary)' }}
+              onMouseEnter={(e) => !loading && (e.currentTarget.style.opacity = '0.9')}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             >
-              {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
+              {loading ? 'Loading...' : 'Einloggen'}
             </button>
-          </div>
-        </form>
+
+            <div className="text-center mt-4">
+              <span className="font-body text-[16px]" style={{ color: '#144220' }}>
+                Noch kein Konto?{' '}
+              </span>
+              <button
+                type="button"
+                onClick={handleRegisterClick}
+                className="font-body text-[16px] underline"
+                style={{ color: 'var(--primary)' }}
+              >
+                registrieren
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   )
