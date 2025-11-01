@@ -30,9 +30,9 @@ const PostEditModal: React.FC<PostEditModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-50">
       <div className="bg-[#1a3442] md:bg-white w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto">
-        <div className="sticky top-0 bg-[#1a3442] md:bg-white border-b border-[#2a4a57] md:border-gray-200 px-4 md:px-6 py-3 md:py-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg md:text-xl font-headline font-bold text-[#2ebe7a] md:text-gray-900">
+        <div className="sticky top-0 bg-[#1a3442] md:bg-white border-b border-[#2a4a57] md:border-gray-200 px-6 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base md:text-xl font-semibold text-[#2ebe7a] leading-tight md:text-gray-900">
               Beitrag bearbeiten
             </h2>
             <button
@@ -45,7 +45,7 @@ const PostEditModal: React.FC<PostEditModalProps> = ({
             </button>
           </div>
         </div>
-        <div className="p-4 md:p-6 pb-20 md:pb-6">
+        <div className="px-6 pb-20 md:pb-6">
           <PostEditor
             editMode={true}
             mobileOptimized={true}
