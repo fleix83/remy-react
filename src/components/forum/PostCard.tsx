@@ -1,9 +1,6 @@
 import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { PostWithRelations } from '../../types/database.types'
-import { useAuthStore } from '../../stores/auth.store'
-import ModerationActions from '../ui/ModerationActions'
-import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
 
 interface PostCardProps {
@@ -14,7 +11,6 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className = '' }) => {
   const navigate = useNavigate()
-  const { user } = useAuthStore()
 
   // Get comment count from post data (from batched query) or fallback to 0
   const commentCount = useMemo(() => {
@@ -145,26 +141,6 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
         <div className="flex-1 min-w-0">
           <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{post.users?.username}</p>
           <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          {/* Send Message Button */}
-          {user && post.users && user.id !== post.user_id && (
-            <SendMessageButton
-              recipientId={post.user_id}
-              recipientUsername={post.users.username}
-              postTitle={post.title}
-              postId={post.id}
-              variant="icon-only"
-              className="hover:bg-[var(--bg-element-hover)] rounded p-1"
-            />
-          )}
-          {/* Moderation Actions */}
-          <ModerationActions
-            contentType="post"
-            contentId={post.id}
-            contentUserId={post.user_id}
-            onContentDeleted={() => window.location.reload()}
-          />
         </div>
       </div>
 
