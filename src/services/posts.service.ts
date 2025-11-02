@@ -186,7 +186,7 @@ export class PostsService {
       throw new Error('User not authenticated')
     }
 
-    console.log('👤 PostsService: Authenticated user:', user.email, 'ID:', user.id)
+    console.log('👤 PostsService: Authenticated user ID:', user.id)
 
     const { tags, ...postDataWithoutTags } = postData
     const insertData = {

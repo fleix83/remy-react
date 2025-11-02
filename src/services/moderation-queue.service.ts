@@ -9,7 +9,7 @@ export class ModerationQueueService {
       .from('posts')
       .select(`
         *,
-        users!posts_user_id_fkey(id, username, email, role, avatar_url),
+        users!posts_user_id_fkey(id, username, role, avatar_url),
         categories!inner(id, name_de, name_fr, name_it)
       `)
       .eq('moderation_status', 'pending')
@@ -25,7 +25,7 @@ export class ModerationQueueService {
       .from('comments')
       .select(`
         *,
-        users!comments_user_id_fkey(id, username, email, role, avatar_url)
+        users!comments_user_id_fkey(id, username, role, avatar_url)
       `)
       .eq('moderation_status', 'pending')
       .order('created_at', { ascending: true })
@@ -197,7 +197,7 @@ export class ModerationQueueService {
         .from('posts')
         .select(`
           *,
-          users!posts_user_id_fkey(id, username, email, avatar_url)
+          users!posts_user_id_fkey(id, username, avatar_url)
         `)
         .eq('moderated_by', moderatorId)
         .not('moderation_status', 'eq', 'pending')
@@ -207,7 +207,7 @@ export class ModerationQueueService {
         .from('comments')
         .select(`
           *,
-          users!comments_user_id_fkey(id, username, email, avatar_url)
+          users!comments_user_id_fkey(id, username, avatar_url)
         `)
         .eq('moderated_by', moderatorId)
         .not('moderation_status', 'eq', 'pending')

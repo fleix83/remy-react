@@ -5,7 +5,6 @@ export type Database = {
         Row: {
           id: string
           username: string
-          email: string
           avatar: string | null
           biography: string | null
           registration_date: string
@@ -23,7 +22,6 @@ export type Database = {
         Insert: {
           id: string
           username: string
-          email: string
           avatar?: string | null
           biography?: string | null
           registration_date?: string
@@ -41,7 +39,6 @@ export type Database = {
         Update: {
           id?: string
           username?: string
-          email?: string
           avatar?: string | null
           biography?: string | null
           registration_date?: string

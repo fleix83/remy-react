@@ -85,7 +85,7 @@ export class TherapistsService {
       throw new Error('User not authenticated')
     }
 
-    console.log('👤 TherapistsService: Authenticated user:', user.email, 'ID:', user.id)
+    console.log('👤 TherapistsService: Authenticated user ID:', user.id)
 
     const insertData = {
       form_of_address: therapistData.form_of_address,
@@ -235,7 +235,7 @@ export class TherapistsService {
       throw new Error('User not authenticated')
     }
 
-    console.log('👤 TherapistsService: Authenticated user:', user.email, 'ID:', user.id)
+    console.log('👤 TherapistsService: Authenticated user ID:', user.id)
 
     // Prepare data for insertion
     const insertData = therapists.map(t => ({
