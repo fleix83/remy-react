@@ -298,8 +298,8 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   if (!isOpen) return null
 
   return createPortal(
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto" style={{ backgroundColor: '#ecffef' }}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="w-full h-full overflow-y-auto" style={{ backgroundColor: '#ecffef' }}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b" style={{ borderBottomColor: '#ebebeb' }}>
           <h2 className="text-xl font-bold" style={{ color: 'var(--primary)' }}>
