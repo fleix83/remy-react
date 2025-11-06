@@ -166,32 +166,42 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
     }
 
     try {
+      console.log('Attempting to delete post:', postId, 'for user:', userId)
+
       // Soft delete - mark as inactive instead of actually deleting
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('posts')
-        .update({ 
+        .update({
           is_active: false,
-          is_published: false 
+          is_published: false
         })
         .eq('id', postId)
         .eq('user_id', userId) // Security: ensure user can only delete their own posts
+        .select()
+
+      console.log('Delete response:', { data, error })
 
       if (error) {
         console.error('Error deleting post:', error)
         throw new Error('Failed to delete post from database')
       }
 
+      if (!data || data.length === 0) {
+        console.warn('No rows updated - post may not exist or user does not own it')
+        throw new Error('Could not delete post - you may not have permission')
+      }
+
       setMessage({ type: 'success', text: 'Post deleted successfully!' })
-      
+
       // Reload posts to remove deleted post from view
       if (activeTab === 'posts') {
         await loadContent()
       }
     } catch (error) {
       console.error('Error deleting post:', error)
-      setMessage({ 
-        type: 'error', 
-        text: error instanceof Error ? error.message : 'Failed to delete post' 
+      setMessage({
+        type: 'error',
+        text: error instanceof Error ? error.message : 'Failed to delete post'
       })
     }
   }
@@ -269,54 +279,68 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                     <p className="text-sm text-gray-400 mt-1">Your published and pending posts will appear here</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                     {posts.map((post) => (
-                      <div 
-                        key={post.id} 
-                        className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors duration-200 cursor-pointer"
+                      <div
+                        key={post.id}
+                        className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors duration-200 cursor-pointer relative"
+                        style={{ marginTop: '20px' }}
                         onClick={() => handlePostClick(post.id)}
                       >
-                        {/* Top Section */}
-                        <div className="flex items-start justify-between mb-3">
-                          {/* Top Left: Status Badge, Category/Canton Group, Date */}
-                          <div className="text-left">
-                            <div className="flex items-center gap-2 mb-1">
-                              {getStatusBadge(post)}
-                              
-                              {/* Category */}
-                              {post.categories && (
-                                <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600" style={{ borderRadius: '3px' }}>
-                                  {post.categories.name_de}
-                                </span>
-                              )}
-                              
-                              {/* Canton Flag */}
-                              {post.canton && (
-                                <img 
-                                  src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
-                                  alt={`${post.canton} flag`}
-                                  className="w-4 h-auto object-cover"
-                                  onError={(e) => {
-                                    (e.target as HTMLImageElement).style.display = 'none'
-                                  }}
-                                />
-                              )}
-                              
-                              {/* Canton Abbreviation */}
-                              {post.canton && (
-                                <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
-                                  {post.canton}
-                                </span>
-                              )}
-                            </div>
-                            
-                            <div className="text-xs text-gray-500 mt-1" style={{fontSize: '0.65rem'}}>
+                        {/* Status Badge - Positioned absolutely to overlap top border */}
+                        <div style={{ position: 'absolute', top: '-12px', left: '16px' }}>
+                          {getStatusBadge(post)}
+                        </div>
+
+                        {/* Top Section - Category, Canton, Date and Edit Button on one line */}
+                        <div className="flex items-center justify-between mb-3" style={{ marginTop: '8px' }}>
+                          {/* Left: Category and Canton */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {/* Category with app colors */}
+                            {post.categories && (
+                              <span
+                                className="px-2 py-1 text-xs text-black font-medium"
+                                style={{
+                                  borderRadius: '3px',
+                                  backgroundColor:
+                                    post.categories.id === 1 ? 'var(--bg-erfahrung)' :
+                                    post.categories.id === 2 ? 'var(--bg-suche)' :
+                                    post.categories.id === 3 ? 'var(--bg-gedanken)' :
+                                    post.categories.id === 4 ? 'var(--bg-rant)' :
+                                    post.categories.id === 5 ? 'var(--bg-ressourcen)' :
+                                    '#f3f4f6'
+                                }}
+                              >
+                                {post.categories.name_de}
+                              </span>
+                            )}
+
+                            {/* Canton Flag */}
+                            {post.canton && (
+                              <img
+                                src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
+                                alt={`${post.canton} flag`}
+                                className="w-4 h-auto object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none'
+                                }}
+                              />
+                            )}
+
+                            {/* Canton Abbreviation */}
+                            {post.canton && (
+                              <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
+                                {post.canton}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Right: Date and Edit Button */}
+                          <div className="flex items-center gap-3">
+                            <div className="text-xs text-gray-500" style={{fontSize: '0.65rem'}}>
                               {formatDate(post.created_at)}
                             </div>
-                          </div>
-                          
-                          {/* Top Right: Edit Button Only */}
-                          <div className="flex items-center">
+
                             {/* Edit Button - Only for own posts */}
                             {user && user.id === post.user_id && (
                               <button
@@ -332,27 +356,33 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                             )}
                           </div>
                         </div>
-                        
+
+                        {/* Therapist line above title - full format like forum post, blue color, closer to title */}
+                        {post.therapists && (
+                          <div
+                            className="text-left mb-[-4px]"
+                            style={{
+                              color: '#4785ff',
+                              fontSize: '12px',
+                              lineHeight: '1.2'
+                            }}
+                          >
+                            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
+                          </div>
+                        )}
+
                         {/* Title */}
                         <h3 className="text-lg font-medium mb-2 text-left" style={{color: 'var(--post-title)'}}>
                           {post.title || 'Untitled Post'}
                         </h3>
-                        
+
                         {/* Content Preview */}
                         <p className="text-gray-600 text-sm mb-3 text-left leading-relaxed">
                           {truncateToLines(post.content, 2)}
                         </p>
-                        
-                        {/* Bottom Section */}
-                        <div className="flex items-center justify-between">
-                          <div className="text-left">
-                            {post.therapists && (
-                              <span className="text-xs text-gray-500">
-                                with {post.therapists.first_name} {post.therapists.last_name}
-                              </span>
-                            )}
-                          </div>
-                          
+
+                        {/* Bottom Section - Delete Button */}
+                        <div className="flex items-center justify-end">
                           {/* Delete Button - Only for own posts */}
                           {user && user.id === post.user_id && (
                             <button
@@ -391,25 +421,28 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                   <div className="space-y-4">
                     {comments.map((comment) => (
                       <div key={comment.id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="mb-3">
+                        <div className="mb-3 text-left">
                           {comment.posts && (
-                            <Link 
-                              to={`/post/${comment.posts.id}`}
-                              className="text-sm font-medium text-[var(--primary)] hover:text-[#2d8544] transition-colors duration-200"
-                            >
-                              Comment on: {comment.posts.title || 'Untitled Post'}
-                            </Link>
+                            <span className="text-sm font-medium text-gray-700">
+                              Kommentar zu:{' '}
+                              <Link
+                                to={`/post/${comment.posts.id}`}
+                                className="text-[var(--primary)] hover:text-[#2d8544] underline transition-colors duration-200"
+                              >
+                                {comment.posts.title || 'Untitled Post'}
+                              </Link>
+                            </span>
                           )}
                         </div>
-                        
-                        <div className="text-gray-700 text-sm mb-3">
+
+                        <div className="text-gray-700 text-sm mb-3 text-left font-medium">
                           {truncateText(comment.content.replace(/<[^>]*>/g, ''), 200)}
                         </div>
-                        
+
                         <div className="flex items-center justify-between text-sm text-gray-500">
-                          <span>Posted {formatDate(comment.created_at)}</span>
+                          <span className="text-left">Kommentiert am: {formatDate(comment.created_at)}</span>
                           {comment.is_edited && (
-                            <span className="text-xs text-gray-400">Edited</span>
+                            <span className="text-xs text-gray-400">Bearbeitet</span>
                           )}
                         </div>
                       </div>
@@ -431,36 +464,124 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                     <p className="text-sm text-gray-400 mt-1">Your unsaved post drafts will appear here</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                     {drafts.map((draft) => (
-                      <div key={draft.id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <h4 className="text-lg font-medium text-gray-900">
-                              {draft.title || 'Untitled Draft'}
-                            </h4>
-                            <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 border border-blue-200">
-                              Draft
-                            </span>
+                      <div
+                        key={draft.id}
+                        className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors duration-200 cursor-pointer relative"
+                        style={{ marginTop: '20px' }}
+                        onClick={() => handlePostClick(draft.id)}
+                      >
+                        {/* Draft Badge - Positioned absolutely to overlap top border */}
+                        <div style={{ position: 'absolute', top: '-12px', left: '16px' }}>
+                          <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 border border-blue-200">
+                            Entwurf
+                          </span>
+                        </div>
+
+                        {/* Top Section - Category, Canton, Date and Edit Button on one line */}
+                        <div className="flex items-center justify-between mb-3" style={{ marginTop: '8px' }}>
+                          {/* Left: Category and Canton */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {/* Category with app colors */}
+                            {draft.categories && (
+                              <span
+                                className="px-2 py-1 text-xs text-black font-medium"
+                                style={{
+                                  borderRadius: '3px',
+                                  backgroundColor:
+                                    draft.categories.id === 1 ? 'var(--bg-erfahrung)' :
+                                    draft.categories.id === 2 ? 'var(--bg-suche)' :
+                                    draft.categories.id === 3 ? 'var(--bg-gedanken)' :
+                                    draft.categories.id === 4 ? 'var(--bg-rant)' :
+                                    draft.categories.id === 5 ? 'var(--bg-ressourcen)' :
+                                    '#f3f4f6'
+                                }}
+                              >
+                                {draft.categories.name_de}
+                              </span>
+                            )}
+
+                            {/* Canton Flag */}
+                            {draft.canton && (
+                              <img
+                                src={`/remyreact/kantone/${draft.canton.toLowerCase()}.png`}
+                                alt={`${draft.canton} flag`}
+                                className="w-4 h-auto object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none'
+                                }}
+                              />
+                            )}
+
+                            {/* Canton Abbreviation */}
+                            {draft.canton && (
+                              <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
+                                {draft.canton}
+                              </span>
+                            )}
                           </div>
+
+                          {/* Right: Date and Edit Button */}
+                          <div className="flex items-center gap-3">
+                            <div className="text-xs text-gray-500" style={{fontSize: '0.65rem'}}>
+                              {formatDate(draft.created_at)}
+                            </div>
+
+                            {/* Edit Button - Only for own drafts */}
+                            {user && user.id === draft.user_id && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleEditPost(draft)
+                                }}
+                                className="text-[var(--primary)] hover:text-[#2d8544] text-xs font-medium transition-colors duration-200"
+                                title="Edit draft"
+                              >
+                                Edit
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Therapist line above title - full format like forum post, blue color, closer to title */}
+                        {draft.therapists && (
+                          <div
+                            className="text-left mb-[-4px]"
+                            style={{
+                              color: '#4785ff',
+                              fontSize: '12px',
+                              lineHeight: '1.2'
+                            }}
+                          >
+                            Erfahrung mit {draft.therapists.form_of_address} {draft.therapists.first_name} {draft.therapists.last_name}, {draft.therapists.short_designation || draft.therapists.designation}
+                          </div>
+                        )}
+
+                        {/* Post Title */}
+                        <h3 className="text-lg font-semibold mb-2 text-left">
+                          {draft.title || 'Untitled Draft'}
+                        </h3>
+
+                        {/* Content Preview */}
+                        <p className="text-gray-600 text-sm mb-3 text-left">
+                          {truncateText(draft.content.replace(/<[^>]*>/g, ''), 200)}
+                        </p>
+
+                        {/* Bottom Section - Delete Button */}
+                        <div className="flex justify-end">
                           <button
-                            onClick={() => handleDeleteDraft(draft.id)}
-                            className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeleteDraft(draft.id)
+                            }}
+                            className="text-red-500 hover:text-red-700 p-2 transition-colors duration-200 rounded-full hover:bg-red-50"
                             title="Delete draft"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                           </button>
-                        </div>
-                        
-                        <p className="text-gray-600 text-sm mb-3">
-                          {truncateText(draft.content.replace(/<[^>]*>/g, ''), 150)}
-                        </p>
-                        
-                        <div className="flex items-center justify-between text-sm text-gray-500">
-                          <span>Last edited {formatDate(draft.updated_at)}</span>
-                          <span>Created {formatDate(draft.created_at)}</span>
                         </div>
                       </div>
                     ))}

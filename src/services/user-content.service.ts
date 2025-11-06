@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import type { Post, PostDraft, PostWithRelations, CommentWithUser } from '../types/database.types'
+import type { Post, PostWithRelations, CommentWithUser } from '../types/database.types'
 
 export class UserContentService {
   // Get user's posts with status information
@@ -13,6 +13,8 @@ export class UserContentService {
           therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
         `)
         .eq('user_id', userId)
+        .eq('is_active', true) // Only show active posts
+        .eq('is_draft', false) // Exclude drafts - shown in separate drafts tab
         .order('created_at', { ascending: false })
         .limit(limit)
 
@@ -53,13 +55,19 @@ export class UserContentService {
     }
   }
 
-  // Get user's drafts
-  static async getUserDrafts(userId: string, limit: number = 50): Promise<PostDraft[]> {
+  // Get user's drafts (posts with is_draft = true)
+  static async getUserDrafts(userId: string, limit: number = 50): Promise<PostWithRelations[]> {
     try {
       const { data, error } = await supabase
-        .from('post_drafts')
-        .select('*')
+        .from('posts')
+        .select(`
+          *,
+          categories(id, name_de),
+          therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
+        `)
         .eq('user_id', userId)
+        .eq('is_active', true) // Only show active drafts
+        .eq('is_draft', true) // Only show drafts
         .order('updated_at', { ascending: false })
         .limit(limit)
 
@@ -75,14 +83,15 @@ export class UserContentService {
     }
   }
 
-  // Delete a draft
+  // Delete a draft (soft delete by setting is_active = false)
   static async deleteDraft(draftId: number, userId: string): Promise<void> {
     try {
       const { error } = await supabase
-        .from('post_drafts')
-        .delete()
+        .from('posts')
+        .update({ is_active: false })
         .eq('id', draftId)
         .eq('user_id', userId) // Security: ensure user can only delete their own drafts
+        .eq('is_draft', true) // Extra security: only allow deleting drafts
 
       if (error) {
         console.error('Error deleting draft:', error)
@@ -98,34 +107,34 @@ export class UserContentService {
   static getPostStatusBadge(post: Post) {
     if (post.is_banned) {
       return {
-        text: 'Banned',
+        text: 'Gesperrt',
         className: 'bg-red-100 text-red-800 border-red-200'
       }
     }
-    
+
     if (!post.is_active) {
       return {
-        text: 'Inactive',
+        text: 'Inaktiv',
         className: 'bg-gray-100 text-gray-800 border-gray-200'
       }
     }
-    
+
     if (!post.is_published) {
       return {
-        text: 'Pending Review',
+        text: 'In Moderation',
         className: 'bg-yellow-100 text-yellow-800 border-yellow-200'
       }
     }
-    
+
     if (post.is_published && post.is_active && !post.is_banned) {
       return {
-        text: 'Published',
+        text: 'Veröffentlicht',
         className: 'bg-green-100 text-green-800 border-green-200'
       }
     }
-    
+
     return {
-      text: 'Unknown',
+      text: 'Unbekannt',
       className: 'bg-gray-100 text-gray-800 border-gray-200'
     }
   }

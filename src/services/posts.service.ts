@@ -170,6 +170,7 @@ export class PostsService {
     canton: string
     therapist_id?: number
     is_published?: boolean
+    is_draft?: boolean
     tags?: string[]
   }): Promise<Post> {
     console.log('🔧 PostsService: Starting createPost with data:', postData)
@@ -188,12 +189,13 @@ export class PostsService {
 
     console.log('👤 PostsService: Authenticated user ID:', user.id)
 
-    const { tags, ...postDataWithoutTags } = postData
+    const { tags, is_draft, ...postDataWithoutTags } = postData
     const insertData = {
       ...postDataWithoutTags,
       user_id: user.id,
-      is_published: false, // Always start as unpublished - requires moderation approval
-      moderation_status: 'pending' as const,
+      is_published: false, // Always start as unpublished - requires moderation approval for non-drafts
+      is_draft: is_draft ?? false, // Default to false (submitted for moderation)
+      moderation_status: (is_draft ? null : 'pending') as const, // Drafts don't need moderation status yet
       designation: 'Allgemein' // Provide default designation since it's required by DB
     }
 

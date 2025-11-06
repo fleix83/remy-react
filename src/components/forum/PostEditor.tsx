@@ -148,7 +148,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
         content: content.trim(),
         category_id: categoryId,
         canton,
-        is_published: publish,
+        is_draft: !publish, // true when saving as draft, false when publishing
         tags,
         ...(selectedTherapist && { therapist_id: selectedTherapist.id })
       }

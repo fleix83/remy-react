@@ -4,7 +4,8 @@ import type { ModerationQueueItem, ModerationStatus, Post, Comment } from '../ty
 export class ModerationQueueService {
   // Get all pending content for moderation queue
   async getPendingContent(): Promise<ModerationQueueItem[]> {
-    // Get pending posts
+    // Get pending posts - exclude drafts
+    // Drafts (is_draft = true) should never appear in moderation queue
     const { data: pendingPosts, error: postsError } = await supabase
       .from('posts')
       .select(`
@@ -13,6 +14,8 @@ export class ModerationQueueService {
         categories!inner(id, name_de, name_fr, name_it)
       `)
       .eq('moderation_status', 'pending')
+      .eq('is_active', true) // Only show active posts
+      .eq('is_draft', false) // Exclude drafts - only show submitted posts
       .order('created_at', { ascending: true })
 
     if (postsError) {
@@ -82,7 +85,9 @@ export class ModerationQueueService {
       supabase
         .from('posts')
         .select('id', { count: 'exact', head: true })
-        .eq('moderation_status', 'pending'),
+        .eq('moderation_status', 'pending')
+        .eq('is_active', true) // Only count active posts (exclude soft-deleted)
+        .eq('is_draft', false), // Exclude drafts from count
       supabase
         .from('comments')
         .select('id', { count: 'exact', head: true })
