@@ -5,7 +5,7 @@ import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
 import PostEditModal from '../forum/PostEditModal'
 import { supabase } from '../../lib/supabase'
-import type { PostWithRelations, PostDraft, CommentWithUser, Post } from '../../types/database.types'
+import type { PostWithRelations, CommentWithUser, Post } from '../../types/database.types'
 
 interface UserContentProps {
   userId: string
@@ -17,7 +17,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   const [activeTab, setActiveTab] = useState<ContentTab>('posts')
   const [posts, setPosts] = useState<PostWithRelations[]>([])
   const [comments, setComments] = useState<(CommentWithUser & { posts?: Post })[]>([])
-  const [drafts, setDrafts] = useState<PostDraft[]>([])
+  const [drafts, setDrafts] = useState<PostWithRelations[]>([])
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [editingPost, setEditingPost] = useState<PostWithRelations | null>(null)

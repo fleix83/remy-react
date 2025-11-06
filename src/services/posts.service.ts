@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase'
 import { withPerformanceTracking } from '../utils/performance-monitor'
-import type { Post, PostWithRelations, Category, Designation } from '../types/database.types'
+import type { Post, PostWithRelations, Category, Designation, ModerationStatus } from '../types/database.types'
 import { TagsService } from './tags.service'
 
 interface PostFilters {
@@ -190,12 +190,16 @@ export class PostsService {
     console.log('👤 PostsService: Authenticated user ID:', user.id)
 
     const { tags, is_draft, ...postDataWithoutTags } = postData
+
+    // Set moderation status based on draft flag
+    const draftStatus = is_draft ? null : 'pending'
+
     const insertData = {
       ...postDataWithoutTags,
       user_id: user.id,
       is_published: false, // Always start as unpublished - requires moderation approval for non-drafts
       is_draft: is_draft ?? false, // Default to false (submitted for moderation)
-      moderation_status: (is_draft ? null : 'pending') as const, // Drafts don't need moderation status yet
+      moderation_status: draftStatus as ModerationStatus | null, // Drafts don't need moderation status yet
       designation: 'Allgemein' // Provide default designation since it's required by DB
     }
 
