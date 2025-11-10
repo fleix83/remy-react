@@ -29,10 +29,9 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
   const {
     comments: allComments,
     loading: commentsLoading,
-    loadComments,
-    createComment
+    loadComments
   } = useCommentsStore()
-  
+
   // Get comments for this specific post
   const comments = allComments[postId.toString()] || []
   const loading = commentsLoading[postId.toString()] || false
@@ -44,9 +43,9 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
     })
   }, [postId, loadComments])
 
-  const handleCommentSubmit = async (commentData: any) => {
+  const handleCommentSubmit = async () => {
     try {
-      await createComment(commentData)
+      // Just reset the form - the real-time subscription will handle adding the comment
       setShowCommentForm(false)
     } catch (error) {
       console.error('Error creating comment:', error)
@@ -74,12 +73,8 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
             postId={postId}
             quotedText={selectedText}
             replyingToUsername={replyingToUsername}
-            onCommentAdded={(comment) => {
-              handleCommentSubmit({
-                post_id: postId,
-                content: comment.content,
-                quoted_text: selectedText
-              })
+            onCommentAdded={async () => {
+              await handleCommentSubmit()
             }}
             onCancel={() => {
               setShowCommentForm(false)

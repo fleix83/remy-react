@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { CommentsService } from '../services/comments.service'
+import { markCommentAsCreated } from '../utils/comment-dedup'
 import type { Comment, CommentWithRelations } from '../types/database.types'
 
 interface CommentsState {
@@ -188,10 +189,13 @@ export const useCommentsStore = create<CommentsState>((set, get) => ({
   }) => {
     try {
       const comment = await commentsService.createComment(commentData)
-      
+
+      // Mark as created to avoid duplicate from real-time event
+      markCommentAsCreated(commentData.post_id, comment.id)
+
       // Add to store immediately
       get().addComment(commentData.post_id, comment as CommentWithRelations)
-      
+
       return comment
     } catch (error) {
       console.error('Error creating comment:', error)

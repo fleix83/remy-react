@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CommentsService } from '../../services/comments.service'
+import { useCommentsStore } from '../../stores/comments.store'
 import RichTextEditor from '../ui/RichTextEditor'
 
 interface CommentFormProps {
@@ -29,7 +29,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
   const [submitting, setSubmitting] = useState(false)
   const [selectedText, setSelectedText] = useState('')
 
-  const commentsService = new CommentsService()
+  const { createComment } = useCommentsStore()
 
   useEffect(() => {
     if (quotedText) {
@@ -39,7 +39,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Check text content without HTML tags
     const textContent = content.replace(/<[^>]*>/g, '').trim()
     if (!textContent) {
@@ -48,15 +48,15 @@ const CommentForm: React.FC<CommentFormProps> = ({
     }
 
     setSubmitting(true)
-    
+
     try {
       // Add @username reference if replying to someone
       let finalContent = content.trim()
       if (replyingToUsername) {
         finalContent = `<p><strong>@${replyingToUsername}</strong></p>${finalContent}`
       }
-      
-      const newComment = await commentsService.createComment({
+
+      const newComment = await createComment({
         post_id: postId,
         content: finalContent
       })
@@ -64,7 +64,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
       // Reset form
       setContent('')
       setSelectedText('')
-      
+
       if (onCommentAdded) {
         onCommentAdded(newComment)
       }
