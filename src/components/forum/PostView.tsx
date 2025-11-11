@@ -246,7 +246,7 @@ const PostView: React.FC = () => {
                 {post.users?.username || 'Unknown User'}
               </p>
               <p className="text-gray-500 text-left leading-tight" style={{ fontSize: '10px' }}>
-                {formatDate(post.created_at)}
+                {post.created_at ? formatDate(post.created_at) : 'Unbekannt'}
               </p>
             </div>
 
@@ -320,7 +320,7 @@ const PostView: React.FC = () => {
               <SendMessageButton
                 recipientId={post.user_id}
                 recipientUsername={post.users.username}
-                postTitle={post.title}
+                postTitle={post.title || undefined}
                 postId={post.id}
                 variant="text-link"
               />
@@ -333,7 +333,7 @@ const PostView: React.FC = () => {
           <CommentsSection
             postId={parseInt(id!)}
             shouldOpenForm={openCommentForm}
-            replyToUsername={replyToPostAuthor && post?.users?.username ? post.users.username : undefined}
+            replyToUsername={replyToPostAuthor && post?.users?.username ? post.users.username || undefined : undefined}
             onFormStateChange={(isOpen) => {
               if (isOpen) {
                 setOpenCommentForm(false)
@@ -357,7 +357,7 @@ const PostView: React.FC = () => {
         <MobileSlideMenu
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
-          userRole={userProfile?.role}
+          userRole={userProfile?.role || undefined}
           onLogout={handleSignOut}
         />
       </div>

@@ -50,12 +50,14 @@ export type Database = {
           content: string
           created_at: string | null
           id: number
+          is_edited: boolean | null
           is_published: boolean | null
           moderated_at: string | null
           moderated_by: string | null
           moderation_status:
             | Database["public"]["Enums"]["moderation_status"]
             | null
+          parent_comment_id: number | null
           post_id: number
           quoted_text: string | null
           rejection_reason: string | null
@@ -66,12 +68,14 @@ export type Database = {
           content: string
           created_at?: string | null
           id?: number
+          is_edited?: boolean | null
           is_published?: boolean | null
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?:
             | Database["public"]["Enums"]["moderation_status"]
             | null
+          parent_comment_id?: number | null
           post_id: number
           quoted_text?: string | null
           rejection_reason?: string | null
@@ -82,12 +86,14 @@ export type Database = {
           content?: string
           created_at?: string | null
           id?: number
+          is_edited?: boolean | null
           is_published?: boolean | null
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?:
             | Database["public"]["Enums"]["moderation_status"]
             | null
+          parent_comment_id?: number | null
           post_id?: number
           quoted_text?: string | null
           rejection_reason?: string | null
@@ -624,6 +630,19 @@ export type UserBlock = Database['public']['Tables']['user_blocks']['Row']
 export type UserRole = Database['public']['Enums']['user_role']
 export type AccessRole = Database['public']['Enums']['access_role']
 export type ModerationStatus = Database['public']['Enums']['moderation_status']
+
+// Placeholder types for features not yet in database
+export type NotificationType = 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
+export interface Notification {
+  id: number
+  user_id: string
+  type: NotificationType
+  title: string
+  message: string
+  link?: string
+  is_read: boolean
+  created_at: string
+}
 
 // Extended types with relationships
 export type PostWithRelations = Post & {

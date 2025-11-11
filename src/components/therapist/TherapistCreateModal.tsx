@@ -253,6 +253,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           first_name: '',
           last_name: '',
           designation: '',
+          designation_id: null,
           short_designation: '',
           institution: '',
           description: ''

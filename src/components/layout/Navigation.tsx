@@ -215,7 +215,7 @@ const Navigation: React.FC<NavigationProps> = ({
         <MobileSlideMenu
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
-          userRole={userProfile?.role}
+          userRole={userProfile?.role || undefined}
           onLogout={handleSignOut}
         />
       </div>

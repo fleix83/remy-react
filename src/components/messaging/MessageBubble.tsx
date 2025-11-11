@@ -91,7 +91,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         {/* Timestamp */}
         {showTimestamp && (
           <div className={`text-xs text-gray-400 mt-1 ${isOwn ? 'text-right' : 'text-left'}`}>
-            {formatTimestamp(message.created_at)}
+            {message.created_at ? formatTimestamp(message.created_at) : 'Unbekannt'}
             {isOwn && (
               <span className="ml-1">
                 {message.is_read ? '✓✓' : '✓'}

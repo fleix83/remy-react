@@ -41,7 +41,7 @@ export const usePermissions = (): UserPermissions => {
   }
 
   const role = userProfile.role
-  const isBanned = userProfile.is_banned
+  const isBanned = userProfile.is_banned ?? false
   const isUser = role === 'user'
   const isModerator = role === 'moderator'
   const isAdmin = role === 'admin'

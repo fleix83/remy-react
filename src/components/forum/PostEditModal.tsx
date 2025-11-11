@@ -50,10 +50,10 @@ const PostEditModal: React.FC<PostEditModalProps> = ({
             editMode={true}
             mobileOptimized={true}
             initialData={{
-              title: post.title,
+              title: post.title || undefined,
               content: post.content,
               category_id: post.category_id,
-              canton: post.canton || '',
+              canton: post.canton || undefined,
               therapist_id: post.therapist_id || undefined,
               tags: (post.tags || []) as string[]
             }}

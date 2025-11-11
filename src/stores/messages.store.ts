@@ -235,12 +235,12 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
     const otherParticipantId = message.sender_id === user.id ? message.receiver_id : message.sender_id
     
     const updatedConversations = conversations.map(conv => {
-      if (conv.id === otherParticipantId) {
+      if (conv.id === otherParticipantId && message.created_at) {
         return {
           ...conv,
           lastMessage: message,
           lastActivity: message.created_at,
-          unreadCount: message.receiver_id === user.id && !message.is_read ? 
+          unreadCount: message.receiver_id === user.id && !message.is_read ?
             conv.unreadCount + 1 : conv.unreadCount
         }
       }

@@ -93,7 +93,7 @@ export class MessagesService {
     const conversations: Conversation[] = []
     conversationMap.forEach((conv, participantId) => {
       const lastMessage = conv.messages[0] // Already sorted by created_at desc
-      if (lastMessage) {
+      if (lastMessage && lastMessage.created_at) {
         conversations.push({
           id: participantId,
           participant: conv.participant,

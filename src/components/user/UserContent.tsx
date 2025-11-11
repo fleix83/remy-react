@@ -344,7 +344,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
 
                           {/* Right: Date */}
                           <div className="text-xs text-gray-500" style={{fontSize: '0.65rem'}}>
-                            {formatDate(post.created_at)}
+                            {post.created_at ? formatDate(post.created_at) : 'Unbekannt'}
                           </div>
                         </div>
 
@@ -448,7 +448,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                         </div>
 
                         <div className="flex items-center justify-between text-sm text-gray-500">
-                          <span className="text-left">Kommentiert am: {formatDate(comment.created_at)}</span>
+                          <span className="text-left">Kommentiert am: {comment.created_at ? formatDate(comment.created_at) : 'Unbekannt'}</span>
                           {comment.is_edited && (
                             <span className="text-xs text-gray-400">Bearbeitet</span>
                           )}
@@ -532,7 +532,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
 
                           {/* Right: Date */}
                           <div className="text-xs text-gray-500" style={{fontSize: '0.65rem'}}>
-                            {formatDate(draft.created_at)}
+                            {draft.created_at ? formatDate(draft.created_at) : 'Unbekannt'}
                           </div>
                         </div>
 

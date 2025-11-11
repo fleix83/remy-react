@@ -50,7 +50,7 @@ export class UserSearchService {
       // First get the blocked user IDs
       const { data: blockedIds, error: blockedError } = await supabase
         .from('user_blocks')
-        .select('blocker_id, blocked_id, blocked_at')
+        .select('id, blocker_id, blocked_id, blocked_at')
         .eq('blocker_id', userId)
         .order('blocked_at', { ascending: false })
 

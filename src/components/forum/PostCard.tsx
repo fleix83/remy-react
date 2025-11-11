@@ -140,7 +140,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
         )}
         <div className="flex-1 min-w-0">
           <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{post.users?.username}</p>
-          <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(post.created_at)}</p>
+          <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{post.created_at ? formatDate(post.created_at) : 'Unbekannt'}</p>
         </div>
       </div>
 

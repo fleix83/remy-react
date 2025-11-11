@@ -252,7 +252,7 @@ const BlockedUsers: React.FC = () => {
                         {blockedUser.blocked_user?.username || 'Unknown User'}
                       </p>
                       <p className="text-sm text-gray-500">
-                        Blocked on {formatDate(blockedUser.blocked_at)}
+                        Blocked on {blockedUser.blocked_at ? formatDate(blockedUser.blocked_at) : 'Unbekannt'}
                       </p>
                     </div>
                   </div>

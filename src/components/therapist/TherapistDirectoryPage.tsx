@@ -227,7 +227,7 @@ const TherapistDirectoryPage: React.FC = () => {
                               <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
                                 <span>{post.users?.username || 'Anonym'}</span>
                                 <span>•</span>
-                                <span>{formatDate(post.created_at)}</span>
+                                <span>{post.created_at ? formatDate(post.created_at) : 'Unbekannt'}</span>
                               </div>
 
                               {/* Tags */}
@@ -280,7 +280,7 @@ const TherapistDirectoryPage: React.FC = () => {
       <MobileSlideMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        userRole={userProfile?.role}
+        userRole={userProfile?.role || undefined}
         onLogout={handleSignOut}
       />
 

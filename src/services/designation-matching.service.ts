@@ -121,8 +121,6 @@ export class DesignationMatchingService {
    * Extract short form (base profession without credentials/titles)
    */
   private extractShortForm(text: string): string {
-    const lowerText = text.toLowerCase()
-
     // List of base professions to extract
     const baseProfessions = [
       { pattern: /psychotherapeutin/i, short: 'Psychotherapeutin' },

@@ -78,9 +78,11 @@ const ConversationView: React.FC = () => {
                   currentMessages[index - 1].sender_id !== message.sender_id
                 }
                 showTimestamp={
-                  index === currentMessages.length - 1 || 
+                  index === currentMessages.length - 1 ||
                   currentMessages[index + 1].sender_id !== message.sender_id ||
-                  (new Date(currentMessages[index + 1].created_at).getTime() - new Date(message.created_at).getTime()) > 5 * 60 * 1000 // 5 minutes
+                  (currentMessages[index + 1]?.created_at && message.created_at ?
+                    (new Date(currentMessages[index + 1].created_at!).getTime() - new Date(message.created_at).getTime()) > 5 * 60 * 1000 :
+                    true) // 5 minutes
                 }
               />
             ))}

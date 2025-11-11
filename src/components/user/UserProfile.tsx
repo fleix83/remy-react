@@ -187,7 +187,7 @@ const UserProfile: React.FC = () => {
               {userProfile.username}
             </h1>
             <p className="text-gray-400 text-sm mb-2">
-              Registriert am {formatDate(userProfile.created_at)}
+              Registriert am {userProfile.created_at ? formatDate(userProfile.created_at) : 'Unbekannt'}
             </p>
             
             {userProfile.bio && (
@@ -218,7 +218,7 @@ const UserProfile: React.FC = () => {
       <MobileSlideMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        userRole={userProfile?.role}
+        userRole={userProfile?.role || undefined}
         onLogout={handleSignOut}
       />
     </div>

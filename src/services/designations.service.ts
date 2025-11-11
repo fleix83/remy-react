@@ -145,7 +145,7 @@ export class DesignationsService {
    * @param designationData - The designation data (without id)
    */
   async createDesignation(designationData: Omit<Designation, 'id' | 'created_at'>): Promise<Designation> {
-    console.log('🔧 DesignationsService: Creating new designation:', designationData.name_de)
+    console.log('🔧 DesignationsService: Creating new designation:', this.getDisplayName(designationData as Designation))
 
     const { data, error } = await supabase
       .from('designations')
