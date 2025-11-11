@@ -5,6 +5,7 @@ import RichTextEditor from '../ui/RichTextEditor'
 import TherapistSelector from '../therapist/TherapistSelector'
 import BadgeDropdown from '../ui/BadgeDropdown'
 import TagInput from '../ui/TagInput'
+import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 
 interface PostEditorProps {
   onSubmit?: (postData: any) => Promise<void>
@@ -53,35 +54,6 @@ const PostEditor: React.FC<PostEditorProps> = ({
     return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
   }
 
-  const cantons = [
-    { code: '', name: 'Kanton auswählen' },
-    { code: 'AG', name: 'Aargau' },
-    { code: 'AI', name: 'Appenzell Innerrhoden' },
-    { code: 'AR', name: 'Appenzell Ausserrhoden' },
-    { code: 'BE', name: 'Bern' },
-    { code: 'BL', name: 'Basel-Landschaft' },
-    { code: 'BS', name: 'Basel-Stadt' },
-    { code: 'FR', name: 'Freiburg' },
-    { code: 'GE', name: 'Genf' },
-    { code: 'GL', name: 'Glarus' },
-    { code: 'GR', name: 'Graubünden' },
-    { code: 'JU', name: 'Jura' },
-    { code: 'LU', name: 'Luzern' },
-    { code: 'NE', name: 'Neuenburg' },
-    { code: 'NW', name: 'Nidwalden' },
-    { code: 'OW', name: 'Obwalden' },
-    { code: 'SG', name: 'St. Gallen' },
-    { code: 'SH', name: 'Schaffhausen' },
-    { code: 'SO', name: 'Solothurn' },
-    { code: 'SZ', name: 'Schwyz' },
-    { code: 'TG', name: 'Thurgau' },
-    { code: 'TI', name: 'Tessin' },
-    { code: 'UR', name: 'Uri' },
-    { code: 'VD', name: 'Waadt' },
-    { code: 'VS', name: 'Wallis' },
-    { code: 'ZG', name: 'Zug' },
-    { code: 'ZH', name: 'Zürich' }
-  ]
 
 
   useEffect(() => {
@@ -196,7 +168,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
             <div className="mb-4">
               <BadgeDropdown
                 value={canton}
-                options={cantons.filter(c => c.code).map(c => ({
+                options={SWISS_CANTONS.filter(c => c.code).map(c => ({
                   value: c.code,
                   label: c.name,
                   icon: c.code ? (
@@ -332,7 +304,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   required
                 >
-                  {cantons.map((c) => (
+                  {SWISS_CANTONS.map((c) => (
                     <option key={c.code} value={c.code}>
                       {c.name}
                     </option>

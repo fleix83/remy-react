@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuthStore } from '../../stores/auth.store'
 import BadgeDropdown from '../ui/BadgeDropdown'
+import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 
 interface ProfileSettingsProps {
   isEditing?: boolean
@@ -23,35 +24,11 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
-  const cantons = [
-    { value: '', label: 'Kanton auswählen' },
-    { value: 'AG', label: 'Aargau' },
-    { value: 'AI', label: 'Appenzell Innerrhoden' },
-    { value: 'AR', label: 'Appenzell Ausserrhoden' },
-    { value: 'BE', label: 'Bern' },
-    { value: 'BL', label: 'Basel-Landschaft' },
-    { value: 'BS', label: 'Basel-Stadt' },
-    { value: 'FR', label: 'Freiburg' },
-    { value: 'GE', label: 'Genf' },
-    { value: 'GL', label: 'Glarus' },
-    { value: 'GR', label: 'Graubünden' },
-    { value: 'JU', label: 'Jura' },
-    { value: 'LU', label: 'Luzern' },
-    { value: 'NE', label: 'Neuenburg' },
-    { value: 'NW', label: 'Nidwalden' },
-    { value: 'OW', label: 'Obwalden' },
-    { value: 'SG', label: 'St. Gallen' },
-    { value: 'SH', label: 'Schaffhausen' },
-    { value: 'SO', label: 'Solothurn' },
-    { value: 'SZ', label: 'Schwyz' },
-    { value: 'TG', label: 'Thurgau' },
-    { value: 'TI', label: 'Tessin' },
-    { value: 'UR', label: 'Uri' },
-    { value: 'VD', label: 'Waadt' },
-    { value: 'VS', label: 'Wallis' },
-    { value: 'ZG', label: 'Zug' },
-    { value: 'ZH', label: 'Zürich' }
-  ]
+  // Map SWISS_CANTONS to the format expected by BadgeDropdown
+  const cantons = SWISS_CANTONS.map(canton => ({
+    value: canton.code,
+    label: canton.name
+  }))
 
   const languages = [
     { value: 'de', label: 'Deutsch' },

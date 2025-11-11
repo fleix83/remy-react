@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { TherapistsService } from '../../services/therapists.service'
+import { DesignationsService } from '../../services/designations.service'
 import { TherapistImportService, type ImportResult } from '../../services/therapist-import.service'
 import { downloadTherapistCSVTemplate } from '../../utils/therapist-csv-template'
 import { usePermissions } from '../../hooks/usePermissions'
-import type { Therapist } from '../../types/database.types'
+import type { Therapist, Designation } from '../../types/database.types'
+import { SWISS_CANTONS } from '../../constants/switzerland.constants'
+import { FORMS_OF_ADDRESS } from '../../constants/therapist.constants'
 
 interface TherapistCreateModalProps {
   isOpen: boolean
@@ -45,7 +48,12 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  // Designations state (fetched from database)
+  const [designations, setDesignations] = useState<Designation[]>([])
+  const [loadingDesignations, setLoadingDesignations] = useState(true)
+
   const therapistsService = new TherapistsService()
+  const designationsService = new DesignationsService()
   const importService = new TherapistImportService()
   const permissions = usePermissions()
 
@@ -70,60 +78,24 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     }
   }, [therapist, preselectedCanton])
 
-  // Swiss cantons
-  const cantons = [
-    { code: '', name: 'Kanton auswählen' },
-    { code: 'AG', name: 'Aargau' },
-    { code: 'AI', name: 'Appenzell Innerrhoden' },
-    { code: 'AR', name: 'Appenzell Ausserrhoden' },
-    { code: 'BE', name: 'Bern' },
-    { code: 'BL', name: 'Basel-Landschaft' },
-    { code: 'BS', name: 'Basel-Stadt' },
-    { code: 'FR', name: 'Freiburg' },
-    { code: 'GE', name: 'Genf' },
-    { code: 'GL', name: 'Glarus' },
-    { code: 'GR', name: 'Graubünden' },
-    { code: 'JU', name: 'Jura' },
-    { code: 'LU', name: 'Luzern' },
-    { code: 'NE', name: 'Neuenburg' },
-    { code: 'NW', name: 'Nidwalden' },
-    { code: 'OW', name: 'Obwalden' },
-    { code: 'SG', name: 'St. Gallen' },
-    { code: 'SH', name: 'Schaffhausen' },
-    { code: 'SO', name: 'Solothurn' },
-    { code: 'SZ', name: 'Schwyz' },
-    { code: 'TG', name: 'Thurgau' },
-    { code: 'TI', name: 'Tessin' },
-    { code: 'UR', name: 'Uri' },
-    { code: 'VD', name: 'Waadt' },
-    { code: 'VS', name: 'Wallis' },
-    { code: 'ZG', name: 'Zug' },
-    { code: 'ZH', name: 'Zürich' }
-  ]
+  // Load designations from database on mount
+  useEffect(() => {
+    const loadDesignations = async () => {
+      try {
+        setLoadingDesignations(true)
+        const fetchedDesignations = await designationsService.getActiveDesignations()
+        setDesignations(fetchedDesignations)
+      } catch (error) {
+        console.error('Error loading designations:', error)
+        // Continue with empty list - non-critical error
+        setDesignations([])
+      } finally {
+        setLoadingDesignations(false)
+      }
+    }
 
-  // Forms of address
-  const formsOfAddress = [
-    'Frau',
-    'Herr',
-    'Dr.',
-    'Dr. med.',
-    'Prof.',
-    'Prof. Dr.',
-    'Prof. Dr. med.'
-  ]
-
-  // Professional designations
-  const designations = [
-    'Psychotherapeut',
-    'Psychologe',
-    'Psychiater',
-    'Facharzt für Psychiatrie',
-    'Facharzt für Psychotherapie',
-    'Coach',
-    'Berater',
-    'Sozialarbeiter',
-    'Klinischer Psychologe'
-  ]
+    loadDesignations()
+  }, []) // Only run once on mount
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({
@@ -442,7 +414,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 disabled={isSubmitting}
                 required
               >
-                {cantons.map((canton) => (
+                {SWISS_CANTONS.map((canton) => (
                   <option key={canton.code} value={canton.code} className="bg-white">
                     {canton.code ? `${canton.code} - ${canton.name}` : canton.name}
                   </option>
@@ -463,7 +435,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 disabled={isSubmitting}
               >
                 <option value="" className="bg-white">Anrede auswählen (optional)</option>
-                {formsOfAddress.map((address) => (
+                {FORMS_OF_ADDRESS.map((address) => (
                   <option key={address} value={address} className="bg-white">
                     {address}
                   </option>
@@ -517,12 +489,14 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 onChange={(e) => handleInputChange('short_designation', e.target.value)}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
-                disabled={isSubmitting}
+                disabled={isSubmitting || loadingDesignations}
               >
-                <option value="" className="bg-white">Kurze Bezeichnung auswählen</option>
+                <option value="" className="bg-white">
+                  {loadingDesignations ? 'Lade Bezeichnungen...' : 'Kurze Bezeichnung auswählen'}
+                </option>
                 {designations.map((designation) => (
-                  <option key={designation} value={designation} className="bg-white">
-                    {designation}
+                  <option key={designation.id} value={designation.name_de} className="bg-white">
+                    {designation.name_de}
                   </option>
                 ))}
               </select>
@@ -538,13 +512,15 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 onChange={(e) => handleInputChange('designation', e.target.value)}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
-                disabled={isSubmitting}
+                disabled={isSubmitting || loadingDesignations}
                 required
               >
-                <option value="" className="bg-white">Berufsbezeichnung auswählen</option>
+                <option value="" className="bg-white">
+                  {loadingDesignations ? 'Lade Bezeichnungen...' : 'Berufsbezeichnung auswählen'}
+                </option>
                 {designations.map((designation) => (
-                  <option key={designation} value={designation} className="bg-white">
-                    {designation}
+                  <option key={designation.id} value={designation.name_de} className="bg-white">
+                    {designation.name_de}
                   </option>
                 ))}
               </select>
