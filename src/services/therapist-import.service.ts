@@ -1,6 +1,7 @@
 import Papa from 'papaparse'
 import { validateCSVHeaders, type TherapistCSVRow } from '../utils/therapist-csv-template'
 import type { Therapist } from '../types/database.types'
+import { DesignationMatchingService } from './designation-matching.service'
 
 export interface ImportResult {
   success: boolean
@@ -22,6 +23,7 @@ interface ParsedTherapist {
   first_name: string
   last_name: string
   designation: string
+  designation_id: number | null
   short_designation: string | null
   institution: string | null
   description: string | null
@@ -31,6 +33,8 @@ interface ParsedTherapist {
  * Service for importing therapists from CSV files
  */
 export class TherapistImportService {
+  private designationMatchingService = new DesignationMatchingService()
+
   /**
    * Parse CSV file
    */
@@ -160,14 +164,30 @@ export class TherapistImportService {
 
   /**
    * Parse and normalize therapist data from CSV row
+   * Now async to support designation matching
    */
-  parseTherapist(row: any): ParsedTherapist {
+  async parseTherapist(row: any): Promise<ParsedTherapist> {
+    const designationText = row.designation?.trim() || ''
+
+    // Match designation to existing or create new one
+    let designationMatch: { designation_id: number; display_text: string } | null = null
+
+    if (designationText) {
+      try {
+        designationMatch = await this.designationMatchingService.findOrCreateDesignation(designationText)
+      } catch (error) {
+        console.error('Error matching designation:', error)
+        // Continue without designation_id if matching fails
+      }
+    }
+
     return {
       canton: row.canton?.trim() || null,
       form_of_address: row.form_of_address?.trim() || '',
       first_name: row.first_name?.trim() || '',
       last_name: row.last_name?.trim() || '',
-      designation: row.designation?.trim() || '',
+      designation: designationMatch?.display_text || designationText,
+      designation_id: designationMatch?.designation_id || null,
       short_designation: row.short_designation?.trim() || null,
       institution: row.institution?.trim() || null,
       description: row.description?.trim() || null
@@ -176,12 +196,14 @@ export class TherapistImportService {
 
   /**
    * Process CSV data and handle duplicates
+   * Now async to support designation matching
    */
-  processTherapists(data: any[]): { therapists: ParsedTherapist[]; errors: ImportError[] } {
+  async processTherapists(data: any[]): Promise<{ therapists: ParsedTherapist[]; errors: ImportError[] }> {
     const therapistMap = new Map<string, { therapist: ParsedTherapist; rowIndex: number }>()
     const errors: ImportError[] = []
 
-    data.forEach((row, index) => {
+    for (let index = 0; index < data.length; index++) {
+      const row = data[index]
       const rowIndex = index + 2 // +2 because of 0-based index and header row
 
       // Validate row
@@ -192,11 +214,11 @@ export class TherapistImportService {
           data: row,
           error: validation.error || 'Invalid row data'
         })
-        return
+        continue
       }
 
-      // Parse therapist data
-      const therapist = this.parseTherapist(row)
+      // Parse therapist data (now async)
+      const therapist = await this.parseTherapist(row)
 
       // Check for duplicates
       const duplicateKey = this.getDuplicateKey(therapist)
@@ -225,9 +247,9 @@ export class TherapistImportService {
       } else {
         therapistMap.set(duplicateKey, { therapist, rowIndex })
       }
-    })
+    }
 
-    const therapists = Array.from(therapistMap.values()).map(item => item.therapist)
+    const therapists = Array.from(therapistMap.values()).map((item) => item.therapist)
 
     console.log(
       `📊 Processed ${data.length} rows: ` +
@@ -268,8 +290,15 @@ export class TherapistImportService {
         }
       }
 
-      // Process therapists and handle duplicates
-      const { therapists, errors } = this.processTherapists(parseResult.data)
+      // Load designations into cache before processing to avoid repeated API calls
+      console.log('🔧 TherapistImport: Pre-loading designations cache...')
+      await this.designationMatchingService.loadDesignations()
+
+      // Process therapists and handle duplicates (now async)
+      const { therapists, errors } = await this.processTherapists(parseResult.data)
+
+      // Clear cache after processing
+      this.designationMatchingService.clearCache()
 
       if (therapists.length === 0) {
         return {

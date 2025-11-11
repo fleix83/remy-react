@@ -66,6 +66,7 @@ export class TherapistsService {
     last_name: string
     institution?: string
     designation: string
+    designation_id?: number | null
     short_designation?: string
     description?: string
     canton?: string
@@ -216,6 +217,7 @@ export class TherapistsService {
     first_name: string
     last_name: string
     designation: string
+    designation_id: number | null
     short_designation: string | null
     institution: string | null
     description: string | null
@@ -244,6 +246,7 @@ export class TherapistsService {
       last_name: t.last_name.trim(),
       institution: t.institution?.trim() || null,
       designation: t.designation,
+      designation_id: t.designation_id,
       short_designation: t.short_designation?.trim() || null,
       description: t.description?.trim() || null,
       canton: t.canton || null

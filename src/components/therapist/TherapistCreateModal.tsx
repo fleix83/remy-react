@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { TherapistsService } from '../../services/therapists.service'
 import { DesignationsService } from '../../services/designations.service'
+import { DesignationMatchingService } from '../../services/designation-matching.service'
 import { TherapistImportService, type ImportResult } from '../../services/therapist-import.service'
 import { downloadTherapistCSVTemplate } from '../../utils/therapist-csv-template'
 import { usePermissions } from '../../hooks/usePermissions'
@@ -32,6 +33,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     first_name: '',
     last_name: '',
     designation: '',
+    designation_id: null as number | null,
     short_designation: '',
     institution: '',
     description: ''
@@ -54,6 +56,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
   const therapistsService = new TherapistsService()
   const designationsService = new DesignationsService()
+  const designationMatchingService = new DesignationMatchingService()
   const importService = new TherapistImportService()
   const permissions = usePermissions()
 
@@ -66,6 +69,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
         first_name: therapist.first_name || '',
         last_name: therapist.last_name || '',
         designation: therapist.designation || '',
+        designation_id: therapist.designation_id || null,
         short_designation: therapist.short_designation || '',
         institution: therapist.institution || '',
         description: therapist.description || ''
@@ -217,6 +221,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           first_name: formData.first_name,
           last_name: formData.last_name,
           designation: formData.designation,
+          designation_id: formData.designation_id,
           short_designation: formData.short_designation || null,
           institution: formData.institution || null,
           description: formData.description || null
@@ -229,6 +234,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           first_name: formData.first_name,
           last_name: formData.last_name,
           designation: formData.designation,
+          designation_id: formData.designation_id,
           short_designation: formData.short_designation || undefined,
           institution: formData.institution || undefined,
           description: formData.description || undefined
@@ -495,8 +501,8 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   {loadingDesignations ? 'Lade Bezeichnungen...' : 'Kurze Bezeichnung auswählen'}
                 </option>
                 {designations.map((designation) => (
-                  <option key={designation.id} value={designation.name_de} className="bg-white">
-                    {designation.name_de}
+                  <option key={designation.id} value={designation.id} className="bg-white">
+                    {designationMatchingService.getDisplayText(designation)}
                   </option>
                 ))}
               </select>
@@ -508,8 +514,21 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 Berufsbezeichnung vollständig
               </label>
               <select
-                value={formData.designation}
-                onChange={(e) => handleInputChange('designation', e.target.value)}
+                value={formData.designation_id || ''}
+                onChange={(e) => {
+                  const designationId = e.target.value ? parseInt(e.target.value) : null
+                  const selectedDesignation = designations.find(d => d.id === designationId)
+                  const displayText = selectedDesignation
+                    ? designationMatchingService.getDisplayText(selectedDesignation)
+                    : ''
+
+                  setFormData(prev => ({
+                    ...prev,
+                    designation: displayText,
+                    designation_id: designationId
+                  }))
+                  if (error) setError('')
+                }}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting || loadingDesignations}
@@ -519,8 +538,8 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   {loadingDesignations ? 'Lade Bezeichnungen...' : 'Berufsbezeichnung auswählen'}
                 </option>
                 {designations.map((designation) => (
-                  <option key={designation.id} value={designation.name_de} className="bg-white">
-                    {designation.name_de}
+                  <option key={designation.id} value={designation.id} className="bg-white">
+                    {designationMatchingService.getDisplayText(designation)}
                   </option>
                 ))}
               </select>
