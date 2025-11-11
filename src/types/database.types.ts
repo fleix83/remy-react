@@ -186,6 +186,270 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: number
+          is_read: boolean | null
+          post_messages_id: number | null
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: number
+          is_read?: boolean | null
+          post_messages_id?: number | null
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: number
+          is_read?: boolean | null
+          post_messages_id?: number | null
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_saved: {
+        Row: {
+          canton: string
+          category_id: number
+          content: string
+          created_at: string | null
+          designation: string | null
+          id: number
+          tags: string | null
+          therapist: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          canton: string
+          category_id: number
+          content: string
+          created_at?: string | null
+          designation?: string | null
+          id?: number
+          tags?: string | null
+          therapist?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          canton?: string
+          category_id?: number
+          content?: string
+          created_at?: string | null
+          designation?: string | null
+          id?: number
+          tags?: string | null
+          therapist?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_saved_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_saved_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_tags: {
+        Row: {
+          post_id: number
+          tag_id: number
+        }
+        Insert: {
+          post_id: number
+          tag_id: number
+        }
+        Update: {
+          post_id?: number
+          tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_tags_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          canton: string
+          category_id: number
+          content: string
+          created_at: string | null
+          designation: string
+          id: number
+          is_active: boolean | null
+          is_banned: boolean | null
+          is_deactivated: boolean | null
+          is_draft: boolean | null
+          is_published: boolean | null
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_status:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
+          parent_id: number | null
+          rejection_reason: string | null
+          sticky: boolean | null
+          tags: string | null
+          therapist: string | null
+          therapist_id: number | null
+          title: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          canton: string
+          category_id: number
+          content: string
+          created_at?: string | null
+          designation: string
+          id?: number
+          is_active?: boolean | null
+          is_banned?: boolean | null
+          is_deactivated?: boolean | null
+          is_draft?: boolean | null
+          is_published?: boolean | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
+          parent_id?: number | null
+          rejection_reason?: string | null
+          sticky?: boolean | null
+          tags?: string | null
+          therapist?: string | null
+          therapist_id?: number | null
+          title?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          canton?: string
+          category_id?: number
+          content?: string
+          created_at?: string | null
+          designation?: string
+          id?: number
+          is_active?: boolean | null
+          is_banned?: boolean | null
+          is_deactivated?: boolean | null
+          is_draft?: boolean | null
+          is_published?: boolean | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
+          parent_id?: number | null
+          rejection_reason?: string | null
+          sticky?: boolean | null
+          tags?: string | null
+          therapist?: string | null
+          therapist_id?: number | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_moderated_by_fkey"
+            columns: ["moderated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_therapist_id_fkey"
+            columns: ["therapist_id"]
+            isOneToOne: false
+            referencedRelation: "therapists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tags: {
+        Row: {
+          id: number
+          name: string
+        }
+        Insert: {
+          id?: number
+          name: string
+        }
+        Update: {
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
       therapists: {
         Row: {
           canton: string | null
@@ -239,6 +503,96 @@ export type Database = {
           },
         ]
       }
+      user_blocks: {
+        Row: {
+          blocked_at: string | null
+          blocked_id: string
+          blocker_id: string
+          id: number
+        }
+        Insert: {
+          blocked_at?: string | null
+          blocked_id: string
+          blocker_id: string
+          id?: number
+        }
+        Update: {
+          blocked_at?: string | null
+          blocked_id?: string
+          blocker_id?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          avatar: string | null
+          avatar_url: string | null
+          background_image_url: string | null
+          bio: string | null
+          biography: string | null
+          created_at: string | null
+          default_canton: string | null
+          email: string
+          id: string
+          is_banned: boolean | null
+          language_preference: string | null
+          messages_active: boolean | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          updated_at: string | null
+          username: string
+        }
+        Insert: {
+          avatar?: string | null
+          avatar_url?: string | null
+          background_image_url?: string | null
+          bio?: string | null
+          biography?: string | null
+          created_at?: string | null
+          default_canton?: string | null
+          email: string
+          id: string
+          is_banned?: boolean | null
+          language_preference?: string | null
+          messages_active?: boolean | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          updated_at?: string | null
+          username: string
+        }
+        Update: {
+          avatar?: string | null
+          avatar_url?: string | null
+          background_image_url?: string | null
+          bio?: string | null
+          biography?: string | null
+          created_at?: string | null
+          default_canton?: string | null
+          email?: string
+          id?: string
+          is_banned?: boolean | null
+          language_preference?: string | null
+          messages_active?: boolean | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          updated_at?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
     }
     Enums: {
       access_role: "all" | "user" | "moderator" | "admin"
@@ -248,11 +602,66 @@ export type Database = {
   }
 }
 
-export type Category = Database['public']['Tables']['categories']['Row']
+// Helper types for easier use in components
+export type User = Database['public']['Tables']['users']['Row']
+export type Post = Database['public']['Tables']['posts']['Row']
 export type Comment = Database['public']['Tables']['comments']['Row']
+export type Category = Database['public']['Tables']['categories']['Row']
 export type Therapist = Database['public']['Tables']['therapists']['Row']
+export type Message = Database['public']['Tables']['messages']['Row']
+export type PostSaved = Database['public']['Tables']['post_saved']['Row']
 export type Designation = Database['public']['Tables']['designations']['Row']
+export type Tag = Database['public']['Tables']['tags']['Row']
+export type PostTag = Database['public']['Tables']['post_tags']['Row']
+export type UserBlock = Database['public']['Tables']['user_blocks']['Row']
 
 export type UserRole = Database['public']['Enums']['user_role']
 export type AccessRole = Database['public']['Enums']['access_role']
 export type ModerationStatus = Database['public']['Enums']['moderation_status']
+
+// Extended types with relationships
+export type PostWithRelations = Post & {
+  categories?: Category
+  users?: User
+  therapists?: Therapist
+  comments?: Comment[] | { count: number }[]
+  post_tags?: (PostTag & { tags: Tag })[]
+  tags?: string[]
+  comment_count?: number
+}
+
+export type CommentWithUser = Comment & {
+  users?: User
+}
+
+export type CommentWithRelations = Comment & {
+  users?: User
+  replies?: CommentWithRelations[]
+}
+
+export type TherapistWithPosts = Therapist & {
+  posts?: (Post & { users?: User })[]
+}
+
+// Moderation types
+export interface ModerationQueueItem {
+  id: number
+  content_type: 'post' | 'comment'
+  content_id: number
+  user_id: string
+  created_at: string
+  content?: string
+  title?: string
+  canton?: string
+  moderation_status?: ModerationStatus
+  moderated_by?: string
+  moderated_at?: string
+  rejection_reason?: string
+  post_id?: number
+  category_id?: number
+  users?: {
+    id: string
+    username: string
+    avatar_url?: string | null
+  }
+}

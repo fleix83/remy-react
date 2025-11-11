@@ -204,7 +204,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
       {/* Replies */}
       {comment.replies && comment.replies.length > 0 && showReplies && (
         <div className="mt-4 space-y-3">
-          {comment.replies.map((reply) => (
+          {comment.replies.map((reply: CommentWithRelations) => (
             <CommentCard
               key={reply.id}
               comment={reply}

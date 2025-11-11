@@ -1,16 +1,20 @@
 import React, { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import UserAvatar from './UserAvatar'
 import ProfileSettings from './ProfileSettings'
 import BlockedUsers from './BlockedUsers'
 import UserContent from './UserContent'
 import AvatarService from '../../services/avatar.service'
+import MobileSlideMenu from '../layout/MobileSlideMenu'
 
 const UserProfile: React.FC = () => {
-  const { user, userProfile, loadUserProfile } = useAuthStore()
+  const navigate = useNavigate()
+  const { user, userProfile, loadUserProfile, logout } = useAuthStore()
   const [showSettings, setShowSettings] = useState(false)
   const [uploadingBackground, setUploadingBackground] = useState(false)
   const [backgroundHover, setBackgroundHover] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const backgroundInputRef = useRef<HTMLInputElement>(null)
   
   if (!user || !userProfile) {
@@ -55,28 +59,78 @@ const UserProfile: React.FC = () => {
     }
   }
 
+  const handleSignOut = async () => {
+    await logout()
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Container with Overlapping Avatar */}
+    <div className="min-h-screen relative z-10" style={{ backgroundColor: 'rgb(238, 250, 240)' }}>
+      {/* Header bar - matching PostView */}
+      <div
+        className="w-full flex items-center justify-center relative"
+        style={{
+          height: '65px',
+          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
+        }}
+      >
+        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
+          {/* Invisible spacer to balance the avatar and center the back button */}
+          <div className="w-6 h-6"></div>
+
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
+            style={{ color: 'var(--primary)' }}
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Zurück zum Forum
+          </button>
+
+          {user && (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden relative p-1 rounded-full transition-colors mr-2.5"
+            >
+              {userProfile && (
+                <UserAvatar
+                  user={userProfile}
+                  size="small"
+                />
+              )}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '24px' }}>
+        {/* Header Container with Banner and Avatar */}
         <div className="relative">
           {/* Background Header */}
           <div
-            className="bg-gradient-to-r from-[var(--primary)] to-[#2d8544] rounded-lg h-48 relative overflow-hidden cursor-pointer group"
+            className="bg-gradient-to-r from-[var(--primary)] to-[#2d8544] rounded-lg relative overflow-hidden cursor-pointer group"
+            style={{ maxHeight: '118px', height: '118px' }}
             onClick={handleBackgroundClick}
             onMouseEnter={() => setBackgroundHover(true)}
             onMouseLeave={() => setBackgroundHover(false)}
-            style={
-              userProfile.background_image_url
-                ? {
-                    backgroundImage: `url(${userProfile.background_image_url})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }
-                : undefined
-            }
           >
-            {/* Edit Banner button - top right */}
+            {userProfile.background_image_url && (
+              <div
+                style={{
+                  backgroundImage: `url(${userProfile.background_image_url})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  width: '100%',
+                  height: '100%',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0
+                }}
+              />
+            )}
+
+            {/* Edit Banner button - shown on hover */}
             <div className="absolute top-4 right-4">
               <div className={`bg-white/90 text-gray-700 px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-2 shadow-sm transition-opacity duration-200 ${backgroundHover || uploadingBackground ? 'opacity-100' : 'opacity-0'}`}>
                 {uploadingBackground ? (
@@ -105,9 +159,9 @@ const UserProfile: React.FC = () => {
               disabled={uploadingBackground}
             />
           </div>
-          
-          {/* Overlapping Avatar */}
-          <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
+
+          {/* Overlapping Avatar - aligned with content + 15px left offset */}
+          <div className="absolute" style={{ left: '15px', top: '29px' }}>
             <UserAvatar
               user={userProfile}
               size="large"
@@ -116,19 +170,18 @@ const UserProfile: React.FC = () => {
           </div>
         </div>
 
-        {/* Edit Profile Button - below banner, aligned left */}
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="mt-[14px] mb-[30px] bg-[var(--primary)]/10 hover:bg-[var(--primary)]/15 text-[var(--primary)] px-[7px] py-[3px] rounded-md font-medium text-sm transition-colors duration-200 flex items-center"
-        >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          Edit Profile
-        </button>
-
         {/* Public Profile Information */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-white rounded-lg shadow-sm p-6 relative" style={{ marginTop: '58px' }}>
+          {/* Edit Profile Button - positioned in top right corner of profile div */}
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="absolute top-4 right-4 hover:opacity-70 text-gray-600 px-3 py-1.5 rounded-md font-medium text-sm transition-opacity duration-200 flex items-center"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Profile
+          </button>
           <div className="text-left">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {userProfile.username}
@@ -160,6 +213,14 @@ const UserProfile: React.FC = () => {
           <UserContent userId={userProfile.id} />
         </div>
       </div>
+
+      {/* Mobile Slide-in Menu */}
+      <MobileSlideMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        userRole={userProfile?.role}
+        onLogout={handleSignOut}
+      />
     </div>
   )
 }

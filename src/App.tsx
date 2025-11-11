@@ -1,5 +1,5 @@
 import { useState, useEffect, Suspense, lazy, useRef } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from './stores/auth.store'
 import { useNotificationsRealtime } from './hooks/useNotificationsRealtime'
 import { usePostsRealtime } from './hooks/usePostsRealtime'
@@ -15,6 +15,8 @@ const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'))
 const ModerationQueue = lazy(() => import('./components/admin/ModerationQueue'))
 const TherapistDirectoryPage = lazy(() => import('./components/therapist/TherapistDirectoryPage'))
 const UserProfile = lazy(() => import('./components/user/UserProfile'))
+const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
+const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
 
 function App() {
   const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
@@ -45,10 +47,6 @@ function App() {
     )
   }
 
-  if (!user) {
-    return <AuthForm />
-  }
-
   return (
     <Router basename="/remyreact">
           <Suspense fallback={
@@ -60,27 +58,38 @@ function App() {
             </div>
           }>
             <Routes>
-          {/* PostView and TherapistDirectoryPage without Layout to avoid double navigation */}
-          <Route path="/post/:id" element={<PostView />} />
-          <Route path="/therapists" element={<TherapistDirectoryPage />} />
+          {/* Public routes (no auth required) */}
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
-          {/* All other routes use Layout */}
-          <Route
-            path="/"
-            element={
-              <Layout onCreatePost={handleCreatePost}>
-                <ForumView
-                  showCreatePostDialog={showCreatePostDialog}
-                  onCreatePostDialogClose={() => setShowCreatePostDialog(false)}
-                  onCreatePost={handleCreatePost}
-                />
-              </Layout>
-            }
-          />
-          <Route path="/messages" element={<Layout onCreatePost={handleCreatePost}><MessagesPage /></Layout>} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/admin" element={<Layout onCreatePost={handleCreatePost}><AdminDashboard /></Layout>} />
-          <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost} headerBg="#fff0b5"><ModerationQueue /></Layout>} />
+          {/* Auth-protected routes */}
+          {!user ? (
+            <Route path="*" element={<AuthForm />} />
+          ) : (
+            <>
+              {/* PostView and TherapistDirectoryPage without Layout to avoid double navigation */}
+              <Route path="/post/:id" element={<PostView />} />
+              <Route path="/therapists" element={<TherapistDirectoryPage />} />
+
+              {/* All other routes use Layout */}
+              <Route
+                path="/"
+                element={
+                  <Layout onCreatePost={handleCreatePost}>
+                    <ForumView
+                      showCreatePostDialog={showCreatePostDialog}
+                      onCreatePostDialogClose={() => setShowCreatePostDialog(false)}
+                      onCreatePost={handleCreatePost}
+                    />
+                  </Layout>
+                }
+              />
+              <Route path="/messages" element={<Layout onCreatePost={handleCreatePost}><MessagesPage /></Layout>} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/admin" element={<Layout onCreatePost={handleCreatePost}><AdminDashboard /></Layout>} />
+              <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost} headerBg="#fff0b5"><ModerationQueue /></Layout>} />
+            </>
+          )}
             </Routes>
           </Suspense>
       </Router>
@@ -88,12 +97,14 @@ function App() {
 }
 
 function AuthForm() {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
   const [showRegisterForm, setShowRegisterForm] = useState(false)
-  const [showLoginForm, setShowLoginForm] = useState(false)
+  const [showLoginForm, setShowLoginForm] = useState(searchParams.get('login') === 'true')
   const [message, setMessage] = useState('')
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -144,8 +155,22 @@ function AuthForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#d5f4da' }}>
-      <div className="max-w-md w-full" style={{ padding: '9px' }}>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#d5f4da', position: 'relative', overflow: 'hidden' }}>
+      {/* Ghost Image - Top Right Corner */}
+      <img
+        src="/remyreact/assets/ghost.png"
+        alt=""
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          height: '400px',
+          width: 'auto',
+          zIndex: 1,
+          pointerEvents: 'none'
+        }}
+      />
+      <div className="max-w-md w-full" style={{ padding: '9px', position: 'relative', zIndex: 10 }}>
         {/* Welcome Text */}
         {!showLoginForm && (
           <div className="mb-8" style={{ textAlign: 'left' }}>
@@ -318,6 +343,19 @@ function AuthForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <div className="mt-2 text-left">
+                <span className="font-body text-[14px]" style={{ color: '#144220' }}>
+                  Passwort vergessen?{' '}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => navigate('/forgot-password')}
+                  className="font-body text-[14px] underline"
+                  style={{ color: 'var(--primary)' }}
+                >
+                  Zurücksetzen
+                </button>
+              </div>
             </div>
 
             {message && (

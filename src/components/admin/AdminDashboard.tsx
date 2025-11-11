@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationService } from '../../services/moderation.service'
 import UserAvatar from '../user/UserAvatar'
+import DesignationsTab from './DesignationsTab'
 import type { User } from '../../types/database.types'
 
 interface ModerationStats {
@@ -18,7 +19,7 @@ const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<ModerationStats | null>(null)
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'content'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'designations' | 'content'>('overview')
   const moderationService = new ModerationService()
 
   useEffect(() => {
@@ -122,6 +123,16 @@ const AdminDashboard: React.FC = () => {
               }`}
             >
               Benutzer
+            </button>
+            <button
+              onClick={() => setActiveTab('designations')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'designations'
+                  ? 'border-[#2ebe7a] text-[#2ebe7a]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              Bezeichnungen
             </button>
             <button
               onClick={() => setActiveTab('content')}
@@ -318,6 +329,11 @@ const AdminDashboard: React.FC = () => {
               </table>
             </div>
           </div>
+        )}
+
+        {/* Designations Tab */}
+        {activeTab === 'designations' && permissions.isAdmin && (
+          <DesignationsTab />
         )}
 
         {/* Content Tab */}

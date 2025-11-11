@@ -17,6 +17,7 @@ interface AuthState {
   logout: () => Promise<void>
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>
   resetPassword: (email: string) => Promise<void>
+  updatePassword: (newPassword: string) => Promise<void>
   loadUserProfile: () => Promise<void>
 }
 
@@ -160,9 +161,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   resetPassword: async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`
+      redirectTo: `${window.location.origin}/remyreact/reset-password`
     })
-    
+
+    if (error) throw error
+  },
+
+  updatePassword: async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    })
+
     if (error) throw error
   }
 }))

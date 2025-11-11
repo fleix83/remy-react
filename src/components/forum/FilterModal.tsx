@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { PostsService } from '../../services/posts.service'
 import { TherapistsService } from '../../services/therapists.service'
+import { DesignationsService } from '../../services/designations.service'
 import { useCategories } from '../../hooks/usePosts'
 import type { Designation, Therapist } from '../../types/database.types'
 
@@ -349,11 +350,15 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] cursor-pointer text-sm"
               >
                 <option value="">Alle Bezeichnungen</option>
-                {designations.map(designation => (
-                  <option key={designation.id} value={designation.name_de}>
-                    {designation.name_de}
-                  </option>
-                ))}
+                {designations.map(designation => {
+                  const designationsService = new DesignationsService()
+                  const displayName = designationsService.getDisplayName(designation)
+                  return (
+                    <option key={designation.id} value={displayName}>
+                      {displayName}
+                    </option>
+                  )
+                })}
               </select>
             </div>
 
