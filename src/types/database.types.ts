@@ -1,537 +1,258 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
 export type Database = {
   public: {
     Tables: {
-      users: {
-        Row: {
-          id: string
-          username: string
-          avatar: string | null
-          biography: string | null
-          registration_date: string
-          avatar_url: string | null
-          background_image_url: string | null
-          bio: string | null
-          role: 'user' | 'moderator' | 'admin'
-          is_banned: boolean
-          default_canton: string | null
-          language_preference: string
-          messages_active: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id: string
-          username: string
-          avatar?: string | null
-          biography?: string | null
-          registration_date?: string
-          avatar_url?: string | null
-          background_image_url?: string | null
-          bio?: string | null
-          role?: 'user' | 'moderator' | 'admin'
-          is_banned?: boolean
-          default_canton?: string | null
-          language_preference?: string
-          messages_active?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          username?: string
-          avatar?: string | null
-          biography?: string | null
-          registration_date?: string
-          avatar_url?: string | null
-          background_image_url?: string | null
-          bio?: string | null
-          role?: 'user' | 'moderator' | 'admin'
-          is_banned?: boolean
-          default_canton?: string | null
-          language_preference?: string
-          messages_active?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-      }
       categories: {
         Row: {
+          access_role: Database["public"]["Enums"]["access_role"] | null
+          description_de: string | null
+          description_fr: string | null
+          description_it: string | null
           id: number
+          is_active: boolean | null
           name_de: string
           name_fr: string | null
           name_it: string | null
-          description_de: string | null
-          description_fr: string | null
-          description_it: string | null
-          is_active: boolean
-          is_activ: boolean
-          access_role: 'all' | 'user' | 'moderator' | 'admin'
         }
         Insert: {
+          access_role?: Database["public"]["Enums"]["access_role"] | null
+          description_de?: string | null
+          description_fr?: string | null
+          description_it?: string | null
           id?: number
+          is_active?: boolean | null
           name_de: string
           name_fr?: string | null
           name_it?: string | null
+        }
+        Update: {
+          access_role?: Database["public"]["Enums"]["access_role"] | null
           description_de?: string | null
           description_fr?: string | null
           description_it?: string | null
-          is_active?: boolean
-          is_activ?: boolean
-          access_role?: 'all' | 'user' | 'moderator' | 'admin'
-        }
-        Update: {
           id?: number
+          is_active?: boolean | null
           name_de?: string
           name_fr?: string | null
           name_it?: string | null
-          description_de?: string | null
-          description_fr?: string | null
-          description_it?: string | null
-          is_active?: boolean
-          is_activ?: boolean
-          access_role?: 'all' | 'user' | 'moderator' | 'admin'
         }
-      }
-      posts: {
-        Row: {
-          id: number
-          user_id: string
-          category_id: number
-          title: string
-          content: string
-          created_at: string
-          updated_at: string
-          parent_id: number | null
-          canton: string
-          therapist: string | null
-          designation: string
-          tags: string | null
-          is_published: boolean
-          is_active: boolean
-          is_banned: boolean
-          is_deactivated: boolean
-          therapist_id: number | null
-          sticky: boolean
-        }
-        Insert: {
-          id?: number
-          user_id: string
-          category_id: number
-          title?: string
-          content: string
-          created_at?: string
-          updated_at?: string
-          parent_id?: number | null
-          canton: string
-          therapist?: string | null
-          designation: string
-          tags?: string | null
-          is_published?: boolean
-          is_active?: boolean
-          is_banned?: boolean
-          is_deactivated?: boolean
-          therapist_id?: number | null
-          sticky?: boolean
-        }
-        Update: {
-          id?: number
-          user_id?: string
-          category_id?: number
-          title?: string
-          content?: string
-          created_at?: string
-          updated_at?: string
-          parent_id?: number | null
-          canton?: string
-          therapist?: string | null
-          designation?: string
-          tags?: string | null
-          is_published?: boolean
-          is_active?: boolean
-          is_banned?: boolean
-          is_deactivated?: boolean
-          therapist_id?: number | null
-          sticky?: boolean
-        }
-      }
-      therapists: {
-        Row: {
-          id: number
-          form_of_address: string
-          first_name: string
-          last_name: string
-          institution: string | null
-          designation: string
-          short_designation: string | null
-          description: string | null
-          canton: string | null
-          created_at: string
-          designation_id: number | null
-        }
-        Insert: {
-          id?: number
-          form_of_address: string
-          first_name: string
-          last_name: string
-          institution?: string | null
-          designation: string
-          short_designation?: string | null
-          description?: string | null
-          canton?: string | null
-          created_at?: string
-          designation_id?: number | null
-        }
-        Update: {
-          id?: number
-          form_of_address?: string
-          first_name?: string
-          last_name?: string
-          institution?: string | null
-          designation?: string
-          short_designation?: string | null
-          description?: string | null
-          canton?: string | null
-          created_at?: string
-          designation_id?: number | null
-        }
+        Relationships: []
       }
       comments: {
         Row: {
+          content: string
+          created_at: string | null
           id: number
+          is_published: boolean | null
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_status:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
           post_id: number
+          rejection_reason: string | null
           user_id: string | null
-          content: string
-          parent_comment_id: number | null
-          is_edited: boolean
-          is_active: boolean
-          is_banned: boolean
-          quoted_text: string | null
-          created_at: string
-          updated_at: string
         }
         Insert: {
+          content: string
+          created_at?: string | null
           id?: number
+          is_published?: boolean | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
           post_id: number
+          rejection_reason?: string | null
           user_id?: string | null
-          content: string
-          parent_comment_id?: number | null
-          is_edited?: boolean
-          is_active?: boolean
-          is_banned?: boolean
-          quoted_text?: string | null
-          created_at?: string
-          updated_at?: string
         }
         Update: {
+          content?: string
+          created_at?: string | null
           id?: number
+          is_published?: boolean | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
           post_id?: number
+          rejection_reason?: string | null
           user_id?: string | null
-          content?: string
-          parent_comment_id?: number | null
-          is_edited?: boolean
-          is_active?: boolean
-          is_banned?: boolean
-          quoted_text?: string | null
-          created_at?: string
-          updated_at?: string
         }
-      }
-      messages: {
-        Row: {
-          id: number
-          sender_id: string
-          receiver_id: string
-          content: string
-          created_at: string
-          is_read: boolean
-          post_messages_id: number | null
-        }
-        Insert: {
-          id?: number
-          sender_id: string
-          receiver_id: string
-          content: string
-          created_at?: string
-          is_read?: boolean
-          post_messages_id?: number | null
-        }
-        Update: {
-          id?: number
-          sender_id?: string
-          receiver_id?: string
-          content?: string
-          created_at?: string
-          is_read?: boolean
-          post_messages_id?: number | null
-        }
-      }
-      post_saved: {
-        Row: {
-          id: number
-          user_id: string
-          category_id: number
-          canton: string
-          therapist: string | null
-          designation: string | null
-          title: string
-          content: string
-          tags: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: number
-          user_id: string
-          category_id: number
-          canton: string
-          therapist?: string | null
-          designation?: string | null
-          title: string
-          content: string
-          tags?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: number
-          user_id?: string
-          category_id?: number
-          canton?: string
-          therapist?: string | null
-          designation?: string | null
-          title?: string
-          content?: string
-          tags?: string | null
-          created_at?: string
-        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_moderated_by_fkey"
+            columns: ["moderated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       designations: {
         Row: {
-          id: number
-          name_de: string
-          name_fr: string
-          name_it: string
+          created_at: string | null
           description_de: string | null
           description_fr: string | null
           description_it: string | null
-          is_active: boolean
+          id: number
+          is_active: boolean | null
+          name_de_long_f: string | null
+          name_de_long_m: string | null
+          name_de_short_f: string | null
+          name_de_short_m: string | null
+          name_fr_long_f: string | null
+          name_fr_long_m: string | null
+          name_fr_short_f: string | null
+          name_fr_short_m: string | null
+          name_it_long_f: string | null
+          name_it_long_m: string | null
+          name_it_short_f: string | null
+          name_it_short_m: string | null
+          parent_id: number | null
         }
         Insert: {
-          id?: number
-          name_de: string
-          name_fr: string
-          name_it: string
+          created_at?: string | null
           description_de?: string | null
           description_fr?: string | null
           description_it?: string | null
-          is_active?: boolean
+          id?: number
+          is_active?: boolean | null
+          name_de_long_f?: string | null
+          name_de_long_m?: string | null
+          name_de_short_f?: string | null
+          name_de_short_m?: string | null
+          name_fr_long_f?: string | null
+          name_fr_long_m?: string | null
+          name_fr_short_f?: string | null
+          name_fr_short_m?: string | null
+          name_it_long_f?: string | null
+          name_it_long_m?: string | null
+          name_it_short_f?: string | null
+          name_it_short_m?: string | null
+          parent_id?: number | null
         }
         Update: {
-          id?: number
-          name_de?: string
-          name_fr?: string
-          name_it?: string
+          created_at?: string | null
           description_de?: string | null
           description_fr?: string | null
           description_it?: string | null
-          is_active?: boolean
-        }
-      }
-      tags: {
-        Row: {
-          id: number
-          name: string
-        }
-        Insert: {
           id?: number
-          name: string
+          is_active?: boolean | null
+          name_de_long_f?: string | null
+          name_de_long_m?: string | null
+          name_de_short_f?: string | null
+          name_de_short_m?: string | null
+          name_fr_long_f?: string | null
+          name_fr_long_m?: string | null
+          name_fr_short_f?: string | null
+          name_fr_short_m?: string | null
+          name_it_long_f?: string | null
+          name_it_long_m?: string | null
+          name_it_short_f?: string | null
+          name_it_short_m?: string | null
+          parent_id?: number | null
         }
-        Update: {
-          id?: number
-          name?: string
-        }
+        Relationships: [
+          {
+            foreignKeyName: "designations_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "designations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      post_tags: {
+      therapists: {
         Row: {
-          post_id: number
-          tag_id: number
-        }
-        Insert: {
-          post_id: number
-          tag_id: number
-        }
-        Update: {
-          post_id?: number
-          tag_id?: number
-        }
-      }
-      user_blocks: {
-        Row: {
-          blocker_id: string
-          blocked_id: string
-          blocked_at: string
-        }
-        Insert: {
-          blocker_id: string
-          blocked_id: string
-          blocked_at?: string
-        }
-        Update: {
-          blocker_id?: string
-          blocked_id?: string
-          blocked_at?: string
-        }
-      }
-      notifications: {
-        Row: {
-          id: number
-          user_id: string
-          type: 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
-          title: string
-          message: string
-          related_post_id: number | null
-          related_comment_id: number | null
-          is_read: boolean
-          created_at: string
-        }
-        Insert: {
-          id?: number
-          user_id: string
-          type: 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
-          title: string
-          message: string
-          related_post_id?: number | null
-          related_comment_id?: number | null
-          is_read?: boolean
-          created_at?: string
-        }
-        Update: {
-          id?: number
-          user_id?: string
-          type?: 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
-          title?: string
-          message?: string
-          related_post_id?: number | null
-          related_comment_id?: number | null
-          is_read?: boolean
-          created_at?: string
-        }
-      }
-      post_drafts: {
-        Row: {
-          id: number
-          user_id: string
-          category_id: number | null
-          title: string
-          content: string
           canton: string | null
-          therapist_id: number | null
-          created_at: string
-          updated_at: string
+          created_at: string | null
+          description: string | null
+          designation: string
+          designation_id: number | null
+          first_name: string
+          form_of_address: string
+          id: number
+          institution: string | null
+          last_name: string
+          short_designation: string | null
+          updated_at: string | null
         }
         Insert: {
-          id?: number
-          user_id: string
-          category_id?: number | null
-          title: string
-          content: string
           canton?: string | null
-          therapist_id?: number | null
-          created_at?: string
-          updated_at?: string
+          created_at?: string | null
+          description?: string | null
+          designation: string
+          designation_id?: number | null
+          first_name: string
+          form_of_address: string
+          id?: number
+          institution?: string | null
+          last_name: string
+          short_designation?: string | null
+          updated_at?: string | null
         }
         Update: {
-          id?: number
-          user_id?: string
-          category_id?: number | null
-          title?: string
-          content?: string
           canton?: string | null
-          therapist_id?: number | null
-          created_at?: string
-          updated_at?: string
+          created_at?: string | null
+          description?: string | null
+          designation?: string
+          designation_id?: number | null
+          first_name?: string
+          form_of_address?: string
+          id?: number
+          institution?: string | null
+          last_name?: string
+          short_designation?: string | null
+          updated_at?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "therapists_designation_id_fkey"
+            columns: ["designation_id"]
+            isOneToOne: false
+            referencedRelation: "designations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
     }
     Enums: {
-      user_role: 'user' | 'moderator' | 'admin'
-      access_role: 'all' | 'user' | 'moderator' | 'admin'
-      notification_type: 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
-    }
-    CompositeTypes: {
-      [_ in never]: never
+      access_role: "all" | "user" | "moderator" | "admin"
+      moderation_status: "pending" | "approved" | "rejected"
+      user_role: "user" | "moderator" | "admin"
     }
   }
 }
 
-// Helper types for easier use in components
-export type User = Database['public']['Tables']['users']['Row']
-export type Post = Database['public']['Tables']['posts']['Row']
-export type Comment = Database['public']['Tables']['comments']['Row']
 export type Category = Database['public']['Tables']['categories']['Row']
+export type Comment = Database['public']['Tables']['comments']['Row']
 export type Therapist = Database['public']['Tables']['therapists']['Row']
-export type Message = Database['public']['Tables']['messages']['Row']
-export type PostSaved = Database['public']['Tables']['post_saved']['Row']
 export type Designation = Database['public']['Tables']['designations']['Row']
-export type Tag = Database['public']['Tables']['tags']['Row']
-export type PostTag = Database['public']['Tables']['post_tags']['Row']
-export type UserBlock = Database['public']['Tables']['user_blocks']['Row']
-export type Notification = Database['public']['Tables']['notifications']['Row']
-export type PostDraft = Database['public']['Tables']['post_drafts']['Row']
 
 export type UserRole = Database['public']['Enums']['user_role']
 export type AccessRole = Database['public']['Enums']['access_role']
-export type NotificationType = Database['public']['Enums']['notification_type']
-
-// Extended types with relationships
-export type PostWithRelations = Post & {
-  categories?: Category
-  users?: User
-  therapists?: Therapist
-  comments?: Comment[] | { count: number }[]
-  post_tags?: (PostTag & { tags: Tag })[]
-  tags?: string[]
-  comment_count?: number
-}
-
-export type CommentWithUser = Comment & {
-  users?: User
-}
-
-export type CommentWithRelations = Comment & {
-  users?: User
-  replies?: CommentWithRelations[]
-}
-
-export type TherapistWithPosts = Therapist & {
-  posts?: (Post & { users?: User })[]
-}
-
-// Moderation types
-export type ModerationStatus = 'pending' | 'approved' | 'rejected'
-
-export interface ModerationQueueItem {
-  id: number
-  content_type: 'post' | 'comment'
-  content_id: number
-  user_id: string
-  created_at: string
-  content?: string
-  title?: string
-  canton?: string
-  moderation_status?: ModerationStatus
-  moderated_by?: string
-  moderated_at?: string
-  rejection_reason?: string
-  post_id?: number
-  category_id?: number
-  users?: {
-    id: string
-    username: string
-    avatar_url?: string | null
-  }
-}
+export type ModerationStatus = Database['public']['Enums']['moderation_status']
