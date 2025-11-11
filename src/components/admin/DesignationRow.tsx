@@ -36,7 +36,8 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
   }
 
   const handleDelete = async () => {
-    if (!confirm(`Möchten Sie die Bezeichnung "${designation.name_de}" wirklich löschen?`)) {
+    const displayName = designationsService.getDisplayName(designation)
+    if (!confirm(`Möchten Sie die Bezeichnung "${displayName}" wirklich löschen?`)) {
       return
     }
 
@@ -127,7 +128,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
         <div className="w-16 flex justify-center">
           <input
             type="checkbox"
-            checked={designation.is_active}
+            checked={designation.is_active ?? true}
             onChange={async (e) => {
               await handleUpdate('is_active', e.target.checked as any)
             }}

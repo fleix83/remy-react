@@ -57,7 +57,9 @@ export type Database = {
             | Database["public"]["Enums"]["moderation_status"]
             | null
           post_id: number
+          quoted_text: string | null
           rejection_reason: string | null
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
@@ -71,7 +73,9 @@ export type Database = {
             | Database["public"]["Enums"]["moderation_status"]
             | null
           post_id: number
+          quoted_text?: string | null
           rejection_reason?: string | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
@@ -85,7 +89,9 @@ export type Database = {
             | Database["public"]["Enums"]["moderation_status"]
             | null
           post_id?: number
+          quoted_text?: string | null
           rejection_reason?: string | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [

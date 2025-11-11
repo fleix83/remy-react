@@ -95,7 +95,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             {comment.users?.username || 'Unbekannt'}
           </p>
           <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>
-            {formatDate(comment.created_at)}
+            {comment.created_at ? formatDate(comment.created_at) : 'Unbekannt'}
             {comment.updated_at && comment.updated_at !== comment.created_at && (
               <span className="text-gray-500 ml-1">(bearbeitet)</span>
             )}

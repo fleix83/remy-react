@@ -291,7 +291,7 @@ const AdminDashboard: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {new Date(user.created_at).toLocaleDateString('de-DE')}
+                        {user.created_at ? new Date(user.created_at).toLocaleDateString('de-DE') : 'Unbekannt'}
                       </td>
                       {permissions.isAdmin && (
                         <td className="px-4 py-4 whitespace-nowrap text-sm">
@@ -312,7 +312,7 @@ const AdminDashboard: React.FC = () => {
                               </button>
                             )}
                             <select
-                              value={user.role}
+                              value={user.role || 'user'}
                               onChange={(e) => handleUserRoleChange(user.id, e.target.value as 'user' | 'moderator' | 'admin')}
                               className="bg-white text-gray-900 text-sm rounded px-2 py-1 border border-gray-300"
                             >
