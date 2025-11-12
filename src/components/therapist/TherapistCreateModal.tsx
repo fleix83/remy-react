@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { TherapistsService } from '../../services/therapists.service'
 import { DesignationsService } from '../../services/designations.service'
-import { DesignationMatchingService } from '../../services/designation-matching.service'
 import { TherapistImportService, type ImportResult } from '../../services/therapist-import.service'
 import { downloadTherapistCSVTemplate } from '../../utils/therapist-csv-template'
 import { usePermissions } from '../../hooks/usePermissions'
@@ -57,7 +56,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
   const therapistsService = new TherapistsService()
   const designationsService = new DesignationsService()
-  const designationMatchingService = new DesignationMatchingService()
   const importService = new TherapistImportService()
   const permissions = usePermissions()
   const { userProfile } = useAuthStore()
