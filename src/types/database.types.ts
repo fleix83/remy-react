@@ -769,13 +769,13 @@ export type User = Tables<'users'>
 export type UserBlock = Tables<'user_blocks'>
 
 // Extended types with relations
-export interface PostWithRelations extends Post {
+export interface PostWithRelations extends Omit<Post, 'therapist'> {
   user?: User
   users?: User
   category?: Category
   categories?: Category
-  therapist?: Therapist
-  therapists?: Therapist
+  therapist?: Therapist | string | null
+  therapists?: Therapist | null
   comments?: Comment[]
   comment_count?: number
 }
