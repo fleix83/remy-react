@@ -773,11 +773,12 @@ export interface MessageWithUser {
 
 export interface ModerationQueueItem {
   id: number
-  type: 'post' | 'comment'
+  content_type: 'post' | 'comment'
   content: string
+  title?: string | null
   created_at: string | null
   user_id: string
   moderation_status: string | null
-  user?: User
+  users?: User
   post?: Post
 }
