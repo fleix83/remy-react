@@ -274,8 +274,8 @@ export class MessagesService {
 
       if (sender) {
         try {
-          const { error: notificationError } = await (supabase
-            .from('notifications') as any) // notifications table may not exist yet
+          const notificationsQuery = supabase.from('notifications' as any) as any
+          const { error: notificationError } = await notificationsQuery
             .insert([{
               user_id: receiverId,
               type: 'private_message',
