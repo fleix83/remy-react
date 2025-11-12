@@ -24,9 +24,9 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   loadNotifications: async () => {
     try {
       set({ loading: true })
-      
-      const { data, error } = await supabase
-        .from('notifications')
+
+      const { data, error } = await (supabase
+        .from('notifications' as any) as any)
         .select('*')
         .order('created_at', { ascending: false })
         .limit(50)
@@ -44,11 +44,11 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
         throw error
       }
       
-      const unreadCount = data?.filter(n => !n.is_read).length || 0
-      
-      set({ 
-        notifications: data || [],
-        unreadCount 
+      const unreadCount = (data as any)?.filter((n: any) => !n.is_read).length || 0
+
+      set({
+        notifications: (data as any) || [],
+        unreadCount
       })
     } catch (error) {
       console.error('Error loading notifications:', error)
@@ -65,7 +65,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   markAsRead: async (id: number) => {
     try {
       const { error } = await supabase
-        .from('notifications')
+        .from('notifications' as any)
         .update({ is_read: true })
         .eq('id', id)
       
@@ -92,7 +92,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   markAllAsRead: async () => {
     try {
       const { error } = await supabase
-        .from('notifications')
+        .from('notifications' as any)
         .update({ is_read: true })
         .eq('is_read', false)
       
@@ -124,7 +124,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   deleteNotification: async (id: number) => {
     try {
       const { error } = await supabase
-        .from('notifications')
+        .from('notifications' as any)
         .delete()
         .eq('id', id)
       
@@ -210,7 +210,7 @@ export const createNotification = async (notificationData: {
 }) => {
   try {
     const { error } = await supabase
-      .from('notifications')
+      .from('notifications' as any)
       .insert([notificationData])
     
     if (error) {
