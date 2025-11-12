@@ -29,17 +29,18 @@ const commentsService = new CommentsService()
 
 // Helper function to add comment to the right place in tree
 const addCommentToTree = (
-  comments: CommentWithRelations[], 
+  comments: CommentWithRelations[],
   newComment: CommentWithRelations
 ): CommentWithRelations[] => {
-  if (!newComment.parent_comment_id) {
+  const newCommentAny = newComment as any
+  if (!newCommentAny.parent_comment_id) {
     // Top-level comment
     return [newComment, ...comments]
   }
-  
+
   // Reply to existing comment
   return comments.map(comment => {
-    if (comment.id === newComment.parent_comment_id) {
+    if (comment.id === newCommentAny.parent_comment_id) {
       return {
         ...comment,
         replies: comment.replies 
@@ -213,9 +214,8 @@ export const useCommentsStore = create<CommentsState>((set, get) => ({
         const postId = parseInt(postKey)
         get().updateComment(postId, commentId, {
           content,
-          is_edited: true,
           updated_at: new Date().toISOString()
-        })
+        } as any)
       }
     } catch (error) {
       console.error('Error editing comment:', error)

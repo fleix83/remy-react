@@ -112,7 +112,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   }
 
   const getStatusBadge = (post: PostWithRelations | Post) => {
-    const badge = UserContentService.getPostStatusBadge(post)
+    const badge = UserContentService.getPostStatusBadge(post as any)
     // Extract text color from badge className
     let textColor = '#666' // default gray
     if (badge.className.includes('yellow')) textColor = '#b8860b' // yellow text for pending

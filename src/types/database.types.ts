@@ -784,11 +784,15 @@ export interface CommentWithRelations extends Comment {
   user?: User
   users?: User
   replies?: CommentWithRelations[]
+  is_edited?: boolean
+  parent_comment_id?: number | null
 }
 
 export interface CommentWithUser extends Comment {
   user?: User
   users?: User
+  is_edited?: boolean
+  parent_comment_id?: number | null
 }
 
 export interface ModerationQueueItem {

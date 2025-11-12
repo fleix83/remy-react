@@ -50,7 +50,7 @@ const BlockedUsers: React.FC = () => {
     setIsLoading(true)
     try {
       const blocked = await UserSearchService.getBlockedUsers(userProfile.id)
-      setBlockedUsers(blocked)
+      setBlockedUsers(blocked as any)
     } catch (error) {
       console.error('Error loading blocked users:', error)
       setMessage({ type: 'error', text: 'Failed to load blocked users' })

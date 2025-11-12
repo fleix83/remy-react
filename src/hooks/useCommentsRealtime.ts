@@ -67,7 +67,7 @@ export const useCommentsRealtime = (postId: number) => {
               }
 
               if (commentWithUser) {
-                addComment(postId, commentWithUser)
+                addComment(postId, commentWithUser as any)
               }
             } catch (error) {
               console.error('Error in comment INSERT handler:', error)
