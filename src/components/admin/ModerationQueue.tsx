@@ -82,7 +82,7 @@ const ModerationQueue: React.FC = () => {
                 moderated_by: postWithUser.moderated_by,
                 moderated_at: postWithUser.moderated_at,
                 rejection_reason: postWithUser.rejection_reason,
-                users: postWithUser.users
+                users: postWithUser.users as any
               }
               
               setQueueItems(prev => [queueItem, ...prev])
@@ -139,7 +139,7 @@ const ModerationQueue: React.FC = () => {
                 moderated_at: commentWithUser.moderated_at,
                 rejection_reason: commentWithUser.rejection_reason,
                 post_id: commentWithUser.post_id,
-                users: commentWithUser.users
+                users: commentWithUser.users as any
               }
               
               setQueueItems(prev => [queueItem, ...prev])

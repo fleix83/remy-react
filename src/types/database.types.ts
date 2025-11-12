@@ -753,7 +753,10 @@ export type User = Tables<'users'>
 export interface PostWithRelations extends Post {
   user?: User
   category?: Category
+  categories?: Category
   therapist?: Therapist
+  comments?: Comment[]
+  comment_count?: number
 }
 
 export interface CommentWithRelations extends Comment {
