@@ -5,7 +5,7 @@ interface BlockedUserInfo {
   id: string
   username: string
   avatar_url?: string | null
-  created_at: string
+  created_at?: string | null
 }
 
 interface UserBlockWithUser extends UserBlock {
@@ -79,7 +79,7 @@ export class UserSearchService {
       const result = blockedIds.map(block => ({
         ...block,
         blocked_user: blockedUsers?.find(user => user.id === block.blocked_id)
-      }))
+      })) as any[]
 
       return result
     } catch (error) {

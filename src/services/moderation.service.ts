@@ -133,12 +133,12 @@ export class ModerationService {
     if (error) throw error
 
     const role = data.role as 'user' | 'moderator' | 'admin'
-    
+
     return {
       role,
       canModerate: role === 'moderator' || role === 'admin',
       canAdmin: role === 'admin',
-      isBanned: data.is_banned
+      isBanned: data.is_banned ?? false
     }
   }
 

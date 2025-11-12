@@ -4,7 +4,7 @@ export interface BlockedUser {
   id: string
   username: string
   avatar_url?: string | null
-  blocked_at: string
+  blocked_at: string | null
 }
 
 export class UserBlocksService {

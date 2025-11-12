@@ -8,7 +8,7 @@ interface BlockedUserInfo {
   id: string
   username: string
   avatar_url?: string | null
-  created_at: string
+  created_at: string | null
 }
 
 interface UserBlockWithUser extends UserBlock {

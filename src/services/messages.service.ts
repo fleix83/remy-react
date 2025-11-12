@@ -273,19 +273,24 @@ export class MessagesService {
         .single()
 
       if (sender) {
-        const { error: notificationError } = await supabase
-          .from('notifications')
-          .insert([{
-            user_id: receiverId,
-            type: 'private_message',
-            title: 'New Message',
-            message: `${sender.username} sent you a message`,
-            is_read: false
-          }])
-        
-        if (notificationError && 
-            !(notificationError.code === 'PGRST116' || notificationError.message.includes('relation "public.notifications" does not exist'))) {
-          console.error('Error creating notification:', notificationError)
+        try {
+          const { error: notificationError } = await (supabase
+            .from('notifications') as any) // notifications table may not exist yet
+            .insert([{
+              user_id: receiverId,
+              type: 'private_message',
+              title: 'New Message',
+              message: `${sender.username} sent you a message`,
+              is_read: false
+            }])
+
+          if (notificationError &&
+              !(notificationError.code === 'PGRST116' || notificationError.message.includes('relation "public.notifications" does not exist'))) {
+            console.error('Error creating notification:', notificationError)
+          }
+        } catch (notifError) {
+          // Notification table doesn't exist yet - this is okay, skip silently
+          console.warn('Notifications table not available')
         }
       }
     } catch (error) {

@@ -23,7 +23,7 @@ export class UserContentService {
         throw new Error('Failed to load user posts')
       }
 
-      return data || []
+      return (data as any) || []
     } catch (error) {
       console.error('Error getting user posts:', error)
       throw error
@@ -48,7 +48,7 @@ export class UserContentService {
         throw new Error('Failed to load user comments')
       }
 
-      return data || []
+      return (data as any) || []
     } catch (error) {
       console.error('Error getting user comments:', error)
       throw error
@@ -76,7 +76,7 @@ export class UserContentService {
         throw new Error('Failed to load user drafts')
       }
 
-      return data || []
+      return (data as any) || []
     } catch (error) {
       console.error('Error getting user drafts:', error)
       throw error

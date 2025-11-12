@@ -744,6 +744,18 @@ export const Constants = {
 // Enum types
 export type ModerationStatus = Database['public']['Enums']['moderation_status']
 export type UserRole = Database['public']['Enums']['user_role']
+export type NotificationType = 'private_message' | 'comment_reply' | 'post_mention' | 'system'
+
+// Stub types for incomplete features
+export interface Notification {
+  id: number
+  user_id: string
+  type: NotificationType
+  title: string
+  message: string
+  is_read: boolean
+  created_at?: string | null
+}
 
 // Helper types
 export type Category = Tables<'categories'>

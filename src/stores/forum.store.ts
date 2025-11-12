@@ -173,7 +173,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
       
       // Add to beginning of posts list
       set(state => ({
-        posts: [newPost as PostWithRelations, ...state.posts]
+        posts: [newPost as any, ...state.posts]
       }))
     } catch (error) {
       console.error('Error creating post:', error)
