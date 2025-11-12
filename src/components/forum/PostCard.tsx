@@ -173,9 +173,9 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       )}
 
       {/* Content Tags */}
-      {post.tags && post.tags.length > 0 && (
+      {post.tags && typeof post.tags === 'string' && post.tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {post.tags.map((tag: string, index: number) => (
+          {post.tags.split(',').map((tag: string, index: number) => (
             <span
               key={index}
               className="inline-flex items-center px-3 py-1 rounded-lg text-xs md:text-sm"

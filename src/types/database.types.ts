@@ -774,6 +774,7 @@ export interface MessageWithUser {
   is_read: boolean | null
   sender_id: string
   receiver_id: string
+  post_messages_id?: number | null
   sender?: User
   receiver?: User
 }
