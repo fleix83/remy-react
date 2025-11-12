@@ -752,9 +752,11 @@ export type User = Tables<'users'>
 // Extended types with relations
 export interface PostWithRelations extends Post {
   user?: User
+  users?: User
   category?: Category
   categories?: Category
   therapist?: Therapist
+  therapists?: Therapist
   comments?: Comment[]
   comment_count?: number
 }
