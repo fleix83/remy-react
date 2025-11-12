@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.4"
+  }
   public: {
     Tables: {
       categories: {
@@ -50,14 +55,12 @@ export type Database = {
           content: string
           created_at: string | null
           id: number
-          is_edited: boolean | null
           is_published: boolean | null
           moderated_at: string | null
           moderated_by: string | null
           moderation_status:
             | Database["public"]["Enums"]["moderation_status"]
             | null
-          parent_comment_id: number | null
           post_id: number
           quoted_text: string | null
           rejection_reason: string | null
@@ -68,14 +71,12 @@ export type Database = {
           content: string
           created_at?: string | null
           id?: number
-          is_edited?: boolean | null
           is_published?: boolean | null
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?:
             | Database["public"]["Enums"]["moderation_status"]
             | null
-          parent_comment_id?: number | null
           post_id: number
           quoted_text?: string | null
           rejection_reason?: string | null
@@ -86,14 +87,12 @@ export type Database = {
           content?: string
           created_at?: string | null
           id?: number
-          is_edited?: boolean | null
           is_published?: boolean | null
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?:
             | Database["public"]["Enums"]["moderation_status"]
             | null
-          parent_comment_id?: number | null
           post_id?: number
           quoted_text?: string | null
           rejection_reason?: string | null
@@ -127,65 +126,56 @@ export type Database = {
       designations: {
         Row: {
           created_at: string | null
-          description_de: string | null
-          description_fr: string | null
-          description_it: string | null
           id: number
           is_active: boolean | null
-          name_de_long_f: string | null
           name_de_long_m: string | null
-          name_de_short_f: string | null
+          name_de_long_w: string | null
           name_de_short_m: string | null
-          name_fr_long_f: string | null
+          name_de_short_w: string | null
           name_fr_long_m: string | null
-          name_fr_short_f: string | null
+          name_fr_long_w: string | null
           name_fr_short_m: string | null
-          name_it_long_f: string | null
+          name_fr_short_w: string | null
           name_it_long_m: string | null
-          name_it_short_f: string | null
+          name_it_long_w: string | null
           name_it_short_m: string | null
+          name_it_short_w: string | null
           parent_id: number | null
         }
         Insert: {
           created_at?: string | null
-          description_de?: string | null
-          description_fr?: string | null
-          description_it?: string | null
           id?: number
           is_active?: boolean | null
-          name_de_long_f?: string | null
           name_de_long_m?: string | null
-          name_de_short_f?: string | null
+          name_de_long_w?: string | null
           name_de_short_m?: string | null
-          name_fr_long_f?: string | null
+          name_de_short_w?: string | null
           name_fr_long_m?: string | null
-          name_fr_short_f?: string | null
+          name_fr_long_w?: string | null
           name_fr_short_m?: string | null
-          name_it_long_f?: string | null
+          name_fr_short_w?: string | null
           name_it_long_m?: string | null
-          name_it_short_f?: string | null
+          name_it_long_w?: string | null
           name_it_short_m?: string | null
+          name_it_short_w?: string | null
           parent_id?: number | null
         }
         Update: {
           created_at?: string | null
-          description_de?: string | null
-          description_fr?: string | null
-          description_it?: string | null
           id?: number
           is_active?: boolean | null
-          name_de_long_f?: string | null
           name_de_long_m?: string | null
-          name_de_short_f?: string | null
+          name_de_long_w?: string | null
           name_de_short_m?: string | null
-          name_fr_long_f?: string | null
+          name_de_short_w?: string | null
           name_fr_long_m?: string | null
-          name_fr_short_f?: string | null
+          name_fr_long_w?: string | null
           name_fr_short_m?: string | null
-          name_it_long_f?: string | null
+          name_fr_short_w?: string | null
           name_it_long_m?: string | null
-          name_it_short_f?: string | null
+          name_it_long_w?: string | null
           name_it_short_m?: string | null
+          name_it_short_w?: string | null
           parent_id?: number | null
         }
         Relationships: [
@@ -606,87 +596,155 @@ export type Database = {
         Relationships: []
       }
     }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
+    }
     Enums: {
       access_role: "all" | "user" | "moderator" | "admin"
       moderation_status: "pending" | "approved" | "rejected"
       user_role: "user" | "moderator" | "admin"
     }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
 }
 
-// Helper types for easier use in components
-export type User = Database['public']['Tables']['users']['Row']
-export type Post = Database['public']['Tables']['posts']['Row']
-export type Comment = Database['public']['Tables']['comments']['Row']
-export type Category = Database['public']['Tables']['categories']['Row']
-export type Therapist = Database['public']['Tables']['therapists']['Row']
-export type Message = Database['public']['Tables']['messages']['Row']
-export type PostSaved = Database['public']['Tables']['post_saved']['Row']
-export type Designation = Database['public']['Tables']['designations']['Row']
-export type Tag = Database['public']['Tables']['tags']['Row']
-export type PostTag = Database['public']['Tables']['post_tags']['Row']
-export type UserBlock = Database['public']['Tables']['user_blocks']['Row']
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-export type UserRole = Database['public']['Enums']['user_role']
-export type AccessRole = Database['public']['Enums']['access_role']
-export type ModerationStatus = Database['public']['Enums']['moderation_status']
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
-// Placeholder types for features not yet in database
-export type NotificationType = 'comment_reply' | 'post_comment' | 'private_message' | 'post_mention' | 'therapist_review'
-export interface Notification {
-  id: number
-  user_id: string
-  type: NotificationType
-  title: string
-  message: string
-  link?: string
-  is_read: boolean
-  created_at: string
-}
-
-// Extended types with relationships
-export type PostWithRelations = Post & {
-  categories?: Category
-  users?: User
-  therapists?: Therapist
-  comments?: Comment[] | { count: number }[]
-  post_tags?: (PostTag & { tags: Tag })[]
-  tags?: string[]
-  comment_count?: number
-}
-
-export type CommentWithUser = Comment & {
-  users?: User
-}
-
-export type CommentWithRelations = Comment & {
-  users?: User
-  replies?: CommentWithRelations[]
-}
-
-export type TherapistWithPosts = Therapist & {
-  posts?: (Post & { users?: User })[]
-}
-
-// Moderation types
-export interface ModerationQueueItem {
-  id: number
-  content_type: 'post' | 'comment'
-  content_id: number
-  user_id: string
-  created_at: string
-  content?: string
-  title?: string
-  canton?: string
-  moderation_status?: ModerationStatus
-  moderated_by?: string
-  moderated_at?: string
-  rejection_reason?: string
-  post_id?: number
-  category_id?: number
-  users?: {
-    id: string
-    username: string
-    avatar_url?: string | null
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
   }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      access_role: ["all", "user", "moderator", "admin"],
+      moderation_status: ["pending", "approved", "rejected"],
+      user_role: ["user", "moderator", "admin"],
+    },
+  },
+} as const
+
+// Helper types
+export type Category = Tables<'categories'>
+export type Comment = Tables<'comments'>
+export type Designation = Tables<'designations'>
+export type Post = Tables<'posts'>
+export type Therapist = Tables<'therapists'>
+export type User = Tables<'users'>

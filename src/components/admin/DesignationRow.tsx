@@ -97,8 +97,8 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
         {/* Kurzb. (w) - Short Feminine */}
         <div className="w-44">
           <InlineEditCell
-            value={designation.name_de_short_f || ''}
-            onSave={(newValue) => handleUpdate('name_de_short_f', newValue)}
+            value={designation.name_de_short_w || ''}
+            onSave={(newValue) => handleUpdate('name_de_short_w', newValue)}
             placeholder="Kurzb. (w)"
             displayClassName="text-left"
           />
@@ -117,8 +117,8 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
         {/* Lang (w) - Long Feminine */}
         <div className="flex-1">
           <InlineEditCell
-            value={designation.name_de_long_f || ''}
-            onSave={(newValue) => handleUpdate('name_de_long_f', newValue)}
+            value={designation.name_de_long_w || ''}
+            onSave={(newValue) => handleUpdate('name_de_long_w', newValue)}
             placeholder="Lang (w)"
             displayClassName="text-left"
           />
@@ -166,8 +166,8 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
           </div>
           <div className="w-44">
             <InlineEditCell
-              value={designation.name_fr_short_f || ''}
-              onSave={(newValue) => handleUpdate('name_fr_short_f', newValue)}
+              value={designation.name_fr_short_w || ''}
+              onSave={(newValue) => handleUpdate('name_fr_short_w', newValue)}
               placeholder="Kurzb. (w)"
               displayClassName="text-left"
             />
@@ -182,8 +182,8 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
           </div>
           <div className="flex-1">
             <InlineEditCell
-              value={designation.name_fr_long_f || ''}
-              onSave={(newValue) => handleUpdate('name_fr_long_f', newValue)}
+              value={designation.name_fr_long_w || ''}
+              onSave={(newValue) => handleUpdate('name_fr_long_w', newValue)}
               placeholder="Lang (w)"
               displayClassName="text-left"
             />
@@ -210,8 +210,8 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
           </div>
           <div className="w-44">
             <InlineEditCell
-              value={designation.name_it_short_f || ''}
-              onSave={(newValue) => handleUpdate('name_it_short_f', newValue)}
+              value={designation.name_it_short_w || ''}
+              onSave={(newValue) => handleUpdate('name_it_short_w', newValue)}
               placeholder="Kurzb. (w)"
               displayClassName="text-left"
             />
@@ -226,8 +226,8 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
           </div>
           <div className="flex-1">
             <InlineEditCell
-              value={designation.name_it_long_f || ''}
-              onSave={(newValue) => handleUpdate('name_it_long_f', newValue)}
+              value={designation.name_it_long_w || ''}
+              onSave={(newValue) => handleUpdate('name_it_long_w', newValue)}
               placeholder="Lang (w)"
               displayClassName="text-left"
             />

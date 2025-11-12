@@ -80,17 +80,17 @@ export class DesignationsService {
   getDisplayName(designation: Designation, language: 'de' | 'fr' | 'it' = 'de'): string {
     switch (language) {
       case 'fr':
-        return designation.name_fr_short_m || designation.name_fr_short_f ||
-               designation.name_fr_long_m || designation.name_fr_long_f ||
-               designation.name_de_short_m || designation.name_de_short_f || ''
+        return designation.name_fr_short_m || designation.name_fr_short_w ||
+               designation.name_fr_long_m || designation.name_fr_long_w ||
+               designation.name_de_short_m || designation.name_de_short_w || ''
       case 'it':
-        return designation.name_it_short_m || designation.name_it_short_f ||
-               designation.name_it_long_m || designation.name_it_long_f ||
-               designation.name_de_short_m || designation.name_de_short_f || ''
+        return designation.name_it_short_m || designation.name_it_short_w ||
+               designation.name_it_long_m || designation.name_it_long_w ||
+               designation.name_de_short_m || designation.name_de_short_w || ''
       case 'de':
       default:
-        return designation.name_de_short_m || designation.name_de_short_f ||
-               designation.name_de_long_m || designation.name_de_long_f || ''
+        return designation.name_de_short_m || designation.name_de_short_w ||
+               designation.name_de_long_m || designation.name_de_long_w || ''
     }
   }
 

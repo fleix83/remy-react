@@ -71,13 +71,13 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
       if (lang === 'de') {
         if (d.name_de_long_m) longForms.push(d.name_de_long_m)
-        if (d.name_de_long_f) longForms.push(d.name_de_long_f)
+        if (d.name_de_long_w) longForms.push(d.name_de_long_w)
       } else if (lang === 'fr') {
         if (d.name_fr_long_m) longForms.push(d.name_fr_long_m)
-        if (d.name_fr_long_f) longForms.push(d.name_fr_long_f)
+        if (d.name_fr_long_w) longForms.push(d.name_fr_long_w)
       } else if (lang === 'it') {
         if (d.name_it_long_m) longForms.push(d.name_it_long_m)
-        if (d.name_it_long_f) longForms.push(d.name_it_long_f)
+        if (d.name_it_long_w) longForms.push(d.name_it_long_w)
       }
 
       longForms.forEach(text => {
@@ -536,11 +536,11 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                     let shortForm = ''
 
                     if (lang === 'de') {
-                      shortForm = selectedOption.designation.name_de_short_m || selectedOption.designation.name_de_short_f || ''
+                      shortForm = selectedOption.designation.name_de_short_m || selectedOption.designation.name_de_short_w || ''
                     } else if (lang === 'fr') {
-                      shortForm = selectedOption.designation.name_fr_short_m || selectedOption.designation.name_fr_short_f || ''
+                      shortForm = selectedOption.designation.name_fr_short_m || selectedOption.designation.name_fr_short_w || ''
                     } else if (lang === 'it') {
-                      shortForm = selectedOption.designation.name_it_short_m || selectedOption.designation.name_it_short_f || ''
+                      shortForm = selectedOption.designation.name_it_short_m || selectedOption.designation.name_it_short_w || ''
                     }
 
                     setFormData(prev => ({

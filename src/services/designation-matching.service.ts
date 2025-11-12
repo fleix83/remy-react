@@ -53,17 +53,17 @@ export class DesignationMatchingService {
     for (const designation of designations) {
       const fields = [
         { key: 'name_de_short_m', value: designation.name_de_short_m },
-        { key: 'name_de_short_f', value: designation.name_de_short_f },
+        { key: 'name_de_short_w', value: designation.name_de_short_w },
         { key: 'name_de_long_m', value: designation.name_de_long_m },
-        { key: 'name_de_long_f', value: designation.name_de_long_f },
+        { key: 'name_de_long_w', value: designation.name_de_long_w },
         { key: 'name_fr_short_m', value: designation.name_fr_short_m },
-        { key: 'name_fr_short_f', value: designation.name_fr_short_f },
+        { key: 'name_fr_short_w', value: designation.name_fr_short_w },
         { key: 'name_fr_long_m', value: designation.name_fr_long_m },
-        { key: 'name_fr_long_f', value: designation.name_fr_long_f },
+        { key: 'name_fr_long_w', value: designation.name_fr_long_w },
         { key: 'name_it_short_m', value: designation.name_it_short_m },
-        { key: 'name_it_short_f', value: designation.name_it_short_f },
+        { key: 'name_it_short_w', value: designation.name_it_short_w },
         { key: 'name_it_long_m', value: designation.name_it_long_m },
-        { key: 'name_it_long_f', value: designation.name_it_long_f },
+        { key: 'name_it_long_w', value: designation.name_it_long_w },
       ]
 
       // Calculate similarity for each non-null field
@@ -202,24 +202,24 @@ export class DesignationMatchingService {
     // Build designation object with both short and long forms
     const designationData: any = {
       name_de_short_m: null,
-      name_de_short_f: null,
+      name_de_short_w: null,
       name_de_long_m: null,
-      name_de_long_f: null,
+      name_de_long_w: null,
       name_fr_short_m: null,
-      name_fr_short_f: null,
+      name_fr_short_w: null,
       name_fr_long_m: null,
-      name_fr_long_f: null,
+      name_fr_long_w: null,
       name_it_short_m: null,
-      name_it_short_f: null,
+      name_it_short_w: null,
       name_it_long_m: null,
-      name_it_long_f: null,
+      name_it_long_w: null,
       parent_id: null,
       is_active: true
     }
 
     // Set short form (always populate this)
     if (gender === 'f') {
-      designationData.name_de_short_f = shortForm
+      designationData.name_de_short_w = shortForm
     } else {
       designationData.name_de_short_m = shortForm
     }
@@ -227,7 +227,7 @@ export class DesignationMatchingService {
     // Set long form if this is a long designation
     if (isLong) {
       if (gender === 'f') {
-        designationData.name_de_long_f = trimmedText
+        designationData.name_de_long_w = trimmedText
       } else {
         designationData.name_de_long_m = trimmedText
       }
@@ -257,17 +257,17 @@ export class DesignationMatchingService {
   getDisplayText(designation: Designation): string {
     const fields = [
       designation.name_de_short_m,
-      designation.name_de_short_f,
+      designation.name_de_short_w,
       designation.name_de_long_m,
-      designation.name_de_long_f,
+      designation.name_de_long_w,
       designation.name_fr_short_m,
-      designation.name_fr_short_f,
+      designation.name_fr_short_w,
       designation.name_fr_long_m,
-      designation.name_fr_long_f,
+      designation.name_fr_long_w,
       designation.name_it_short_m,
-      designation.name_it_short_f,
+      designation.name_it_short_w,
       designation.name_it_long_m,
-      designation.name_it_long_f,
+      designation.name_it_long_w,
     ]
 
     for (const field of fields) {

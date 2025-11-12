@@ -41,20 +41,17 @@ const DesignationsTab: React.FC = () => {
       // Create a new designation with default values
       await designationsService.createDesignation({
         name_de_short_m: 'Neue Bezeichnung',
-        name_de_short_f: null,
+        name_de_short_w: null,
         name_de_long_m: null,
-        name_de_long_f: null,
+        name_de_long_w: null,
         name_fr_short_m: null,
-        name_fr_short_f: null,
+        name_fr_short_w: null,
         name_fr_long_m: null,
-        name_fr_long_f: null,
+        name_fr_long_w: null,
         name_it_short_m: null,
-        name_it_short_f: null,
+        name_it_short_w: null,
         name_it_long_m: null,
-        name_it_long_f: null,
-        description_de: null,
-        description_fr: null,
-        description_it: null,
+        name_it_long_w: null,
         parent_id: null,
         is_active: true
       })
