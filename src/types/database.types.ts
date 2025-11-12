@@ -774,11 +774,21 @@ export interface MessageWithUser {
 export interface ModerationQueueItem {
   id: number
   content_type: 'post' | 'comment'
+  content_id: number
   content: string
   title?: string | null
   created_at: string | null
   user_id: string
   moderation_status: string | null
+  moderated_by?: string | null
+  moderated_at?: string | null
+  rejection_reason?: string | null
+  // Post-specific fields
+  canton?: string
+  category_id?: number
+  // Comment-specific fields
+  post_id?: number
+  // Relations
   users?: User
   post?: Post
 }

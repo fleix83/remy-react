@@ -30,7 +30,8 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
 }) => {
   if (!isOpen || !item) return null
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return ''
     return new Date(dateString).toLocaleDateString('de-DE', {
       year: 'numeric',
       month: 'long',
