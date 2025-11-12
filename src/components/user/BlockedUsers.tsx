@@ -12,6 +12,8 @@ interface BlockedUserInfo {
 }
 
 interface UserBlockWithUser extends UserBlock {
+  blocked_id: string
+  blocked_at: string | null
   blocked_user?: BlockedUserInfo
 }
 

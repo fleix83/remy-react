@@ -741,13 +741,20 @@ export const Constants = {
   },
 } as const
 
+// Enum types
+export type ModerationStatus = Database['public']['Enums']['moderation_status']
+export type UserRole = Database['public']['Enums']['user_role']
+
 // Helper types
 export type Category = Tables<'categories'>
 export type Comment = Tables<'comments'>
 export type Designation = Tables<'designations'>
+export type Message = Tables<'messages'>
 export type Post = Tables<'posts'>
+export type Tag = Tables<'tags'>
 export type Therapist = Tables<'therapists'>
 export type User = Tables<'users'>
+export type UserBlock = Tables<'user_blocks'>
 
 // Extended types with relations
 export interface PostWithRelations extends Post {
@@ -767,16 +774,9 @@ export interface CommentWithRelations extends Comment {
   replies?: CommentWithRelations[]
 }
 
-export interface MessageWithUser {
-  id: number
-  content: string
-  created_at: string | null
-  is_read: boolean | null
-  sender_id: string
-  receiver_id: string
-  post_messages_id?: number | null
-  sender?: User
-  receiver?: User
+export interface CommentWithUser extends Comment {
+  user?: User
+  users?: User
 }
 
 export interface ModerationQueueItem {
