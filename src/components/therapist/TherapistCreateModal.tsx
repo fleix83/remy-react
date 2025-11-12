@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { TherapistsService } from '../../services/therapists.service'
 import { DesignationsService } from '../../services/designations.service'
@@ -6,6 +6,7 @@ import { DesignationMatchingService } from '../../services/designation-matching.
 import { TherapistImportService, type ImportResult } from '../../services/therapist-import.service'
 import { downloadTherapistCSVTemplate } from '../../utils/therapist-csv-template'
 import { usePermissions } from '../../hooks/usePermissions'
+import { useAuthStore } from '../../stores/auth.store'
 import type { Therapist, Designation } from '../../types/database.types'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { FORMS_OF_ADDRESS } from '../../constants/therapist.constants'
@@ -59,6 +60,40 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   const designationMatchingService = new DesignationMatchingService()
   const importService = new TherapistImportService()
   const permissions = usePermissions()
+  const { userProfile } = useAuthStore()
+
+  // Filter designations by user's language preference, showing only long forms
+  const filteredDesignations = useMemo(() => {
+    const lang = userProfile?.language_preference || 'de'
+
+    const options: Array<{ id: number; designation: Designation; displayText: string }> = []
+
+    designations.forEach(d => {
+      const longForms: string[] = []
+
+      if (lang === 'de') {
+        if (d.name_de_long_m) longForms.push(d.name_de_long_m)
+        if (d.name_de_long_f) longForms.push(d.name_de_long_f)
+      } else if (lang === 'fr') {
+        if (d.name_fr_long_m) longForms.push(d.name_fr_long_m)
+        if (d.name_fr_long_f) longForms.push(d.name_fr_long_f)
+      } else if (lang === 'it') {
+        if (d.name_it_long_m) longForms.push(d.name_it_long_m)
+        if (d.name_it_long_f) longForms.push(d.name_it_long_f)
+      }
+
+      longForms.forEach(text => {
+        options.push({
+          id: d.id,
+          designation: d,
+          displayText: text
+        })
+      })
+    })
+
+    // Sort alphabetically by display text
+    return options.sort((a, b) => a.displayText.localeCompare(b.displayText, lang))
+  }, [designations, userProfile?.language_preference])
 
   // Initialize form data when therapist prop changes (edit mode)
   useEffect(() => {
@@ -486,48 +521,45 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
               />
             </div>
 
-            {/* Berufsbezeichnung kurz */}
+            {/* Berufsbezeichnung */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Berufsbezeichnung kurz
-              </label>
-              <select
-                value={formData.short_designation}
-                onChange={(e) => handleInputChange('short_designation', e.target.value)}
-                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                style={{ borderColor: '#ebebeb' }}
-                disabled={isSubmitting || loadingDesignations}
-              >
-                <option value="" className="bg-white">
-                  {loadingDesignations ? 'Lade Bezeichnungen...' : 'Kurze Bezeichnung auswählen'}
-                </option>
-                {designations.map((designation) => (
-                  <option key={designation.id} value={designation.id} className="bg-white">
-                    {designationMatchingService.getDisplayText(designation)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Berufsbezeichnung vollständig */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Berufsbezeichnung vollständig
+                Berufsbezeichnung
               </label>
               <select
                 value={formData.designation_id || ''}
                 onChange={(e) => {
                   const designationId = e.target.value ? parseInt(e.target.value) : null
-                  const selectedDesignation = designations.find(d => d.id === designationId)
-                  const displayText = selectedDesignation
-                    ? designationMatchingService.getDisplayText(selectedDesignation)
-                    : ''
+                  const selectedOption = filteredDesignations.find(opt => opt.id === designationId)
 
-                  setFormData(prev => ({
-                    ...prev,
-                    designation: displayText,
-                    designation_id: designationId
-                  }))
+                  if (selectedOption) {
+                    // Get the short form for auto-population
+                    const lang = userProfile?.language_preference || 'de'
+                    let shortForm = ''
+
+                    if (lang === 'de') {
+                      shortForm = selectedOption.designation.name_de_short_m || selectedOption.designation.name_de_short_f || ''
+                    } else if (lang === 'fr') {
+                      shortForm = selectedOption.designation.name_fr_short_m || selectedOption.designation.name_fr_short_f || ''
+                    } else if (lang === 'it') {
+                      shortForm = selectedOption.designation.name_it_short_m || selectedOption.designation.name_it_short_f || ''
+                    }
+
+                    setFormData(prev => ({
+                      ...prev,
+                      designation: selectedOption.displayText,
+                      designation_id: designationId,
+                      short_designation: shortForm
+                    }))
+                  } else {
+                    setFormData(prev => ({
+                      ...prev,
+                      designation: '',
+                      designation_id: null,
+                      short_designation: ''
+                    }))
+                  }
+
                   if (error) setError('')
                 }}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
@@ -538,9 +570,9 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 <option value="" className="bg-white">
                   {loadingDesignations ? 'Lade Bezeichnungen...' : 'Berufsbezeichnung auswählen'}
                 </option>
-                {designations.map((designation) => (
-                  <option key={designation.id} value={designation.id} className="bg-white">
-                    {designationMatchingService.getDisplayText(designation)}
+                {filteredDesignations.map((option, index) => (
+                  <option key={`${option.id}-${index}`} value={option.id} className="bg-white">
+                    {option.displayText}
                   </option>
                 ))}
               </select>
