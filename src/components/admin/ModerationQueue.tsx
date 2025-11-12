@@ -64,7 +64,7 @@ const ModerationQueue: React.FC = () => {
               .from('posts')
               .select(`
                 *,
-                users(id, username, email, role)
+                users!posts_user_id_fkey(id, username, email, role)
               `)
               .eq('id', newPost.id)
               .single()
@@ -121,7 +121,7 @@ const ModerationQueue: React.FC = () => {
               .from('comments')
               .select(`
                 *,
-                users(id, username, email, role)
+                users!comments_user_id_fkey(id, username, email, role)
               `)
               .eq('id', newComment.id)
               .single()
@@ -449,7 +449,8 @@ const ModerationQueue: React.FC = () => {
     }
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return ''
     return new Date(dateString).toLocaleString('de-DE', {
       day: '2-digit',
       month: '2-digit',
@@ -538,8 +539,8 @@ const ModerationQueue: React.FC = () => {
       }
     }
     
-    const allCategoryIds = [...new Set([...postCategoryIds, ...commentCategoryIds])]
-    
+    const allCategoryIds = [...new Set([...postCategoryIds, ...commentCategoryIds])].filter((id): id is number => id !== undefined)
+
     if (allCategoryIds.length === 0) return
 
     try {

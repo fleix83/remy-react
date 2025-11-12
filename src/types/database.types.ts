@@ -758,6 +758,8 @@ export interface PostWithRelations extends Post {
 
 export interface CommentWithRelations extends Comment {
   user?: User
+  users?: User
+  replies?: CommentWithRelations[]
 }
 
 export interface MessageWithUser {
@@ -778,7 +780,7 @@ export interface ModerationQueueItem {
   content: string
   title?: string | null
   created_at: string | null
-  user_id: string
+  user_id: string | null
   moderation_status: string | null
   moderated_by?: string | null
   moderated_at?: string | null
