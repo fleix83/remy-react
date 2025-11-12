@@ -748,3 +748,36 @@ export type Designation = Tables<'designations'>
 export type Post = Tables<'posts'>
 export type Therapist = Tables<'therapists'>
 export type User = Tables<'users'>
+
+// Extended types with relations
+export interface PostWithRelations extends Post {
+  user?: User
+  category?: Category
+  therapist?: Therapist
+}
+
+export interface CommentWithRelations extends Comment {
+  user?: User
+}
+
+export interface MessageWithUser {
+  id: number
+  content: string
+  created_at: string | null
+  is_read: boolean | null
+  sender_id: string
+  receiver_id: string
+  sender?: User
+  receiver?: User
+}
+
+export interface ModerationQueueItem {
+  id: number
+  type: 'post' | 'comment'
+  content: string
+  created_at: string | null
+  user_id: string
+  moderation_status: string | null
+  user?: User
+  post?: Post
+}

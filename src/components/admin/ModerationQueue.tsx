@@ -487,7 +487,7 @@ const ModerationQueue: React.FC = () => {
       
       const titleMap: Record<number, string> = {}
       data?.forEach(post => {
-        titleMap[post.id] = post.title
+        titleMap[post.id] = post.title || ''
       })
       
       setPostTitles(prev => ({ ...prev, ...titleMap }))
