@@ -14,6 +14,7 @@ export interface Conversation {
 }
 
 export interface MessageWithUser extends Message {
+  // Message fields are inherited: id, content, created_at, is_read, sender_id, receiver_id, post_messages_id
   sender?: {
     id: string
     username: string
