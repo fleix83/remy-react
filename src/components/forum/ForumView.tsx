@@ -225,11 +225,11 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
       {showCreatePostDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-40">
           <div className="w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto" style={{backgroundColor: '#ecffef'}}>
-            <div className="px-4 md:px-6 pb-0" style={{paddingTop: 'max(16px, calc(16px + env(safe-area-inset-top)))'}}>
+            <div className="px-4 md:px-6 pb-0" style={{paddingTop: '35px'}}>
               <button
                 onClick={onCreatePostDialogClose}
                 className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1"
-                style={{ top: '25px', right: '25px' }}
+                style={{ top: '35px', right: '25px' }}
               >
                 <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -241,7 +241,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               </h2>
             </div>
             <div className="px-4 md:px-6 pb-20 md:pb-6">
-              <PostEditor 
+              <PostEditor
                 onSubmit={handleCreatePost}
                 onCancel={onCreatePostDialogClose}
                 mobileOptimized={true}

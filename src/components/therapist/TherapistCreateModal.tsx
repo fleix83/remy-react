@@ -313,36 +313,37 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="w-full h-full overflow-y-auto" style={{ backgroundColor: '#ecffef' }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b" style={{ borderBottomColor: '#ebebeb' }}>
-          <h2 className="text-xl font-bold" style={{ color: 'var(--primary)' }}>
-            {isEditMode ? 'Therapeut bearbeiten' : 'Neuen Therapeuten hinzufügen'}
-          </h2>
+        <div className="px-4 md:px-6 pb-0" style={{ paddingTop: '35px' }}>
           <button
             onClick={handleClose}
             disabled={isSubmitting}
-            className="text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-50"
+            className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1 disabled:opacity-50"
+            style={{ top: '35px', right: '25px' }}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
+          <div className="mb-10"></div>
+          <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
+            {isEditMode ? 'Therapeut bearbeiten' : 'Neuen Therapeuten hinzufügen'}
+          </h2>
         </div>
 
         {/* Form */}
-        <div className="p-6">
+        <div className="px-4 md:px-6 pb-20 md:pb-6">
           {/* CSV Import Section - Admin Only */}
           {permissions.isAdmin && !isEditMode && (
-            <div className="mb-6 pb-6 border-b" style={{ borderBottomColor: '#ebebeb' }}>
+            <div className="mb-6">
               <button
                 type="button"
                 onClick={() => setShowImportSection(!showImportSection)}
-                className="flex items-center justify-between w-full text-left mb-3"
+                className="px-4 py-2 rounded-md font-medium transition-colors text-sm flex items-center gap-2"
+                style={{ backgroundColor: '#ff6b6b', color: 'white' }}
               >
-                <h3 className="text-lg font-semibold" style={{ color: 'var(--primary)' }}>
-                  CSV Import (Admin)
-                </h3>
+                <span>CSV Import (Admin)</span>
                 <svg
-                  className={`w-5 h-5 transition-transform ${showImportSection ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 transition-transform ${showImportSection ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -352,7 +353,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
               </button>
 
               {showImportSection && (
-                <div className="space-y-3">
+                <div className="space-y-3 mt-4">
                   <p className="text-sm" style={{ color: 'var(--primary)' }}>
                     Importieren Sie mehrere Therapeuten gleichzeitig aus einer CSV-Datei.
                   </p>
@@ -496,7 +497,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
-                required
                 maxLength={100}
               />
             </div>
@@ -514,7 +514,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
-                required
                 maxLength={100}
               />
             </div>
@@ -579,7 +578,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {/* Institution */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Institution (wenn vorhanden)
+                Institution (Erfahrung mit Institution oder Institution in der dein Therapeut tätig war)
               </label>
               <input
                 type="text"

@@ -180,7 +180,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
           onBlur={handleInputBlur}
           onClick={handleInputFocus}
           onKeyDown={handleKeyDown}
-          placeholder="Therapeut* suchen"
+          placeholder="Therapeut suchen"
           disabled={disabled}
           className="w-full px-3 py-2 pr-10 border border-[#ebebeb] rounded-md bg-white focus:outline-none focus:border-[#37a653] disabled:bg-gray-100 disabled:text-gray-500"
         />

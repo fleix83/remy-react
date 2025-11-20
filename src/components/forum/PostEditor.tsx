@@ -194,25 +194,24 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* 3. Title Input - Third (for all categories) */}
             <div className="mb-4">
               <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                Titel *
+                Titel
               </label>
               <input
                 type="text"
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none text-base"
+                className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 focus:outline-none text-base"
                 placeholder="Titel eingeben..."
                 maxLength={255}
-                required
               />
             </div>
 
             {/* Therapist Selector - Only for Erfahrung category */}
             {categoryId === 1 && (
               <div className="mb-4">
-                <label className="block mb-2 text-left" style={{ fontSize: '0.75rem', color: '#4785ff' }}>
-                  Therapeut* für Erfahrung wählen
+                <label className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                  Therapeut für Erfahrung wählen
                 </label>
                 <TherapistSelector
                   selectedTherapist={selectedTherapist}
@@ -224,7 +223,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
             {/* 4. Content - Fourth */}
             <div className="mb-6">
-              <label htmlFor="content" className="block mb-1 text-left" style={{ fontSize: '0.75rem', color: '#4785ff' }}>
+              <label htmlFor="content" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
                 Inhalt
               </label>
               <RichTextEditor
@@ -258,7 +257,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* Title - Required for all categories */}
             <div className="mb-4">
               <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                Titel *
+                Titel
               </label>
               <input
                 type="text"
@@ -268,7 +267,6 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none"
                 placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
                 maxLength={255}
-                required
               />
             </div>
 
@@ -276,7 +274,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-                  Kategorie *
+                  Kategorie
                 </label>
                 <select
                   id="category"
@@ -295,14 +293,13 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
               <div>
                 <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">
-                  Kanton *
+                  Kanton
                 </label>
                 <select
                   id="canton"
                   value={canton}
                   onChange={(e) => setCanton(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  required
                 >
                   {SWISS_CANTONS.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -316,9 +313,9 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* Therapist Selection - Only show for "Erfahrung" category */}
             {categoryId === 1 && (
               <div className="mb-4">
-                
+
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Therapeut* *
+                  Therapeut
                 </label>
                 <TherapistSelector
                   selectedTherapist={selectedTherapist}
@@ -338,7 +335,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
           <>
             <div className="mb-6">
               <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-                Inhalt *
+                Inhalt
               </label>
               <RichTextEditor
                 content={content}
