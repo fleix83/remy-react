@@ -162,7 +162,7 @@ function AuthForm() {
         alt=""
         style={{
           position: 'absolute',
-          top: 0,
+          top: '-60px',
           right: 0,
           height: '400px',
           width: 'auto',
@@ -173,7 +173,7 @@ function AuthForm() {
       <div className="max-w-md w-full" style={{ padding: '9px', position: 'relative', zIndex: 10 }}>
         {/* Welcome Text */}
         {!showLoginForm && (
-          <div className="mb-8" style={{ textAlign: 'left' }}>
+          <div className="mb-8" style={{ textAlign: 'left', marginTop: '60px' }}>
             <p className="font-body text-[27px] font-semibold" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.3', hyphens: 'auto' } as React.CSSProperties}>
               Du machst eine Psychotherapie? Auf <span className="text-[60px]" style={{ fontFamily: 'Gaegu, cursive', color: 'var(--primary)', fontWeight: 'bold', display: 'inline-block', lineHeight: '0.5', verticalAlign: 'middle' }}>REMY</span> kannst du dich anonym mit Gleichgesinnten austauschen, deine Erfahrungen mit Therapeuten teilen oder nach neuen Therapeuten suchen.
             </p>
