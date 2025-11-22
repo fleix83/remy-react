@@ -188,6 +188,42 @@ export type Database = {
           },
         ]
       }
+      documents: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          lead_text: string | null
+          sections: Json
+          published: boolean | null
+          locale: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title: string
+          lead_text?: string | null
+          sections?: Json
+          published?: boolean | null
+          locale?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          title?: string
+          lead_text?: string | null
+          sections?: Json
+          published?: boolean | null
+          locale?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -456,51 +492,80 @@ export type Database = {
         Row: {
           canton: string | null
           created_at: string | null
+          created_by: string | null
           description: string | null
           designation: string
           designation_id: number | null
           first_name: string
           form_of_address: string
+          gender: string | null
           id: number
           institution: string | null
           last_name: string
+          needs_review: boolean | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           short_designation: string | null
           updated_at: string | null
         }
         Insert: {
           canton?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           designation: string
           designation_id?: number | null
           first_name: string
           form_of_address: string
+          gender?: string | null
           id?: number
           institution?: string | null
           last_name: string
+          needs_review?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           short_designation?: string | null
           updated_at?: string | null
         }
         Update: {
           canton?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           designation?: string
           designation_id?: number | null
           first_name?: string
           form_of_address?: string
+          gender?: string | null
           id?: number
           institution?: string | null
           last_name?: string
+          needs_review?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           short_designation?: string | null
           updated_at?: string | null
         }
         Relationships: [
           {
+            foreignKeyName: "therapists_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "therapists_designation_id_fkey"
             columns: ["designation_id"]
             isOneToOne: false
             referencedRelation: "designations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "therapists_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -744,7 +809,7 @@ export const Constants = {
 // Enum types
 export type ModerationStatus = Database['public']['Enums']['moderation_status']
 export type UserRole = Database['public']['Enums']['user_role']
-export type NotificationType = 'private_message' | 'comment_reply' | 'post_mention' | 'system'
+export type NotificationType = 'private_message' | 'comment_reply' | 'post_mention' | 'system' | 'therapist_pending'
 
 // Stub types for incomplete features
 export interface Notification {
@@ -754,6 +819,9 @@ export interface Notification {
   title: string
   message: string
   is_read: boolean
+  related_post_id?: number
+  related_comment_id?: number
+  related_therapist_id?: number
   created_at?: string | null
 }
 
@@ -797,7 +865,7 @@ export interface CommentWithUser extends Comment {
 
 export interface ModerationQueueItem {
   id: number
-  content_type: 'post' | 'comment'
+  content_type: 'post' | 'comment' | 'therapist'
   content_id: number
   content: string
   title?: string | null
@@ -812,7 +880,32 @@ export interface ModerationQueueItem {
   category_id?: number
   // Comment-specific fields
   post_id?: number
+  // Therapist-specific fields
+  first_name?: string
+  last_name?: string
+  designation?: string
+  needs_review?: boolean
   // Relations
   users?: User
   post?: Post
 }
+
+// Document types
+export type DocumentExample = {
+  type: 'positive' | 'negative'
+  text: string
+}
+
+export type DocumentSection = {
+  number: number
+  title: string
+  content: string
+  examples: DocumentExample[]
+}
+
+export type Document = Database['public']['Tables']['documents']['Row'] & {
+  sections: DocumentSection[]
+}
+
+export type DocumentInsert = Database['public']['Tables']['documents']['Insert']
+export type DocumentUpdate = Database['public']['Tables']['documents']['Update']

@@ -153,7 +153,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                 <button
                   onClick={() => handleNavigation('/messages')}
                   className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80 flex items-center"
-                  style={{ 
+                  style={{
                     fontFamily: 'Gaegu, cursive',
                     fontSize: '38px',
                     color: '#4785ff'
@@ -161,7 +161,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                 >
                   MESSAGES
                   {messageCount > 0 && (
-                    <div 
+                    <div
                       className="ml-3 flex items-center justify-center text-white font-bold rounded-full"
                       style={{
                         backgroundColor: '#ff6467',
@@ -176,13 +176,28 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                 </button>
               </li>
 
+              {/* Community Guidelines */}
+              <li>
+                <button
+                  onClick={() => handleNavigation('/community-guidelines')}
+                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
+                  style={{
+                    fontFamily: 'Gaegu, cursive',
+                    fontSize: '38px',
+                    color: '#4785ff'
+                  }}
+                >
+                  GUIDELINES
+                </button>
+              </li>
+
               {/* Moderation - Only for moderators and admin */}
               {(userRole === 'moderator' || userRole === 'admin') && (
                 <li>
                   <button
                     onClick={() => handleNavigation('/admin/moderation')}
                     className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
-                    style={{ 
+                    style={{
                       fontFamily: 'Gaegu, cursive',
                       fontSize: '38px',
                       color: '#4785ff'

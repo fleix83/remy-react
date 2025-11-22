@@ -17,6 +17,7 @@ const TherapistDirectoryPage = lazy(() => import('./components/therapist/Therapi
 const UserProfile = lazy(() => import('./components/user/UserProfile'))
 const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
 const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
+const CommunityGuidelinesPage = lazy(() => import('./components/static/CommunityGuidelinesPage'))
 
 function App() {
   const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
@@ -67,9 +68,10 @@ function App() {
             <Route path="*" element={<AuthForm />} />
           ) : (
             <>
-              {/* PostView and TherapistDirectoryPage without Layout to avoid double navigation */}
+              {/* PostView, TherapistDirectoryPage, and CommunityGuidelinesPage without Layout to avoid double navigation */}
               <Route path="/post/:id" element={<PostView />} />
               <Route path="/therapists" element={<TherapistDirectoryPage />} />
+              <Route path="/community-guidelines" element={<CommunityGuidelinesPage />} />
 
               {/* All other routes use Layout */}
               <Route
