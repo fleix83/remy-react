@@ -17,7 +17,6 @@ interface BadgeDropdownProps {
   disabled?: boolean
   required?: boolean
   style?: React.CSSProperties
-  height?: string
 }
 
 const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
@@ -30,8 +29,7 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
   dropdownClassName = "",
   disabled = false,
   required = false,
-  style = {},
-  height = "auto"
+  style = {}
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
