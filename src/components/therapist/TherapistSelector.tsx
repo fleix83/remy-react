@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { TherapistsService } from '../../services/therapists.service'
 import TherapistCreateModal from './TherapistCreateModal'
 import type { Therapist } from '../../types/database.types'
+import { useAuthStore } from '../../stores/auth.store'
 
 interface TherapistSelectorProps {
   selectedTherapist: Therapist | null
@@ -27,6 +28,9 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
   const therapistsService = new TherapistsService()
   const searchInputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const { userProfile } = useAuthStore()
+
+  const isModeratorOrAdmin = userProfile?.role === 'moderator' || userProfile?.role === 'admin'
 
   // Load therapists on mount
   useEffect(() => {
@@ -180,7 +184,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
           onBlur={handleInputBlur}
           onClick={handleInputFocus}
           onKeyDown={handleKeyDown}
-          placeholder="Therapeut suchen"
+          placeholder="Therapeut:innen suchen"
           disabled={disabled}
           className="w-full px-3 py-2 pr-10 border border-[#ebebeb] rounded-md bg-white focus:outline-none focus:border-[#37a653] disabled:bg-gray-100 disabled:text-gray-500"
         />
@@ -255,8 +259,21 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
                   index === selectedIndex ? 'bg-primary-50' : ''
                 } ${selectedTherapist?.id === therapist.id ? 'bg-primary-100' : ''}`}
               >
-                <div className="font-semibold text-[#37a653]">
-                  {therapistsService.formatTherapistName(therapist)}
+                <div className="flex items-center gap-2">
+                  <div className="font-semibold text-[#37a653]">
+                    {therapistsService.formatTherapistName(therapist)}
+                  </div>
+                  {isModeratorOrAdmin && therapist.needs_review && (
+                    <svg
+                      className="w-4 h-4 flex-shrink-0"
+                      fill="none"
+                      stroke="#856404"
+                      viewBox="0 0 24 24"
+                      title="Wird geprüft"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                    </svg>
+                  )}
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
                   {therapist.short_designation || therapist.designation}

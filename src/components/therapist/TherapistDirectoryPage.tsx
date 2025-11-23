@@ -90,11 +90,12 @@ const TherapistDirectoryPage: React.FC = () => {
 
   return (
     <div className="min-h-screen relative z-10" style={{ backgroundColor: '#eefaf0' }}>
-      {/* Header bar - no background */}
+      {/* Header bar - matching PostView */}
       <div
         className="w-full flex items-center justify-center relative"
         style={{
-          height: '65px'
+          height: '65px',
+          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
         }}
       >
         <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
@@ -112,31 +113,33 @@ const TherapistDirectoryPage: React.FC = () => {
             Zurück zum Forum
           </button>
 
-          {user && (
+          {user && userProfile && (
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden relative p-1 rounded-full transition-colors mr-2.5"
             >
-              {userProfile && (
-                <UserAvatar
-                  user={userProfile}
-                  size="small"
-                />
-              )}
+              <UserAvatar
+                user={userProfile}
+                size="small"
+              />
             </button>
           )}
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h1 className="text-2xl font-bold text-blue-600 mb-2 text-left">
-            Therapeuten
-          </h1>
-          <p className="text-gray-900 mb-8 text-left">
-            Suche hier nach Therapeuten und Erfahrungen
-          </p>
+      <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '48px' }}>
+        {/* Title */}
+        <h1 className="text-2xl font-bold mb-4 text-left" style={{ color: 'var(--primary)' }}>
+          Therapeut:innen
+        </h1>
 
+        {/* Lead text */}
+        <p className="text-gray-700 leading-relaxed mb-8 text-base text-left">
+          Finde hier alle Therapeut:innen und Institutionen und dazugehörige Erfahrungsberichte.
+        </p>
+
+        {/* White container for search and results */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
           <TherapistSelector
             selectedTherapist={selectedTherapist}
             onTherapistSelect={handleTherapistSelect}
@@ -157,6 +160,23 @@ const TherapistDirectoryPage: React.FC = () => {
                   </svg>
                   <span>Bearbeiten</span>
                 </button>
+              )}
+
+              {/* Review flag banner - visible only to moderators/admins */}
+              {isModeratorOrAdmin && selectedTherapist.needs_review && (
+                <div
+                  className="mb-4 px-3 py-2 rounded text-sm font-medium text-left flex items-center gap-2"
+                  style={{
+                    backgroundColor: '#fff9de',
+                    border: '1px solid #fff0b5',
+                    color: '#856404'
+                  }}
+                >
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                  </svg>
+                  <span>Wird geprüft</span>
+                </div>
               )}
 
               {/* Therapist name with canton flag */}

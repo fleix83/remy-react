@@ -158,20 +158,6 @@ function AuthForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#d5f4da', position: 'relative', overflow: 'hidden' }}>
-      {/* Ghost Image - Top Right Corner */}
-      <img
-        src="/remyreact/assets/ghost.png"
-        alt=""
-        style={{
-          position: 'absolute',
-          top: '-60px',
-          right: 0,
-          height: '400px',
-          width: 'auto',
-          zIndex: 1,
-          pointerEvents: 'none'
-        }}
-      />
       <div className="max-w-md w-full" style={{ padding: '9px', position: 'relative', zIndex: 10 }}>
         {/* Welcome Text */}
         {!showLoginForm && (
