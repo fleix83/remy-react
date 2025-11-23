@@ -79,13 +79,13 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
         onKeyDown={handleKeyDown}
         disabled={disabled}
         className={`
-          inline-flex items-center px-3 py-2 font-medium text-sm w-full justify-between
+          inline-flex items-center px-3 py-2 w-full justify-between
           transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-          rounded-lg
+          rounded-lg text-base
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80'}
           ${badgeClassName}
         `}
-        style={{ fontSize: '0.75rem', ...style }}
+        style={style}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-required={required}
@@ -126,7 +126,7 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
               type="button"
               onClick={() => handleSelect(option.value)}
               className={`
-                w-full px-3 py-2 text-left text-sm hover:bg-gray-100 focus:bg-gray-100 focus:outline-none
+                w-full px-3 py-2 text-left text-base hover:bg-gray-100 focus:bg-gray-100 focus:outline-none
                 first:rounded-t-lg last:rounded-b-lg
                 transition-colors duration-150
                 flex items-center
