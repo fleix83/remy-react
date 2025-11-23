@@ -95,7 +95,7 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
             {selectedOption.icon}
           </span>
         )}
-        <span className="truncate flex-1 text-left">
+        <span className={`truncate flex-1 text-left ${!selectedOption ? 'text-gray-400' : ''}`}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <svg
