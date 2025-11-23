@@ -63,6 +63,13 @@ const PostEditor: React.FC<PostEditorProps> = ({
     }
   }, [editMode, initialData?.therapist_id])
 
+  // Auto-populate canton from selected therapist for Erfahrung category
+  useEffect(() => {
+    if (categoryId === 1 && selectedTherapist?.canton) {
+      setCanton(selectedTherapist.canton)
+    }
+  }, [categoryId, selectedTherapist])
+
   const loadCategories = async () => {
     try {
       const cats = await postsService.getCategories()
@@ -100,15 +107,16 @@ const PostEditor: React.FC<PostEditorProps> = ({
       return
     }
 
-    if (!canton) {
-      alert('Bitte Kanton auswählen')
-      return
-    }
-
-
     // Validate therapist selection for "Erfahrung" category
     if (categoryId === 1 && !selectedTherapist) {
       alert('Bitte wählen Sie einen Therapeut* für Ihre Erfahrung aus')
+      return
+    }
+
+    // For Erfahrung category, canton comes from therapist
+    // For other categories, canton dropdown is required
+    if (categoryId !== 1 && !canton) {
+      alert('Bitte Kanton auswählen')
       return
     }
 
@@ -164,32 +172,48 @@ const PostEditor: React.FC<PostEditorProps> = ({
               />
             </div>
 
-            {/* 2. Canton Badge Dropdown - Second with max height to 2/3 screen */}
-            <div className="mb-4">
-              <BadgeDropdown
-                value={canton}
-                options={SWISS_CANTONS.filter(c => c.code).map(c => ({
-                  value: c.code,
-                  label: c.name,
-                  icon: c.code ? (
-                    <img
-                      src={`/remyreact/kantone/${c.code.toLowerCase()}.png`}
-                      alt={`${c.code} flag`}
-                      className="w-5 h-3 object-contain"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none'
-                      }}
-                    />
-                  ) : undefined
-                }))}
-                onChange={(value) => setCanton(String(value))}
-                placeholder="Kanton"
-                badgeClassName="bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-                dropdownClassName="max-h-[66vh] overflow-y-auto"
-                className="w-full"
-                required
-              />
-            </div>
+            {/* Therapist Selector - Second (only for Erfahrung category) */}
+            {categoryId === 1 && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                  Therapeut:innen/Institution für Erfahrung wählen
+                </label>
+                <TherapistSelector
+                  selectedTherapist={selectedTherapist}
+                  onTherapistSelect={setSelectedTherapist}
+                  canton={canton}
+                />
+              </div>
+            )}
+
+            {/* 2. Canton Badge Dropdown - Second (only for non-Erfahrung categories) */}
+            {categoryId !== 1 && (
+              <div className="mb-4">
+                <BadgeDropdown
+                  value={canton}
+                  options={SWISS_CANTONS.filter(c => c.code).map(c => ({
+                    value: c.code,
+                    label: c.name,
+                    icon: c.code ? (
+                      <img
+                        src={`/remyreact/kantone/${c.code.toLowerCase()}.png`}
+                        alt={`${c.code} flag`}
+                        className="w-5 h-3 object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none'
+                        }}
+                      />
+                    ) : undefined
+                  }))}
+                  onChange={(value) => setCanton(String(value))}
+                  placeholder="Kanton"
+                  badgeClassName="bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                  dropdownClassName="max-h-[66vh] overflow-y-auto"
+                  className="w-full"
+                  required
+                />
+              </div>
+            )}
 
             {/* 3. Title Input - Third (for all categories) */}
             <div className="mb-4">
@@ -206,20 +230,6 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 maxLength={255}
               />
             </div>
-
-            {/* Therapist Selector - Only for Erfahrung category */}
-            {categoryId === 1 && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                  Therapeut für Erfahrung wählen
-                </label>
-                <TherapistSelector
-                  selectedTherapist={selectedTherapist}
-                  onTherapistSelect={setSelectedTherapist}
-                  canton={canton}
-                />
-              </div>
-            )}
 
             {/* 4. Content - Fourth */}
             <div className="mb-6">
@@ -270,7 +280,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               />
             </div>
 
-            {/* Category and Canton */}
+            {/* Category and Canton - Layout depends on category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
@@ -280,7 +290,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   id="category"
                   value={categoryId}
                   onChange={(e) => setCategoryId(Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   required
                 >
                   {categories.map((category) => (
@@ -291,31 +301,33 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 </select>
               </div>
 
-              <div>
-                <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">
-                  Kanton
-                </label>
-                <select
-                  id="canton"
-                  value={canton}
-                  onChange={(e) => setCanton(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                >
-                  {SWISS_CANTONS.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Canton - Only show for non-Erfahrung categories */}
+              {categoryId !== 1 && (
+                <div>
+                  <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">
+                    Kanton
+                  </label>
+                  <select
+                    id="canton"
+                    value={canton}
+                    onChange={(e) => setCanton(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  >
+                    {SWISS_CANTONS.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* Therapist Selection - Only show for "Erfahrung" category */}
             {categoryId === 1 && (
               <div className="mb-4">
-
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Therapeut
+                  Therapeut:innen/Institution für Erfahrung wählen
                 </label>
                 <TherapistSelector
                   selectedTherapist={selectedTherapist}

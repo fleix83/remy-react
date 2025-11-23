@@ -38,6 +38,36 @@ export class ModerationQueueService {
       throw commentsError
     }
 
+    // Get therapists needing review
+    // Handle gracefully if therapist review system isn't set up yet
+    let pendingTherapists: any[] = []
+    try {
+      const { data, error: therapistsError } = await supabase
+        .from('therapists')
+        .select(`
+          *,
+          users!therapists_created_by_fkey(id, username, role, avatar_url)
+        `)
+        .eq('needs_review', true)
+        .order('created_at', { ascending: true })
+
+      if (therapistsError) {
+        // If the foreign key doesn't exist yet (migration not applied), silently skip
+        if (therapistsError.code === 'PGRST200' || therapistsError.message.includes('Could not find a relationship')) {
+          console.warn('Therapist review system not set up yet - skipping therapist moderation')
+          pendingTherapists = []
+        } else {
+          console.error('Error fetching pending therapists:', therapistsError)
+          throw therapistsError
+        }
+      } else {
+        pendingTherapists = data || []
+      }
+    } catch (error) {
+      console.warn('Therapist moderation not available yet:', error)
+      pendingTherapists = []
+    }
+
     // Transform posts to ModerationQueueItem format
     const postItems: ModerationQueueItem[] = (pendingPosts || []).map((post: any) => ({
       content_type: 'post' as const,
@@ -72,8 +102,28 @@ export class ModerationQueueService {
       users: comment.users
     }))
 
+    // Transform therapists to ModerationQueueItem format
+    const therapistItems: ModerationQueueItem[] = (pendingTherapists || []).map((therapist: any) => ({
+      content_type: 'therapist' as const,
+      id: therapist.id,
+      content_id: therapist.id, // Use therapist ID as content ID
+      user_id: therapist.created_by,
+      content: therapist.description || '', // Use description as content
+      title: `${therapist.first_name} ${therapist.last_name}`,
+      first_name: therapist.first_name,
+      last_name: therapist.last_name,
+      designation: therapist.designation,
+      canton: therapist.canton,
+      created_at: therapist.created_at,
+      moderation_status: null, // Therapists don't have moderation_status
+      needs_review: therapist.needs_review,
+      moderated_by: therapist.reviewed_by,
+      moderated_at: therapist.reviewed_at,
+      users: therapist.users
+    }))
+
     // Combine and sort by creation date
-    const allItems = [...postItems, ...commentItems]
+    const allItems = [...postItems, ...commentItems, ...therapistItems]
     allItems.sort((a, b) => {
       const aDate = a.created_at ? new Date(a.created_at).getTime() : 0
       const bDate = b.created_at ? new Date(b.created_at).getTime() : 0
@@ -84,8 +134,8 @@ export class ModerationQueueService {
   }
 
   // Get pending content count for dashboard
-  async getPendingContentCount(): Promise<{ posts: number; comments: number; total: number }> {
-    const [postsResult, commentsResult] = await Promise.all([
+  async getPendingContentCount(): Promise<{ posts: number; comments: number; therapists: number; total: number }> {
+    const [postsResult, commentsResult, therapistsResult] = await Promise.all([
       supabase
         .from('posts')
         .select('id', { count: 'exact', head: true })
@@ -95,16 +145,22 @@ export class ModerationQueueService {
       supabase
         .from('comments')
         .select('id', { count: 'exact', head: true })
-        .eq('moderation_status', 'pending')
+        .eq('moderation_status', 'pending'),
+      supabase
+        .from('therapists')
+        .select('id', { count: 'exact', head: true })
+        .eq('needs_review', true)
     ])
 
     const posts = postsResult.count || 0
     const comments = commentsResult.count || 0
+    const therapists = therapistsResult.count || 0
 
     return {
       posts,
       comments,
-      total: posts + comments
+      therapists,
+      total: posts + comments + therapists
     }
   }
 
@@ -368,10 +424,45 @@ export class ModerationQueueService {
     console.log(`🗑️ Comment ${commentId} deleted permanently${reason ? ` (${reason})` : ''}`)
   }
 
+  // Dismiss therapist review (mark as reviewed/approved)
+  async dismissTherapist(therapistId: number, moderatorId: string): Promise<void> {
+    const { error } = await supabase
+      .from('therapists')
+      .update({
+        needs_review: false,
+        reviewed_by: moderatorId,
+        reviewed_at: new Date().toISOString()
+      })
+      .eq('id', therapistId)
+
+    if (error) {
+      console.error('Error dismissing therapist review:', error)
+      throw error
+    }
+
+    console.log(`✅ Therapist ${therapistId} review dismissed by moderator ${moderatorId}`)
+  }
+
+  // Delete a therapist permanently
+  async deleteTherapist(therapistId: number, reason?: string): Promise<void> {
+    const { error } = await supabase
+      .from('therapists')
+      .delete()
+      .eq('id', therapistId)
+
+    if (error) {
+      console.error('Error deleting therapist:', error)
+      throw error
+    }
+
+    console.log(`🗑️ Therapist ${therapistId} deleted permanently${reason ? ` (${reason})` : ''}`)
+  }
+
   // Bulk delete multiple items
-  async bulkDelete(items: { type: 'post' | 'comment'; id: number }[], reason?: string): Promise<void> {
+  async bulkDelete(items: { type: 'post' | 'comment' | 'therapist'; id: number }[], reason?: string): Promise<void> {
     const posts = items.filter(item => item.type === 'post').map(item => item.id)
     const comments = items.filter(item => item.type === 'comment').map(item => item.id)
+    const therapists = items.filter(item => item.type === 'therapist').map(item => item.id)
 
     const promises = []
 
@@ -393,8 +484,17 @@ export class ModerationQueueService {
       )
     }
 
+    if (therapists.length > 0) {
+      promises.push(
+        supabase
+          .from('therapists')
+          .delete()
+          .in('id', therapists)
+      )
+    }
+
     const results = await Promise.all(promises)
-    
+
     for (const result of results) {
       if (result.error) {
         console.error('Error in bulk delete:', result.error)
@@ -403,5 +503,24 @@ export class ModerationQueueService {
     }
 
     console.log(`🗑️ Bulk deleted ${items.length} items${reason ? ` (${reason})` : ''}`)
+  }
+
+  // Bulk dismiss therapists (approve for review)
+  async bulkDismissTherapists(therapistIds: number[], moderatorId: string): Promise<void> {
+    const { error } = await supabase
+      .from('therapists')
+      .update({
+        needs_review: false,
+        reviewed_by: moderatorId,
+        reviewed_at: new Date().toISOString()
+      })
+      .in('id', therapistIds)
+
+    if (error) {
+      console.error('Error in bulk dismiss therapists:', error)
+      throw error
+    }
+
+    console.log(`✅ Bulk dismissed ${therapistIds.length} therapists by moderator ${moderatorId}`)
   }
 }

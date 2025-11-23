@@ -17,6 +17,7 @@ interface BadgeDropdownProps {
   disabled?: boolean
   required?: boolean
   style?: React.CSSProperties
+  height?: string
 }
 
 const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
@@ -29,7 +30,8 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
   dropdownClassName = "",
   disabled = false,
   required = false,
-  style = {}
+  style = {},
+  height = "auto"
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -79,10 +81,11 @@ const BadgeDropdown: React.FC<BadgeDropdownProps> = ({
         className={`
           inline-flex items-center px-3 py-2 font-medium text-sm w-full justify-between
           transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+          rounded-lg
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80'}
           ${badgeClassName}
         `}
-        style={{ fontSize: '0.75rem', borderRadius: '3px', ...style }}
+        style={{ fontSize: '0.75rem', ...style }}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-required={required}

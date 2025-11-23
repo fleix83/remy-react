@@ -184,9 +184,9 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
           onBlur={handleInputBlur}
           onClick={handleInputFocus}
           onKeyDown={handleKeyDown}
-          placeholder="Therapeut:innen suchen"
+          placeholder="Therapeut:innen/Institution suchen"
           disabled={disabled}
-          className="w-full px-3 py-2 pr-10 border border-[#ebebeb] rounded-md bg-white focus:outline-none focus:border-[#37a653] disabled:bg-gray-100 disabled:text-gray-500"
+          className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-[#37a653] disabled:bg-gray-100 disabled:text-gray-500"
         />
         
         {/* Clear button */}

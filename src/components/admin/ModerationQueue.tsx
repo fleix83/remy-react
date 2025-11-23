@@ -26,7 +26,7 @@ const ModerationQueue: React.FC = () => {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [messageAction, setMessageAction] = useState<'approve' | 'reject' | 'message' | null>(null)
   const [messageItem, setMessageItem] = useState<ModerationQueueItem | null>(null)
-  const [contentFilter, setContentFilter] = useState<'alle' | 'beiträge' | 'kommentare'>('alle')
+  const [contentFilter, setContentFilter] = useState<'alle' | 'beiträge' | 'kommentare' | 'therapeuten'>('alle')
 
   const moderationService = new ModerationQueueService()
 
@@ -313,11 +313,11 @@ const ModerationQueue: React.FC = () => {
     const items = Array.from(selectedItems).map(id => {
       const item = queueItems.find(i => i.id === id)
       return item ? { type: item.content_type, id } : null
-    }).filter(Boolean) as { type: 'post' | 'comment'; id: number }[]
+    }).filter(Boolean) as { type: 'post' | 'comment' | 'therapist'; id: number }[]
 
     try {
       await moderationService.bulkDelete(items, 'Bulk moderation deletion')
-      
+
       // Remove items from queue
       setQueueItems(prev => prev.filter(i => !selectedItems.has(i.id)))
       setSelectedItems(new Set())
@@ -364,21 +364,25 @@ const ModerationQueue: React.FC = () => {
   }
 
   const handleDelete = async (item: ModerationQueueItem) => {
-    const confirmMessage = `Sind Sie sicher, dass Sie ${item.content_type === 'post' ? 'diesen Beitrag' : 'diesen Kommentar'} endgültig löschen möchten?`
-    
+    const contentTypeLabel = item.content_type === 'post' ? 'diesen Beitrag' : item.content_type === 'therapist' ? 'diesen Therapeuten' : 'diesen Kommentar'
+    const confirmMessage = `Sind Sie sicher, dass Sie ${contentTypeLabel} endgültig löschen möchten?`
+
     if (!confirm(confirmMessage)) return
 
     setProcessingId(item.id)
     try {
       if (item.content_type === 'post') {
         await moderationService.deletePost(item.id, 'Moderator deletion')
+      } else if (item.content_type === 'therapist') {
+        await moderationService.deleteTherapist(item.id, 'Moderator deletion')
       } else {
         await moderationService.deleteComment(item.id, 'Moderator deletion')
       }
-      
+
       // Remove item from queue
       setQueueItems(prev => prev.filter(i => i.id !== item.id))
-      alert(`${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} gelöscht!`)
+      const deletedLabel = item.content_type === 'post' ? 'Beitrag' : item.content_type === 'therapist' ? 'Therapeut' : 'Kommentar'
+      alert(`${deletedLabel} gelöscht!`)
     } catch (error) {
       console.error('Error deleting content:', error)
       alert('Fehler beim Löschen')
@@ -586,6 +590,7 @@ const ModerationQueue: React.FC = () => {
   const filteredQueueItems = queueItems.filter(item => {
     if (contentFilter === 'beiträge') return item.content_type === 'post'
     if (contentFilter === 'kommentare') return item.content_type === 'comment'
+    if (contentFilter === 'therapeuten') return item.content_type === 'therapist'
     return true // 'alle'
   })
 
@@ -660,6 +665,12 @@ const ModerationQueue: React.FC = () => {
               >
                 Kommentare
               </button>
+              <button
+                onClick={() => setContentFilter('therapeuten')}
+                className={`underline ${contentFilter === 'therapeuten' ? 'font-bold' : ''}`}
+              >
+                Therapeuten
+              </button>
             </div>
           </div>
         </div>
@@ -695,11 +706,16 @@ const ModerationQueue: React.FC = () => {
               >
                 {/* Content Type Badge - Overlapping */}
                 <span className={`absolute -top-2 left-4 z-10 inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-lg ${
-                  item.content_type === 'post' 
-                    ? 'bg-gray-600 text-white' 
+                  item.content_type === 'post'
+                    ? 'bg-gray-600 text-white'
+                    : item.content_type === 'therapist'
+                    ? 'text-white'
                     : 'bg-blue-600 text-white'
-                }`} style={{fontSize: '0.65rem'}}>
-                  {item.content_type === 'post' ? 'Beitrag' : 'Kommentar'}
+                }`} style={{
+                  fontSize: '0.65rem',
+                  ...(item.content_type === 'therapist' ? { backgroundColor: '#37a653' } : {})
+                }}>
+                  {item.content_type === 'post' ? 'Beitrag' : item.content_type === 'therapist' ? 'Therapeut' : 'Kommentar'}
                 </span>
                 {/* Header with Canton */}
                 <div className="flex items-start justify-end mb-4">
@@ -736,7 +752,7 @@ const ModerationQueue: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Category Dropdown - Above User Block (Direct Selection for Moderators) */}
+                {/* Category Dropdown - Above User Block (Direct Selection for Moderators) - Only for Posts */}
                 {item.content_type === 'post' && (
                   <div className="mb-2 flex justify-start">
                     {permissions.canModerate ? (
@@ -813,6 +829,23 @@ const ModerationQueue: React.FC = () => {
                         {item.title}
                       </h3>
                     )
+                  ) : item.content_type === 'therapist' ? (
+                    // For Therapists: Show name as blue link + designation
+                    <div>
+                      <Link
+                        to={`/therapeuten/${item.id}`}
+                        className="text-base md:text-xl font-semibold leading-tight text-left block mb-1"
+                        style={{ color: '#0066cc' }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {item.first_name} {item.last_name}
+                      </Link>
+                      {item.designation && (
+                        <div className="text-sm text-gray-600 text-left">
+                          {item.designation}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     // For Comments: Show first line in quotes + post reference
                     <div>
@@ -839,73 +872,122 @@ const ModerationQueue: React.FC = () => {
                 
                 {/* Small Action Buttons - Bottom Right */}
                 <div className="absolute bottom-3 right-3 flex items-center space-x-1">
-                  {/* Mobile: Icons, Desktop: Text */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleMessage(item)
-                    }}
-                    disabled={processingId === item.id}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
-                    title="Message"
-                  >
-                    <span className="md:hidden">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                      </svg>
-                    </span>
-                    <span className="hidden md:inline text-xs">Message</span>
-                  </button>
-                  
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDelete(item)
-                    }}
-                    disabled={processingId === item.id}
-                    className="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
-                    title="Löschen"
-                  >
-                    <span className="md:hidden">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </span>
-                    <span className="hidden md:inline text-xs">Löschen</span>
-                  </button>
-                  
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setMessageItem(item)
-                      setMessageAction('reject')
-                      setShowMessageModal(true)
-                    }}
-                    disabled={processingId === item.id}
-                    className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
-                    title="Ablehnen"
-                  >
-                    <span className="md:hidden">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </span>
-                    <span className="hidden md:inline text-xs">Ablehnen</span>
-                  </button>
-                  
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setMessageItem(item)
-                      setMessageAction('approve')
-                      setShowMessageModal(true)
-                    }}
-                    disabled={processingId === item.id}
-                    className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
-                    title="Publizieren"
-                  >
-                    Publizieren
-                  </button>
+                  {item.content_type === 'therapist' ? (
+                    // Therapist action buttons - only Delete and Freigeben
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDelete(item)
+                        }}
+                        disabled={processingId === item.id}
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+                        title="Löschen"
+                      >
+                        <span className="md:hidden">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </span>
+                        <span className="hidden md:inline text-xs">Löschen</span>
+                      </button>
+
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation()
+                          // Handle therapist dismissal directly (no modal needed)
+                          if (!permissions.userProfile) return
+                          setProcessingId(item.id)
+                          try {
+                            await moderationService.dismissTherapist(item.id, permissions.userProfile.id)
+                            setQueueItems(prev => prev.filter(i => i.id !== item.id))
+                            alert('Therapeut freigegeben!')
+                          } catch (error) {
+                            console.error('Error dismissing therapist:', error)
+                            alert('Fehler beim Freigeben')
+                          } finally {
+                            setProcessingId(null)
+                          }
+                        }}
+                        disabled={processingId === item.id}
+                        className="text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
+                        style={{ backgroundColor: '#37a653' }}
+                        title="Freigeben"
+                      >
+                        Freigeben
+                      </button>
+                    </>
+                  ) : (
+                    // Post/Comment action buttons - original layout
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleMessage(item)
+                        }}
+                        disabled={processingId === item.id}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+                        title="Message"
+                      >
+                        <span className="md:hidden">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                        </span>
+                        <span className="hidden md:inline text-xs">Message</span>
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDelete(item)
+                        }}
+                        disabled={processingId === item.id}
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+                        title="Löschen"
+                      >
+                        <span className="md:hidden">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </span>
+                        <span className="hidden md:inline text-xs">Löschen</span>
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setMessageItem(item)
+                          setMessageAction('reject')
+                          setShowMessageModal(true)
+                        }}
+                        disabled={processingId === item.id}
+                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+                        title="Ablehnen"
+                      >
+                        <span className="md:hidden">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </span>
+                        <span className="hidden md:inline text-xs">Ablehnen</span>
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setMessageItem(item)
+                          setMessageAction('approve')
+                          setShowMessageModal(true)
+                        }}
+                        disabled={processingId === item.id}
+                        className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
+                        title="Publizieren"
+                      >
+                        Publizieren
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ))}

@@ -25,6 +25,7 @@ interface ParsedTherapist {
   designation: string
   designation_id: number | null
   short_designation: string | null
+  gender: string | null
   institution: string | null
   description: string | null
 }
@@ -135,6 +136,48 @@ export class TherapistImportService {
   }
 
   /**
+   * Detect gender from designation text
+   * Returns 'm' (masculine), 'f' (feminine), or null
+   */
+  private detectGender(designationText: string): string | null {
+    const lowerText = designationText.toLowerCase()
+
+    // Check for feminine forms
+    const feminineWords = [
+      'psychologin',
+      'therapeutin',
+      'psychotherapeutin',
+      'ärztin',
+      'beraterin',
+      'pädagogin',
+      'fachpsychologin'
+    ]
+
+    if (feminineWords.some(word => lowerText.includes(word))) {
+      return 'f'
+    }
+
+    // Check for masculine forms (to be explicit)
+    const masculineWords = [
+      'psychologe',
+      'therapeut',
+      'psychotherapeut',
+      'arzt',
+      'berater',
+      'pädagoge',
+      'fachpsychologe',
+      'psychiater'
+    ]
+
+    if (masculineWords.some(word => lowerText.includes(word))) {
+      return 'm'
+    }
+
+    // Default to masculine if no clear gender marker
+    return 'm'
+  }
+
+  /**
    * Count non-empty fields in a therapist record
    */
   countCompleteFields(therapist: ParsedTherapist): number {
@@ -146,6 +189,7 @@ export class TherapistImportService {
     if (therapist.last_name) count++
     if (therapist.designation) count++
     if (therapist.short_designation) count++
+    if (therapist.gender) count++
     if (therapist.institution) count++
     if (therapist.description) count++
 
@@ -169,6 +213,9 @@ export class TherapistImportService {
   async parseTherapist(row: any): Promise<ParsedTherapist> {
     const designationText = row.designation?.trim() || ''
 
+    // Detect gender from designation text
+    const detectedGender = designationText ? this.detectGender(designationText) : null
+
     // Match designation to existing or create new one
     let designationMatch: { designation_id: number; display_text: string } | null = null
 
@@ -189,6 +236,7 @@ export class TherapistImportService {
       designation: designationMatch?.display_text || designationText,
       designation_id: designationMatch?.designation_id || null,
       short_designation: row.short_designation?.trim() || null,
+      gender: detectedGender,
       institution: row.institution?.trim() || null,
       description: row.description?.trim() || null
     }

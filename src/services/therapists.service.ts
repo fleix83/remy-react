@@ -88,7 +88,8 @@ export class TherapistsService {
 
     console.log('👤 TherapistsService: Authenticated user ID:', user.id)
 
-    const insertData = {
+    // Base insert data (works both with and without migration)
+    const insertData: any = {
       form_of_address: therapistData.form_of_address,
       first_name: therapistData.first_name.trim(),
       last_name: therapistData.last_name.trim(),
@@ -97,6 +98,15 @@ export class TherapistsService {
       short_designation: therapistData.short_designation?.trim() || null,
       description: therapistData.description?.trim() || null,
       canton: therapistData.canton || null
+    }
+
+    // Try to add review fields if migration has been applied
+    // If migration not applied, these will be ignored and therapist created without them
+    try {
+      insertData.needs_review = true
+      insertData.created_by = user.id
+    } catch (e) {
+      console.warn('⚠️ TherapistsService: Review fields not available (migration not applied)')
     }
 
     console.log('📤 TherapistsService: Inserting data:', insertData)
@@ -108,6 +118,36 @@ export class TherapistsService {
       .single()
 
     if (error) {
+      // If error is about missing column, retry without review fields
+      if (error.message.includes('created_by') || error.message.includes('needs_review')) {
+        console.warn('⚠️ TherapistsService: Review system not set up yet, creating therapist without review fields')
+
+        const basicInsertData = {
+          form_of_address: therapistData.form_of_address,
+          first_name: therapistData.first_name.trim(),
+          last_name: therapistData.last_name.trim(),
+          institution: therapistData.institution?.trim() || null,
+          designation: therapistData.designation,
+          short_designation: therapistData.short_designation?.trim() || null,
+          description: therapistData.description?.trim() || null,
+          canton: therapistData.canton || null
+        }
+
+        const { data: retryData, error: retryError } = await supabase
+          .from('therapists')
+          .insert([basicInsertData])
+          .select()
+          .single()
+
+        if (retryError) {
+          console.error('❌ TherapistsService: Database error on retry:', retryError)
+          throw new Error('Database error: ' + retryError.message)
+        }
+
+        console.log('✅ TherapistsService: Therapist created successfully (without review fields):', retryData)
+        return retryData
+      }
+
       console.error('❌ TherapistsService: Database error:', error)
       console.error('❌ TherapistsService: Error details:', {
         code: error.code,
@@ -210,6 +250,27 @@ export class TherapistsService {
     return name
   }
 
+  // Dismiss review for a therapist (mark as reviewed)
+  async dismissReview(id: number, adminId: string): Promise<void> {
+    console.log('🔧 TherapistsService: Dismissing review for therapist ID:', id)
+
+    const { error } = await supabase
+      .from('therapists')
+      .update({
+        needs_review: false,
+        reviewed_by: adminId,
+        reviewed_at: new Date().toISOString()
+      })
+      .eq('id', id)
+
+    if (error) {
+      console.error('❌ TherapistsService: Error dismissing review:', error)
+      throw error
+    }
+
+    console.log('✅ TherapistsService: Review dismissed successfully')
+  }
+
   // Bulk import therapists
   async bulkImportTherapists(therapists: Array<{
     canton: string | null
@@ -249,7 +310,9 @@ export class TherapistsService {
       designation_id: t.designation_id,
       short_designation: t.short_designation?.trim() || null,
       description: t.description?.trim() || null,
-      canton: t.canton || null
+      canton: t.canton || null,
+      needs_review: false, // CSV imports are auto-approved
+      created_by: user.id
     }))
 
     console.log('📤 TherapistsService: Inserting', insertData.length, 'therapist records...')
