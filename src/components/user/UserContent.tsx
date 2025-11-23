@@ -312,7 +312,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                   backgroundColor:
                                     post.categories.id === 1 ? 'var(--bg-erfahrung)' :
                                     post.categories.id === 2 ? 'var(--bg-suche)' :
-                                    post.categories.id === 3 ? 'var(--bg-gedanken)' :
+                                    post.categories.id === 3 ? 'var(--bg-austausch)' :
                                     post.categories.id === 4 ? 'var(--bg-rant)' :
                                     post.categories.id === 5 ? 'var(--bg-ressourcen)' :
                                     '#f3f4f6'
@@ -500,7 +500,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                   backgroundColor:
                                     draft.categories.id === 1 ? 'var(--bg-erfahrung)' :
                                     draft.categories.id === 2 ? 'var(--bg-suche)' :
-                                    draft.categories.id === 3 ? 'var(--bg-gedanken)' :
+                                    draft.categories.id === 3 ? 'var(--bg-austausch)' :
                                     draft.categories.id === 4 ? 'var(--bg-rant)' :
                                     draft.categories.id === 5 ? 'var(--bg-ressourcen)' :
                                     '#f3f4f6'

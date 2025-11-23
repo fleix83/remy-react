@@ -47,7 +47,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
     const backgrounds = {
       1: 'var(--bg-erfahrung)',     // Yellow
       2: 'var(--bg-suche)',         // Light Pink
-      3: 'var(--bg-gedanken)',      // Light Blue
+      3: 'var(--bg-austausch)',     // Light Blue
       4: 'var(--bg-rant)',          // Light Purple
       5: 'var(--bg-ressourcen)',    // Light Green
     }
@@ -239,7 +239,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <RichTextEditor
                 content={content}
                 onChange={setContent}
-                placeholder="Teile deine Gedanken, Erfahrungen oder Fragen mit der Community..."
+                placeholder="Teile deine Erfahrungen oder Fragen mit der Community..."
                 minHeight="200px"
                 mobileOptimized={mobileOptimized}
               />
@@ -352,7 +352,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <RichTextEditor
                 content={content}
                 onChange={setContent}
-                placeholder="Teile deine Gedanken, Erfahrungen oder Fragen mit der Community..."
+                placeholder="Teile deine Erfahrungen oder Fragen mit der Community..."
                 minHeight="200px"
                 mobileOptimized={mobileOptimized}
               />

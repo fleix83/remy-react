@@ -81,7 +81,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
               setSelectedText('')
               setReplyingToUsername('')
             }}
-            placeholder="Teile deine Gedanken zu diesem Beitrag..."
+            placeholder="Teile deine Meinung zu diesem Beitrag..."
             fullWidth={true}
           />
         </div>

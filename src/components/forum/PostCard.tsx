@@ -47,7 +47,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
     const backgrounds = {
       1: 'var(--bg-erfahrung)',     // Yellow
       2: 'var(--bg-suche)',         // Light Pink
-      3: 'var(--bg-gedanken)',      // Light Blue
+      3: 'var(--bg-austausch)',     // Light Blue
       4: 'var(--bg-rant)',          // Light Purple
       5: 'var(--bg-ressourcen)',    // Light Green
     }

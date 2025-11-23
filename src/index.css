@@ -18,14 +18,14 @@
   /* Category Badge Colors */
   --bg-erfahrung: #ffeb99;     /* Yellow - Experience/Stories */
   --bg-suche: #FFC8C8;         /* Light Pink - Search for Therapist */
-  --bg-gedanken: #C5D0FF;      /* Light Blue - Thoughts/Reflections */
+  --bg-austausch: #C5D0FF;     /* Light Blue - Exchange/Discussion */
   --bg-rant: #edd3ff;          /* Light Purple - Rants/Venting */
   --bg-ressourcen: #98FFC7;    /* Light Green - Resources/Tips */
-  
+
   /* Category Badge Hover Colors */
   --bg-erfahrung-hover: #3b71e6;    /* Darker blue */
   --bg-suche-hover: #2e8b47;        /* Darker green */
-  --bg-gedanken-hover: #7b1fa2;     /* Darker purple */
+  --bg-austausch-hover: #7b1fa2;    /* Darker purple */
   --bg-rant-hover: #f55252;         /* Darker coral */
   --bg-ressourcen-hover: #e68900;   /* Darker orange */
 }
