@@ -231,9 +231,6 @@ function AuthForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <p className="text-left text-xs mt-2" style={{ color: 'var(--primary)' }}>
-                Verwende eine anonyme Emailadresse ohne deinen Namen für komplette Anonymität.
-              </p>
             </div>
 
             <div>
