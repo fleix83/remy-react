@@ -29,38 +29,44 @@ jobs:
         run: npm run build
 
       - name: Deploy to staging branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: |
-          # Configure git (use local config, don't override checkout credentials)
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config user.name "github-actions[bot]"
+          # Set up git credentials
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+          # Use GitHub token for authentication
+          git config --global url."https://github-actions:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
           # Store the current commit hash
           COMMIT_HASH=$(git rev-parse --short HEAD)
 
+          # Create temporary directory for dist files
+          mkdir -p /tmp/staging-dist
+          cp -r dist/* /tmp/staging-dist/
+
+          # Try to fetch existing staging branch
+          git fetch origin staging 2>/dev/null || true
+
           # Create and switch to staging branch
-          git checkout --orphan staging || { echo "Failed to create orphan branch"; exit 1; }
-
-          # Remove all files except .git and dist
-          find . -maxdepth 1 -not -name '.git' -not -name 'dist' -not -name '.' -not -name '..' -exec rm -rf {} + 2>/dev/null || true
-
-          # Move dist contents to root
-          if [ -d "dist" ] && [ "$(ls -A dist)" ]; then
-            mv dist/* . 2>/dev/null || true
-            mv dist/.* . 2>/dev/null || true
-            rmdir dist 2>/dev/null || true
+          if git rev-parse --verify origin/staging 2>/dev/null; then
+            git checkout -b staging --track origin/staging
           else
-            echo "Error: dist directory is empty or doesn't exist"
-            ls -la
-            exit 1
+            git checkout --orphan staging
           fi
+
+          # Clear the working directory except .git
+          find . -maxdepth 1 -not -name '.git' -type f -delete
+          find . -maxdepth 1 -not -name '.git' -type d ! -name '.' -exec rm -rf {} + 2>/dev/null || true
+
+          # Copy dist files back
+          cp -r /tmp/staging-dist/* .
 
           # Add and commit files
           git add -A || { echo "Failed to add files"; exit 1; }
-          git commit -m "Deploy build from commit ${COMMIT_HASH}" || { echo "Failed to commit"; exit 1; }
+          git commit -m "Deploy build from commit ${COMMIT_HASH}" || { echo "No changes to commit"; }
 
-          # Debug: show git remote
-          echo "=== Git Remote ==="
-          git remote -v
-
-          # Push to remote (uses credentials from persist-credentials)
-          git push -f origin staging || { echo "Failed to push to staging"; exit 1; }
+          # Push to remote
+          git push -u origin staging 2>&1 || { echo "Push failed with: $?"; exit 1; }
