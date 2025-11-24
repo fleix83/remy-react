@@ -256,7 +256,7 @@ const CommunityGuidelinesPage: React.FC = () => {
         {((isEditMode && editedDocument?.lead_text) || (!isEditMode && document?.lead_text)) && (
           isEditMode && editedDocument ? (
             <textarea
-              value={editedDocument.lead_text}
+              value={editedDocument.lead_text || ''}
               onChange={(e) => setEditedDocument({ ...editedDocument, lead_text: e.target.value })}
               className="w-full text-gray-700 leading-relaxed mb-8 text-base px-3 py-2 border border-gray-300 rounded bg-white"
               rows={3}
