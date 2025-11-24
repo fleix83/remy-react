@@ -46,6 +46,10 @@ jobs:
           mkdir -p /tmp/staging-dist
           cp -r dist/* /tmp/staging-dist/
 
+          # Clean up git state before switching branches
+          git clean -fd
+          git reset --hard HEAD
+
           # Try to fetch existing staging branch
           git fetch origin staging 2>/dev/null || true
 
