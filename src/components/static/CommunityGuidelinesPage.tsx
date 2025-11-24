@@ -253,8 +253,8 @@ const CommunityGuidelinesPage: React.FC = () => {
         )}
 
         {/* Lead text */}
-        {editedDocument && editedDocument.lead_text ? (
-          isEditMode ? (
+        {((isEditMode && editedDocument?.lead_text) || (!isEditMode && document?.lead_text)) && (
+          isEditMode && editedDocument ? (
             <textarea
               value={editedDocument.lead_text}
               onChange={(e) => setEditedDocument({ ...editedDocument, lead_text: e.target.value })}
@@ -264,10 +264,10 @@ const CommunityGuidelinesPage: React.FC = () => {
             />
           ) : (
             <p className="text-gray-700 leading-relaxed mb-8 text-base text-left">
-              {editedDocument.lead_text}
+              {document?.lead_text}
             </p>
           )
-        ) : null}
+        )}
 
         {/* Sections as accordions */}
         <div className="space-y-4">
