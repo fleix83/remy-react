@@ -209,10 +209,24 @@ const TherapistDirectoryPage: React.FC = () => {
                   </p>
                 )}
 
-                {/* Description/Bio */}
+                {/* City */}
+                {selectedTherapist.city && (
+                  <p className="text-gray-700 mt-2">
+                    <strong>Stadt:</strong> {selectedTherapist.city}
+                  </p>
+                )}
+
+                {/* Description */}
                 {selectedTherapist.description && (
                   <p className="text-gray-700 mt-4">
                     {selectedTherapist.description}
+                  </p>
+                )}
+
+                {/* Languages */}
+                {selectedTherapist.languages && (
+                  <p className="text-gray-700 mt-2">
+                    <strong>Sprachen:</strong> {selectedTherapist.languages}
                   </p>
                 )}
               </div>

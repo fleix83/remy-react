@@ -491,9 +491,9 @@ export type Database = {
       therapists: {
         Row: {
           canton: string | null
+          city: string | null
           created_at: string | null
           created_by: string | null
-          description: string | null
           designation: string
           designation_id: number | null
           first_name: string
@@ -501,18 +501,21 @@ export type Database = {
           gender: string | null
           id: number
           institution: string | null
+          languages: string | null
           last_name: string
           needs_review: boolean | null
           reviewed_at: string | null
           reviewed_by: string | null
+          services: string | null
           short_designation: string | null
+          specialty: string | null
           updated_at: string | null
         }
         Insert: {
           canton?: string | null
+          city?: string | null
           created_at?: string | null
           created_by?: string | null
-          description?: string | null
           designation: string
           designation_id?: number | null
           first_name: string
@@ -520,18 +523,21 @@ export type Database = {
           gender?: string | null
           id?: number
           institution?: string | null
+          languages?: string | null
           last_name: string
           needs_review?: boolean | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          services?: string | null
           short_designation?: string | null
+          specialty?: string | null
           updated_at?: string | null
         }
         Update: {
           canton?: string | null
+          city?: string | null
           created_at?: string | null
           created_by?: string | null
-          description?: string | null
           designation?: string
           designation_id?: number | null
           first_name?: string
@@ -539,11 +545,14 @@ export type Database = {
           gender?: string | null
           id?: number
           institution?: string | null
+          languages?: string | null
           last_name?: string
           needs_review?: boolean | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          services?: string | null
           short_designation?: string | null
+          specialty?: string | null
           updated_at?: string | null
         }
         Relationships: [

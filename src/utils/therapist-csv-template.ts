@@ -4,6 +4,7 @@
 
 export interface TherapistCSVRow {
   canton: string
+  city: string
   form_of_address: string
   first_name: string
   last_name: string
@@ -11,6 +12,8 @@ export interface TherapistCSVRow {
   short_designation: string
   institution: string
   description: string
+  languages: string
+  gender: string
 }
 
 /**
@@ -19,25 +22,31 @@ export interface TherapistCSVRow {
 export function generateTherapistCSVTemplate(): string {
   const headers = [
     'canton',
+    'city',
     'form_of_address',
     'first_name',
     'last_name',
     'designation',
     'short_designation',
     'institution',
-    'description'
+    'description',
+    'languages',
+    'gender'
   ]
 
   // Sample data row for reference
   const sampleRow = [
     'ZH',
+    'Zürich',
     'Dr.',
     'Maria',
     'Müller',
     'Psychotherapeut',
     'Psychotherapeut',
     'Klinik am See',
-    'Spezialisiert auf Traumatherapie und kognitive Verhaltenstherapie'
+    'Spezialisiert auf Traumatherapie und kognitive Verhaltenstherapie',
+    'Deutsch, Englisch',
+    'f'
   ]
 
   // Create CSV content
@@ -81,10 +90,13 @@ export function validateCSVHeaders(headers: string[]): { valid: boolean; missing
 
   const optionalHeaders = [
     'canton',
+    'city',
     'form_of_address',
     'short_designation',
     'institution',
-    'description'
+    'description',
+    'languages',
+    'gender'
   ]
 
   const allValidHeaders = [...requiredHeaders, ...optionalHeaders]

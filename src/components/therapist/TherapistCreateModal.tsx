@@ -36,7 +36,10 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     designation_id: null as number | null,
     short_designation: '',
     institution: '',
-    description: ''
+    description: '',
+    languages: '',
+    city: '',
+    gender: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -105,7 +108,10 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
         designation_id: therapist.designation_id || null,
         short_designation: therapist.short_designation || '',
         institution: therapist.institution || '',
-        description: therapist.description || ''
+        description: therapist.description || '',
+        languages: therapist.languages || '',
+        city: therapist.city || '',
+        gender: therapist.gender || ''
       })
     } else if (preselectedCanton) {
       setFormData(prev => ({
@@ -257,7 +263,10 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           designation_id: formData.designation_id,
           short_designation: formData.short_designation || null,
           institution: formData.institution || null,
-          description: formData.description || null
+          description: formData.description || null,
+          languages: formData.languages || null,
+          city: formData.city || null,
+          gender: formData.gender || null
         })
       } else {
         // Create new therapist
@@ -270,7 +279,10 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           designation_id: formData.designation_id,
           short_designation: formData.short_designation || undefined,
           institution: formData.institution || undefined,
-          description: formData.description || undefined
+          description: formData.description || undefined,
+          languages: formData.languages || undefined,
+          city: formData.city || undefined,
+          gender: formData.gender || undefined
         })
       }
 
@@ -289,7 +301,10 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           designation_id: null,
           short_designation: '',
           institution: '',
-          description: ''
+          description: '',
+          languages: '',
+          city: '',
+          gender: ''
         })
       }
     } catch (error) {
@@ -592,7 +607,24 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
               />
             </div>
 
-            {/* Description/Bio */}
+            {/* City */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
+                Stadt (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.city}
+                onChange={(e) => handleInputChange('city', e.target.value)}
+                placeholder="z.B. Zürich, Bern"
+                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                style={{ borderColor: '#ebebeb' }}
+                disabled={isSubmitting}
+                maxLength={100}
+              />
+            </div>
+
+            {/* Description */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
                 Beschreibung (optional)
@@ -606,6 +638,23 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 disabled={isSubmitting}
                 rows={3}
                 maxLength={500}
+              />
+            </div>
+
+            {/* Languages */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
+                Sprachen (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.languages}
+                onChange={(e) => handleInputChange('languages', e.target.value)}
+                placeholder="z.B. Deutsch, Englisch, Französisch"
+                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                style={{ borderColor: '#ebebeb' }}
+                disabled={isSubmitting}
+                maxLength={200}
               />
             </div>
 

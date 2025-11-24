@@ -108,7 +108,7 @@ export class ModerationQueueService {
       id: therapist.id,
       content_id: therapist.id, // Use therapist ID as content ID
       user_id: therapist.created_by,
-      content: therapist.description || '', // Use description as content
+      content: therapist.services || '', // Use services as content
       title: `${therapist.first_name} ${therapist.last_name}`,
       first_name: therapist.first_name,
       last_name: therapist.last_name,

@@ -69,7 +69,10 @@ export class TherapistsService {
     designation_id?: number | null
     short_designation?: string
     description?: string
+    languages?: string
+    city?: string
     canton?: string
+    gender?: string
   }): Promise<Therapist> {
     console.log('🔧 TherapistsService: Creating therapist with data:', therapistData)
 
@@ -97,7 +100,10 @@ export class TherapistsService {
       designation: therapistData.designation,
       short_designation: therapistData.short_designation?.trim() || null,
       description: therapistData.description?.trim() || null,
-      canton: therapistData.canton || null
+      languages: therapistData.languages?.trim() || null,
+      city: therapistData.city?.trim() || null,
+      canton: therapistData.canton || null,
+      gender: therapistData.gender || null
     }
 
     // Try to add review fields if migration has been applied
@@ -130,7 +136,10 @@ export class TherapistsService {
           designation: therapistData.designation,
           short_designation: therapistData.short_designation?.trim() || null,
           description: therapistData.description?.trim() || null,
-          canton: therapistData.canton || null
+          languages: therapistData.languages?.trim() || null,
+          city: therapistData.city?.trim() || null,
+          canton: therapistData.canton || null,
+          gender: therapistData.gender || null
         }
 
         const { data: retryData, error: retryError } = await supabase
@@ -274,6 +283,7 @@ export class TherapistsService {
   // Bulk import therapists
   async bulkImportTherapists(therapists: Array<{
     canton: string | null
+    city: string | null
     form_of_address: string
     first_name: string
     last_name: string
@@ -281,7 +291,9 @@ export class TherapistsService {
     designation_id: number | null
     short_designation: string | null
     institution: string | null
-    description: string | null
+    description?: string | null
+    languages?: string | null
+    gender?: string | null
   }>): Promise<Therapist[]> {
     console.log('🔧 TherapistsService: Bulk importing', therapists.length, 'therapists...')
 
@@ -310,7 +322,10 @@ export class TherapistsService {
       designation_id: t.designation_id,
       short_designation: t.short_designation?.trim() || null,
       description: t.description?.trim() || null,
+      languages: t.languages?.trim() || null,
+      city: t.city?.trim() || null,
       canton: t.canton || null,
+      gender: t.gender || null,
       needs_review: false, // CSV imports are auto-approved
       created_by: user.id
     }))

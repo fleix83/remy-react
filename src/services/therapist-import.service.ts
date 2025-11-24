@@ -19,15 +19,17 @@ export interface ImportError {
 
 interface ParsedTherapist {
   canton: string | null
+  city: string | null
   form_of_address: string
   first_name: string
   last_name: string
   designation: string
   designation_id: number | null
   short_designation: string | null
-  gender: string | null
   institution: string | null
   description: string | null
+  languages: string | null
+  gender: string | null
 }
 
 /**
@@ -192,6 +194,8 @@ export class TherapistImportService {
     if (therapist.gender) count++
     if (therapist.institution) count++
     if (therapist.description) count++
+    if (therapist.languages) count++
+    if (therapist.city) count++
 
     return count
   }
@@ -230,15 +234,17 @@ export class TherapistImportService {
 
     return {
       canton: row.canton?.trim() || null,
+      city: row.city?.trim() || null,
       form_of_address: row.form_of_address?.trim() || '',
       first_name: row.first_name?.trim() || '',
       last_name: row.last_name?.trim() || '',
       designation: designationMatch?.display_text || designationText,
       designation_id: designationMatch?.designation_id || null,
       short_designation: row.short_designation?.trim() || null,
-      gender: detectedGender,
       institution: row.institution?.trim() || null,
-      description: row.description?.trim() || null
+      description: row.description?.trim() || null,
+      languages: row.languages?.trim() || null,
+      gender: detectedGender
     }
   }
 
