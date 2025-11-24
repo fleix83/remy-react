@@ -63,8 +63,8 @@ jobs:
           git add -A
           git commit -m "Deploy build from commit ${COMMIT_HASH}"
 
-          # Add remote and push
-          git remote add origin "https://github.com/${{ github.repository }}.git"
+          # Add remote with token auth and push
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
 
           # Push to staging branch
           git push -f origin HEAD:staging
