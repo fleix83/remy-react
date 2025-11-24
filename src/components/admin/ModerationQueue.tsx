@@ -723,8 +723,8 @@ const ModerationQueue: React.FC = () => {
                     {/* Canton Flag and Abbreviation */}
                     {item.canton && (
                       <>
-                        <img 
-                          src={`/remyreact/kantone/${item.canton.toLowerCase()}.png`}
+                        <img
+                          src={`/kantone/${item.canton.toLowerCase()}.png`}
                           alt={`${item.canton} flag`}
                           className="w-4 h-auto object-cover"
                           onError={(e) => {

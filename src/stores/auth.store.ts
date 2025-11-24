@@ -161,7 +161,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   resetPassword: async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/remyreact/reset-password`
+      redirectTo: `${window.location.origin}/reset-password`
     })
 
     if (error) throw error

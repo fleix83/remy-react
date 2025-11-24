@@ -197,7 +197,7 @@ const PostView: React.FC = () => {
               {post.canton && (
                 <>
                   <img
-                    src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
+                    src={`/kantone/${post.canton.toLowerCase()}.png`}
                     alt={`${post.canton} flag`}
                     className="w-4 h-auto object-cover"
                     onError={(e) => {

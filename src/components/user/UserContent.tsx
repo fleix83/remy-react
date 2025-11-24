@@ -325,7 +325,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                             {/* Canton Flag */}
                             {post.canton && (
                               <img
-                                src={`/remyreact/kantone/${post.canton.toLowerCase()}.png`}
+                                src={`/kantone/${post.canton.toLowerCase()}.png`}
                                 alt={`${post.canton} flag`}
                                 className="w-4 h-auto object-cover"
                                 onError={(e) => {
@@ -513,7 +513,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                             {/* Canton Flag */}
                             {draft.canton && (
                               <img
-                                src={`/remyreact/kantone/${draft.canton.toLowerCase()}.png`}
+                                src={`/kantone/${draft.canton.toLowerCase()}.png`}
                                 alt={`${draft.canton} flag`}
                                 className="w-4 h-auto object-cover"
                                 onError={(e) => {

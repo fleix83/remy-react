@@ -186,7 +186,7 @@ const TherapistDirectoryPage: React.FC = () => {
                 </h3>
                 {selectedTherapist.canton && (
                   <img
-                    src={`/remyreact/kantone/${selectedTherapist.canton.toLowerCase()}.png`}
+                    src={`/kantone/${selectedTherapist.canton.toLowerCase()}.png`}
                     alt={`${selectedTherapist.canton} flag`}
                     className="w-4 h-auto object-cover"
                     onError={(e) => {

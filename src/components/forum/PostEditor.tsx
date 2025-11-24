@@ -196,7 +196,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                     label: c.name,
                     icon: c.code ? (
                       <img
-                        src={`/remyreact/kantone/${c.code.toLowerCase()}.png`}
+                        src={`/kantone/${c.code.toLowerCase()}.png`}
                         alt={`${c.code} flag`}
                         className="w-5 h-3 object-contain"
                         onError={(e) => {

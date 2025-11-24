@@ -88,7 +88,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
               {item.canton && (
                 <div className="flex items-center space-x-2">
                   <img 
-                    src={`/remyreact/kantone/${item.canton.toLowerCase()}.png`}
+                    src={`/kantone/${item.canton.toLowerCase()}.png`}
                     alt={`${item.canton} flag`}
                     className="w-4 h-auto object-cover"
                     onError={(e) => {
