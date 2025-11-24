@@ -29,46 +29,34 @@ jobs:
         run: npm run build
 
       - name: Deploy to staging branch
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Configure git
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
+          # Store the current commit hash
           COMMIT_HASH=$(git rev-parse --short HEAD)
 
-          # Verify dist exists
-          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
+          # Create and switch to staging branch
+          git checkout --orphan staging
+
+          # Remove all files except .git and dist
+          find . -maxdepth 1 -type f -delete
+          find . -maxdepth 1 -type d -not -name '.git' -not -name 'dist' -not -name '.' -not -name '..' -delete
+
+          # Move dist contents to root
+          if [ -d "dist" ] && [ "$(ls -A dist)" ]; then
+            cp -r dist/* .
+            [ -f "dist/.htaccess" ] && cp dist/.htaccess .
+            rm -rf dist
+          else
             echo "Error: dist directory is empty or doesn't exist"
             exit 1
           fi
 
-          # Save current working directory
-          WORK_DIR=$(pwd)
-
-          # Create a completely separate git repo in temp for staging
-          DEPLOY_DIR=$(mktemp -d)
-          cd "$DEPLOY_DIR"
-
-          # Initialize new repo
-          git init
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config user.name "github-actions[bot]"
-
-          # Copy files from original dist
-          cp -r "$WORK_DIR/dist"/* .
-
-          # Initial commit
+          # Add and commit files
           git add -A
           git commit -m "Deploy build from commit ${COMMIT_HASH}"
 
-          # Add remote with token auth and push
-          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
-
-          # Push to staging branch
-          git push -f origin HEAD:staging
-
-          # Cleanup
-          cd "$WORK_DIR"
-          rm -rf "$DEPLOY_DIR"
+          # Push to remote
+          git push -f origin staging
