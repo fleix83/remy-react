@@ -1,19 +1,38 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import type { DocumentSection, DocumentExample } from '../../types/database.types'
 
 interface GuidelineSectionProps {
   section: DocumentSection
   isEditMode?: boolean
   onSectionChange?: (updatedSection: DocumentSection) => void
+  index?: number
+  isDragged?: boolean
+  isDropTarget?: boolean
+  onDragStart?: (index: number) => void
+  onDragOver?: (e: React.DragEvent, index: number) => void
+  onDrop?: (index: number) => void
+  onDragEnd?: () => void
 }
 
 const GuidelineSection: React.FC<GuidelineSectionProps> = ({
   section,
   isEditMode = false,
-  onSectionChange
+  onSectionChange,
+  index = 0,
+  isDragged = false,
+  isDropTarget = false,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [editedSection, setEditedSection] = useState<DocumentSection>(section)
+
+  // Sync local state with prop changes (important for drag and drop reordering)
+  useEffect(() => {
+    setEditedSection(section)
+  }, [section])
 
   const handleSectionUpdate = (field: keyof DocumentSection, value: any) => {
     const updated = { ...editedSection, [field]: value }
@@ -40,53 +59,86 @@ const GuidelineSection: React.FC<GuidelineSectionProps> = ({
   }
 
   return (
-    <div className="overflow-hidden">
-      {/* Header - Always visible, clickable */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full py-4 flex items-center justify-between hover:opacity-80 transition-opacity text-left"
-      >
-        {isEditMode ? (
-          <div className="flex items-center gap-3 flex-1">
-            <input
-              type="number"
-              value={editedSection.number}
-              onChange={(e) => handleSectionUpdate('number', parseInt(e.target.value))}
-              className="w-12 px-2 py-1 border border-gray-300 rounded font-bold"
-              style={{ color: 'var(--primary)', fontSize: '30px' }}
-            />
-            <input
-              type="text"
-              value={editedSection.title}
-              onChange={(e) => handleSectionUpdate('title', e.target.value)}
-              className="flex-1 px-2 py-1 border border-gray-300 rounded font-semibold text-lg"
-              placeholder="Section title"
-            />
+    <div
+      className={`overflow-hidden transition-all duration-200 border-2 rounded-lg p-2 ${
+        isDragged ? 'opacity-40 scale-95 border-transparent' :
+        isDropTarget ? 'border-blue-400 bg-blue-50' :
+        'border-transparent'
+      }`}
+      onDragOver={(e) => {
+        if (isEditMode && onDragOver) {
+          e.preventDefault()
+          onDragOver(e, index)
+        }
+      }}
+      onDrop={(e) => {
+        e.preventDefault()
+        if (isEditMode) onDrop?.(index)
+      }}
+    >
+      {/* Header Row with Drag Handle and Content */}
+      <div className="w-full py-4 flex items-center gap-3">
+        {/* Drag Handle - Only in edit mode */}
+        {isEditMode && (
+          <div
+            draggable
+            onDragStart={(e) => {
+              e.stopPropagation()
+              onDragStart?.(index)
+            }}
+            onDragEnd={onDragEnd}
+            className="cursor-move text-gray-400 hover:text-gray-600 px-2 flex-shrink-0"
+            title="Drag to reorder"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <circle cx="4" cy="3" r="1.5"/>
+              <circle cx="4" cy="8" r="1.5"/>
+              <circle cx="4" cy="13" r="1.5"/>
+              <circle cx="12" cy="3" r="1.5"/>
+              <circle cx="12" cy="8" r="1.5"/>
+              <circle cx="12" cy="13" r="1.5"/>
+            </svg>
           </div>
-        ) : (
-          <div className="flex items-center gap-3">
+        )}
+
+        {/* Clickable expand/collapse button */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex-1 flex items-center justify-between hover:opacity-80 transition-opacity text-left"
+        >
+          <div className="flex items-center gap-3 flex-1">
             <span
               className="flex-shrink-0 font-bold"
               style={{ color: 'var(--primary)', fontSize: '30px', lineHeight: '1' }}
             >
               {editedSection.number}
             </span>
-            <h3 className="font-semibold text-gray-900 text-lg">
-              {editedSection.title}
-            </h3>
+            {isEditMode ? (
+              <input
+                type="text"
+                value={editedSection.title}
+                onChange={(e) => handleSectionUpdate('title', e.target.value)}
+                className="flex-1 px-2 py-1 border border-gray-300 rounded font-semibold text-lg bg-white"
+                placeholder="Section title"
+              />
+            ) : (
+              <h3 className="font-semibold text-gray-900 text-lg">
+                {editedSection.title}
+              </h3>
+            )}
           </div>
-        )}
-        <svg
-          className={`w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ml-4 ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+          <svg
+            className={`w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ml-4 ${
+              isExpanded ? 'rotate-180' : ''
+            }`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
 
       {/* Content - Expandable */}
       <div
@@ -100,7 +152,7 @@ const GuidelineSection: React.FC<GuidelineSectionProps> = ({
             <textarea
               value={editedSection.content}
               onChange={(e) => handleSectionUpdate('content', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-gray-700 leading-relaxed mb-4"
+              className="w-full px-3 py-2 border border-gray-300 rounded text-gray-700 leading-relaxed mb-4 bg-white"
               rows={4}
               placeholder="Section content"
             />
@@ -127,7 +179,7 @@ const GuidelineSection: React.FC<GuidelineSectionProps> = ({
                               type="text"
                               value={editedSection.examples[idx].text}
                               onChange={(e) => handleExampleChange(idx, 'text', e.target.value)}
-                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm bg-white"
                               placeholder="Example text"
                             />
                             <button
@@ -159,7 +211,7 @@ const GuidelineSection: React.FC<GuidelineSectionProps> = ({
                               type="text"
                               value={editedSection.examples[idx].text}
                               onChange={(e) => handleExampleChange(idx, 'text', e.target.value)}
-                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm bg-white"
                               placeholder="Example text"
                             />
                             <button

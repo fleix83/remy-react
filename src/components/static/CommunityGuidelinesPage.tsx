@@ -18,6 +18,8 @@ const CommunityGuidelinesPage: React.FC = () => {
   const [isEditMode, setIsEditMode] = useState(false)
   const [editedDocument, setEditedDocument] = useState<Document | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null)
 
   const documentsService = new DocumentsService()
 
@@ -90,6 +92,52 @@ const CommunityGuidelinesPage: React.FC = () => {
     setEditedDocument(null)
   }
 
+  const handleDragStart = (index: number) => {
+    console.log('Drag started:', index)
+    setDraggedIndex(index)
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    console.log('Drag over:', index, 'dragged:', draggedIndex)
+    setDropTargetIndex(index)
+  }
+
+  const handleDrop = (dropIndex: number) => {
+    console.log('Drop at:', dropIndex, 'dragged:', draggedIndex)
+
+    if (draggedIndex === null || draggedIndex === dropIndex || !editedDocument) {
+      console.log('Drop cancelled:', { draggedIndex, dropIndex, hasEditedDocument: !!editedDocument })
+      setDropTargetIndex(null)
+      return
+    }
+
+    console.log('Performing reorder...')
+    const newSections = [...editedDocument.sections]
+    const draggedSection = newSections[draggedIndex]
+
+    // Remove from original position
+    newSections.splice(draggedIndex, 1)
+    // Insert at new position
+    newSections.splice(dropIndex, 0, draggedSection)
+
+    console.log('Reordered sections:', newSections.map(s => `${s.number}. ${s.title}`))
+
+    setEditedDocument({
+      ...editedDocument,
+      sections: newSections
+    })
+    setDraggedIndex(null)
+    setDropTargetIndex(null)
+  }
+
+  const handleDragEnd = () => {
+    console.log('Drag ended')
+    setDraggedIndex(null)
+    setDropTargetIndex(null)
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -160,20 +208,21 @@ const CommunityGuidelinesPage: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '48px' }}>
         {/* Edit Mode Controls */}
         {isEditMode && (
-          <div className="mb-6 flex gap-2">
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="px-4 py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700 disabled:bg-gray-400"
-            >
-              {isSaving ? 'Saving...' : 'Save Changes'}
-            </button>
+          <div className="mb-6 flex gap-3 justify-end">
             <button
               onClick={handleCancel}
               disabled={isSaving}
-              className="px-4 py-2 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 disabled:bg-gray-300"
+              className="px-5 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 transition-colors"
             >
               Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-6 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+              style={{ backgroundColor: isSaving ? '#9CA3AF' : '#2563eb' }}
+            >
+              {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         )}
@@ -182,10 +231,9 @@ const CommunityGuidelinesPage: React.FC = () => {
         {isAdmin && !isEditMode && (
           <button
             onClick={handleEditClick}
-            className="mb-4 text-sm font-semibold hover:opacity-80 transition-opacity"
-            style={{ color: 'var(--primary)' }}
+            className="mb-4 text-sm font-medium text-gray-600 hover:text-gray-800 underline transition-colors block text-left"
           >
-            ✏️ Edit
+            Edit
           </button>
         )}
 
@@ -195,7 +243,7 @@ const CommunityGuidelinesPage: React.FC = () => {
             type="text"
             value={editedDocument.title}
             onChange={(e) => setEditedDocument({ ...editedDocument, title: e.target.value })}
-            className="w-full text-2xl font-bold mb-4 px-3 py-2 border border-gray-300 rounded"
+            className="w-full text-2xl font-bold mb-4 px-3 py-2 border border-gray-300 rounded bg-white"
             style={{ color: 'var(--primary)' }}
           />
         ) : (
@@ -210,7 +258,7 @@ const CommunityGuidelinesPage: React.FC = () => {
             <textarea
               value={editedDocument.lead_text}
               onChange={(e) => setEditedDocument({ ...editedDocument, lead_text: e.target.value })}
-              className="w-full text-gray-700 leading-relaxed mb-8 text-base px-3 py-2 border border-gray-300 rounded"
+              className="w-full text-gray-700 leading-relaxed mb-8 text-base px-3 py-2 border border-gray-300 rounded bg-white"
               rows={3}
               placeholder="Lead text"
             />
@@ -225,10 +273,17 @@ const CommunityGuidelinesPage: React.FC = () => {
         <div className="space-y-4">
           {(editedDocument || document)?.sections.map((section, index) => (
             <GuidelineSection
-              key={index}
+              key={`section-${section.number}-${index}`}
               section={section}
+              index={index}
               isEditMode={isEditMode}
+              isDragged={draggedIndex === index}
+              isDropTarget={dropTargetIndex === index && draggedIndex !== index}
               onSectionChange={(updated) => handleSectionChange(index, updated)}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onDragEnd={handleDragEnd}
             />
           ))}
         </div>
