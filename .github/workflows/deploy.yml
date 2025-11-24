@@ -28,21 +28,24 @@ jobs:
         run: npm run build
       
       - name: Deploy to dist-light
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Configure git
+          # Configure git with authentication
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          
+          git config --global credential.helper store
+          echo "https://github-actions:${GITHUB_TOKEN}@github.com" > ~/.git-credentials
+
           # Store the current commit hash
           COMMIT_HASH=$(git rev-parse --short HEAD)
-          
+
           # Create and switch to dist-light branch
-          git checkout --orphan dist-light
-          
+          git checkout --orphan dist-light || { echo "Failed to create orphan branch"; exit 1; }
+
           # Remove all files except .git and dist
-          ls -la
           find . -maxdepth 1 -not -name '.git' -not -name 'dist' -not -name '.' -not -name '..' -exec rm -rf {} + 2>/dev/null || true
-          
+
           # Move dist contents to root
           if [ -d "dist" ] && [ "$(ls -A dist)" ]; then
             mv dist/* . 2>/dev/null || true
@@ -53,10 +56,10 @@ jobs:
             ls -la
             exit 1
           fi
-          
+
           # Add and commit files
-          git add .
-          git commit -m "Deploy build from commit ${COMMIT_HASH}" || exit 1
-          
-          # Push to remote
-          git push -f origin dist-light
+          git add -A || { echo "Failed to add files"; exit 1; }
+          git commit -m "Deploy build from commit ${COMMIT_HASH}" || { echo "Failed to commit"; exit 1; }
+
+          # Push to remote with proper auth
+          git push -f origin dist-light || { echo "Failed to push to dist-light"; exit 1; }
