@@ -37,27 +37,34 @@ jobs:
           # Store the current commit hash
           COMMIT_HASH=$(git rev-parse --short HEAD)
 
-          # Create and switch to staging branch
-          git checkout --orphan staging
-
-          # Remove all files except .git and dist
-          ls -la
-          find . -maxdepth 1 -not -name '.git' -not -name 'dist' -not -name '.' -not -name '..' -exec rm -rf {} + 2>/dev/null || true
-
-          # Move dist contents to root
-          if [ -d "dist" ] && [ "$(ls -A dist)" ]; then
-            mv dist/* . 2>/dev/null || true
-            mv dist/.* . 2>/dev/null || true
-            rmdir dist 2>/dev/null || true
-          else
+          # Check if dist exists and has content
+          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
             echo "Error: dist directory is empty or doesn't exist"
             ls -la
             exit 1
           fi
 
-          # Add and commit files
-          git add .
-          git commit -m "Deploy build from commit ${COMMIT_HASH}" || exit 1
+          # Create a temporary directory for dist files
+          mkdir -p /tmp/dist_staging
+          cp -r dist/* /tmp/dist_staging/
+          cp .htaccess /tmp/dist_staging/ 2>/dev/null || true
+
+          # Switch to or create staging branch (fetch first to ensure we have latest)
+          git fetch origin staging 2>/dev/null || true
+          git checkout -B staging origin/staging 2>/dev/null || git checkout --orphan staging
+
+          # Clear working directory (keep .git)
+          find . -maxdepth 1 -type f -delete
+          find . -maxdepth 1 -type d -not -name '.' -not -name '.git' -exec rm -rf {} + 2>/dev/null || true
+
+          # Copy dist files back
+          cp -r /tmp/dist_staging/* .
+
+          # Add all files
+          git add -A
+
+          # Commit (allow empty commit if no changes)
+          git commit -m "Deploy build from commit ${COMMIT_HASH}" --allow-empty || true
 
           # Push to remote
           git push -f origin staging
