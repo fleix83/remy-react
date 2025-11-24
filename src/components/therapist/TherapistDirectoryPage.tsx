@@ -216,13 +216,6 @@ const TherapistDirectoryPage: React.FC = () => {
                   </p>
                 )}
 
-                {/* Description */}
-                {selectedTherapist.description && (
-                  <p className="text-gray-700 mt-4">
-                    {selectedTherapist.description}
-                  </p>
-                )}
-
                 {/* Languages */}
                 {selectedTherapist.languages && (
                   <p className="text-gray-700 mt-2">

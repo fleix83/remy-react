@@ -36,7 +36,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     designation_id: null as number | null,
     short_designation: '',
     institution: '',
-    description: '',
     languages: '',
     city: '',
     gender: ''
@@ -108,7 +107,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
         designation_id: therapist.designation_id || null,
         short_designation: therapist.short_designation || '',
         institution: therapist.institution || '',
-        description: therapist.description || '',
         languages: therapist.languages || '',
         city: therapist.city || '',
         gender: therapist.gender || ''
@@ -263,7 +261,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           designation_id: formData.designation_id,
           short_designation: formData.short_designation || null,
           institution: formData.institution || null,
-          description: formData.description || null,
           languages: formData.languages || null,
           city: formData.city || null,
           gender: formData.gender || null
@@ -279,7 +276,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           designation_id: formData.designation_id,
           short_designation: formData.short_designation || undefined,
           institution: formData.institution || undefined,
-          description: formData.description || undefined,
           languages: formData.languages || undefined,
           city: formData.city || undefined,
           gender: formData.gender || undefined
@@ -301,7 +297,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           designation_id: null,
           short_designation: '',
           institution: '',
-          description: '',
           languages: '',
           city: '',
           gender: ''
@@ -621,23 +616,6 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
                 maxLength={100}
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Beschreibung (optional)
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Zusätzliche Informationen über den Therapeuten"
-                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                style={{ borderColor: '#ebebeb' }}
-                disabled={isSubmitting}
-                rows={3}
-                maxLength={500}
               />
             </div>
 
