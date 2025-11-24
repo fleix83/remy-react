@@ -1,12 +1,43 @@
 import React, { useState } from 'react'
-import type { DocumentSection } from '../../types/database.types'
+import type { DocumentSection, DocumentExample } from '../../types/database.types'
 
 interface GuidelineSectionProps {
   section: DocumentSection
+  isEditMode?: boolean
+  onSectionChange?: (updatedSection: DocumentSection) => void
 }
 
-const GuidelineSection: React.FC<GuidelineSectionProps> = ({ section }) => {
+const GuidelineSection: React.FC<GuidelineSectionProps> = ({
+  section,
+  isEditMode = false,
+  onSectionChange
+}) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [editedSection, setEditedSection] = useState<DocumentSection>(section)
+
+  const handleSectionUpdate = (field: keyof DocumentSection, value: any) => {
+    const updated = { ...editedSection, [field]: value }
+    setEditedSection(updated)
+    if (onSectionChange) {
+      onSectionChange(updated)
+    }
+  }
+
+  const handleExampleChange = (index: number, field: string, value: any) => {
+    const updatedExamples = [...editedSection.examples]
+    updatedExamples[index] = { ...updatedExamples[index], [field]: value } as DocumentExample
+    handleSectionUpdate('examples', updatedExamples)
+  }
+
+  const handleAddExample = (type: 'positive' | 'negative') => {
+    const newExample: DocumentExample = { type, text: '' }
+    handleSectionUpdate('examples', [...editedSection.examples, newExample])
+  }
+
+  const handleRemoveExample = (index: number) => {
+    const updatedExamples = editedSection.examples.filter((_, i) => i !== index)
+    handleSectionUpdate('examples', updatedExamples)
+  }
 
   return (
     <div className="overflow-hidden">
@@ -15,17 +46,36 @@ const GuidelineSection: React.FC<GuidelineSectionProps> = ({ section }) => {
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full py-4 flex items-center justify-between hover:opacity-80 transition-opacity text-left"
       >
-        <div className="flex items-center gap-3">
-          <span
-            className="flex-shrink-0 font-bold"
-            style={{ color: 'var(--primary)', fontSize: '30px', lineHeight: '1' }}
-          >
-            {section.number}
-          </span>
-          <h3 className="font-semibold text-gray-900 text-lg">
-            {section.title}
-          </h3>
-        </div>
+        {isEditMode ? (
+          <div className="flex items-center gap-3 flex-1">
+            <input
+              type="number"
+              value={editedSection.number}
+              onChange={(e) => handleSectionUpdate('number', parseInt(e.target.value))}
+              className="w-12 px-2 py-1 border border-gray-300 rounded font-bold"
+              style={{ color: 'var(--primary)', fontSize: '30px' }}
+            />
+            <input
+              type="text"
+              value={editedSection.title}
+              onChange={(e) => handleSectionUpdate('title', e.target.value)}
+              className="flex-1 px-2 py-1 border border-gray-300 rounded font-semibold text-lg"
+              placeholder="Section title"
+            />
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <span
+              className="flex-shrink-0 font-bold"
+              style={{ color: 'var(--primary)', fontSize: '30px', lineHeight: '1' }}
+            >
+              {editedSection.number}
+            </span>
+            <h3 className="font-semibold text-gray-900 text-lg">
+              {editedSection.title}
+            </h3>
+          </div>
+        )}
         <svg
           className={`w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ml-4 ${
             isExpanded ? 'rotate-180' : ''
@@ -41,74 +91,154 @@ const GuidelineSection: React.FC<GuidelineSectionProps> = ({ section }) => {
       {/* Content - Expandable */}
       <div
         className={`transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+          isExpanded ? 'max-h-[3000px] opacity-100' : 'max-h-0 opacity-0'
         } overflow-hidden`}
       >
         <div className="pb-6 pt-2">
           {/* Main content text */}
-          <p className="text-gray-700 leading-relaxed mb-4 text-left">
-            {section.content}
-          </p>
+          {isEditMode ? (
+            <textarea
+              value={editedSection.content}
+              onChange={(e) => handleSectionUpdate('content', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-gray-700 leading-relaxed mb-4"
+              rows={4}
+              placeholder="Section content"
+            />
+          ) : (
+            <p className="text-gray-700 leading-relaxed mb-4 text-left">
+              {editedSection.content}
+            </p>
+          )}
 
           {/* Examples section */}
-          {section.examples && section.examples.length > 0 && (
+          {(isEditMode || (editedSection.examples && editedSection.examples.length > 0)) && (
             <div className="mt-4 space-y-3">
-              <div className="bg-red-50 border border-red-100 rounded-md px-4 py-3">
-                <p className="text-sm font-medium text-red-800 mb-2">
-                  Folgende Aussagen sind nicht erlaubt:
-                </p>
-                <div className="space-y-2">
-                  {section.examples
-                    .filter(ex => ex.type === 'negative')
-                    .map((example, idx) => (
-                      <div key={`neg-${idx}`} className="flex items-start gap-2">
-                        <svg
-                          className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                        <span className="text-sm text-gray-700">{example.text}</span>
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              {section.examples.some(ex => ex.type === 'positive') && (
-                <div className="bg-blue-50 border border-blue-100 rounded-md px-4 py-3">
-                  <p className="text-sm font-medium text-blue-800 mb-2">
-                    Besser so:
-                  </p>
-                  <div className="space-y-2">
-                    {section.examples
-                      .filter(ex => ex.type === 'positive')
-                      .map((example, idx) => (
-                        <div key={`pos-${idx}`} className="flex items-start gap-2">
-                          <svg
-                            className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
+              {isEditMode ? (
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold text-red-800 mb-2">Negative Examples (not allowed)</h4>
+                    <div className="space-y-2 mb-2">
+                      {editedSection.examples
+                        .map((ex, idx) => ex.type === 'negative' ? idx : -1)
+                        .filter(idx => idx !== -1)
+                        .map((idx) => (
+                          <div key={`neg-edit-${idx}`} className="flex items-start gap-2">
+                            <input
+                              type="text"
+                              value={editedSection.examples[idx].text}
+                              onChange={(e) => handleExampleChange(idx, 'text', e.target.value)}
+                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                              placeholder="Example text"
                             />
-                          </svg>
-                          <span className="text-sm text-gray-700">{example.text}</span>
-                        </div>
-                      ))}
+                            <button
+                              onClick={() => handleRemoveExample(idx)}
+                              className="px-2 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                    <button
+                      onClick={() => handleAddExample('negative')}
+                      className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                    >
+                      + Add Negative Example
+                    </button>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-blue-800 mb-2">Positive Examples (preferred)</h4>
+                    <div className="space-y-2 mb-2">
+                      {editedSection.examples
+                        .map((ex, idx) => ex.type === 'positive' ? idx : -1)
+                        .filter(idx => idx !== -1)
+                        .map((idx) => (
+                          <div key={`pos-edit-${idx}`} className="flex items-start gap-2">
+                            <input
+                              type="text"
+                              value={editedSection.examples[idx].text}
+                              onChange={(e) => handleExampleChange(idx, 'text', e.target.value)}
+                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                              placeholder="Example text"
+                            />
+                            <button
+                              onClick={() => handleRemoveExample(idx)}
+                              className="px-2 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                    <button
+                      onClick={() => handleAddExample('positive')}
+                      className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                    >
+                      + Add Positive Example
+                    </button>
                   </div>
                 </div>
+              ) : (
+                <>
+                  <div className="bg-red-50 border border-red-100 rounded-md px-4 py-3">
+                    <p className="text-sm font-medium text-red-800 mb-2">
+                      Folgende Aussagen sind nicht erlaubt:
+                    </p>
+                    <div className="space-y-2">
+                      {editedSection.examples
+                        .filter(ex => ex.type === 'negative')
+                        .map((example, idx) => (
+                          <div key={`neg-${idx}`} className="flex items-start gap-2">
+                            <svg
+                              className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                            <span className="text-sm text-gray-700">{example.text}</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  {editedSection.examples.some(ex => ex.type === 'positive') && (
+                    <div className="bg-blue-50 border border-blue-100 rounded-md px-4 py-3">
+                      <p className="text-sm font-medium text-blue-800 mb-2">
+                        Besser so:
+                      </p>
+                      <div className="space-y-2">
+                        {editedSection.examples
+                          .filter(ex => ex.type === 'positive')
+                          .map((example, idx) => (
+                            <div key={`pos-${idx}`} className="flex items-start gap-2">
+                              <svg
+                                className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                              <span className="text-sm text-gray-700">{example.text}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}

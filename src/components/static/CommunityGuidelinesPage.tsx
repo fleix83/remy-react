@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
+import { usePermissions } from '../../hooks/usePermissions'
 import { DocumentsService } from '../../services/documents.service'
 import UserAvatar from '../user/UserAvatar'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import GuidelineSection from '../ui/GuidelineSection'
-import type { Document } from '../../types/database.types'
+import type { Document, DocumentSection } from '../../types/database.types'
 
 const CommunityGuidelinesPage: React.FC = () => {
   const navigate = useNavigate()
   const { user, userProfile, logout } = useAuthStore()
+  const { isAdmin } = usePermissions()
   const [document, setDocument] = useState<Document | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editedDocument, setEditedDocument] = useState<Document | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
   const documentsService = new DocumentsService()
 
@@ -34,6 +39,55 @@ const CommunityGuidelinesPage: React.FC = () => {
 
   const handleSignOut = async () => {
     await logout()
+  }
+
+  const handleEditClick = () => {
+    if (document) {
+      setEditedDocument(JSON.parse(JSON.stringify(document)))
+      setIsEditMode(true)
+    }
+  }
+
+  const handleSectionChange = (index: number, updatedSection: DocumentSection) => {
+    if (editedDocument) {
+      const updatedSections = [...editedDocument.sections]
+      updatedSections[index] = updatedSection
+      setEditedDocument({
+        ...editedDocument,
+        sections: updatedSections
+      })
+    }
+  }
+
+  const handleSave = async () => {
+    if (!editedDocument || !document) return
+
+    setIsSaving(true)
+    try {
+      const result = await documentsService.updateDocument(document.id, {
+        title: editedDocument.title,
+        lead_text: editedDocument.lead_text,
+        sections: editedDocument.sections
+      })
+
+      if (result) {
+        setDocument(result)
+        setIsEditMode(false)
+        alert('Community Guidelines updated successfully!')
+      } else {
+        alert('Failed to save changes. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error saving document:', error)
+      alert('Error saving changes.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleCancel = () => {
+    setIsEditMode(false)
+    setEditedDocument(null)
   }
 
   if (isLoading) {
@@ -104,22 +158,78 @@ const CommunityGuidelinesPage: React.FC = () => {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '48px' }}>
+        {/* Edit Mode Controls */}
+        {isEditMode && (
+          <div className="mb-6 flex gap-2">
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-4 py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700 disabled:bg-gray-400"
+            >
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button
+              onClick={handleCancel}
+              disabled={isSaving}
+              className="px-4 py-2 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 disabled:bg-gray-300"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
+        {/* Edit Link (Admin Only) */}
+        {isAdmin && !isEditMode && (
+          <button
+            onClick={handleEditClick}
+            className="mb-4 text-sm font-semibold hover:opacity-80 transition-opacity"
+            style={{ color: 'var(--primary)' }}
+          >
+            ✏️ Edit
+          </button>
+        )}
+
         {/* Title */}
-        <h1 className="text-2xl font-bold mb-4 text-left" style={{ color: 'var(--primary)' }}>
-          {document.title}
-        </h1>
+        {isEditMode && editedDocument ? (
+          <input
+            type="text"
+            value={editedDocument.title}
+            onChange={(e) => setEditedDocument({ ...editedDocument, title: e.target.value })}
+            className="w-full text-2xl font-bold mb-4 px-3 py-2 border border-gray-300 rounded"
+            style={{ color: 'var(--primary)' }}
+          />
+        ) : (
+          <h1 className="text-2xl font-bold mb-4 text-left" style={{ color: 'var(--primary)' }}>
+            {document?.title}
+          </h1>
+        )}
 
         {/* Lead text */}
-        {document.lead_text && (
-          <p className="text-gray-700 leading-relaxed mb-8 text-base text-left">
-            {document.lead_text}
-          </p>
-        )}
+        {editedDocument && editedDocument.lead_text ? (
+          isEditMode ? (
+            <textarea
+              value={editedDocument.lead_text}
+              onChange={(e) => setEditedDocument({ ...editedDocument, lead_text: e.target.value })}
+              className="w-full text-gray-700 leading-relaxed mb-8 text-base px-3 py-2 border border-gray-300 rounded"
+              rows={3}
+              placeholder="Lead text"
+            />
+          ) : (
+            <p className="text-gray-700 leading-relaxed mb-8 text-base text-left">
+              {editedDocument.lead_text}
+            </p>
+          )
+        ) : null}
 
         {/* Sections as accordions */}
         <div className="space-y-4">
-          {document.sections.map((section, index) => (
-            <GuidelineSection key={index} section={section} />
+          {(editedDocument || document)?.sections.map((section, index) => (
+            <GuidelineSection
+              key={index}
+              section={section}
+              isEditMode={isEditMode}
+              onSectionChange={(updated) => handleSectionChange(index, updated)}
+            />
           ))}
         </div>
       </div>

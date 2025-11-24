@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import type { Document } from '../types/database.types'
+import type { Document, DocumentUpdate } from '../types/database.types'
 
 export class DocumentsService {
   /**
@@ -46,6 +46,30 @@ export class DocumentsService {
     } catch (error) {
       console.error('Error in getPublishedDocuments:', error)
       return []
+    }
+  }
+
+  /**
+   * Update a document by ID
+   */
+  async updateDocument(id: string, updates: DocumentUpdate): Promise<Document | null> {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error updating document:', error)
+        return null
+      }
+
+      return data as Document
+    } catch (error) {
+      console.error('Error in updateDocument:', error)
+      return null
     }
   }
 }
