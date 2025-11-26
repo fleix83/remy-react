@@ -13,7 +13,7 @@ interface AuthState {
   // Actions
   initialize: () => Promise<void>
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, username?: string) => Promise<void>
+  register: (email: string, password: string, username?: string) => Promise<{ requiresConfirmation: boolean; message: string } | void>
   logout: () => Promise<void>
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>
   resetPassword: (email: string) => Promise<void>
@@ -80,13 +80,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   register: async (email: string, password: string, username?: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           username: username || email.split('@')[0]
-        }
+        },
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     })
 
@@ -95,13 +96,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       let message = error.message
       if (message.includes('at least 6 characters')) {
         message = 'Das Passwort muss mindestens 6 Zeichen lang sein.'
+      } else if (message.includes('already registered')) {
+        message = 'Diese E-Mail-Adresse ist bereits registriert.'
       }
       const translatedError = new Error(message)
       throw translatedError
     }
 
-    // Note: User won't be set until email is confirmed
-    // Return void as expected by interface
+    // Check if email confirmation is required
+    if (data?.user && !data.session) {
+      return {
+        requiresConfirmation: true,
+        message: 'Bitte überprüfe deine E-Mails und klicke auf den Bestätigungslink.'
+      }
+    }
+
+    // Auto-login when confirmations disabled (backward compatibility)
+    if (data?.user && data.session) {
+      set({ user: data.user, session: data.session })
+      await get().loadUserProfile()
+    }
   },
 
   logout: async () => {

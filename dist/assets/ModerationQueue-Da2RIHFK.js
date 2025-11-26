@@ -1,4 +1,4 @@
-import{s as m,j as e,U as W,L as O,r as _,d as je}from"./index-BZVIKD4G.js";class ve{async getPendingContent(){const{data:r,error:s}=await m.from("posts").select(`
+import{s as m,j as e,U as W,L as O,r as _,d as je}from"./index-Dt-3lIks.js";class ve{async getPendingContent(){const{data:r,error:s}=await m.from("posts").select(`
         *,
         users!posts_user_id_fkey(id, username, role, avatar_url),
         categories!inner(id, name_de, name_fr, name_it)

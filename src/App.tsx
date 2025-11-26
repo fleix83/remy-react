@@ -17,6 +17,7 @@ const TherapistDirectoryPage = lazy(() => import('./components/therapist/Therapi
 const UserProfile = lazy(() => import('./components/user/UserProfile'))
 const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
 const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
+const ConfirmEmail = lazy(() => import('./components/auth/ConfirmEmail'))
 const CommunityGuidelinesPage = lazy(() => import('./components/static/CommunityGuidelinesPage'))
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
           {/* Public routes (no auth required) */}
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/auth/callback" element={<ConfirmEmail />} />
 
           {/* Auth-protected routes */}
           {!user ? (
@@ -108,6 +110,7 @@ function AuthForm() {
   const [showRegisterForm, setShowRegisterForm] = useState(false)
   const [showLoginForm, setShowLoginForm] = useState(searchParams.get('login') === 'true')
   const [message, setMessage] = useState('')
+  const [registrationComplete, setRegistrationComplete] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
   const { login, register } = useAuthStore()
@@ -118,8 +121,15 @@ function AuthForm() {
     setMessage('')
 
     try {
-      await register(email, password, username || email.split('@')[0])
-      setMessage('Du hast eine Bestätigungsmail erhalten. Bitte überprüfe deinen Posteingang.')
+      const result = await register(email, password, username || email.split('@')[0])
+
+      // Handle email confirmation required
+      if (result?.requiresConfirmation) {
+        setMessage('Registrierung erfolgreich! Bitte überprüfe deine E-Mails und klicke auf den Bestätigungslink.')
+        setRegistrationComplete(true)
+      } else {
+        setMessage('Registrierung erfolgreich!')
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'An error occurred')
     } finally {
@@ -144,6 +154,7 @@ function AuthForm() {
   const handleRegisterClick = () => {
     setShowRegisterForm(true)
     setShowLoginForm(false)
+    setRegistrationComplete(false)
     setMessage('')
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
@@ -153,6 +164,7 @@ function AuthForm() {
   const handleLoginClick = () => {
     setShowLoginForm(true)
     setShowRegisterForm(false)
+    setRegistrationComplete(false)
     setMessage('')
   }
 
@@ -199,7 +211,7 @@ function AuthForm() {
         )}
 
         {/* Registration Form */}
-        {showRegisterForm && (
+        {showRegisterForm && !registrationComplete && (
           <form ref={formRef} onSubmit={handleRegister} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
@@ -209,6 +221,7 @@ function AuthForm() {
                 id="username"
                 name="username"
                 type="text"
+                autoComplete="username"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
                 placeholder="Benutzername wählen"
@@ -225,6 +238,7 @@ function AuthForm() {
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
                 placeholder="deine@email.com"
@@ -241,6 +255,7 @@ function AuthForm() {
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="new-password"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
                 placeholder="••••••••"
@@ -286,6 +301,33 @@ function AuthForm() {
           </form>
         )}
 
+        {/* Registration Complete - Email Confirmation Required */}
+        {showRegisterForm && registrationComplete && (
+          <div className="text-center space-y-6">
+            <div className="text-green-600 text-6xl mb-4">✓</div>
+
+            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+              <p className="text-lg font-medium mb-2" style={{ color: '#144220' }}>
+                Registrierung erfolgreich!
+              </p>
+              <p className="text-base" style={{ color: '#144220' }}>
+                Bitte überprüfe deine E-Mails und klicke auf den Bestätigungslink.
+              </p>
+            </div>
+
+            <div className="text-sm" style={{ color: '#144220' }}>
+              <p className="mb-4">Nach der Bestätigung kannst du dich einloggen.</p>
+              <button
+                onClick={handleLoginClick}
+                className="font-body text-[16px] underline font-medium"
+                style={{ color: 'var(--primary)' }}
+              >
+                Zum Login
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Login Form */}
         {showLoginForm && (
           <form onSubmit={handleLogin} className="space-y-4">
@@ -306,6 +348,7 @@ function AuthForm() {
                 id="login-email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
                 placeholder="deine@email.com"
@@ -322,6 +365,7 @@ function AuthForm() {
                 id="login-password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
                 placeholder="••••••••"
