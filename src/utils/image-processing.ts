@@ -324,6 +324,27 @@ export async function processImageForUpload(
   
   // No conversion needed for standard web formats
   console.log('No conversion needed, using original file')
+
+  // Fix iOS MIME type issue: If the detected type differs from file.type,
+  // create a new File object with the correct MIME type
+  if (detectedType !== file.type && STANDARD_IMAGE_TYPES.includes(detectedType)) {
+    console.log('Correcting MIME type:', {
+      originalMimeType: file.type,
+      detectedMimeType: detectedType
+    })
+
+    const correctedFile = new File([file], file.name, {
+      type: detectedType,
+      lastModified: file.lastModified
+    })
+
+    return {
+      file: correctedFile,
+      originalType,
+      wasConverted: false
+    }
+  }
+
   return {
     file,
     originalType,
