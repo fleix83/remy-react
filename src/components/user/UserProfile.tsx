@@ -149,11 +149,11 @@ const UserProfile: React.FC = () => {
               </div>
             </div>
 
-            {/* Hidden file input */}
+            {/* Hidden file input - accepts all image formats including iOS HEIC */}
             <input
               ref={backgroundInputRef}
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
+              accept={AvatarService.FILE_INPUT_ACCEPT}
               onChange={handleBackgroundChange}
               className="hidden"
               disabled={uploadingBackground}

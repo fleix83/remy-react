@@ -1,9 +1,13 @@
 import { supabase } from '../lib/supabase'
+import { processImageForUpload, FILE_INPUT_ACCEPT, ACCEPTED_IMAGE_TYPES } from '../utils/image-processing'
 
 export class AvatarService {
   private static readonly BUCKET_NAME = 'avatars'
   private static readonly MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-  private static readonly ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+  
+  // Export for use in components
+  static readonly FILE_INPUT_ACCEPT = FILE_INPUT_ACCEPT
+  static readonly ACCEPTED_IMAGE_TYPES = ACCEPTED_IMAGE_TYPES
 
   static async uploadAvatar(userId: string, file: File): Promise<string> {
     console.log(`Starting avatar upload for user ${userId}, file:`, {
@@ -12,30 +16,32 @@ export class AvatarService {
       size: file.size
     })
 
-    // Validate file
-    if (!this.ALLOWED_TYPES.includes(file.type)) {
-      throw new Error('Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.')
-    }
-
-    if (file.size > this.MAX_FILE_SIZE) {
-      throw new Error('File size too large. Please upload an image smaller than 5MB.')
-    }
-
-    // Create unique filename
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${userId}-${Date.now()}.${fileExt}`
-    const filePath = `${userId}/${fileName}`
-
-    console.log(`Uploading to path: ${filePath}`)
-
     try {
+      // Process image (handles iOS HEIC conversion and validation)
+      const { file: processedFile, wasConverted } = await processImageForUpload(
+        file,
+        this.MAX_FILE_SIZE / (1024 * 1024) // Convert to MB
+      )
+      
+      if (wasConverted) {
+        console.log('Image was converted for web compatibility')
+      }
+
+      // Create unique filename (always use processed file's extension)
+      const fileExt = processedFile.name.split('.').pop()
+      const fileName = `${userId}-${Date.now()}.${fileExt}`
+      const filePath = `${userId}/${fileName}`
+
+      console.log(`Uploading to path: ${filePath}`)
+
       // Upload file to Supabase Storage
       console.log('Attempting file upload...')
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from(this.BUCKET_NAME)
-        .upload(filePath, file, {
+        .upload(filePath, processedFile, {
           cacheControl: '3600',
-          upsert: true
+          upsert: true,
+          contentType: processedFile.type
         })
 
       if (uploadError) {
@@ -124,30 +130,32 @@ export class AvatarService {
       size: file.size
     })
 
-    // Validate file
-    if (!this.ALLOWED_TYPES.includes(file.type)) {
-      throw new Error('Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.')
-    }
-
-    if (file.size > this.MAX_FILE_SIZE) {
-      throw new Error('File size too large. Please upload an image smaller than 5MB.')
-    }
-
-    // Create unique filename
-    const fileExt = file.name.split('.').pop()
-    const fileName = `background-${Date.now()}.${fileExt}`
-    const filePath = `${userId}/${fileName}`
-
-    console.log(`Uploading to path: ${filePath}`)
-
     try {
+      // Process image (handles iOS HEIC conversion and validation)
+      const { file: processedFile, wasConverted } = await processImageForUpload(
+        file,
+        this.MAX_FILE_SIZE / (1024 * 1024) // Convert to MB
+      )
+      
+      if (wasConverted) {
+        console.log('Image was converted for web compatibility')
+      }
+
+      // Create unique filename
+      const fileExt = processedFile.name.split('.').pop()
+      const fileName = `background-${Date.now()}.${fileExt}`
+      const filePath = `${userId}/${fileName}`
+
+      console.log(`Uploading to path: ${filePath}`)
+
       // Upload file to Supabase Storage
       console.log('Attempting file upload...')
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from(this.BUCKET_NAME)
-        .upload(filePath, file, {
+        .upload(filePath, processedFile, {
           cacheControl: '3600',
-          upsert: true
+          upsert: true,
+          contentType: processedFile.type
         })
 
       if (uploadError) {
@@ -254,7 +262,7 @@ export class AvatarService {
     // This would be run once during setup
     const { error } = await supabase.storage.createBucket(this.BUCKET_NAME, {
       public: true,
-      allowedMimeTypes: this.ALLOWED_TYPES,
+      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
       fileSizeLimit: this.MAX_FILE_SIZE
     })
 

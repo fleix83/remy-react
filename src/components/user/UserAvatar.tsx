@@ -137,12 +137,12 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
         )}
       </div>
 
-      {/* File input */}
+      {/* File input - accepts all image formats including iOS HEIC */}
       {showUpload && isFullUser(user) && (
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
+          accept={AvatarService.FILE_INPUT_ACCEPT}
           onChange={handleFileSelect}
           className="hidden"
         />
