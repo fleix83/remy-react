@@ -100,7 +100,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   if (!userProfile) return null
 
   return (
-    <div className="bg-white rounded-lg shadow-sm">
+    <div className="bg-white shadow-sm" style={{ borderRadius: '28px' }}>
       <div className="p-6">
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-900 text-left">Profile Settings</h2>

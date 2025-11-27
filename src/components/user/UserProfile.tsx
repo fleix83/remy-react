@@ -109,8 +109,15 @@ const UserProfile: React.FC = () => {
         <div className="relative">
           {/* Background Header */}
           <div
-            className="bg-gradient-to-r from-[var(--primary)] to-[#2d8544] rounded-lg relative overflow-hidden cursor-pointer group"
-            style={{ maxHeight: '118px', height: '118px' }}
+            className="bg-gradient-to-r from-[var(--primary)] to-[#2d8544] relative overflow-hidden cursor-pointer group"
+            style={{
+              maxHeight: '118px',
+              height: '118px',
+              borderTopLeftRadius: '28px',
+              borderTopRightRadius: '28px',
+              borderBottomLeftRadius: '0',
+              borderBottomRightRadius: '0'
+            }}
             onClick={handleBackgroundClick}
             onMouseEnter={() => setBackgroundHover(true)}
             onMouseLeave={() => setBackgroundHover(false)}
@@ -161,7 +168,7 @@ const UserProfile: React.FC = () => {
           </div>
 
           {/* Overlapping Avatar - aligned with content + 15px left offset */}
-          <div className="absolute" style={{ left: '15px', top: '29px' }}>
+          <div className="absolute" style={{ left: '15px', top: '29px', zIndex: 10 }}>
             <UserAvatar
               user={userProfile}
               size="large"
@@ -171,11 +178,26 @@ const UserProfile: React.FC = () => {
         </div>
 
         {/* Public Profile Information */}
-        <div className="bg-white rounded-lg shadow-sm p-6 relative" style={{ marginTop: '58px' }}>
+        <div
+          className="bg-white shadow-sm relative"
+          style={{
+            marginTop: '0',
+            paddingTop: '74px',
+            paddingBottom: '32px',
+            paddingLeft: '24px',
+            paddingRight: '24px',
+            minHeight: '200px',
+            borderTopLeftRadius: '0',
+            borderTopRightRadius: '0',
+            borderBottomLeftRadius: '28px',
+            borderBottomRightRadius: '28px'
+          }}
+        >
           {/* Edit Profile Button - positioned in top right corner of profile div */}
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="absolute top-4 right-4 hover:opacity-70 text-gray-600 px-3 py-1.5 rounded-md font-medium text-sm transition-opacity duration-200 flex items-center"
+            className="absolute hover:opacity-70 text-gray-600 px-3 py-1.5 rounded-md font-medium text-sm transition-opacity duration-200 flex items-center"
+            style={{ top: '16px', right: '16px' }}
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -186,10 +208,10 @@ const UserProfile: React.FC = () => {
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {userProfile.username}
             </h1>
-            <p className="text-gray-400 text-sm mb-2">
+            <p className="text-gray-400 text-sm mb-4">
               Registriert am {userProfile.created_at ? formatDate(userProfile.created_at) : 'Unbekannt'}
             </p>
-            
+
             {userProfile.bio && (
               <div>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">

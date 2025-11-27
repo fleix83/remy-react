@@ -17,15 +17,17 @@ interface UserAvatarProps {
   className?: string
 }
 
-const UserAvatar: React.FC<UserAvatarProps> = ({ 
-  user, 
-  size = 'medium', 
-  showUpload = false, 
-  className = '' 
+const UserAvatar: React.FC<UserAvatarProps> = ({
+  user,
+  size = 'medium',
+  showUpload = false,
+  className = ''
 }) => {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [showControls, setShowControls] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const { updateProfile } = useAuthStore()
 
   const sizeStyles = {
@@ -84,22 +86,42 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
     }
   }
 
-  const handleAvatarClick = () => {
-    if (showUpload && !isUploading && isFullUser(user) && fileInputRef.current) {
+  const handleShowControls = () => {
+    setShowControls(true)
+    // Clear existing timeout
+    if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current)
+    // Auto-fade after 3 seconds
+    fadeTimeoutRef.current = setTimeout(() => setShowControls(false), 3000)
+  }
+
+  const handleHideControls = () => {
+    if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current)
+    setShowControls(false)
+  }
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (fileInputRef.current) {
       fileInputRef.current.click()
     }
   }
 
+  const handleDeleteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    await handleRemoveAvatar()
+  }
+
   return (
     <div className={`relative ${className}`}>
-      <div 
+      <div
         className={`
           rounded-full overflow-hidden shadow-lg group
-          ${showUpload && isFullUser(user) ? 'cursor-pointer hover:opacity-80 transition-opacity duration-200' : ''}
           ${isUploading ? 'opacity-50' : ''}
         `}
         style={sizeStyles[size]}
-        onClick={handleAvatarClick}
+        onMouseEnter={showUpload && isFullUser(user) && size === 'large' ? handleShowControls : undefined}
+        onMouseLeave={showUpload && isFullUser(user) && size === 'large' ? handleHideControls : undefined}
+        onTouchStart={showUpload && isFullUser(user) && size === 'large' ? handleShowControls : undefined}
       >
         <img
           src={avatarUrl}
@@ -113,19 +135,52 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
             target.src = AvatarService.getDefaultAvatar(user?.username || 'User')
           }}
         />
-        
-        {/* Upload overlay - temporarily disabled for debugging */}
-        {false && showUpload && (
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center pointer-events-none">
-            <svg 
-              className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
+
+        {/* Controls overlay - only for large avatars */}
+        {showUpload && isFullUser(user) && size === 'large' && (
+          <div
+            className="absolute inset-0 rounded-full transition-opacity duration-300"
+            style={{
+              backgroundColor: showControls ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
+              opacity: showControls ? 1 : 0,
+              pointerEvents: showControls ? 'auto' : 'none'
+            }}
+          >
+            {/* Delete button - upper half center */}
+            <button
+              onClick={handleDeleteClick}
+              disabled={isUploading}
+              className="absolute bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 shadow-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              style={{
+                top: '25%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+              title="Remove avatar"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+
+            {/* Edit button - lower half center */}
+            <button
+              onClick={handleEditClick}
+              disabled={isUploading}
+              className="absolute hover:opacity-90 text-white rounded-full w-10 h-10 shadow-lg transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              style={{
+                top: '75%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: 'var(--primary)'
+              }}
+              title="Change avatar"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
           </div>
         )}
 
@@ -146,29 +201,6 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
           onChange={handleFileSelect}
           className="hidden"
         />
-      )}
-
-      {/* Remove avatar button */}
-      {showUpload && isFullUser(user) && user.avatar_url && size === 'large' && (
-        <button
-          onClick={handleRemoveAvatar}
-          disabled={isUploading}
-          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Remove avatar"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
-      )}
-
-      {/* Upload tooltip */}
-      {showUpload && isFullUser(user) && size === 'large' && (
-        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-          <p className="text-xs text-gray-500 text-center whitespace-nowrap">
-            Click to change avatar
-          </p>
-        </div>
       )}
 
       {/* Error message */}
