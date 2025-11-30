@@ -70,6 +70,14 @@ const PostEditor: React.FC<PostEditorProps> = ({
     }
   }, [categoryId, selectedTherapist])
 
+  // Auto-clear title and canton when switching to Rant category
+  useEffect(() => {
+    if (categoryId === 4 && !editMode) {
+      setTitle('')
+      setCanton('')
+    }
+  }, [categoryId, editMode])
+
   const loadCategories = async () => {
     try {
       const cats = await postsService.getCategories()
@@ -96,8 +104,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
   const handleSubmit = async (e: React.FormEvent, publish = true) => {
     e.preventDefault()
 
-    // Title is required for ALL categories
-    if (!title.trim()) {
+    // Title required EXCEPT for Rant (4)
+    if (categoryId !== 4 && !title.trim()) {
       alert('Bitte Titel ausfüllen')
       return
     }
@@ -113,9 +121,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
       return
     }
 
-    // For Erfahrung category, canton comes from therapist
-    // For other categories, canton dropdown is required
-    if (categoryId !== 1 && !canton) {
+    // Canton required EXCEPT for Erfahrung (1) and Rant (4)
+    if (categoryId !== 1 && categoryId !== 4 && !canton) {
       alert('Bitte Kanton auswählen')
       return
     }
@@ -124,10 +131,10 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
     try {
       const postData = {
-        title: title.trim(),
+        title: categoryId === 4 ? null : title.trim(), // NULL for Rant
         content: content.trim(),
         category_id: categoryId,
-        canton,
+        canton: canton || null, // Allow NULL
         is_draft: !publish, // true when saving as draft, false when publishing
         tags,
         ...(selectedTherapist && { therapist_id: selectedTherapist.id })
@@ -186,8 +193,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
               </div>
             )}
 
-            {/* 2. Canton Badge Dropdown - Second (only for non-Erfahrung categories) */}
-            {categoryId !== 1 && (
+            {/* 2. Canton Badge Dropdown - Second (hidden for Erfahrung and Rant) */}
+            {categoryId !== 1 && categoryId !== 4 && (
               <div className="mb-4">
                 <BadgeDropdown
                   value={canton}
@@ -215,21 +222,23 @@ const PostEditor: React.FC<PostEditorProps> = ({
               </div>
             )}
 
-            {/* 3. Title Input - Third (for all categories) */}
-            <div className="mb-4">
-              <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                Titel
-              </label>
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 focus:outline-none text-base"
-                placeholder="Titel eingeben..."
-                maxLength={255}
-              />
-            </div>
+            {/* 3. Title Input - Third (hidden for Rant category) */}
+            {categoryId !== 4 && (
+              <div className="mb-4">
+                <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                  Titel
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 focus:outline-none text-base"
+                  placeholder="Titel eingeben..."
+                  maxLength={255}
+                />
+              </div>
+            )}
 
             {/* 4. Content - Fourth */}
             <div className="mb-6">
@@ -264,21 +273,23 @@ const PostEditor: React.FC<PostEditorProps> = ({
         {/* Desktop: Traditional form layout */}
         {!mobileOptimized && (
           <div className="mb-6">
-            {/* Title - Required for all categories */}
-            <div className="mb-4">
-              <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                Titel
-              </label>
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none"
-                placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
-                maxLength={255}
-              />
-            </div>
+            {/* Title - Hidden for Rant category */}
+            {categoryId !== 4 && (
+              <div className="mb-4">
+                <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
+                  Titel
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none"
+                  placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
+                  maxLength={255}
+                />
+              </div>
+            )}
 
             {/* Category and Canton - Layout depends on category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -301,8 +312,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 </select>
               </div>
 
-              {/* Canton - Only show for non-Erfahrung categories */}
-              {categoryId !== 1 && (
+              {/* Canton - Hidden for Erfahrung (1) and Rant (4) */}
+              {categoryId !== 1 && categoryId !== 4 && (
                 <div>
                   <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">
                     Kanton

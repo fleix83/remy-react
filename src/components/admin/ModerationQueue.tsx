@@ -7,6 +7,7 @@ import ModerationPreviewModal from './ModerationPreviewModal'
 import ModerationMessageModal from './ModerationMessageModal'
 import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
+import { getPostDisplayTitle } from '../../utils/text.utils'
 
 const ModerationQueue: React.FC = () => {
   const permissions = usePermissions()
@@ -823,12 +824,10 @@ const ModerationQueue: React.FC = () => {
                 {/* Content Display */}
                 <div className="mb-4">
                   {item.content_type === 'post' ? (
-                    // For Posts: Show only title
-                    item.title && (
-                      <h3 className="text-base md:text-xl font-semibold text-[var(--type)] leading-tight text-left">
-                        {item.title}
-                      </h3>
-                    )
+                    // For Posts: Show title (auto-generated for Rant posts)
+                    <h3 className="text-base md:text-xl font-semibold text-[var(--type)] leading-tight text-left">
+                      {getPostDisplayTitle(item.title, item.content || '', item.category_id || 1)}
+                    </h3>
                   ) : item.content_type === 'therapist' ? (
                     // For Therapists: Show name as blue link + designation
                     <div>

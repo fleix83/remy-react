@@ -9,6 +9,7 @@ import { SelectableText } from '../ui/RichTextEditor'
 import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
+import { getPostDisplayTitle } from '../../utils/text.utils'
 
 const PostView: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -223,9 +224,9 @@ const PostView: React.FC = () => {
             )}
           </div>
 
-          {/* Title */}
+          {/* Title - Auto-generated for Rant posts without title */}
           <h1 className="text-left" style={{color: 'var(--post-title)', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
-            {post.title}
+            {getPostDisplayTitle(post.title, post.content, post.category_id)}
           </h1>
 
           {/* User Info */}

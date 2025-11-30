@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
+import { getPostDisplayTitle } from '../../utils/text.utils'
 
 interface ModerationPreviewModalProps {
   isOpen: boolean
@@ -129,13 +130,11 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             {/* Content Display */}
             <div className="mb-4">
               {item.content_type === 'post' ? (
-                // For Posts: Show title and full content
+                // For Posts: Show title (auto-generated for Rant posts) and full content
                 <div>
-                  {item.title && (
-                    <h1 className="text-base md:text-xl font-semibold text-[var(--type)] mb-4 leading-tight text-left">
-                      {item.title}
-                    </h1>
-                  )}
+                  <h1 className="text-base md:text-xl font-semibold text-[var(--type)] mb-4 leading-tight text-left">
+                    {getPostDisplayTitle(item.title, item.content || '', item.category_id || 1)}
+                  </h1>
                   <div className="prose prose-gray max-w-none text-[var(--type)] leading-tight text-left text-sm">
                     <div dangerouslySetInnerHTML={{ __html: item.content || '' }} />
                   </div>

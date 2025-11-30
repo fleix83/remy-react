@@ -355,7 +355,7 @@ export type Database = {
       }
       posts: {
         Row: {
-          canton: string
+          canton: string | null
           category_id: number
           content: string
           created_at: string | null
@@ -382,7 +382,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          canton: string
+          canton?: string | null
           category_id: number
           content: string
           created_at?: string | null
@@ -409,7 +409,7 @@ export type Database = {
           user_id: string
         }
         Update: {
-          canton?: string
+          canton?: string | null
           category_id?: number
           content?: string
           created_at?: string | null

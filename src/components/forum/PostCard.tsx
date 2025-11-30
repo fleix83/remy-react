@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { PostWithRelations } from '../../types/database.types'
 import UserAvatar from '../user/UserAvatar'
+import { getPostDisplayTitle } from '../../utils/text.utils'
 
 interface PostCardProps {
   post: PostWithRelations
@@ -158,9 +159,9 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
         </button>
       )}
 
-      {/* Title */}
+      {/* Title - Auto-generated for Rant posts without title */}
       <h3 className="text-base md:text-xl font-semibold mb-4 leading-tight text-left" style={{color: 'var(--post-title)'}}>
-        {post.title}
+        {getPostDisplayTitle(post.title, post.content, post.category_id)}
       </h3>
 
       {/* Rejection Reason (for banned posts) */}
