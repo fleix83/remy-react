@@ -121,8 +121,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
       return
     }
 
-    // Canton required EXCEPT for Erfahrung (1) and Rant (4)
-    if (categoryId !== 1 && categoryId !== 4 && !canton) {
+    // Canton required EXCEPT for Erfahrung (1), Rant (4), and Austausch (3)
+    if (categoryId !== 1 && categoryId !== 3 && categoryId !== 4 && !canton) {
       alert('Bitte Kanton auswählen')
       return
     }
@@ -193,7 +193,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               </div>
             )}
 
-            {/* 2. Canton Badge Dropdown - Second (hidden for Erfahrung and Rant) */}
+            {/* 2. Canton Badge Dropdown - Second (hidden for Erfahrung and Rant, optional for Austausch) */}
             {categoryId !== 1 && categoryId !== 4 && (
               <div className="mb-4">
                 <BadgeDropdown
@@ -217,7 +217,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   badgeClassName="bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                   dropdownClassName="max-h-[66vh] overflow-y-auto"
                   className="w-full"
-                  required
+                  required={categoryId !== 3}
                 />
               </div>
             )}
@@ -312,17 +312,18 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 </select>
               </div>
 
-              {/* Canton - Hidden for Erfahrung (1) and Rant (4) */}
+              {/* Canton - Hidden for Erfahrung (1) and Rant (4), optional for Austausch (3) */}
               {categoryId !== 1 && categoryId !== 4 && (
                 <div>
                   <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">
-                    Kanton
+                    Kanton {categoryId !== 3 && '*'}
                   </label>
                   <select
                     id="canton"
                     value={canton}
                     onChange={(e) => setCanton(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                    required={categoryId !== 3}
                   >
                     {SWISS_CANTONS.map((c) => (
                       <option key={c.code} value={c.code}>
