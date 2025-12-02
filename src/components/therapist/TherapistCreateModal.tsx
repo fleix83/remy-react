@@ -62,27 +62,27 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   const permissions = usePermissions()
   const { userProfile } = useAuthStore()
 
-  // Filter designations by user's language preference, showing only long forms
+  // Filter designations by user's language preference, showing only short forms
   const filteredDesignations = useMemo(() => {
     const lang = userProfile?.language_preference || 'de'
 
     const options: Array<{ id: number; designation: Designation; displayText: string }> = []
 
     designations.forEach(d => {
-      const longForms: string[] = []
+      const shortForms: string[] = []
 
       if (lang === 'de') {
-        if (d.name_de_long_m) longForms.push(d.name_de_long_m)
-        if (d.name_de_long_w) longForms.push(d.name_de_long_w)
+        if (d.name_de_short_m) shortForms.push(d.name_de_short_m)
+        if (d.name_de_short_w) shortForms.push(d.name_de_short_w)
       } else if (lang === 'fr') {
-        if (d.name_fr_long_m) longForms.push(d.name_fr_long_m)
-        if (d.name_fr_long_w) longForms.push(d.name_fr_long_w)
+        if (d.name_fr_short_m) shortForms.push(d.name_fr_short_m)
+        if (d.name_fr_short_w) shortForms.push(d.name_fr_short_w)
       } else if (lang === 'it') {
-        if (d.name_it_long_m) longForms.push(d.name_it_long_m)
-        if (d.name_it_long_w) longForms.push(d.name_it_long_w)
+        if (d.name_it_short_m) shortForms.push(d.name_it_short_m)
+        if (d.name_it_short_w) shortForms.push(d.name_it_short_w)
       }
 
-      longForms.forEach(text => {
+      shortForms.forEach(text => {
         options.push({
           id: d.id,
           designation: d,
