@@ -61,14 +61,22 @@ const CANTONS = [
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onFiltersChange }) => {
   const { data: categories = [] } = useCategories()
-  const [localFilters, setLocalFilters] = useState<FilterState>({})
   const [designations, setDesignations] = useState<Designation[]>([])
-  const [loading, setLoading] = useState(false)
   const [therapistSearch, setTherapistSearch] = useState('')
   const [therapistSuggestions, setTherapistSuggestions] = useState<Therapist[]>([])
   const [showTherapistDropdown, setShowTherapistDropdown] = useState(false)
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
   const [isTherapistExpanded, setIsTherapistExpanded] = useState(false)
+
+  // Check if any filters are active
+  const hasActiveFilters = Boolean(
+    filters.category ||
+    filters.canton ||
+    filters.therapist ||
+    filters.designation ||
+    filters.dateFrom ||
+    filters.dateTo
+  )
   
   const postsService = new PostsService()
   const therapistsService = new TherapistsService()
@@ -78,19 +86,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
     loadDesignations()
   }, [])
 
-  // Initialize local filters from store
+  // Initialize therapist search if there's a selected therapist
   useEffect(() => {
     if (isOpen) {
-      setLocalFilters({
-        category: filters.category,
-        canton: filters.canton,
-        therapist: filters.therapist,
-        designation: filters.designation,
-        dateFrom: filters.dateFrom,
-        dateTo: filters.dateTo
-      })
-      
-      // Initialize therapist search if there's a selected therapist
       if (filters.therapist) {
         // Find the therapist by ID and set the search text
         loadTherapistById(filters.therapist)
@@ -99,7 +97,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
         setSelectedTherapist(null)
       }
     }
-  }, [isOpen, filters])
+  }, [isOpen, filters.therapist])
 
   const loadTherapistById = async (therapistId: string) => {
     try {
@@ -164,52 +162,21 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
   }
 
   const handleFilterChange = (key: keyof FilterState, value: string | number | undefined) => {
-    setLocalFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [key]: value
-    }))
+    }
+    onFiltersChange(newFilters) // Apply immediately to parent
   }
 
-  const handleApplyFilters = async () => {
-    setLoading(true)
-    try {
-      // Convert local filters to the correct format
-      const newFilters = {
-        category: localFilters.category,
-        canton: localFilters.canton,
-        therapist: localFilters.therapist,
-        designation: localFilters.designation,
-        dateFrom: localFilters.dateFrom,
-        dateTo: localFilters.dateTo,
-      }
+  const handleClearFilters = () => {
+    setTherapistSearch('')
+    setSelectedTherapist(null)
+    setShowTherapistDropdown(false)
+    setIsTherapistExpanded(false)
 
-      // Apply filters using the passed callback
-      onFiltersChange(newFilters)
-      onClose()
-    } catch (error) {
-      console.error('Error applying filters:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleClearFilters = async () => {
-    setLoading(true)
-    try {
-      setLocalFilters({})
-      setTherapistSearch('')
-      setSelectedTherapist(null)
-      setShowTherapistDropdown(false)
-      setIsTherapistExpanded(false)
-      
-      // Clear filters using the passed callback
-      onFiltersChange({})
-      onClose()
-    } catch (error) {
-      console.error('Error clearing filters:', error)
-    } finally {
-      setLoading(false)
-    }
+    onFiltersChange({}) // Clear filters immediately
+    // Don't close modal - let user see results update
   }
 
 
@@ -219,7 +186,17 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
     <div className="bg-[var(--bg-element)] rounded-lg mb-4 mx-4 md:mx-0" style={{borderRadius: '20px'}}>
         {/* Header */}
         <div className="flex items-center justify-between p-6">
-          <h2 className="text-xl font-semibold text-black">Filter</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-semibold text-black">Filter</h2>
+            {hasActiveFilters && (
+              <button
+                onClick={handleClearFilters}
+                className="text-sm text-gray-600 hover:text-gray-800 underline transition-colors"
+              >
+                Zurücksetzen
+              </button>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -237,7 +214,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             {/* Kategorien */}
             <div className="relative">
               <select
-                value={localFilters.category || ''}
+                value={filters.category || ''}
                 onChange={(e) => handleFilterChange('category', e.target.value ? parseInt(e.target.value) : undefined)}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] cursor-pointer text-sm"
               >
@@ -253,7 +230,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             {/* Kantone */}
             <div className="relative">
               <select
-                value={localFilters.canton || ''}
+                value={filters.canton || ''}
                 onChange={(e) => handleFilterChange('canton', e.target.value || undefined)}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] cursor-pointer text-sm"
               >
@@ -345,7 +322,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             {/* Berufsbezeichnung */}
             <div className="relative">
               <select
-                value={localFilters.designation || ''}
+                value={filters.designation || ''}
                 onChange={(e) => handleFilterChange('designation', e.target.value || undefined)}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] cursor-pointer text-sm"
               >
@@ -366,7 +343,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             <div className="relative">
               <input
                 type="date"
-                value={localFilters.dateFrom || ''}
+                value={filters.dateFrom || ''}
                 onChange={(e) => handleFilterChange('dateFrom', e.target.value || undefined)}
                 className="w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 placeholder="tt.mm.jjjj"
@@ -382,7 +359,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             <div className="relative">
               <input
                 type="date"
-                value={localFilters.dateTo || ''}
+                value={filters.dateTo || ''}
                 onChange={(e) => handleFilterChange('dateTo', e.target.value || undefined)}
                 className="w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 placeholder="tt.mm.jjjj"
@@ -394,28 +371,6 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Footer Actions */}
-        <div className="flex items-center justify-center p-4 space-x-3">
-          <button
-            onClick={handleClearFilters}
-            disabled={loading}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 text-sm"
-          >
-            Zurücksetzen
-          </button>
-          
-          <button
-            onClick={handleApplyFilters}
-            disabled={loading}
-            className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center space-x-2 text-sm"
-          >
-            {loading && (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            )}
-            <span>Filtern</span>
-          </button>
         </div>
     </div>
   )
