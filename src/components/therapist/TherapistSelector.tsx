@@ -49,11 +49,12 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
     // Filter by search term
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase()
-      filtered = filtered.filter(therapist => 
+      filtered = filtered.filter(therapist =>
         therapist.first_name.toLowerCase().includes(term) ||
         therapist.last_name.toLowerCase().includes(term) ||
         (therapist.institution && therapist.institution.toLowerCase().includes(term)) ||
-        therapist.designation.toLowerCase().includes(term)
+        therapist.designation.toLowerCase().includes(term) ||
+        (therapist.short_designation && therapist.short_designation.toLowerCase().includes(term))
       )
     }
 
