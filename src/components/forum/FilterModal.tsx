@@ -269,10 +269,11 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
               {/* Clear button overlay */}
               {(selectedTherapist || therapistSearch) && (
                 <div
-                  className="absolute right-0 top-0 bottom-0 rounded-r-lg flex items-center justify-center"
+                  className="absolute right-0 top-0 bottom-0 rounded-r-lg flex items-center justify-end"
                   style={{
-                    width: '60px',
-                    background: 'linear-gradient(to right, rgba(244, 146, 116, 0) 0%, rgba(244, 146, 116, 0.8) 40%, rgba(244, 146, 116, 1) 100%)'
+                    width: '100%',
+                    background: 'linear-gradient(to right, rgba(244, 146, 116, 0) 0%, rgb(255 60 0 / 0%) 40%, #ff6467 100%)',
+                    paddingRight: '15px'
                   }}
                 >
                   <button
