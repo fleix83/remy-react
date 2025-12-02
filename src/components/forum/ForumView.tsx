@@ -277,7 +277,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 <PostCard
                   key={post.id}
                   post={post}
-                  className={index === 0 ? (getActiveFilterCount > 0 ? 'mt-16' : 'mt-32') : ''}
+                  className={index === 0 ? (getActiveFilterCount > 0 ? 'mt-8' : 'mt-32') : ''}
                 />
               ))}
             </div>
