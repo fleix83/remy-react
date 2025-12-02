@@ -114,9 +114,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
 
   const loadDesignations = async () => {
     try {
-      // We'll fetch unique designations from therapists table for now
-      // In a full implementation, you'd have a designations table
-      const designations = await postsService.getDesignations()
+      const designationsService = new DesignationsService()
+      const designations = await designationsService.getActiveDesignations()
       setDesignations(designations)
     } catch (error) {
       console.error('Error loading designations:', error)
@@ -191,7 +190,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             {hasActiveFilters && (
               <button
                 onClick={handleClearFilters}
-                className="text-sm text-gray-600 hover:text-gray-800 underline transition-colors"
+                className="text-sm text-[#4785ff] hover:opacity-80 underline transition-opacity"
               >
                 Zurücksetzen
               </button>
@@ -216,7 +215,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
               <select
                 value={filters.category || ''}
                 onChange={(e) => handleFilterChange('category', e.target.value ? parseInt(e.target.value) : undefined)}
-                className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] cursor-pointer text-sm"
+                className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >
                 <option value="">Alle Kategorien</option>
                 {categories.map(category => (
@@ -232,7 +231,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
               <select
                 value={filters.canton || ''}
                 onChange={(e) => handleFilterChange('canton', e.target.value || undefined)}
-                className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] cursor-pointer text-sm"
+                className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >
                 <option value="">Alle Kantone</option>
                 {CANTONS.map(canton => (
@@ -264,7 +263,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                     setIsTherapistExpanded(false)
                   }, 200)
                 }}
-                className={`w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center placeholder-white placeholder-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] focus:text-left focus:placeholder-transparent text-sm transition-all duration-300 ${isTherapistExpanded ? 'shadow-lg' : ''}`}
+                className={`w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center placeholder-white placeholder-opacity-90 focus:outline-none focus:text-left focus:placeholder-transparent text-sm transition-all duration-300 ${isTherapistExpanded ? 'shadow-lg' : ''}`}
               />
               {/* Clear button overlay */}
               {(selectedTherapist || therapistSearch) && (
@@ -331,7 +330,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
               <select
                 value={filters.designation || ''}
                 onChange={(e) => handleFilterChange('designation', e.target.value || undefined)}
-                className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] cursor-pointer text-sm"
+                className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >
                 <option value="">Alle Bezeichnungen</option>
                 {designations.map(designation => {
@@ -352,7 +351,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 type="date"
                 value={filters.dateFrom || ''}
                 onChange={(e) => handleFilterChange('dateFrom', e.target.value || undefined)}
-                className="w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                className="w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none text-sm [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 placeholder="tt.mm.jjjj"
               />
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
@@ -368,7 +367,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 type="date"
                 value={filters.dateTo || ''}
                 onChange={(e) => handleFilterChange('dateTo', e.target.value || undefined)}
-                className="w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                className="w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none text-sm [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 placeholder="tt.mm.jjjj"
               />
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
