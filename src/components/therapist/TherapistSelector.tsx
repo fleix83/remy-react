@@ -3,6 +3,7 @@ import { TherapistsService } from '../../services/therapists.service'
 import TherapistCreateModal from './TherapistCreateModal'
 import type { Therapist } from '../../types/database.types'
 import { useAuthStore } from '../../stores/auth.store'
+import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 
 interface TherapistSelectorProps {
   selectedTherapist: Therapist | null
@@ -49,13 +50,23 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
     // Filter by search term
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase()
-      filtered = filtered.filter(therapist =>
-        therapist.first_name.toLowerCase().includes(term) ||
-        therapist.last_name.toLowerCase().includes(term) ||
-        (therapist.institution && therapist.institution.toLowerCase().includes(term)) ||
-        therapist.designation.toLowerCase().includes(term) ||
-        (therapist.short_designation && therapist.short_designation.toLowerCase().includes(term))
-      )
+      filtered = filtered.filter(therapist => {
+        // Search in name, institution, and designation fields
+        const matchesBasicFields =
+          therapist.first_name.toLowerCase().includes(term) ||
+          therapist.last_name.toLowerCase().includes(term) ||
+          (therapist.institution && therapist.institution.toLowerCase().includes(term)) ||
+          therapist.designation.toLowerCase().includes(term) ||
+          (therapist.short_designation && therapist.short_designation.toLowerCase().includes(term))
+
+        // Search in canton code and name
+        const matchesCanton = therapist.canton && (
+          therapist.canton.toLowerCase().includes(term) ||
+          SWISS_CANTONS.find(c => c.code === therapist.canton)?.name.toLowerCase().includes(term)
+        )
+
+        return matchesBasicFields || matchesCanton
+      })
     }
 
     setFilteredTherapists(filtered)
