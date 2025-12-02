@@ -274,10 +274,10 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           ) : (
             <div className="space-y-4 px-4 md:px-0">
               {displayPosts.map((post, index) => (
-                <PostCard
-                  key={post.id}
+                <PostCard 
+                  key={post.id} 
                   post={post}
-                  className={index === 0 ? 'mt-16' : ''}
+                  className={index === 0 ? 'mt-32' : ''}
                 />
               ))}
             </div>
