@@ -268,7 +268,13 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
               />
               {/* Clear button overlay */}
               {(selectedTherapist || therapistSearch) && (
-                <div className="absolute right-0 top-0 bottom-0 w-5 bg-white bg-opacity-90 rounded-r-lg flex items-center justify-center">
+                <div
+                  className="absolute right-0 top-0 bottom-0 rounded-r-lg flex items-center justify-center"
+                  style={{
+                    width: '60px',
+                    background: 'linear-gradient(to right, rgba(244, 146, 116, 0) 0%, rgba(244, 146, 116, 0.8) 40%, rgba(244, 146, 116, 1) 100%)'
+                  }}
+                >
                   <button
                     type="button"
                     onClick={() => {
@@ -278,9 +284,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                       setIsTherapistExpanded(false)
                       handleFilterChange('therapist', undefined)
                     }}
-                    className="hover:bg-gray-100 rounded-full p-1 transition-colors duration-200"
+                    className="hover:opacity-80 rounded-full p-1 transition-opacity duration-200"
                   >
-                    <svg className="w-3 h-3 text-gray-600 hover:text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
