@@ -224,10 +224,12 @@ const PostView: React.FC = () => {
             )}
           </div>
 
-          {/* Title - Auto-generated for Rant posts without title */}
-          <h1 className="text-left" style={{color: 'var(--post-title)', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
-            {getPostDisplayTitle(post.title, post.content, post.category_id)}
-          </h1>
+          {/* Title - Hidden for Rant posts, auto-generated for others */}
+          {post.category_id !== 4 && (
+            <h1 className="text-left" style={{color: 'var(--post-title)', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
+              {getPostDisplayTitle(post.title, post.content, post.category_id)}
+            </h1>
+          )}
 
           {/* User Info */}
           <div className="flex items-center" style={{ marginBottom: '32px' }}>

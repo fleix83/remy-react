@@ -365,10 +365,12 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                           </div>
                         )}
 
-                        {/* Title */}
-                        <h3 className="text-lg font-medium mb-2 text-left leading-tight" style={{color: 'var(--post-title)'}}>
-                          {post.title || 'Untitled Post'}
-                        </h3>
+                        {/* Title - Hidden for Rant posts */}
+                        {post.category_id !== 4 && (
+                          <h3 className="text-lg font-medium mb-2 text-left leading-tight" style={{color: 'var(--post-title)'}}>
+                            {post.title || 'Untitled Post'}
+                          </h3>
+                        )}
 
                         {/* Content Preview */}
                         <p className="text-gray-600 text-sm mb-3 text-left leading-relaxed">
