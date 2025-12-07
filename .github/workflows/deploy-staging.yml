@@ -25,7 +25,10 @@ jobs:
         run: npm ci
 
       - name: Build application
-        run: npm run build
+        run: |
+          # Copy staging environment file to .env.production (Vite uses .env.production for builds)
+          cp .env.staging .env.production
+          npm run build
 
       - name: Deploy to staging branch
         env:
