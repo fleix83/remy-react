@@ -57,21 +57,21 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-x-hidden">
       <div className="bg-[var(--bg-body)] w-full h-full overflow-y-auto overflow-x-hidden">
         {/* Modal Header */}
-        <div className="sticky top-0 bg-[var(--bg-body)] px-4 md:px-6 pb-0 flex items-start justify-between" style={{ paddingTop: '35px' }}>
-          <span className="inline-flex items-center px-3 py-1.5 rounded-lg font-medium bg-pink-500 text-white text-sm">
-            {item.content_type === 'post' ? 'Beitrag' : 'Kommentar'}
-          </span>
+        <div className="sticky top-0 bg-[var(--bg-body)] px-4 md:px-6 pb-0" style={{ paddingTop: '35px' }}>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-600 transition-colors flex items-center justify-center flex-shrink-0 ml-4"
-            style={{ width: '40px', height: '40px', fontWeight: '300' }}
+            className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1"
+            style={{ top: '35px', right: '25px' }}
           >
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ fontWeight: '300' }}>
+            <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
+          <div className="mb-10"></div>
+          <span className="inline-flex items-center px-3 py-1.5 rounded-lg font-medium bg-pink-500 text-white text-sm">
+            {item.content_type === 'post' ? 'Beitrag' : 'Kommentar'}
+          </span>
         </div>
-        <div className="mb-10"></div>
 
         {/* Content */}
         <div className="py-6 px-4 max-w-6xl mx-auto">

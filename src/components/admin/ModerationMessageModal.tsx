@@ -90,22 +90,21 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
-        <div className="flex items-start justify-between mb-10">
-          <h3 className="text-lg font-semibold text-gray-900 flex-1">
-            {getTitle()}
-          </h3>
-          <button
-            onClick={handleClose}
-            disabled={isProcessing}
-            className="text-gray-500 hover:text-gray-600 transition-colors flex items-center justify-center flex-shrink-0 ml-4 disabled:opacity-50"
-            style={{ width: '40px', height: '40px', fontWeight: '300' }}
-          >
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ fontWeight: '300' }}>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+      <div className="bg-white rounded-lg max-w-md w-full relative" style={{ paddingTop: '35px', paddingLeft: '24px', paddingRight: '24px', paddingBottom: '24px' }}>
+        <button
+          onClick={handleClose}
+          disabled={isProcessing}
+          className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1 disabled:opacity-50"
+          style={{ top: '35px', right: '25px' }}
+        >
+          <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div className="mb-10"></div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-10">
+          {getTitle()}
+        </h3>
         
         <p className="text-sm text-gray-600 mb-4">
           {getDescription()}
