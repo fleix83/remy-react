@@ -13,12 +13,14 @@ interface AuthState {
   // Actions
   initialize: () => Promise<void>
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, username?: string) => Promise<{ requiresConfirmation: boolean; message: string } | void>
+  register: (email: string, password: string) => Promise<{ requiresConfirmation: boolean; message: string } | void>
   logout: () => Promise<void>
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>
   resetPassword: (email: string) => Promise<void>
   updatePassword: (newPassword: string) => Promise<void>
   loadUserProfile: () => Promise<void>
+  completeOnboarding: (username: string) => Promise<void>
+  checkUsernameAvailable: (username: string) => Promise<boolean>
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -79,14 +81,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  register: async (email: string, password: string, username?: string) => {
+  register: async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: {
-          username: username || email.split('@')[0]
-        },
+        // Username will be set later during onboarding
+        // Database trigger will use email prefix as temporary username
         emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     })
@@ -187,6 +188,45 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     })
 
     if (error) throw error
+  },
+
+  completeOnboarding: async (username: string) => {
+    const { user } = get()
+    if (!user) throw new Error('Nicht authentifiziert')
+
+    // Update username and mark onboarding complete
+    const { error } = await supabase
+      .from('users')
+      .update({
+        username,
+        onboarding_complete: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', user.id)
+
+    if (error) {
+      // Handle unique constraint violation
+      if (error.code === '23505') {
+        throw new Error('Dieser Benutzername ist bereits vergeben')
+      }
+      throw error
+    }
+
+    // Reload user profile to get updated data
+    await get().loadUserProfile()
+  },
+
+  checkUsernameAvailable: async (username: string): Promise<boolean> => {
+    const { user } = get()
+
+    const { data } = await supabase
+      .from('users')
+      .select('id')
+      .eq('username', username)
+      .neq('id', user?.id || '') // Exclude current user
+      .maybeSingle()
+
+    return !data // true if no user found with this username
   }
 }))
 

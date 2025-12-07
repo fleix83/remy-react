@@ -19,10 +19,11 @@ const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
 const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
 const ConfirmEmail = lazy(() => import('./components/auth/ConfirmEmail'))
 const CommunityGuidelinesPage = lazy(() => import('./components/static/CommunityGuidelinesPage'))
+const WelcomePage = lazy(() => import('./components/auth/WelcomePage'))
 
 function App() {
   const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
-  const { user, loading } = useAuthStore()
+  const { user, userProfile, loading, completeOnboarding, checkUsernameAvailable } = useAuthStore()
   
   // Set up real-time subscriptions
   useNotificationsRealtime()
@@ -68,6 +69,18 @@ function App() {
           {/* Auth-protected routes */}
           {!user ? (
             <Route path="*" element={<AuthForm />} />
+          ) : !userProfile?.onboarding_complete ? (
+            // New user - show welcome page for onboarding
+            <>
+              {/* Allow access to community guidelines during onboarding */}
+              <Route path="/community-guidelines" element={<CommunityGuidelinesPage />} />
+              <Route path="*" element={
+                <WelcomePage
+                  onComplete={completeOnboarding}
+                  checkUsernameAvailable={checkUsernameAvailable}
+                />
+              } />
+            </>
           ) : (
             <>
               {/* PostView, TherapistDirectoryPage, and CommunityGuidelinesPage without Layout to avoid double navigation */}
@@ -105,7 +118,6 @@ function AuthForm() {
   const [searchParams] = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
   const [showRegisterForm, setShowRegisterForm] = useState(false)
   const [showLoginForm, setShowLoginForm] = useState(searchParams.get('login') === 'true')
@@ -121,7 +133,7 @@ function AuthForm() {
     setMessage('')
 
     try {
-      const result = await register(email, password, username || email.split('@')[0])
+      const result = await register(email, password)
 
       // Handle email confirmation required
       if (result?.requiresConfirmation) {
@@ -213,23 +225,6 @@ function AuthForm() {
         {/* Registration Form */}
         {showRegisterForm && !registrationComplete && (
           <form ref={formRef} onSubmit={handleRegister} className="space-y-4">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
-                Benutzername
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                autoComplete="username"
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
-                placeholder="Benutzername wählen"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
                 E-Mail

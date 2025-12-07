@@ -629,6 +629,7 @@ export type Database = {
           is_banned: boolean | null
           language_preference: string | null
           messages_active: boolean | null
+          onboarding_complete: boolean | null
           role: Database["public"]["Enums"]["user_role"] | null
           updated_at: string | null
           username: string
@@ -646,6 +647,7 @@ export type Database = {
           is_banned?: boolean | null
           language_preference?: string | null
           messages_active?: boolean | null
+          onboarding_complete?: boolean | null
           role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string | null
           username: string
@@ -663,6 +665,7 @@ export type Database = {
           is_banned?: boolean | null
           language_preference?: string | null
           messages_active?: boolean | null
+          onboarding_complete?: boolean | null
           role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string | null
           username?: string
