@@ -323,22 +323,22 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="w-full h-full overflow-y-auto" style={{ backgroundColor: '#ecffef' }}>
         {/* Header */}
-        <div className="px-4 md:px-6 pb-0" style={{ paddingTop: '35px' }}>
+        <div className="px-4 md:px-6 pb-0 flex items-start justify-between" style={{ paddingTop: '35px' }}>
+          <h2 className="font-headline font-bold text-left flex-1" style={{ color: '#4785ff', fontSize: '20px' }}>
+            {isEditMode ? 'Therapeut bearbeiten' : 'Neuen Therapeuten hinzufügen'}
+          </h2>
           <button
             onClick={handleClose}
             disabled={isSubmitting}
-            className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1 disabled:opacity-50"
-            style={{ top: '35px', right: '25px' }}
+            className="text-gray-500 hover:text-gray-600 transition-colors flex items-center justify-center flex-shrink-0 disabled:opacity-50 ml-4"
+            style={{ width: '34px', height: '34px', fontWeight: '300' }}
           >
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ fontWeight: '300' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <div className="mb-10"></div>
-          <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
-            {isEditMode ? 'Therapeut bearbeiten' : 'Neuen Therapeuten hinzufügen'}
-          </h2>
         </div>
+        <div className="mb-10"></div>
 
         {/* Form */}
         <div className="px-4 md:px-6 pb-20 md:pb-6">

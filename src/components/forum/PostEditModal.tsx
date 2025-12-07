@@ -30,21 +30,21 @@ const PostEditModal: React.FC<PostEditModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-40">
       <div className="w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto" style={{backgroundColor: '#ecffef'}}>
-        <div className="sticky top-0 px-4 md:px-6 pb-0" style={{backgroundColor: '#ecffef', paddingTop: '35px'}}>
+        <div className="sticky top-0 px-4 md:px-6 pb-0 flex items-start justify-between" style={{backgroundColor: '#ecffef', paddingTop: '35px'}}>
+          <h2 className="font-headline font-bold text-left flex-1" style={{ color: '#4785ff', fontSize: '20px' }}>
+            Beitrag bearbeiten
+          </h2>
           <button
             onClick={onClose}
-            className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1"
-            style={{ position: 'absolute', top: '35px', right: '25px' }}
+            className="text-gray-500 hover:text-gray-600 transition-colors flex items-center justify-center flex-shrink-0 ml-4"
+            style={{ width: '34px', height: '34px', fontWeight: '300' }}
           >
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ fontWeight: '300' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <div className="mb-10"></div>
-          <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
-            Beitrag bearbeiten
-          </h2>
         </div>
+        <div className="mb-10"></div>
         <div className="p-4 md:p-6 pb-20 md:pb-6">
           <PostEditor
             editMode={true}

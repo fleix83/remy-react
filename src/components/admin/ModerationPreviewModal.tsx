@@ -58,14 +58,15 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
       <div className="bg-[var(--bg-body)] w-full h-full overflow-y-auto overflow-x-hidden">
         {/* Modal Header */}
         <div className="sticky top-0 bg-[var(--bg-body)] p-4 flex items-center justify-between">
-          <span className="inline-flex items-center px-2 py-1 rounded-lg font-medium bg-pink-500 text-white text-xs">
-            Moderation Vorschau
+          <span className="inline-flex items-center px-3 py-1.5 rounded-lg font-medium bg-pink-500 text-white text-sm">
+            {item.content_type === 'post' ? 'Beitrag' : 'Kommentar'}
           </span>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-gray-500 hover:text-gray-600 transition-colors flex items-center justify-center flex-shrink-0 ml-4"
+            style={{ width: '34px', height: '34px', fontWeight: '300' }}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ fontWeight: '300' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
