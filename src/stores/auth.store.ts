@@ -88,7 +88,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       options: {
         // Username will be set later during onboarding
         // Database trigger will use email prefix as temporary username
-        emailRedirectTo: `${window.location.origin}/auth/callback`
+        emailRedirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/auth/callback`
       }
     })
 
@@ -176,7 +176,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   resetPassword: async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`
+      redirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/reset-password`
     })
 
     if (error) throw error
