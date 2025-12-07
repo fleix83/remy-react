@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { PostsService } from '../../services/posts.service'
 import { TherapistsService } from '../../services/therapists.service'
 import { DesignationsService } from '../../services/designations.service'
 import { useCategories } from '../../hooks/usePosts'
@@ -77,8 +76,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
     filters.dateFrom ||
     filters.dateTo
   )
-  
-  const postsService = new PostsService()
+
   const therapistsService = new TherapistsService()
 
   // Load designations on mount
