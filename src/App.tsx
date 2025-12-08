@@ -200,7 +200,7 @@ function AuthForm() {
         style={{
           position: 'absolute',
           left: '0%',
-          top: '0%',
+          top: '15px',
           transform: 'rotate(0deg)',
           width: '75vw',
           minWidth: showRegisterForm ? '436px' : '336px',
@@ -261,7 +261,7 @@ function AuthForm() {
               width: '100%',
               maxWidth: '500px',
               paddingLeft: 'clamp(10px, 3vw, 30px)',
-              marginTop: '-35px',
+              marginTop: '-45px',
               marginLeft: '20px'
             }}>
               {/* "Du machst eine Psychotherapie?" - moved 20px upwards */}
