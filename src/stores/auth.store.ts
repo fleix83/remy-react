@@ -21,6 +21,7 @@ interface AuthState {
   loadUserProfile: () => Promise<void>
   completeOnboarding: (username: string) => Promise<void>
   checkUsernameAvailable: (username: string) => Promise<boolean>
+  refreshSession: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -227,6 +228,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       .maybeSingle()
 
     return !data // true if no user found with this username
+  },
+
+  refreshSession: async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (session?.user) {
+      set({ user: session.user, session })
+      await get().loadUserProfile()
+    }
   }
 }))
 

@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { supabase } from '../../lib/supabase'
+import { useAuthStore } from '../../stores/auth.store'
 
 interface WelcomePageProps {
   onComplete: (username: string) => Promise<void>
@@ -7,10 +9,18 @@ interface WelcomePageProps {
 }
 
 const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvailable }) => {
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const { refreshSession } = useAuthStore()
   const [username, setUsername] = useState('')
   const [error, setError] = useState('')
   const [isChecking, setIsChecking] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Check if we have token params (coming from email confirmation link)
+  const tokenHash = searchParams.get('token_hash')
+  const tokenType = searchParams.get('type')
+  const needsEmailConfirmation = !!(tokenHash && tokenType)
 
   const validateUsername = (value: string): string | null => {
     if (value.length < 2) {
@@ -81,7 +91,35 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
         return
       }
 
+      // If we have token params, verify the email first (this also logs the user in)
+      if (needsEmailConfirmation) {
+        const { error: verifyError } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: tokenType as 'signup' | 'email' | 'recovery' | 'invite' | 'email_change',
+        })
+
+        if (verifyError) {
+          // Translate common errors to German
+          let errorMessage = verifyError.message
+          if (verifyError.message.includes('expired')) {
+            errorMessage = 'Der Bestätigungslink ist abgelaufen. Bitte registriere dich erneut.'
+          } else if (verifyError.message.includes('invalid')) {
+            errorMessage = 'Der Bestätigungslink ist ungültig. Bitte registriere dich erneut.'
+          }
+          setError(errorMessage)
+          setIsSubmitting(false)
+          return
+        }
+
+        // Refresh the session to get the authenticated user
+        await refreshSession()
+      }
+
+      // Complete onboarding (saves username and sets onboarding_complete)
       await onComplete(username)
+
+      // Navigate to home
+      navigate('/')
     } catch (err) {
       console.error('Error completing onboarding:', err)
       setError(err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten')
