@@ -200,11 +200,13 @@ function AuthForm() {
         style={{
           position: 'absolute',
           left: '0%',
-          bottom: '-9%',
+          top: '0%',
           transform: 'rotate(0deg)',
           width: '75vw',
           minWidth: showRegisterForm ? '436px' : '336px',
-          height: 'auto',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'left bottom',
           zIndex: 1,
           pointerEvents: 'none'
         }}
@@ -260,18 +262,18 @@ function AuthForm() {
               maxWidth: '500px',
               paddingLeft: 'clamp(10px, 3vw, 30px)',
               marginTop: '-35px',
-              marginLeft: '30px'
+              marginLeft: '20px'
             }}>
               {/* "Du machst eine Psychotherapie?" - moved 20px upwards */}
               <div style={{
                 fontFamily: '"Nunito", sans-serif',
                 fontWeight: 700,
-                fontSize: '36px',
+                fontSize: '32px',
                 lineHeight: '1.0',
                 color: '#5482ff',
                 letterSpacing: '0.01em',
                 marginTop: '10px',
-                marginBottom: '18px',
+                marginBottom: '12px',
                 textAlign: 'left'
               }}>
                 Du machst eine Psychotherapie?
