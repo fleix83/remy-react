@@ -200,13 +200,11 @@ function AuthForm() {
         style={{
           position: 'absolute',
           left: '0%',
-          top: '15px',
+          top: 0,
           transform: 'rotate(0deg)',
           width: '75vw',
           minWidth: showRegisterForm ? '436px' : '336px',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'left bottom',
+          height: 'auto',
           zIndex: 1,
           pointerEvents: 'none'
         }}
