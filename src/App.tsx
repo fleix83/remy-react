@@ -65,6 +65,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/callback" element={<ConfirmEmail />} />
+          <Route path="/auth/confirm" element={<ConfirmEmail />} />
 
           {/* Auth-protected routes */}
           {!user ? (
