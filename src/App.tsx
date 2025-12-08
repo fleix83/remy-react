@@ -187,119 +187,273 @@ function AuthForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#d5f4da', position: 'relative', overflow: 'hidden' }}>
-      <div className="max-w-md w-full" style={{ padding: '9px', position: 'relative', zIndex: 10 }}>
-        {/* Welcome Text */}
+    <div className="min-h-screen flex py-8 px-4" style={{
+      background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Large sofa - exact positioning, min-width changes on register form */}
+      <img
+        src="/images/sofa-landing.png"
+        alt=""
+        className="block md:hidden"
+        style={{
+          position: 'absolute',
+          left: '0%',
+          bottom: '-9%',
+          transform: 'rotate(0deg)',
+          width: '75vw',
+          minWidth: showRegisterForm ? '436px' : '336px',
+          height: 'auto',
+          zIndex: 1,
+          pointerEvents: 'none'
+        }}
+      />
+
+      {/* Desktop version - different positioning */}
+      <img
+        src="/images/sofa-landing.png"
+        alt=""
+        className="hidden md:block"
+        style={{
+          position: 'absolute',
+          left: '-100px',
+          bottom: '-50px',
+          transform: 'rotate(15.78deg)',
+          width: '500px',
+          height: 'auto',
+          zIndex: 1,
+          pointerEvents: 'none',
+          opacity: 0.7
+        }}
+      />
+
+      <div className="w-full" style={{ position: 'relative', zIndex: 10 }}>
+        {/* Welcome Text - Matching mockup exactly */}
         {!showLoginForm && (
-          <div className="mb-8" style={{ textAlign: 'left', marginTop: '60px' }}>
-            <p className="font-body text-[27px] font-semibold" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.3', hyphens: 'auto' } as React.CSSProperties}>
-              Du machst eine Psychotherapie? Auf <span className="text-[60px]" style={{ fontFamily: 'Gaegu, cursive', color: 'var(--primary)', fontWeight: 'bold', display: 'inline-block', lineHeight: '0.5', verticalAlign: 'middle' }}>REMY</span> kannst du dich anonym mit Gleichgesinnten austauschen, deine Erfahrungen mit Therapeuten teilen oder nach neuen Therapeuten suchen.
-            </p>
-            <p className="font-body text-[20px] font-semibold" style={{ color: '#144220', fontWeight: 600, lineHeight: '1.3', hyphens: 'auto', textDecoration: 'underline', textDecorationColor: 'var(--primary)', textDecorationThickness: '3px', textUnderlineOffset: '4px', marginTop: '20px', marginBottom: '30px' } as React.CSSProperties}>
-              Melde dich jetzt anonym an und schau herein!
-            </p>
-          </div>
-        )}
-
-        {/* Registration Button - Initial State */}
-        {!showRegisterForm && !showLoginForm && (
-          <div style={{ textAlign: 'left' }}>
-            <button
-              onClick={handleRegisterClick}
-              className="w-full px-8 py-3 text-white font-medium text-lg rounded-lg transition-colors"
-              style={{ backgroundColor: 'var(--primary)' }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              Registrieren
-            </button>
-            <div className="mt-4">
-              <span className="font-body text-[16px]" style={{ color: '#144220' }}>
-                Schon registriert? Weiter zum{' '}
-              </span>
-              <button
-                onClick={handleLoginClick}
-                className="font-body text-[16px] underline"
-                style={{ color: 'var(--primary)' }}
-              >
-                Login
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Registration Form */}
-        {showRegisterForm && !registrationComplete && (
-          <form ref={formRef} onSubmit={handleRegister} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
-                E-Mail
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
-                placeholder="deine@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            paddingLeft: 'clamp(20px, 5vw, 40px)',
+            paddingRight: 'clamp(20px, 5vw, 40px)',
+            paddingTop: 'clamp(20px, 4vh, 40px)'
+          }}>
+            {/* Logo and claim image - upper right corner */}
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginBottom: 'clamp(100px, 20vh, 180px)', marginTop: '-20px' }}>
+              <img
+                src="/images/logo-claim-landing.png"
+                alt="REMY - Forum für Menschen in Psychotherapie"
+                style={{
+                  width: 'clamp(180px, 42vw, 300px)',
+                  height: 'auto'
+                }}
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
-                Passwort
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            {message && (
-              <div className={`rounded-lg p-4 ${
-                message.includes('error') || message.includes('Error')
-                  ? 'bg-red-50 border border-red-200 text-red-700'
-                  : 'bg-green-50 border border-green-200 text-green-700'
-              }`}>
-                {message}
+            {/* Text and CTA group - moved 30px to the right, 15px more upwards */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              width: '100%',
+              maxWidth: '500px',
+              paddingLeft: 'clamp(10px, 3vw, 30px)',
+              marginTop: '-35px',
+              marginLeft: '30px'
+            }}>
+              {/* "Du machst eine Psychotherapie?" - moved 20px upwards */}
+              <div style={{
+                fontFamily: '"Nunito", sans-serif',
+                fontWeight: 700,
+                fontSize: '36px',
+                lineHeight: '1.0',
+                color: '#5482ff',
+                letterSpacing: '0.01em',
+                marginTop: '10px',
+                marginBottom: '18px',
+                textAlign: 'left'
+              }}>
+                Du machst eine Psychotherapie?
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 text-white font-medium text-lg rounded-lg transition-colors disabled:opacity-50"
-              style={{ backgroundColor: 'var(--primary)' }}
-              onMouseEnter={(e) => !loading && (e.currentTarget.style.opacity = '0.9')}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              {loading ? 'Loading...' : 'Bestätigen'}
-            </button>
+              {/* Subtext - no change */}
+              <div style={{
+                fontFamily: '"Nunito", sans-serif',
+                fontWeight: 600,
+                fontSize: 'clamp(17px, 4vw, 24px)',
+                lineHeight: '1.35',
+                color: '#5482ff',
+                letterSpacing: '0.01em',
+                marginBottom: 'clamp(35px, 7vh, 50px)',
+                textAlign: 'left'
+              }}>
+                Tausche dich anonym aus mit Gleichgesinnten.
+              </div>
 
-            <div className="text-center mt-4">
-              <span className="font-body text-[16px]" style={{ color: '#144220' }}>
-                Schon registriert?{' '}
-              </span>
+              {/* Registration Button - moved 35px upwards */}
               <button
-                type="button"
-                onClick={handleLoginClick}
-                className="font-body text-[16px] underline"
-                style={{ color: 'var(--primary)' }}
+                onClick={handleRegisterClick}
+                style={{
+                  width: '60vw',
+                  maxWidth: '400px',
+                  padding: 'clamp(13px, 3vh, 16px) 28px',
+                  backgroundColor: '#5482ff',
+                  color: 'white',
+                  fontFamily: '"Nunito Sans", sans-serif',
+                  fontSize: 'clamp(19px, 4.2vw, 24px)',
+                  fontWeight: 600,
+                  letterSpacing: '-0.01em',
+                  borderRadius: '12px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 4px 12px rgba(84, 130, 255, 0.3)',
+                  marginTop: '-35px',
+                  marginBottom: 'clamp(18px, 3.5vh, 26px)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#4070e0'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(84, 130, 255, 0.4)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#5482ff'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(84, 130, 255, 0.3)'
+                }}
               >
-                Login
+                Registrieren
               </button>
+
+              {/* Login link - left aligned */}
+              <div style={{ textAlign: 'left', background: 'transparent' }}>
+                <span style={{
+                  color: '#e9eaee',
+                  fontFamily: '"Nunito Sans", sans-serif',
+                  fontSize: 'clamp(14px, 3.2vw, 17px)',
+                  fontWeight: 600,
+                  background: 'transparent'
+                }}>
+                  Schon registriert? Weiter zum{' '}
+                </span>
+                <button
+                  onClick={handleLoginClick}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#5482ff',
+                    fontFamily: '"Nunito Sans", sans-serif',
+                    fontSize: 'clamp(14px, 3.2vw, 17px)',
+                    fontWeight: 700,
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    padding: 0
+                  }}
+                >
+                  Login
+                </button>
+              </div>
             </div>
-          </form>
+          </div>
+        )}
+
+        {/* Registration Form - aligned with register button */}
+        {showRegisterForm && !registrationComplete && (
+          <div style={{
+            marginLeft: '30px',
+            paddingLeft: 'clamp(10px, 3vw, 30px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            marginTop: '20px'
+          }}>
+            <form ref={formRef} onSubmit={handleRegister} className="space-y-4" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              width: '100%',
+              marginLeft: '20px'
+            }}>
+              <div style={{ width: '60vw', maxWidth: '400px' }}>
+                <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: '#e9eaee', textAlign: 'left' }}>
+                  E-Mail
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
+                  style={{ width: '100%' }}
+                  placeholder="deine@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div style={{ width: '60vw', maxWidth: '400px' }}>
+                <label htmlFor="password" className="block text-sm font-medium mb-1" style={{ color: '#e9eaee', textAlign: 'left' }}>
+                  Passwort
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
+                  style={{ width: '100%' }}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              {message && (
+                <div
+                  className={`rounded-lg p-4 ${
+                    message.includes('error') || message.includes('Error')
+                      ? 'bg-red-50 border border-red-200 text-red-700'
+                      : 'bg-green-50 border border-green-200 text-green-700'
+                  }`}
+                  style={{ width: '60vw', maxWidth: '400px' }}
+                >
+                  {message}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="py-3 text-white font-medium text-lg rounded-lg transition-colors disabled:opacity-50"
+                style={{
+                  backgroundColor: '#5482ff',
+                  width: '60vw',
+                  maxWidth: '400px'
+                }}
+                onMouseEnter={(e) => !loading && (e.currentTarget.style.opacity = '0.9')}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+              >
+                {loading ? 'Loading...' : 'Bestätigen'}
+              </button>
+
+              <div className="text-left mt-4">
+                <span className="font-body text-[16px]" style={{ color: '#e9eaee' }}>
+                  Schon registriert?{' '}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLoginClick}
+                  className="font-body text-[16px] underline"
+                  style={{ color: '#e9eaee' }}
+                >
+                  Login
+                </button>
+              </div>
+            </form>
+          </div>
         )}
 
         {/* Registration Complete - Email Confirmation Required */}
