@@ -1,34 +1,119 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 
 const ConfirmEmail: React.FC = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [errorDescription, setErrorDescription] = useState<string | null>(null)
+  const [showConfirmButton, setShowConfirmButton] = useState(false)
+  const [tokenHash, setTokenHash] = useState<string | null>(null)
+  const [tokenType, setTokenType] = useState<string | null>(null)
 
   useEffect(() => {
     const handleEmailConfirmation = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
+        // Check for token_hash in query params (custom email template approach)
+        // This prevents email prefetching from consuming the token
+        const queryTokenHash = searchParams.get('token_hash')
+        const queryType = searchParams.get('type')
 
-        if (error) throw error
+        if (queryTokenHash && queryType) {
+          // Custom email template flow - show button to confirm
+          setTokenHash(queryTokenHash)
+          setTokenType(queryType)
+          setShowConfirmButton(true)
+          setLoading(false)
+          return
+        }
+
+        // Check if there's an error in the URL hash (from Supabase redirect)
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
+        const urlError = hashParams.get('error')
+        const urlErrorCode = hashParams.get('error_code')
+        const urlErrorDescription = hashParams.get('error_description')
+
+        if (urlError) {
+          // Translate common Supabase error codes to German
+          let errorMessage = 'Ein Fehler ist aufgetreten'
+          let errorDetails = urlErrorDescription?.replace(/\+/g, ' ') || ''
+
+          if (urlErrorCode === 'otp_expired') {
+            errorMessage = 'Der Bestätigungslink ist abgelaufen'
+            errorDetails = 'Der Link wurde möglicherweise bereits verwendet oder ist abgelaufen. Bitte registriere dich erneut.'
+          } else if (urlErrorCode === 'access_denied') {
+            errorMessage = 'Zugriff verweigert'
+          }
+
+          setError(errorMessage)
+          setErrorDescription(errorDetails)
+          setLoading(false)
+          return
+        }
+
+        // No error in URL - try to get session (standard flow)
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+        if (sessionError) throw sessionError
 
         if (session) {
           // Success - redirect to home after 2 seconds
           setTimeout(() => navigate('/'), 2000)
         } else {
-          setError('Bestätigung fehlgeschlagen. Bitte versuche es erneut.')
-          setLoading(false)
+          // Try one more time after a delay
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          const { data: { session: retrySession } } = await supabase.auth.getSession()
+
+          if (retrySession) {
+            setTimeout(() => navigate('/'), 2000)
+          } else {
+            setError('Bestätigung fehlgeschlagen')
+            setErrorDescription('Die Sitzung konnte nicht erstellt werden. Bitte versuche es erneut oder melde dich direkt an.')
+            setLoading(false)
+          }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten')
+        setError('Ein Fehler ist aufgetreten')
+        setErrorDescription(err instanceof Error ? err.message : 'Unbekannter Fehler')
         setLoading(false)
       }
     }
 
     handleEmailConfirmation()
-  }, [navigate])
+  }, [navigate, searchParams])
+
+  // Handle manual confirmation button click
+  const handleConfirmClick = async () => {
+    if (!tokenHash || !tokenType) return
+
+    setLoading(true)
+    setShowConfirmButton(false)
+
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: tokenType as 'signup' | 'email' | 'recovery' | 'invite' | 'email_change',
+      })
+
+      if (error) {
+        setError('Bestätigung fehlgeschlagen')
+        setErrorDescription(error.message)
+        setLoading(false)
+        return
+      }
+
+      // Success - redirect to home
+      setTimeout(() => navigate('/'), 2000)
+    } catch (err) {
+      setError('Ein Fehler ist aufgetreten')
+      setErrorDescription(err instanceof Error ? err.message : 'Unbekannter Fehler')
+      setLoading(false)
+    }
+  }
 
   return (
     <div
@@ -43,19 +128,50 @@ const ConfirmEmail: React.FC = () => {
               E-Mail wird bestätigt...
             </p>
           </>
+        ) : showConfirmButton ? (
+          <>
+            <div className="text-blue-600 mb-4 text-5xl">✉️</div>
+            <p className="text-lg mb-2 font-semibold" style={{ color: '#144220' }}>
+              E-Mail-Bestätigung
+            </p>
+            <p className="text-sm mb-6" style={{ color: '#144220', opacity: 0.8 }}>
+              Klicke auf den Button unten, um deine E-Mail-Adresse zu bestätigen.
+            </p>
+            <button
+              onClick={handleConfirmClick}
+              className="w-full px-6 py-3 rounded-lg font-semibold"
+              style={{ backgroundColor: 'var(--primary)', color: 'white' }}
+            >
+              E-Mail bestätigen
+            </button>
+          </>
         ) : error ? (
           <>
             <div className="text-red-600 mb-4 text-5xl">✗</div>
-            <p className="text-lg mb-4" style={{ color: '#144220' }}>
+            <p className="text-lg mb-2 font-semibold" style={{ color: '#144220' }}>
               {error}
             </p>
-            <button
-              onClick={() => navigate('/?login=true')}
-              className="px-6 py-2 rounded-lg"
-              style={{ backgroundColor: 'var(--primary)', color: 'white' }}
-            >
-              Zum Login
-            </button>
+            {errorDescription && (
+              <p className="text-sm mb-6" style={{ color: '#144220', opacity: 0.8 }}>
+                {errorDescription}
+              </p>
+            )}
+            <div className="space-y-3">
+              <button
+                onClick={() => navigate('/')}
+                className="block w-full px-6 py-2 rounded-lg"
+                style={{ backgroundColor: 'var(--primary)', color: 'white' }}
+              >
+                Erneut registrieren
+              </button>
+              <button
+                onClick={() => navigate('/?login=true')}
+                className="block w-full px-6 py-2 rounded-lg border"
+                style={{ borderColor: 'var(--primary)', color: 'var(--primary)', backgroundColor: 'transparent' }}
+              >
+                Zum Login
+              </button>
+            </div>
           </>
         ) : (
           <>
