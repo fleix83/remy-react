@@ -187,11 +187,17 @@ function AuthForm() {
   }
 
   return (
-    <div className="min-h-screen flex py-8 px-4" style={{
-      background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
-      position: 'relative',
-      overflow: 'hidden'
+    <div style={{
+      height: '100vh',
+      overflowY: 'auto',
+      overflowX: 'hidden'
     }}>
+      {/* First Section - Landing Page */}
+      <div className="min-h-screen flex py-8 px-4" style={{
+        background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
       {/* Large sofa - exact positioning, min-width changes on register form */}
       <img
         src="/images/sofa-landing.png"
@@ -580,6 +586,50 @@ function AuthForm() {
         )}
       </div>
     </div>
+
+    {/* Second Section - Über Remy */}
+    <div className="min-h-screen flex items-center justify-center px-6 py-12 md:hidden" style={{
+      background: 'linear-gradient(172deg, #c8e6c9 0.63%, rgb(240, 255, 242) 116.79%)',
+      position: 'relative'
+    }}>
+      <div style={{
+        maxWidth: '600px',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingTop: '40px',
+        paddingBottom: '60px'
+      }}>
+        {/* Über Remy Text */}
+        <div style={{
+          fontFamily: 'Nunito, sans-serif',
+          fontWeight: 600,
+          fontSize: '24px',
+          lineHeight: '1.3',
+          color: 'rgb(84, 130, 255)',
+          letterSpacing: '0.01em',
+          textAlign: 'left',
+          marginBottom: '60px',
+          paddingLeft: '10px',
+          paddingRight: '10px'
+        }}>
+          Psychotherapie ist eine intime Angelegenheit. Trotzdem ist der Bedarf gross nicht nur darin sondern auch darüber zu sprechen. Auf Remy kannst du dich anonym mit Gleichgesinnten austauschen, deine subjektive Erlebnisse mit Therapeut:innen teilen oder die Erfahrungen von anderen zu Rate ziehen, um nach neuen Therapeut:innen suchen. Remy ist eine Patienteninitiative mit Ausrichtung auf die Schweiz und unabhängig von staatlichen oder privaten Stellen.
+        </div>
+
+        {/* Logo at bottom */}
+        <img
+          src="/images/ueber.png"
+          alt="Remy Logo"
+          style={{
+            width: 'clamp(120px, 30vw, 180px)',
+            height: 'auto',
+            marginTop: 'auto'
+          }}
+        />
+      </div>
+    </div>
+  </div>
   )
 }
 
