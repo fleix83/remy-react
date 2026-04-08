@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && cp .htaccess dist/.htaccess && sed 's|\\./assets/|./dist/assets/|g' dist/index.html > index.html",
+    "build": "tsc -b && vite build && cp .htaccess dist/.htaccess && sed 's|\\./assets/|./dist/assets/|g' dist/index.html > index.prod.html",
     "lint": "eslint .",
     "preview": "vite preview"
   },

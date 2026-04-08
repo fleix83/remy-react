@@ -119,8 +119,6 @@ function App() {
   )
 }
 
-const IMG_BASE = import.meta.env.DEV ? '' : './dist'
-
 function AuthForm() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -217,7 +215,7 @@ function AuthForm() {
 
       {/* Dog illustration - upper left, partially cropped */}
       <img
-        src={`${IMG_BASE}/images/dog.png`}
+        src={`${import.meta.env.PROD ? './dist' : ''}/images/dog.png`}
         alt=""
         style={{
           position: 'absolute',
@@ -232,7 +230,7 @@ function AuthForm() {
 
       {/* Saul illustration - wavy river, middle area */}
       <img
-        src={`${IMG_BASE}/images/saul.png`}
+        src={`${import.meta.env.PROD ? './dist' : ''}/images/saul.png`}
         alt=""
         style={{
           position: 'absolute',
@@ -247,7 +245,7 @@ function AuthForm() {
 
       {/* Gate illustration - bottom area */}
       <img
-        src={`${IMG_BASE}/images/gate.png`}
+        src={`${import.meta.env.PROD ? './dist' : ''}/images/gate.png`}
         alt=""
         style={{
           position: 'absolute',
@@ -276,7 +274,7 @@ function AuthForm() {
               paddingRight: '24px'
             }}>
               <img
-                src={`${IMG_BASE}/images/logo_claim.png`}
+                src={`${import.meta.env.PROD ? './dist' : ''}/images/logo_claim.png`}
                 alt="REMY - Forum für Menschen in Psychotherapie"
                 style={{
                   width: 'clamp(180px, 42vw, 280px)',
