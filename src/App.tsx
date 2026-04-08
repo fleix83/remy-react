@@ -194,7 +194,7 @@ function AuthForm() {
     }}>
       {/* First Section - Landing Page */}
       <div style={{
-        minHeight: '100vh',
+        height: '100vh',
         background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
         position: 'relative',
         overflow: 'hidden',
@@ -233,6 +233,20 @@ function AuthForm() {
         }}
       />
 
+      {/* Gate illustration - bottom area */}
+      <img
+        src={`${import.meta.env.PROD ? './dist' : ''}/images/gate.png`}
+        alt=""
+        style={{
+          position: 'absolute',
+          bottom: '-5%',
+          left: '0',
+          width: '100%',
+          height: 'auto',
+          zIndex: 3,
+          pointerEvents: 'none'
+        }}
+      />
 
       <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Welcome Text - Matching mockup exactly */}
@@ -554,19 +568,6 @@ function AuthForm() {
           </form>
         )}
       </div>
-
-      {/* Gate illustration - bottom of first section, flows into view on scroll */}
-      <img
-        src={`${import.meta.env.PROD ? './dist' : ''}/images/gate.png`}
-        alt=""
-        style={{
-          display: 'block',
-          width: '100%',
-          height: 'auto',
-          marginTop: '-8vh',
-          pointerEvents: 'none'
-        }}
-      />
     </div>
 
     {/* Second Section - Über Remy */}
@@ -584,8 +585,8 @@ function AuthForm() {
       }}>
         {/* Über Remy Text */}
         <div style={{
-          fontFamily: '"Paprika", cursive',
-          fontWeight: 400,
+          fontFamily: 'Nunito, sans-serif',
+          fontWeight: 600,
           fontSize: '24px',
           lineHeight: '1.45',
           color: 'rgb(84, 130, 255)',
