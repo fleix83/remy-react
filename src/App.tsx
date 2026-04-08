@@ -202,16 +202,6 @@ function AuthForm() {
         flexDirection: 'column'
       }}>
 
-      {/* Blue gradient bar */}
-      <div className="md:hidden" style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '65px',
-        background: 'linear-gradient(rgb(230, 238, 255) 0%, rgb(239 250 241 / 0%) 100%, rgb(239 250 241) 100%)',
-        zIndex: 5
-      }} />
 
       {/* Dog illustration - upper left, partially cropped */}
       <img
@@ -287,7 +277,7 @@ function AuthForm() {
             <div style={{ flex: 1 }} />
 
             {/* Text and CTA group - bottom portion */}
-            <div style={{
+            <div onClick={() => { if (showRegisterForm) { setShowRegisterForm(false); setMessage('') } }} style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -295,53 +285,133 @@ function AuthForm() {
               paddingRight: '24px',
               paddingBottom: '12vh'
             }}>
-              {/* Tagline */}
-              <div style={{
-                fontFamily: '"Gaegu", cursive',
-                fontWeight: 700,
-                fontSize: '56px',
-                lineHeight: '45px',
-                color: 'rgb(84, 130, 255)',
-                marginBottom: '28px',
-                textAlign: 'left',
-                width: '100%',
-                maxWidth: '500px'
-              }}>
-                Du machst eine Psycho­therapie?
-              </div>
+              {/* Tagline - hidden when register form is open */}
+              {!showRegisterForm && (
+                <div style={{
+                  fontFamily: '"Gaegu", cursive',
+                  fontWeight: 700,
+                  fontSize: '56px',
+                  lineHeight: '45px',
+                  color: 'rgb(84, 130, 255)',
+                  marginBottom: '28px',
+                  textAlign: 'left',
+                  width: '100%',
+                  maxWidth: '500px'
+                }}>
+                  Du machst eine Psycho­therapie?
+                </div>
+              )}
 
-              {/* Registration Button */}
-              <button
-                onClick={handleRegisterClick}
-                style={{
-                  width: '65vw',
-                  maxWidth: '360px',
-                  padding: '14px 28px',
-                  backgroundColor: 'rgb(84, 130, 255)',
-                  color: 'white',
-                  fontFamily: '"Nunito Sans", sans-serif',
-                  fontSize: '20px',
-                  fontWeight: 600,
-                  letterSpacing: '0.02em',
-                  borderRadius: '25px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: '0.2s',
-                  boxShadow: 'rgba(84, 130, 255, 0.3) 0px 4px 12px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#4070e0'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(84, 130, 255, 0.4)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#5482ff'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(84, 130, 255, 0.3)'
-                }}
-              >
-                Registrieren
-              </button>
+              {/* Registration Button - hidden when form is shown */}
+              {!showRegisterForm && (
+                <button
+                  onClick={handleRegisterClick}
+                  style={{
+                    width: '65vw',
+                    maxWidth: '360px',
+                    padding: '14px 28px',
+                    backgroundColor: 'rgb(84, 130, 255)',
+                    color: 'white',
+                    fontFamily: '"Nunito Sans", sans-serif',
+                    fontSize: '20px',
+                    fontWeight: 600,
+                    letterSpacing: '0.02em',
+                    borderRadius: '25px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: '0.2s',
+                    boxShadow: 'rgba(84, 130, 255, 0.3) 0px 4px 12px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#4070e0'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(84, 130, 255, 0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#5482ff'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(84, 130, 255, 0.3)'
+                  }}
+                >
+                  Registrieren
+                </button>
+              )}
+
+              {/* Inline Registration Form */}
+              {showRegisterForm && !registrationComplete && (
+                <form ref={formRef} onSubmit={handleRegister} onClick={(e) => e.stopPropagation()} style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  width: '100%',
+                  gap: '12px'
+                }}>
+                  <div style={{ width: '65vw', maxWidth: '360px' }}>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      className="px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
+                      style={{ width: '100%', fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
+                      placeholder="E-Mail"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+
+                  <div style={{ width: '65vw', maxWidth: '360px' }}>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      className="px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
+                      style={{ width: '100%', fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
+                      placeholder="Passwort"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+
+                  {message && (
+                    <div
+                      className={`rounded-lg p-3 text-sm ${
+                        message.includes('error') || message.includes('Error')
+                          ? 'bg-red-50 border border-red-200 text-red-700'
+                          : 'bg-green-50 border border-green-200 text-green-700'
+                      }`}
+                      style={{ width: '65vw', maxWidth: '360px' }}
+                    >
+                      {message}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      width: '65vw',
+                      maxWidth: '360px',
+                      padding: '14px 28px',
+                      backgroundColor: 'rgb(84, 130, 255)',
+                      color: 'white',
+                      fontFamily: '"Nunito Sans", sans-serif',
+                      fontSize: '20px',
+                      fontWeight: 600,
+                      borderRadius: '25px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: '0.2s',
+                      opacity: loading ? 0.5 : 1
+                    }}
+                  >
+                    {loading ? 'Loading...' : 'Registrieren'}
+                  </button>
+                </form>
+              )}
 
               {/* Login link */}
               <div style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
@@ -372,104 +442,6 @@ function AuthForm() {
                 </button>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Registration Form - aligned with register button */}
-        {showRegisterForm && !registrationComplete && (
-          <div style={{
-            marginLeft: '30px',
-            paddingLeft: 'clamp(10px, 3vw, 30px)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            marginTop: '20px'
-          }}>
-            <form ref={formRef} onSubmit={handleRegister} className="space-y-4" style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              width: '100%',
-              marginLeft: '20px'
-            }}>
-              <div style={{ width: '60vw', maxWidth: '400px' }}>
-                <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: '#e9eaee', textAlign: 'left' }}>
-                  E-Mail
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
-                  style={{ width: '100%' }}
-                  placeholder="deine@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div style={{ width: '60vw', maxWidth: '400px' }}>
-                <label htmlFor="password" className="block text-sm font-medium mb-1" style={{ color: '#e9eaee', textAlign: 'left' }}>
-                  Passwort
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
-                  style={{ width: '100%' }}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              {message && (
-                <div
-                  className={`rounded-lg p-4 ${
-                    message.includes('error') || message.includes('Error')
-                      ? 'bg-red-50 border border-red-200 text-red-700'
-                      : 'bg-green-50 border border-green-200 text-green-700'
-                  }`}
-                  style={{ width: '60vw', maxWidth: '400px' }}
-                >
-                  {message}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="py-3 text-white font-medium text-lg rounded-lg transition-colors disabled:opacity-50"
-                style={{
-                  backgroundColor: '#5482ff',
-                  width: '60vw',
-                  maxWidth: '400px'
-                }}
-                onMouseEnter={(e) => !loading && (e.currentTarget.style.opacity = '0.9')}
-                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-              >
-                {loading ? 'Loading...' : 'Bestätigen'}
-              </button>
-
-              <div className="text-left mt-4">
-                <span className="font-body text-[16px]" style={{ color: '#e9eaee' }}>
-                  Schon registriert?{' '}
-                </span>
-                <button
-                  type="button"
-                  onClick={handleLoginClick}
-                  className="font-body text-[16px] underline"
-                  style={{ color: '#e9eaee' }}
-                >
-                  Login
-                </button>
-              </div>
-            </form>
           </div>
         )}
 
