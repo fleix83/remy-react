@@ -193,130 +193,141 @@ function AuthForm() {
       overflowX: 'hidden'
     }}>
       {/* First Section - Landing Page */}
-      <div className="min-h-screen flex py-8 px-4" style={{
+      <div style={{
+        height: '100vh',
         background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column'
       }}>
-      {/* Large sofa - exact positioning, min-width changes on register form */}
+
+      {/* Blue gradient bar */}
+      <div className="md:hidden" style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '65px',
+        background: 'linear-gradient(rgb(230, 238, 255) 0%, rgb(239 250 241 / 0%) 100%, rgb(239 250 241) 100%)',
+        zIndex: 5
+      }} />
+
+      {/* Dog illustration - upper left, partially cropped */}
       <img
-        src="/images/sofa-landing.png"
+        src="/images/dog.png"
         alt=""
-        className="block md:hidden"
         style={{
           position: 'absolute',
+          top: '5%',
           left: '0%',
-          top: 0,
-          transform: 'rotate(0deg)',
-          width: '75vw',
-          minWidth: showRegisterForm ? '436px' : '336px',
-          height: 'auto',
+          width: '100%',
+          height: '57%',
           zIndex: 1,
           pointerEvents: 'none'
         }}
       />
 
-      {/* Desktop version - different positioning */}
+      {/* Saul illustration - wavy river, middle area */}
       <img
-        src="/images/sofa-landing.png"
+        src="/images/saul.png"
         alt=""
-        className="hidden md:block"
         style={{
           position: 'absolute',
-          left: '-100px',
-          bottom: '-50px',
-          transform: 'rotate(15.78deg)',
-          width: '500px',
+          top: '0%',
+          left: '0%',
+          width: '41%',
           height: 'auto',
-          zIndex: 1,
-          pointerEvents: 'none',
-          opacity: 0.7
+          zIndex: 2,
+          pointerEvents: 'none'
         }}
       />
 
-      <div className="w-full" style={{ position: 'relative', zIndex: 10 }}>
+      {/* Gate illustration - bottom area */}
+      <img
+        src="/images/gate.png"
+        alt=""
+        style={{
+          position: 'absolute',
+          bottom: '-5%',
+          left: '0',
+          width: '100%',
+          height: 'auto',
+          zIndex: 3,
+          pointerEvents: 'none'
+        }}
+      />
+
+      <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Welcome Text - Matching mockup exactly */}
         {!showLoginForm && (
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'flex-start',
-            paddingLeft: 'clamp(20px, 5vw, 40px)',
-            paddingRight: 'clamp(20px, 5vw, 40px)',
-            paddingTop: 'clamp(20px, 4vh, 40px)'
+            height: '100%'
           }}>
-            {/* Logo and claim image - upper right corner */}
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginBottom: 'clamp(100px, 20vh, 180px)', marginTop: '-20px' }}>
+            {/* Logo and claim image - upper right */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              paddingTop: '28px',
+              paddingRight: '24px'
+            }}>
               <img
-                src="/images/logo-claim-landing.png"
+                src="/images/logo_claim.png"
                 alt="REMY - Forum für Menschen in Psychotherapie"
                 style={{
-                  width: 'clamp(180px, 42vw, 300px)',
+                  width: 'clamp(180px, 42vw, 280px)',
                   height: 'auto'
                 }}
               />
             </div>
 
-            {/* Text and CTA group - moved 30px to the right, 15px more upwards */}
+            {/* Spacer to push content down */}
+            <div style={{ flex: 1 }} />
+
+            {/* Text and CTA group - bottom portion */}
             <div style={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'flex-start',
-              width: '100%',
-              maxWidth: '500px',
-              paddingLeft: 'clamp(10px, 3vw, 30px)',
-              marginTop: '-45px',
-              marginLeft: '20px'
+              alignItems: 'center',
+              paddingLeft: '24px',
+              paddingRight: '24px',
+              paddingBottom: '12vh'
             }}>
-              {/* "Du machst eine Psychotherapie?" - moved 20px upwards */}
+              {/* Tagline */}
               <div style={{
-                fontFamily: '"Nunito", sans-serif',
+                fontFamily: '"Gaegu", cursive',
                 fontWeight: 700,
-                fontSize: '32px',
-                lineHeight: '1.0',
-                color: '#5482ff',
-                letterSpacing: '0.01em',
-                marginTop: '10px',
-                marginBottom: '12px',
-                textAlign: 'left'
+                fontSize: '56px',
+                lineHeight: '45px',
+                color: 'rgb(84, 130, 255)',
+                marginBottom: '28px',
+                textAlign: 'left',
+                width: '100%',
+                maxWidth: '500px'
               }}>
-                Du machst eine Psychotherapie?
+                Du machst eine Psycho­therapie?
               </div>
 
-              {/* Subtext - no change */}
-              <div style={{
-                fontFamily: '"Nunito", sans-serif',
-                fontWeight: 600,
-                fontSize: 'clamp(17px, 4vw, 24px)',
-                lineHeight: '1.35',
-                color: '#5482ff',
-                letterSpacing: '0.01em',
-                marginBottom: 'clamp(35px, 7vh, 50px)',
-                textAlign: 'left'
-              }}>
-                Tausche dich anonym aus mit Gleichgesinnten.
-              </div>
-
-              {/* Registration Button - moved 35px upwards */}
+              {/* Registration Button */}
               <button
                 onClick={handleRegisterClick}
                 style={{
-                  width: '60vw',
-                  maxWidth: '400px',
-                  padding: 'clamp(13px, 3vh, 16px) 28px',
-                  backgroundColor: '#5482ff',
+                  width: '65vw',
+                  maxWidth: '360px',
+                  padding: '14px 28px',
+                  backgroundColor: 'rgb(84, 130, 255)',
                   color: 'white',
                   fontFamily: '"Nunito Sans", sans-serif',
-                  fontSize: 'clamp(19px, 4.2vw, 24px)',
+                  fontSize: '20px',
                   fontWeight: 600,
-                  letterSpacing: '-0.01em',
-                  borderRadius: '12px',
+                  letterSpacing: '0.02em',
+                  borderRadius: '25px',
                   border: 'none',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 4px 12px rgba(84, 130, 255, 0.3)',
-                  marginTop: '-35px',
-                  marginBottom: 'clamp(18px, 3.5vh, 26px)'
+                  transition: '0.2s',
+                  boxShadow: 'rgba(84, 130, 255, 0.3) 0px 4px 12px'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#4070e0'
@@ -332,12 +343,12 @@ function AuthForm() {
                 Registrieren
               </button>
 
-              {/* Login link - left aligned */}
-              <div style={{ textAlign: 'left', background: 'transparent' }}>
+              {/* Login link */}
+              <div style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
                 <span style={{
-                  color: '#e9eaee',
+                  color: '#8a9ab5',
                   fontFamily: '"Nunito Sans", sans-serif',
-                  fontSize: 'clamp(14px, 3.2vw, 17px)',
+                  fontSize: '15px',
                   fontWeight: 600,
                   background: 'transparent'
                 }}>
@@ -350,7 +361,7 @@ function AuthForm() {
                     border: 'none',
                     color: '#5482ff',
                     fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: 'clamp(14px, 3.2vw, 17px)',
+                    fontSize: '15px',
                     fontWeight: 700,
                     textDecoration: 'underline',
                     cursor: 'pointer',
@@ -597,8 +608,7 @@ function AuthForm() {
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        paddingTop: '40px',
+        alignItems: 'flex-start',
         paddingBottom: '60px'
       }}>
         {/* Über Remy Text */}
@@ -606,27 +616,22 @@ function AuthForm() {
           fontFamily: 'Nunito, sans-serif',
           fontWeight: 600,
           fontSize: '24px',
-          lineHeight: '1.3',
+          lineHeight: '1.45',
           color: 'rgb(84, 130, 255)',
           letterSpacing: '0.01em',
           textAlign: 'left',
+          hyphens: 'auto',
+          WebkitHyphens: 'auto',
+          msHyphens: 'auto',
           marginBottom: '60px',
           paddingLeft: '10px',
-          paddingRight: '10px'
+          paddingRight: '10px',
+          maxWidth: '600px',
+          widows: 2,
+          orphans: 2
         }}>
-          Psychotherapie ist eine intime Angelegenheit. Trotzdem ist der Bedarf gross nicht nur darin sondern auch darüber zu sprechen. Auf Remy kannst du dich anonym mit Gleichgesinnten austauschen, deine subjektive Erlebnisse mit Therapeut:innen teilen oder die Erfahrungen von anderen zu Rate ziehen, um nach neuen Therapeut:innen suchen. Remy ist eine Patienteninitiative mit Ausrichtung auf die Schweiz und unabhängig von staatlichen oder privaten Stellen.
+          PSYCHOTHERAPIE IST INTIM. UND DOCH IST DAS BEDÜRFNIS GROSS, DARÜBER ZU SPRECHEN. AUF REMY KANNST DU DICH ANONYM MIT GLEICHGESINNTEN AUSTAUSCHEN, DEINE ERLEBNISSE MIT THERAPEUT:INNEN TEILEN UND DIE ERFAHRUNGEN ANDERER NUTZEN, UM NEUE THERAPEUT:INNEN ZU FINDEN. REMY IST EINE PATIENTENINITIATIVE FÜR DIE SCHWEIZ UND UNABHÄNGIG VON STAATLICHEN UND PRIVATEN STELLEN.
         </div>
-
-        {/* Logo at bottom */}
-        <img
-          src="/images/ueber.png"
-          alt="Remy Logo"
-          style={{
-            width: 'clamp(120px, 30vw, 180px)',
-            height: 'auto',
-            marginTop: 'auto'
-          }}
-        />
       </div>
     </div>
   </div>
