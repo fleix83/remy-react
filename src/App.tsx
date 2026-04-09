@@ -268,7 +268,7 @@ function AuthForm() {
               alignItems: 'center',
               paddingLeft: '24px',
               paddingRight: '24px',
-              paddingBottom: '12vh'
+              paddingBottom: '8vh'
             }}>
               {/* Tagline - hidden when register form is open */}
               {!showRegisterForm && (
@@ -559,7 +559,6 @@ function AuthForm() {
     <div className="flex flex-col px-6 md:hidden" style={{
       background: 'linear-gradient(172deg, #c8e6c9 0.63%, rgb(240, 255, 242) 116.79%)',
       position: 'relative',
-      paddingTop: '20px',
       paddingBottom: '60px'
     }}>
       {/* Snail illustration */}
