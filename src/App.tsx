@@ -205,7 +205,7 @@ function AuthForm() {
 
       {/* Dog illustration - upper left, partially cropped */}
       <img
-        src={`${import.meta.env.PROD ? './dist' : ''}/images/dog.png`}
+        src={`/images/dog.png`}
         alt=""
         style={{
           position: 'absolute',
@@ -220,7 +220,7 @@ function AuthForm() {
 
       {/* Saul illustration - wavy river, middle area */}
       <img
-        src={`${import.meta.env.PROD ? './dist' : ''}/images/saul.png`}
+        src={`/images/saul.png`}
         alt=""
         style={{
           position: 'absolute',
@@ -249,7 +249,7 @@ function AuthForm() {
               paddingRight: '24px'
             }}>
               <img
-                src={`${import.meta.env.PROD ? './dist' : ''}/images/logo_claim.png`}
+                src={`/images/logo_claim.png`}
                 alt="REMY - Forum für Menschen in Psychotherapie"
                 style={{
                   width: 'clamp(180px, 42vw, 280px)',
@@ -564,7 +564,7 @@ function AuthForm() {
     }}>
       {/* Snail illustration */}
       <img
-        src={`${import.meta.env.PROD ? './dist' : ''}/images/snail.png`}
+        src={`/images/snail.png`}
         alt=""
         style={{
           width: 'calc(100% + 48px)',

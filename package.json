@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "cp index.dev.html index.html; vite",
-    "build": "tsc -b && vite build && cp .htaccess dist/.htaccess && sed 's|\\./assets/|./dist/assets/|g' dist/index.html > index.html",
+    "dev": "vite",
+    "build": "tsc -b && vite build && cp .htaccess dist/.htaccess",
     "lint": "eslint .",
     "preview": "vite preview"
   },
