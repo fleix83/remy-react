@@ -407,7 +407,7 @@ function AuthForm() {
                   fontWeight: 600,
                   background: 'transparent'
                 }}>
-                  Schon registriert? Weiter zum{' '}
+                  Schon registriert? Zum{' '}
                 </span>
                 <button
                   onClick={handleLoginClick}
@@ -423,7 +423,7 @@ function AuthForm() {
                     padding: 0
                   }}
                 >
-                  Login
+                  Login.
                 </button>
               </div>
             </div>
@@ -583,29 +583,31 @@ function AuthForm() {
       }}>
         {/* Main text */}
         <div style={{
-          fontFamily: '"Gaegu", cursive',
-          fontWeight: 700,
+          fontFamily: '"Rubik", sans-serif',
+          textTransform: 'uppercase' as const,
+          fontWeight: 600,
           fontSize: '28px',
-          lineHeight: '27px',
+          lineHeight: '39px',
           color: 'rgb(84, 130, 255)',
-          letterSpacing: '0.06em',
+          letterSpacing: '0.09em',
           textAlign: 'left',
           marginBottom: '40px'
         }}>
-          Kennst Du das? Eine Situation in deiner Psychotherapie verunsichert dich und Du fragst dich: mache ich etwas falsch, oder ist mein Therapeut inkompetent? Ist das gut für mich, oder eigentlich nicht? Oder was für Erfahrungen haben andere mit meinem Therapeuten oder meiner Therapie gemacht? Auf diese Fragen gibt es keine einfachen Antworten. Aber auf dem Remy Forum kannst Du Dich mit Gleichgesinnten oder Leidensgenossinnen anonym darüber austauschen. Über alles rund um Psychotherapie aus Deiner Sicht.
+          Kennst Du das? Eine Situation in deiner Psycho{'\u00AD'}therapie ver{'\u00AD'}unsichert dich und Du fragst dich: mache ich etwas falsch, oder ist mein Therapeut in{'\u00AD'}kompetent? Ist das gut für mich, oder eigentlich nicht? Oder was für Er{'\u00AD'}fahrungen haben andere mit meinem Thera{'\u00AD'}peuten oder meiner Therapie gemacht? Auf diese Fragen gibt es keine einfachen Antworten. Aber auf dem Remy Forum kannst Du Dich mit Gleich{'\u00AD'}gesinnten oder Leidens{'\u00AD'}genossinnen anonym darüber austauschen. Über alles rund um Psycho{'\u00AD'}therapie aus Deiner Sicht.
         </div>
 
         {/* Disclaimer text */}
         <div style={{
-          fontFamily: '"Gaegu", cursive',
-          fontWeight: 700,
-          fontSize: '28px',
-          lineHeight: '27px',
-          color: 'rgb(84, 130, 255)',
-          letterSpacing: '0.06em',
+          fontFamily: '"Rubik", sans-serif',
+          textTransform: 'uppercase' as const,
+          fontWeight: 500,
+          fontSize: '25px',
+          lineHeight: '39px',
+          color: 'rgb(137, 169, 255)',
+          letterSpacing: '0.09em',
           textAlign: 'left'
         }}>
-          Remy ist eine Patienteninitiative für die Schweiz und unabhängig von staatlichen und privaten Institutionen.
+          Remy ist eine Patienten{'\u00AD'}initiative für die Schweiz und un{'\u00AD'}abhängig von staatlichen und privaten Insti{'\u00AD'}tutionen.
         </div>
       </div>
     </div>
