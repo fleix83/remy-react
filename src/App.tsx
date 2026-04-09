@@ -233,21 +233,6 @@ function AuthForm() {
         }}
       />
 
-      {/* Gate illustration - bottom area */}
-      <img
-        src={`${import.meta.env.PROD ? './dist' : ''}/images/gate.png`}
-        alt=""
-        style={{
-          position: 'absolute',
-          bottom: '-5%',
-          left: '0',
-          width: '100%',
-          height: 'auto',
-          zIndex: 3,
-          pointerEvents: 'none'
-        }}
-      />
-
       <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Welcome Text - Matching mockup exactly */}
         {!showLoginForm && (
@@ -570,39 +555,58 @@ function AuthForm() {
       </div>
     </div>
 
-    {/* Second Section - Über Remy */}
-    <div className="min-h-screen flex items-center justify-center px-6 py-12 md:hidden" style={{
+    {/* Second Section - About */}
+    <div className="flex flex-col px-6 md:hidden" style={{
       background: 'linear-gradient(172deg, #c8e6c9 0.63%, rgb(240, 255, 242) 116.79%)',
-      position: 'relative'
+      position: 'relative',
+      paddingTop: '20px',
+      paddingBottom: '60px'
     }}>
+      {/* Snail illustration */}
+      <img
+        src={`${import.meta.env.PROD ? './dist' : ''}/images/snail.png`}
+        alt=""
+        style={{
+          width: 'calc(100% + 48px)',
+          height: 'auto',
+          alignSelf: 'center',
+          marginBottom: '40px',
+          marginLeft: '-24px',
+          maxWidth: 'none',
+          pointerEvents: 'none'
+        }}
+      />
+
       <div style={{
-        maxWidth: '600px',
         width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        paddingBottom: '60px'
+        paddingLeft: '10px',
+        paddingRight: '10px'
       }}>
-        {/* Über Remy Text */}
+        {/* Main text */}
         <div style={{
-          fontFamily: 'Nunito, sans-serif',
-          fontWeight: 600,
-          fontSize: '24px',
-          lineHeight: '1.45',
+          fontFamily: '"Gaegu", cursive',
+          fontWeight: 700,
+          fontSize: '28px',
+          lineHeight: '27px',
           color: 'rgb(84, 130, 255)',
-          letterSpacing: '0.01em',
+          letterSpacing: '0.06em',
           textAlign: 'left',
-          hyphens: 'auto',
-          WebkitHyphens: 'auto',
-          msHyphens: 'auto',
-          marginBottom: '60px',
-          paddingLeft: '10px',
-          paddingRight: '10px',
-          maxWidth: '600px',
-          widows: 2,
-          orphans: 2
+          marginBottom: '40px'
         }}>
-          PSYCHOTHERAPIE IST INTIM. UND DOCH IST DAS BEDÜRFNIS GROSS, DARÜBER ZU SPRECHEN. AUF REMY KANNST DU DICH ANONYM MIT GLEICHGESINNTEN AUSTAUSCHEN, DEINE ERLEBNISSE MIT THERAPEUT:INNEN TEILEN UND DIE ERFAHRUNGEN ANDERER NUTZEN, UM NEUE THERAPEUT:INNEN ZU FINDEN. REMY IST EINE PATIENTENINITIATIVE FÜR DIE SCHWEIZ UND UNABHÄNGIG VON STAATLICHEN UND PRIVATEN STELLEN.
+          Kennst Du das? Eine Situation in deiner Psychotherapie verunsichert dich und Du fragst dich: mache ich etwas falsch, oder ist mein Therapeut inkompetent? Ist das gut für mich, oder eigentlich nicht? Oder was für Erfahrungen haben andere mit meinem Therapeuten oder meiner Therapie gemacht? Auf diese Fragen gibt es keine einfachen Antworten. Aber auf dem Remy Forum kannst Du Dich mit Gleichgesinnten oder Leidensgenossinnen anonym darüber austauschen. Über alles rund um Psychotherapie aus Deiner Sicht.
+        </div>
+
+        {/* Disclaimer text */}
+        <div style={{
+          fontFamily: '"Gaegu", cursive',
+          fontWeight: 700,
+          fontSize: '28px',
+          lineHeight: '27px',
+          color: 'rgb(84, 130, 255)',
+          letterSpacing: '0.06em',
+          textAlign: 'left'
+        }}>
+          Remy ist eine Patienteninitiative für die Schweiz und unabhängig von staatlichen und privaten Institutionen.
         </div>
       </div>
     </div>
