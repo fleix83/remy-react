@@ -196,8 +196,8 @@ function AuthForm() {
       {/* Info bar */}
       <div style={{
         width: '100%',
-        height: '28px',
-        backgroundColor: 'white',
+        height: '36px',
+        backgroundColor: '#ffffffd1',
         flexShrink: 0,
         display: 'flex',
         alignItems: 'center',
@@ -225,7 +225,7 @@ function AuthForm() {
 
       {/* First Section - Landing Page */}
       <div style={{
-        height: 'calc(100vh - 28px)',
+        height: 'calc(100vh - 36px)',
         background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
         position: 'relative',
         overflow: 'hidden',
@@ -645,7 +645,7 @@ function AuthForm() {
         <div style={{
           fontFamily: '"Nunito Sans", sans-serif',
           textTransform: 'uppercase' as const,
-          fontWeight: 800,
+          fontWeight: 700,
           fontSize: '22px',
           lineHeight: '39px',
           color: 'rgb(71, 132, 255)',
@@ -655,42 +655,11 @@ function AuthForm() {
           fontStyle: 'normal'
         }}>
           <p style={{ marginBottom: '24px' }}>
-            Sehr gut. Dann gehörst Du zu den über 400{'\u2019'}000 Menschen in der Schweiz, die wissen, wie es sich anfühlt: Psycho{'\u00AD'}therapie.
+            Sehr gut. Denn <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em', lineHeight: '39px' }}>Remy</span> ist ein Forum für Menschen, die sich für Psycho{'\u00AD'}therapie interes{'\u00AD'}sieren oder aktuell eine Psycho{'\u00AD'}therapie in Anspruch nehmen.
           </p>
-
-          <p style={{ marginBottom: '24px' }}>
-            Aber vielleicht fragst Du Dich auch manchmal, was Du da eigentlich machst? Oder ob das heute in Ordnung war, was mir in der Sitzung gesagt wurde? Oder ob mein Therapeut, meine Thera{'\u00AD'}peutin mich überhaupt versteht?
-          </p>
-
-          <p style={{ marginBottom: '24px' }}>
-            Solche Fragen sind selbst{'\u00AD'}redend nicht einfach zu beant{'\u00AD'}worten. Das Anliegen des Remy Forum ist es aber Menschen in Psycho{'\u00AD'}therapie online zum Austausch einzu{'\u00AD'}laden und solche Fragen zu disku{'\u00AD'}tieren. Das Ziel ist Themen möglichst konkret zu beschreiben um damit auch Mit{'\u00AD'}lesern und Mit{'\u00AD'}leserinnen eine Idee über das Geschehen in der Therapie zu geben. Anonym, sicher und moderiert.
-          </p>
-
-          <p style={{ marginBottom: '24px' }}>
-            Vielleicht fragst Du Dich trotzdem: Möchte ich wirklich meine persön{'\u00AD'}liche Therapie{'\u00AD'}erfahrung im Internet zum Besten geben? Kann ich dieser Plattform trauen? Bin ich wirklich anonym? Was passiert mit meinen Daten?
-          </p>
-
-          <p style={{ marginBottom: '24px' }}>
-            Das Remy Forum funktio{'\u00AD'}niert nur, wenn User der Plattform vertrauen. Deshalb ist es unser oberstes Anliegen die Sicherheit und Anonymität des Users mit ver{'\u00AD'}schiedenen Mass{'\u00AD'}nahmen zu schützen:
-          </p>
-
-          <ul style={{ marginBottom: '24px', paddingLeft: '20px', listStyleType: 'disc' }}>
-            <li>User sind anonym</li>
-            <li>Es werden ausser der Email-Adresse keine Daten gespeichert</li>
-            <li>Posts werden moderiert vor dem Aufschalten</li>
-            <li>User haben die volle Kontrolle über ihr Profil und können es jederzeit löschen</li>
-            <li>Wenn ein User sich selbst in einem Post gefährdet, wird der Post nicht auf{'\u00AD'}geschaltet</li>
-          </ul>
 
           <p style={{ marginBottom: '40px' }}>
-            Möchtest Du mehr über die Regeln des Forums erfahren, schaue Dir hier die{' '}
-            <span
-              onClick={() => window.location.href = '/community-guidelines'}
-              style={{ textDecoration: 'underline', cursor: 'pointer' }}
-            >
-              Community Guidelines
-            </span>{' '}
-            an.
+            Psycho{'\u00AD'}therapie ist kompli{'\u00AD'}ziert und kann verun{'\u00AD'}sichern. Auf <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em', lineHeight: '39px' }}>Remy</span> kannst Du Erlebnisse aus Deiner Therapie anonym einbringen und Dich mit der Community austau{'\u00AD'}schen.
           </p>
         </div>
 
@@ -698,7 +667,7 @@ function AuthForm() {
         <div style={{
           fontFamily: '"Nunito Sans", sans-serif',
           textTransform: 'uppercase' as const,
-          fontWeight: 800,
+          fontWeight: 700,
           fontSize: '22px',
           lineHeight: '39px',
           color: 'rgb(137, 169, 255)',
@@ -706,7 +675,7 @@ function AuthForm() {
           textAlign: 'left',
           fontStyle: 'normal'
         }}>
-          Remy ist eine Patienten{'\u00AD'}initiative für die Schweiz und unab{'\u00AD'}hängig von staatlichen und privaten Institu{'\u00AD'}tionen.
+          <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em', lineHeight: '39px' }}>Remy</span> ist eine Patienten{'\u00AD'}initiative für die Schweiz und unab{'\u00AD'}hängig von staatlichen und privaten Institu{'\u00AD'}tionen.
         </div>
       </div>
     </div>
