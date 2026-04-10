@@ -364,6 +364,20 @@ function AuthForm() {
                   width: '100%',
                   gap: '12px'
                 }}>
+                  <p style={{
+                    fontFamily: '"Nunito Sans", sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: 'rgb(84, 130, 255)',
+                    marginBottom: '-9px',
+                    width: '65vw',
+                    maxWidth: '360px',
+                    textAlign: 'left',
+                    position: 'relative',
+                    left: '8px'
+                  }}>
+                    Melde Dich anonym und sicher an
+                  </p>
                   <div style={{ width: '65vw', maxWidth: '360px' }}>
                     <input
                       id="email"
