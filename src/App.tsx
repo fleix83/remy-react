@@ -268,7 +268,7 @@ function AuthForm() {
               alignItems: 'center',
               paddingLeft: '24px',
               paddingRight: '24px',
-              paddingBottom: '8vh'
+              paddingBottom: '5vh'
             }}>
               {/* Tagline - hidden when register form is open */}
               {!showRegisterForm && (
@@ -278,9 +278,9 @@ function AuthForm() {
                   fontSize: '56px',
                   lineHeight: '45px',
                   color: 'rgb(84, 130, 255)',
-                  marginBottom: '28px',
+                  marginBottom: '40px',
                   textAlign: 'left',
-                  width: '100%',
+                  alignSelf: 'flex-start',
                   maxWidth: '500px'
                 }}>
                   Du machst eine Psycho­therapie?
@@ -297,7 +297,7 @@ function AuthForm() {
                     padding: '14px 28px',
                     backgroundColor: 'rgb(84, 130, 255)',
                     color: 'white',
-                    fontFamily: '"Nunito Sans", sans-serif',
+                    fontFamily: '"Noto Sans KR", sans-serif',
                     fontSize: '20px',
                     fontWeight: 600,
                     letterSpacing: '0.02em',
@@ -383,7 +383,7 @@ function AuthForm() {
                       padding: '14px 28px',
                       backgroundColor: 'rgb(84, 130, 255)',
                       color: 'white',
-                      fontFamily: '"Nunito Sans", sans-serif',
+                      fontFamily: '"Noto Sans KR", sans-serif',
                       fontSize: '20px',
                       fontWeight: 600,
                       borderRadius: '25px',
@@ -402,7 +402,7 @@ function AuthForm() {
               <div style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
                 <span style={{
                   color: '#8a9ab5',
-                  fontFamily: '"Nunito Sans", sans-serif',
+                  fontFamily: '"Noto Sans KR", sans-serif',
                   fontSize: '15px',
                   fontWeight: 600,
                   background: 'transparent'
@@ -415,7 +415,7 @@ function AuthForm() {
                     background: 'transparent',
                     border: 'none',
                     color: '#5482ff',
-                    fontFamily: '"Nunito Sans", sans-serif',
+                    fontFamily: '"Noto Sans KR", sans-serif',
                     fontSize: '15px',
                     fontWeight: 700,
                     textDecoration: 'underline',
@@ -583,31 +583,34 @@ function AuthForm() {
       }}>
         {/* Main text */}
         <div style={{
-          fontFamily: '"Rubik", sans-serif',
+          fontFamily: '"Noto Sans KR", sans-serif',
           textTransform: 'uppercase' as const,
-          fontWeight: 600,
-          fontSize: '28px',
+          fontWeight: 800,
+          fontSize: '24px',
           lineHeight: '39px',
-          color: 'rgb(84, 130, 255)',
+          color: 'rgb(71, 132, 255)',
           letterSpacing: '0.09em',
           textAlign: 'left',
-          marginBottom: '40px'
+          marginBottom: '40px',
+          marginTop: '20px',
+          fontStyle: 'normal'
         }}>
-          Kennst Du das? Eine Situation in deiner Psycho{'\u00AD'}therapie ver{'\u00AD'}unsichert dich und Du fragst dich: mache ich etwas falsch, oder ist mein Therapeut in{'\u00AD'}kompetent? Ist das gut für mich, oder eigentlich nicht? Oder was für Er{'\u00AD'}fahrungen haben andere mit meinem Thera{'\u00AD'}peuten oder meiner Therapie gemacht? Auf diese Fragen gibt es keine einfachen Antworten. Aber auf dem Remy Forum kannst Du Dich mit Gleich{'\u00AD'}gesinnten oder Leidens{'\u00AD'}genossinnen anonym darüber austauschen. Über alles rund um Psycho{'\u00AD'}therapie aus Deiner Sicht.
+          Kennst Du das? Eine Si{'\u00AD'}tu{'\u00AD'}a{'\u00AD'}tion in deiner Psycho{'\u00AD'}the{'\u00AD'}ra{'\u00AD'}pie ver{'\u00AD'}un{'\u00AD'}si{'\u00AD'}chert dich und Du fragst dich: mache ich etwas falsch, oder ist mein The{'\u00AD'}ra{'\u00AD'}peut in{'\u00AD'}kom{'\u00AD'}pe{'\u00AD'}tent? Ist das gut für mich, oder ei{'\u00AD'}gent{'\u00AD'}lich nicht? Oder was für Er{'\u00AD'}fah{'\u00AD'}run{'\u00AD'}gen haben andere mit meinem The{'\u00AD'}ra{'\u00AD'}peu{'\u00AD'}ten oder meiner The{'\u00AD'}ra{'\u00AD'}pie gemacht? Auf diese Fragen gibt es keine ein{'\u00AD'}fa{'\u00AD'}chen Ant{'\u00AD'}wor{'\u00AD'}ten. Aber auf dem Remy Forum kannst Du Dich mit Gleich{'\u00AD'}ge{'\u00AD'}sinn{'\u00AD'}ten oder Lei{'\u00AD'}dens{'\u00AD'}ge{'\u00AD'}nos{'\u00AD'}sin{'\u00AD'}nen anonym dar{'\u00AD'}über aus{'\u00AD'}tau{'\u00AD'}schen. Über alles rund um Psycho{'\u00AD'}the{'\u00AD'}ra{'\u00AD'}pie aus Deiner Sicht.
         </div>
 
         {/* Disclaimer text */}
         <div style={{
-          fontFamily: '"Rubik", sans-serif',
+          fontFamily: '"Noto Sans KR", sans-serif',
           textTransform: 'uppercase' as const,
-          fontWeight: 500,
-          fontSize: '25px',
+          fontWeight: 800,
+          fontSize: '24px',
           lineHeight: '39px',
           color: 'rgb(137, 169, 255)',
           letterSpacing: '0.09em',
-          textAlign: 'left'
+          textAlign: 'left',
+          fontStyle: 'normal'
         }}>
-          Remy ist eine Patienten{'\u00AD'}initiative für die Schweiz und un{'\u00AD'}abhängig von staatlichen und privaten Insti{'\u00AD'}tutionen.
+          Remy ist eine Pa{'\u00AD'}tien{'\u00AD'}ten{'\u00AD'}ini{'\u00AD'}tia{'\u00AD'}ti{'\u00AD'}ve für die Schweiz und un{'\u00AD'}ab{'\u00AD'}hän{'\u00AD'}gig von staat{'\u00AD'}li{'\u00AD'}chen und pri{'\u00AD'}va{'\u00AD'}ten In{'\u00AD'}sti{'\u00AD'}tu{'\u00AD'}tio{'\u00AD'}nen.
         </div>
       </div>
     </div>
