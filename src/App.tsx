@@ -570,7 +570,7 @@ function AuthForm() {
           height: 'auto',
           alignSelf: 'center',
           marginBottom: '40px',
-          marginLeft: '-24px',
+          marginLeft: '0px',
           maxWidth: 'none',
           pointerEvents: 'none'
         }}
