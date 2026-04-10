@@ -661,7 +661,7 @@ function AuthForm() {
           textTransform: 'uppercase' as const,
           fontWeight: 700,
           fontSize: '22px',
-          lineHeight: '39px',
+          lineHeight: '46px',
           color: 'rgb(71, 132, 255)',
           letterSpacing: '0.09em',
           textAlign: 'left',
@@ -669,11 +669,21 @@ function AuthForm() {
           fontStyle: 'normal'
         }}>
           <p style={{ marginBottom: '24px' }}>
-            Sehr gut. Denn <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em', lineHeight: '39px' }}>Remy</span> ist ein Forum für Menschen, die sich für Psycho{'\u00AD'}therapie interes{'\u00AD'}sieren oder aktuell eine Psycho{'\u00AD'}therapie in Anspruch nehmen.
+            <span style={{ backgroundColor: '#4784ff59', padding: '4px 6px', boxDecorationBreak: 'clone' as const, WebkitBoxDecorationBreak: 'clone' as const }}>
+              Willkommen!<br /><span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> ist ein Forum für Menschen, die sich für Psycho{'\u00AD'}therapie interes{'\u00AD'}sieren oder aktuell eine Psycho{'\u00AD'}therapie in Anspruch nehmen.
+            </span>
           </p>
 
-          <p style={{ marginBottom: '40px' }}>
-            Psycho{'\u00AD'}therapie ist kompli{'\u00AD'}ziert und kann verun{'\u00AD'}sichern. Auf <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em', lineHeight: '39px' }}>Remy</span> kannst Du Erlebnisse aus Deiner Therapie anonym einbringen und Dich mit der Community austau{'\u00AD'}schen.
+          <p style={{ marginBottom: '24px' }}>
+            <span style={{ backgroundColor: '#4784ff59', padding: '4px 6px', boxDecorationBreak: 'clone' as const, WebkitBoxDecorationBreak: 'clone' as const }}>
+              Psycho{'\u00AD'}therapie ist kompli{'\u00AD'}ziert und kann verun{'\u00AD'}sichern. Auf <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> kannst Du Erlebnisse aus Deiner Therapie anonym teilen und Dich mit der Community austau{'\u00AD'}schen.
+            </span>
+          </p>
+
+          <p>
+            <span style={{ backgroundColor: '#4784ff59', padding: '4px 6px', boxDecorationBreak: 'clone' as const, WebkitBoxDecorationBreak: 'clone' as const }}>
+              Dann gehörst Du zu den über 400{'\u2019'}000 Menschen in der Schweiz, die wissen, wie es sich anfühlt: Psycho{'\u00AD'}therapie.
+            </span>
           </p>
         </div>
 
@@ -683,13 +693,16 @@ function AuthForm() {
           textTransform: 'uppercase' as const,
           fontWeight: 700,
           fontSize: '22px',
-          lineHeight: '39px',
+          lineHeight: '46px',
           color: 'rgb(137, 169, 255)',
           letterSpacing: '0.09em',
           textAlign: 'left',
-          fontStyle: 'normal'
+          fontStyle: 'normal',
+          marginTop: '24px'
         }}>
-          <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em', lineHeight: '39px' }}>Remy</span> ist eine Patienten{'\u00AD'}initiative für die Schweiz und unab{'\u00AD'}hängig von staatlichen und privaten Institu{'\u00AD'}tionen.
+          <span style={{ backgroundColor: '#4784ff30', padding: '4px 6px', boxDecorationBreak: 'clone' as const, WebkitBoxDecorationBreak: 'clone' as const }}>
+            <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> ist eine Patienten{'\u00AD'}initiative für die Schweiz und unab{'\u00AD'}hängig von staatlichen und privaten Institu{'\u00AD'}tionen.
+          </span>
         </div>
       </div>
     </div>
