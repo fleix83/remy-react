@@ -268,17 +268,17 @@ function AuthForm() {
               alignItems: 'center',
               paddingLeft: '24px',
               paddingRight: '24px',
-              paddingBottom: '5vh'
+              paddingBottom: '8vh'
             }}>
               {/* Tagline - hidden when register form is open */}
               {!showRegisterForm && (
                 <div style={{
                   fontFamily: '"Gaegu", cursive',
                   fontWeight: 700,
-                  fontSize: '56px',
+                  fontSize: '51px',
                   lineHeight: '45px',
                   color: 'rgb(84, 130, 255)',
-                  marginBottom: '40px',
+                  marginBottom: '49px',
                   textAlign: 'left',
                   alignSelf: 'flex-start',
                   maxWidth: '500px'
@@ -318,7 +318,7 @@ function AuthForm() {
                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(84, 130, 255, 0.3)'
                   }}
                 >
-                  Registrieren
+                  Austauschen
                 </button>
               )}
 
