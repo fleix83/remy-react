@@ -155,10 +155,10 @@ const CommunityGuidelinesPage: React.FC = () => {
         <div className="text-center">
           <p className="text-gray-600">Community Guidelines nicht gefunden.</p>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(user ? '/' : '/?login=true')}
             className="mt-4 text-[var(--primary)] hover:underline"
           >
-            Zurück zum Forum
+            {user ? 'Zurück zum Forum' : 'Login / Registrieren'}
           </button>
         </div>
       </div>
@@ -180,14 +180,14 @@ const CommunityGuidelinesPage: React.FC = () => {
           <div className="w-6 h-6"></div>
 
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(user ? '/' : '/?login=true')}
             className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
             style={{ color: 'var(--primary)' }}
           >
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Zurück zum Forum
+            {user ? 'Zurück zum Forum' : 'Login / Registrieren'}
           </button>
 
           {user && userProfile && (

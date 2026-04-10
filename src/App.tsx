@@ -65,6 +65,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/callback" element={<ConfirmEmail />} />
+          <Route path="/community-guidelines" element={<CommunityGuidelinesPage />} />
           <Route path="/auth/confirm" element={
             <WelcomePage
               onComplete={completeOnboarding}
@@ -192,9 +193,38 @@ function AuthForm() {
       overflowY: 'auto',
       overflowX: 'hidden'
     }}>
+      {/* Info bar */}
+      <div style={{
+        width: '100%',
+        height: '28px',
+        backgroundColor: 'white',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        paddingLeft: '16px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+        position: 'relative',
+        zIndex: 20
+      }}>
+        <a
+          href="/community-guidelines"
+          style={{
+            fontFamily: '"Nunito Sans", sans-serif',
+            fontSize: '12px',
+            fontWeight: 500,
+            color: '#8a9ab5',
+            letterSpacing: '0.03em',
+            textDecoration: 'underline'
+          }}
+        >
+          Community Guidelines
+        </a>
+      </div>
+
       {/* First Section - Landing Page */}
       <div style={{
-        height: '100vh',
+        height: 'calc(100vh - 28px)',
         background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
         position: 'relative',
         overflow: 'hidden',
@@ -203,20 +233,22 @@ function AuthForm() {
       }}>
 
 
-      {/* Dog illustration - upper left, partially cropped */}
-      <img
-        src={`/images/dog.png`}
-        alt=""
-        style={{
-          position: 'absolute',
-          top: '5%',
-          left: '0%',
-          width: '100%',
-          height: '57%',
-          zIndex: 1,
-          pointerEvents: 'none'
-        }}
-      />
+      {/* Dog illustration - upper left, hidden on login */}
+      {!showLoginForm && (
+        <img
+          src={`/images/dog.png`}
+          alt=""
+          style={{
+            position: 'absolute',
+            top: '5%',
+            left: '0%',
+            width: '100%',
+            height: '57%',
+            zIndex: 1,
+            pointerEvents: 'none'
+          }}
+        />
+      )}
 
       {/* Saul illustration - wavy river, middle area */}
       <img
@@ -297,7 +329,7 @@ function AuthForm() {
                     padding: '14px 28px',
                     backgroundColor: 'rgb(84, 130, 255)',
                     color: 'white',
-                    fontFamily: '"Noto Sans KR", sans-serif',
+                    fontFamily: '"Quicksand", sans-serif',
                     fontSize: '20px',
                     fontWeight: 600,
                     letterSpacing: '0.02em',
@@ -383,7 +415,7 @@ function AuthForm() {
                       padding: '14px 28px',
                       backgroundColor: 'rgb(84, 130, 255)',
                       color: 'white',
-                      fontFamily: '"Noto Sans KR", sans-serif',
+                      fontFamily: '"Quicksand", sans-serif',
                       fontSize: '20px',
                       fontWeight: 600,
                       borderRadius: '25px',
@@ -402,7 +434,7 @@ function AuthForm() {
               <div style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
                 <span style={{
                   color: '#8a9ab5',
-                  fontFamily: '"Noto Sans KR", sans-serif',
+                  fontFamily: '"Quicksand", sans-serif',
                   fontSize: '15px',
                   fontWeight: 600,
                   background: 'transparent'
@@ -415,7 +447,7 @@ function AuthForm() {
                     background: 'transparent',
                     border: 'none',
                     color: '#5482ff',
-                    fontFamily: '"Noto Sans KR", sans-serif',
+                    fontFamily: '"Quicksand", sans-serif',
                     fontSize: '15px',
                     fontWeight: 700,
                     textDecoration: 'underline',
@@ -459,98 +491,125 @@ function AuthForm() {
 
         {/* Login Form */}
         {showLoginForm && (
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="text-center mb-8">
-              <h2 style={{ fontFamily: 'Gaegu, cursive', fontWeight: 'bold', fontSize: '60px', color: 'var(--primary)', lineHeight: '0.9', marginBottom: '4px' }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            padding: '0 24px'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <h2 style={{ fontFamily: 'Gaegu, cursive', fontWeight: 'bold', fontSize: '60px', color: 'var(--primary)', lineHeight: '0.9', marginBottom: '8px' }}>
                 REMY
               </h2>
-              <p className="font-body text-[18px]" style={{ color: '#144220', marginBottom: '24px' }}>
+              <p style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '18px', color: '#144220' }}>
                 Willkommen zurück
               </p>
             </div>
 
-            <div>
-              <label htmlFor="login-email" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
-                E-Mail
-              </label>
-              <input
-                id="login-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
-                placeholder="deine@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+            <form onSubmit={handleLogin} style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '100%',
+              gap: '16px'
+            }}>
+              <div style={{ width: '75vw', maxWidth: '340px' }}>
+                <label htmlFor="login-email" style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#144220', textAlign: 'left' }}>
+                  E-Mail
+                </label>
+                <input
+                  id="login-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
+                  style={{ width: '100%', fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
+                  placeholder="deine@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
 
-            <div>
-              <label htmlFor="login-password" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
-                Passwort
-              </label>
-              <input
-                id="login-password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent bg-white"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <div className="mt-2 text-left">
-                <span className="font-body text-[14px]" style={{ color: '#144220' }}>
-                  Passwort vergessen?{' '}
+              <div style={{ width: '75vw', maxWidth: '340px' }}>
+                <label htmlFor="login-password" style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#144220', textAlign: 'left' }}>
+                  Passwort
+                </label>
+                <input
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  className="px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
+                  style={{ width: '100%', fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <div style={{ marginTop: '6px', textAlign: 'left' }}>
+                  <span style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', color: '#144220' }}>
+                    Passwort vergessen?{' '}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/forgot-password')}
+                    style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', color: 'var(--primary)', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  >
+                    Zurücksetzen
+                  </button>
+                </div>
+              </div>
+
+              {message && (
+                <div className={`rounded-lg p-3 text-sm ${
+                  message.includes('error') || message.includes('Error')
+                    ? 'bg-red-50 border border-red-200 text-red-700'
+                    : 'bg-green-50 border border-green-200 text-green-700'
+                }`} style={{ width: '75vw', maxWidth: '340px' }}>
+                  {message}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  width: '75vw',
+                  maxWidth: '340px',
+                  padding: '14px 28px',
+                  backgroundColor: 'rgb(84, 130, 255)',
+                  color: 'white',
+                  fontFamily: '"Nunito Sans", sans-serif',
+                  fontSize: '20px',
+                  fontWeight: 600,
+                  borderRadius: '25px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: '0.2s',
+                  opacity: loading ? 0.5 : 1,
+                  marginTop: '8px'
+                }}
+              >
+                {loading ? 'Loading...' : 'Einloggen'}
+              </button>
+
+              <div style={{ textAlign: 'center', marginTop: '8px' }}>
+                <span style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '15px', color: '#8a9ab5' }}>
+                  Noch kein Konto?{' '}
                 </span>
                 <button
                   type="button"
-                  onClick={() => navigate('/forgot-password')}
-                  className="font-body text-[14px] underline"
-                  style={{ color: 'var(--primary)' }}
+                  onClick={handleRegisterClick}
+                  style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '15px', color: '#5482ff', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontWeight: 700 }}
                 >
-                  Zurücksetzen
+                  Registrieren
                 </button>
               </div>
-            </div>
-
-            {message && (
-              <div className={`rounded-lg p-4 ${
-                message.includes('error') || message.includes('Error')
-                  ? 'bg-red-50 border border-red-200 text-red-700'
-                  : 'bg-green-50 border border-green-200 text-green-700'
-              }`}>
-                {message}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 text-white font-medium text-lg rounded-lg transition-colors disabled:opacity-50"
-              style={{ backgroundColor: 'var(--primary)' }}
-              onMouseEnter={(e) => !loading && (e.currentTarget.style.opacity = '0.9')}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              {loading ? 'Loading...' : 'Einloggen'}
-            </button>
-
-            <div className="text-center mt-4">
-              <span className="font-body text-[16px]" style={{ color: '#144220' }}>
-                Noch kein Konto?{' '}
-              </span>
-              <button
-                type="button"
-                onClick={handleRegisterClick}
-                className="font-body text-[16px] underline"
-                style={{ color: 'var(--primary)' }}
-              >
-                Registrieren
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         )}
       </div>
     </div>
@@ -583,7 +642,7 @@ function AuthForm() {
       }}>
         {/* Main text */}
         <div style={{
-          fontFamily: '"Noto Sans KR", sans-serif',
+          fontFamily: '"Quicksand", sans-serif',
           textTransform: 'uppercase' as const,
           fontWeight: 800,
           fontSize: '22px',
@@ -600,7 +659,7 @@ function AuthForm() {
 
         {/* Disclaimer text */}
         <div style={{
-          fontFamily: '"Noto Sans KR", sans-serif',
+          fontFamily: '"Quicksand", sans-serif',
           textTransform: 'uppercase' as const,
           fontWeight: 800,
           fontSize: '22px',
