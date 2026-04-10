@@ -207,19 +207,20 @@ function AuthForm() {
         position: 'relative',
         zIndex: 20
       }}>
-        <a
-          href="/community-guidelines"
+        <span
+          onClick={() => navigate('/community-guidelines')}
           style={{
             fontFamily: '"Nunito Sans", sans-serif',
             fontSize: '12px',
             fontWeight: 500,
             color: '#8a9ab5',
             letterSpacing: '0.03em',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
+            cursor: 'pointer'
           }}
         >
           Community Guidelines
-        </a>
+        </span>
       </div>
 
       {/* First Section - Landing Page */}
@@ -329,7 +330,7 @@ function AuthForm() {
                     padding: '14px 28px',
                     backgroundColor: 'rgb(84, 130, 255)',
                     color: 'white',
-                    fontFamily: '"Quicksand", sans-serif',
+                    fontFamily: '"Nunito Sans", sans-serif',
                     fontSize: '20px',
                     fontWeight: 600,
                     letterSpacing: '0.02em',
@@ -415,7 +416,7 @@ function AuthForm() {
                       padding: '14px 28px',
                       backgroundColor: 'rgb(84, 130, 255)',
                       color: 'white',
-                      fontFamily: '"Quicksand", sans-serif',
+                      fontFamily: '"Nunito Sans", sans-serif',
                       fontSize: '20px',
                       fontWeight: 600,
                       borderRadius: '25px',
@@ -434,7 +435,7 @@ function AuthForm() {
               <div style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
                 <span style={{
                   color: '#8a9ab5',
-                  fontFamily: '"Quicksand", sans-serif',
+                  fontFamily: '"Nunito Sans", sans-serif',
                   fontSize: '15px',
                   fontWeight: 600,
                   background: 'transparent'
@@ -447,7 +448,7 @@ function AuthForm() {
                     background: 'transparent',
                     border: 'none',
                     color: '#5482ff',
-                    fontFamily: '"Quicksand", sans-serif',
+                    fontFamily: '"Nunito Sans", sans-serif',
                     fontSize: '15px',
                     fontWeight: 700,
                     textDecoration: 'underline',
@@ -642,7 +643,7 @@ function AuthForm() {
       }}>
         {/* Main text */}
         <div style={{
-          fontFamily: '"Quicksand", sans-serif',
+          fontFamily: '"Nunito Sans", sans-serif',
           textTransform: 'uppercase' as const,
           fontWeight: 800,
           fontSize: '22px',
@@ -650,16 +651,52 @@ function AuthForm() {
           color: 'rgb(71, 132, 255)',
           letterSpacing: '0.09em',
           textAlign: 'left',
-          marginBottom: '40px',
           marginTop: '20px',
           fontStyle: 'normal'
         }}>
-          Kennst Du das? Eine Situa{'\u00AD'}tion in deiner Psycho{'\u00AD'}therapie verun{'\u00AD'}sichert dich und Du fragst dich: mache ich etwas falsch, oder ist mein Thera{'\u00AD'}peut inkom{'\u00AD'}petent? Ist das gut für mich, oder eigent{'\u00AD'}lich nicht? Oder was für Erfah{'\u00AD'}rungen haben andere mit meinem Thera{'\u00AD'}peuten oder meiner Thera{'\u00AD'}pie gemacht? Auf diese Fragen gibt es keine einfachen Antwor{'\u00AD'}ten. Aber auf dem Remy Forum kannst Du Dich mit Gleich{'\u00AD'}gesinnten oder Leidens{'\u00AD'}genossinnen anonym darüber austau{'\u00AD'}schen. Über alles rund um Psycho{'\u00AD'}therapie aus Deiner Sicht.
+          <p style={{ marginBottom: '24px' }}>
+            Sehr gut. Dann gehörst Du zu den über 400{'\u2019'}000 Menschen in der Schweiz, die wissen, wie es sich anfühlt: Psycho{'\u00AD'}therapie.
+          </p>
+
+          <p style={{ marginBottom: '24px' }}>
+            Aber vielleicht fragst Du Dich auch manchmal, was Du da eigentlich machst? Oder ob das heute in Ordnung war, was mir in der Sitzung gesagt wurde? Oder ob mein Therapeut, meine Thera{'\u00AD'}peutin mich überhaupt versteht?
+          </p>
+
+          <p style={{ marginBottom: '24px' }}>
+            Solche Fragen sind selbst{'\u00AD'}redend nicht einfach zu beant{'\u00AD'}worten. Das Anliegen des Remy Forum ist es aber Menschen in Psycho{'\u00AD'}therapie online zum Austausch einzu{'\u00AD'}laden und solche Fragen zu disku{'\u00AD'}tieren. Das Ziel ist Themen möglichst konkret zu beschreiben um damit auch Mit{'\u00AD'}lesern und Mit{'\u00AD'}leserinnen eine Idee über das Geschehen in der Therapie zu geben. Anonym, sicher und moderiert.
+          </p>
+
+          <p style={{ marginBottom: '24px' }}>
+            Vielleicht fragst Du Dich trotzdem: Möchte ich wirklich meine persön{'\u00AD'}liche Therapie{'\u00AD'}erfahrung im Internet zum Besten geben? Kann ich dieser Plattform trauen? Bin ich wirklich anonym? Was passiert mit meinen Daten?
+          </p>
+
+          <p style={{ marginBottom: '24px' }}>
+            Das Remy Forum funktio{'\u00AD'}niert nur, wenn User der Plattform vertrauen. Deshalb ist es unser oberstes Anliegen die Sicherheit und Anonymität des Users mit ver{'\u00AD'}schiedenen Mass{'\u00AD'}nahmen zu schützen:
+          </p>
+
+          <ul style={{ marginBottom: '24px', paddingLeft: '20px', listStyleType: 'disc' }}>
+            <li>User sind anonym</li>
+            <li>Es werden ausser der Email-Adresse keine Daten gespeichert</li>
+            <li>Posts werden moderiert vor dem Aufschalten</li>
+            <li>User haben die volle Kontrolle über ihr Profil und können es jederzeit löschen</li>
+            <li>Wenn ein User sich selbst in einem Post gefährdet, wird der Post nicht auf{'\u00AD'}geschaltet</li>
+          </ul>
+
+          <p style={{ marginBottom: '40px' }}>
+            Möchtest Du mehr über die Regeln des Forums erfahren, schaue Dir hier die{' '}
+            <span
+              onClick={() => window.location.href = '/community-guidelines'}
+              style={{ textDecoration: 'underline', cursor: 'pointer' }}
+            >
+              Community Guidelines
+            </span>{' '}
+            an.
+          </p>
         </div>
 
         {/* Disclaimer text */}
         <div style={{
-          fontFamily: '"Quicksand", sans-serif',
+          fontFamily: '"Nunito Sans", sans-serif',
           textTransform: 'uppercase' as const,
           fontWeight: 800,
           fontSize: '22px',
