@@ -246,7 +246,7 @@ function AuthForm() {
               display: 'flex',
               justifyContent: 'flex-end',
               paddingTop: '28px',
-              paddingRight: '24px'
+              paddingRight: '4px'
             }}>
               <img
                 src={`/images/logo_claim.png`}
@@ -280,7 +280,7 @@ function AuthForm() {
                   color: 'rgb(84, 130, 255)',
                   marginBottom: '49px',
                   textAlign: 'left',
-                  alignSelf: 'flex-start',
+                  alignSelf: 'center',
                   maxWidth: '500px'
                 }}>
                   Du machst eine Psycho­therapie?
