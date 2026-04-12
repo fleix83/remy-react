@@ -61,20 +61,26 @@ const PostView: React.FC = () => {
     if (!post) return
 
     try {
+      // forum.store.updatePost now updates currentPost in-place using the
+      // fully-enriched post returned by PostsService.updatePost, so no
+      // follow-up loadPost is needed.
       await updatePost(post.id, {
         title: postData.title,
         content: postData.content,
         category_id: postData.category_id,
         canton: postData.canton,
         therapist_id: postData.therapist_id,
-        tags: postData.tags
+        tags: postData.tags,
+        // Forward the draft flag so publishing a draft from the edit modal
+        // actually flips is_draft / moderation_status.
+        is_draft: postData.is_draft
       })
-
-      // Reload the post to get fresh data
-      await loadPost(post.id)
     } catch (error) {
       console.error('Error updating post:', error)
-      alert('Fehler beim Aktualisieren des Beitrags: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      // If the post body saved but tags failed, the store still holds the
+      // fresh post — show the specific error without rolling back UI.
+      const msg = error instanceof Error ? error.message : 'Unbekannter Fehler'
+      alert('Fehler beim Aktualisieren des Beitrags: ' + msg)
       throw error
     }
   }

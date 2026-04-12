@@ -3,6 +3,20 @@ import { withPerformanceTracking } from '../utils/performance-monitor'
 import type { Post, PostWithRelations, Category, Designation, ModerationStatus } from '../types/database.types'
 import { TagsService } from './tags.service'
 
+// Thrown when the post row was written but a follow-up side-effect (tags)
+// failed. Callers can inspect `postSaved` to know the DB row is fresh.
+export class PostSideEffectError extends Error {
+  readonly postSaved = true
+  readonly updatedPost?: PostWithRelations
+  readonly createdPost?: Post
+  constructor(message: string, opts: { updatedPost?: PostWithRelations; createdPost?: Post } = {}) {
+    super(message)
+    this.name = 'PostSideEffectError'
+    this.updatedPost = opts.updatedPost
+    this.createdPost = opts.createdPost
+  }
+}
+
 interface PostFilters {
   category?: number
   canton?: string
@@ -216,13 +230,20 @@ export class PostsService {
       throw new Error('Database error: ' + error.message)
     }
 
-    console.log('✅ PostsService: Post created successfully:', data)
-
-    // Save tags if provided
+    // Save tags if provided. The post row is already committed, so surface
+    // tag failures as a distinct "post saved but tags failed" error.
     if (tags && tags.length > 0) {
-      const tagsService = new TagsService()
-      await tagsService.addTagsToPost(data.id, tags)
-      console.log('✅ PostsService: Tags saved successfully for post:', data.id)
+      try {
+        const tagsService = new TagsService()
+        await tagsService.addTagsToPost(data.id, tags)
+      } catch (err) {
+        console.error('❌ PostsService: Tag save failed after post create:', err)
+        throw new PostSideEffectError(
+          'Beitrag wurde erstellt, aber die Tags konnten nicht gespeichert werden: ' +
+            (err instanceof Error ? err.message : String(err)),
+          { createdPost: data }
+        )
+      }
     }
 
     return data
@@ -401,6 +422,7 @@ export class PostsService {
     canton?: string
     therapist_id?: number | null
     tags?: string[]
+    is_draft?: boolean
   }): Promise<PostWithRelations> {
     console.log('🔧 PostsService: Starting updatePost for ID:', id, 'with updates:', updates)
 
@@ -434,10 +456,18 @@ export class PostsService {
     }
 
     // Prepare update data (exclude tags from post update)
-    const { tags, ...updatesWithoutTags } = updates
-    const updateData = {
+    const { tags, is_draft, ...updatesWithoutTags } = updates
+    const updateData: Record<string, unknown> = {
       ...updatesWithoutTags,
       updated_at: new Date().toISOString()
+    }
+
+    // If the caller is flipping draft status, mirror the create-flow
+    // semantics: publishing a draft re-enters the moderation queue; saving
+    // as draft clears moderation state.
+    if (is_draft !== undefined) {
+      updateData.is_draft = is_draft
+      updateData.moderation_status = is_draft ? null : 'pending'
     }
 
     console.log('📤 PostsService: Updating post with data:', updateData)
@@ -459,24 +489,34 @@ export class PostsService {
       throw new Error('Database error: ' + error.message)
     }
 
-    console.log('✅ PostsService: Post updated successfully:', data)
-
-    // Update tags if provided
+    // Update tags if provided. The post body is already committed at this
+    // point, so a tag failure must not look like a generic update failure.
+    let tagUpdateError: Error | null = null
     if (tags !== undefined) {
-      const tagsService = new TagsService()
-      await tagsService.addTagsToPost(id, tags)
-      console.log('✅ PostsService: Tags updated successfully for post:', id)
+      try {
+        const tagsService = new TagsService()
+        await tagsService.addTagsToPost(id, tags)
+      } catch (err) {
+        console.error('❌ PostsService: Tag update failed after post update:', err)
+        tagUpdateError = err instanceof Error ? err : new Error(String(err))
+      }
     }
 
-    // Normalize the JOIN arrays to objects to match PostWithRelations type
-    const normalizedData = {
-      ...data,
-      users: Array.isArray(data.users) ? data.users[0] : data.users,
-      categories: Array.isArray(data.categories) ? data.categories[0] : data.categories,
-      therapists: Array.isArray(data.therapists) ? data.therapists[0] : data.therapists
+    // Enrich with comment count and tags so the return value is a complete
+    // PostWithRelations — callers can drop any follow-up refetch.
+    const [enrichedData] = await this.addCommentCounts([data])
+
+    if (tagUpdateError) {
+      // Surface a specific error so the UI can distinguish "post saved but
+      // tags failed" from a full update failure.
+      throw new PostSideEffectError(
+        'Post wurde gespeichert, aber die Tags konnten nicht aktualisiert werden: ' +
+          tagUpdateError.message,
+        { updatedPost: enrichedData }
+      )
     }
 
-    return normalizedData as unknown as PostWithRelations
+    return enrichedData
   }
 
   // Get all designations
@@ -502,26 +542,25 @@ export class PostsService {
     // Get all post IDs
     const postIds = posts.map(post => post.id)
 
-    // Optimized: Use head: true with count to avoid fetching data, only get counts
-    // Execute all count queries in parallel for better performance
-    const countPromises = postIds.map(async (postId) => {
-      const { count, error } = await supabase
-        .from('comments')
-        .select('*', { count: 'exact', head: true })
-        .eq('post_id', postId)
-
-      if (error) {
-        console.error(`Error counting comments for post ${postId}:`, error)
-        return { postId, count: 0 }
-      }
-      return { postId, count: count || 0 }
-    })
-
-    const countResults = await Promise.all(countPromises)
+    // One batched query instead of N parallel per-post count queries.
+    // Select only post_id, then group client-side.
     const countMap = new Map<number, number>()
-    countResults.forEach(({ postId, count }) => {
-      countMap.set(postId, count)
-    })
+    // Pre-seed so posts with zero comments still resolve to 0.
+    postIds.forEach(id => countMap.set(id, 0))
+
+    const { data: commentRows, error: countError } = await supabase
+      .from('comments')
+      .select('post_id')
+      .in('post_id', postIds)
+
+    if (countError) {
+      console.error('Error batch-counting comments:', countError)
+    } else {
+      ;(commentRows as Array<{ post_id: number }> | null)?.forEach(row => {
+        const pid = row.post_id
+        countMap.set(pid, (countMap.get(pid) || 0) + 1)
+      })
+    }
 
     // Fetch tags for all posts in parallel
     const tagsMap = await this.fetchTagsForPosts(postIds)

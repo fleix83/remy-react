@@ -46,6 +46,7 @@ interface ForumState {
     canton?: string
     therapist_id?: number | null
     tags?: string[]
+    is_draft?: boolean
   }) => Promise<void>
   deletePost: (id: number) => Promise<void>
   setFilters: (filters: Partial<PostFilters>) => void
@@ -189,27 +190,17 @@ export const useForumStore = create<ForumState>((set, get) => ({
     canton?: string
     therapist_id?: number | null
     tags?: string[]
+    is_draft?: boolean
   }) => {
     try {
-      console.log('🔧 ForumStore: Updating post:', id, updates)
-      
-      const postsService = new PostsService()
-      await postsService.updatePost(id, updates)
-      
-      console.log('✅ ForumStore: Post updated successfully')
-      
-      // Update posts array by reloading the specific post
-      const postsService2 = new PostsService()
-      const updatedPost = await postsService2.getPost(id)
-      
-      if (updatedPost) {
-        set(state => ({
-          posts: state.posts.map(post => 
-            post.id === id ? updatedPost : post
-          ),
-          currentPost: state.currentPost?.id === id ? updatedPost : state.currentPost
-        }))
-      }
+      const updatedPost = await postsService.updatePost(id, updates)
+
+      set(state => ({
+        posts: state.posts.map(post =>
+          post.id === id ? updatedPost : post
+        ),
+        currentPost: state.currentPost?.id === id ? updatedPost : state.currentPost
+      }))
     } catch (error) {
       console.error('❌ ForumStore: Error updating post:', error)
       throw error

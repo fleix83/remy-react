@@ -35,28 +35,36 @@ export const usePostsRealtime = () => {
     
     // Create global channel only if it doesn't exist
     if (!globalPostsChannel) {
+      const currentUserId = user.id
+      // Skip self-originated events: the mutation already updated the cache
+      // locally, so a follow-up refetch is pure waste.
+      const isSelfWrite = (payload: { new?: { user_id?: string } }) =>
+        payload?.new?.user_id === currentUserId
+
       globalPostsChannel = supabase
         .channel('posts:global')
-        .on('postgres_changes', 
-          { 
-            event: 'INSERT', 
-            schema: 'public', 
+        .on('postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
             table: 'posts',
             filter: 'is_published=eq.true,is_active=eq.true,is_banned=eq.false'
           },
           (payload) => {
+            if (isSelfWrite(payload)) return
             console.log('New post detected:', payload)
             debouncedInvalidate()
           }
         )
         .on('postgres_changes',
-          { 
-            event: 'UPDATE', 
-            schema: 'public', 
+          {
+            event: 'UPDATE',
+            schema: 'public',
             table: 'posts',
             filter: 'is_published=eq.true,is_active=eq.true'
           },
           (payload) => {
+            if (isSelfWrite(payload)) return
             console.log('Post updated:', payload)
             debouncedInvalidate()
           }
