@@ -182,7 +182,7 @@ const PostView: React.FC = () => {
           className="p-6 mb-4 relative"
           style={{
             borderRadius: '30px',
-            backgroundColor: '#e4fce8',
+            backgroundColor: 'rgb(242, 251, 244)',
             zIndex: 1,
             paddingTop: '66px'
           }}
