@@ -201,25 +201,50 @@ function AuthForm() {
         flexShrink: 0,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingLeft: '16px',
+        justifyContent: 'center',
+        gap: '40px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
         position: 'relative',
         zIndex: 20
       }}>
-        <span
-          onClick={() => navigate('/community-guidelines')}
-          style={{
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontSize: '12px',
-            fontWeight: 500,
-            color: '#8a9ab5',
-            letterSpacing: '0.03em',
-            textDecoration: 'underline',
-            cursor: 'pointer'
-          }}
-        >
-          Community Guidelines
+        <span style={{
+          fontFamily: '"Nunito Sans", sans-serif',
+          fontSize: '13px',
+          fontWeight: 600,
+          color: '#8a9ab5',
+          letterSpacing: '0.03em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px'
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a9ab5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Sicher
+        </span>
+        <span style={{
+          fontFamily: '"Nunito Sans", sans-serif',
+          fontSize: '13px',
+          fontWeight: 600,
+          color: '#8a9ab5',
+          letterSpacing: '0.03em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px'
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a9ab5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+          Anonym
+        </span>
+        <span style={{
+          fontFamily: '"Nunito Sans", sans-serif',
+          fontSize: '13px',
+          fontWeight: 600,
+          color: '#8a9ab5',
+          letterSpacing: '0.03em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px'
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a9ab5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Moderiert
         </span>
       </div>
 
@@ -668,23 +693,42 @@ function AuthForm() {
           marginTop: '20px',
           fontStyle: 'normal'
         }}>
-          <p style={{ marginBottom: '24px' }}>
-            <span style={{ backgroundColor: '#4784ff59', padding: '4px 6px', boxDecorationBreak: 'clone' as const, WebkitBoxDecorationBreak: 'clone' as const }}>
-              Willkommen!<br /><span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> ist ein Forum für Menschen, die sich für Psycho{'\u00AD'}therapie interes{'\u00AD'}sieren oder aktuell eine Psycho{'\u00AD'}therapie in Anspruch nehmen.
+          {[
+            { text: 'Willkommen!', ml: 3 },
+            { text: <><span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> ist ein Forum</>, ml: 0 },
+            { text: 'für Menschen, die', ml: 5 },
+            { text: 'sich für Psycho\u00ADtherapie', ml: 2 },
+            { text: 'interessieren oder', ml: 6 },
+            { text: 'aktuell eine', ml: 1 },
+            { text: 'Psycho\u00ADtherapie in', ml: 4 },
+            { text: 'Anspruch nehmen.', ml: 0, mb: 24 },
+            { text: 'Psycho\u00ADtherapie ist', ml: 5 },
+            { text: 'kompliziert und kann', ml: 1 },
+            { text: 'verunsichern. Auf', ml: 4 },
+            { text: <><span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> kannst Du</>, ml: 0 },
+            { text: 'Erlebnisse aus Deiner', ml: 6 },
+            { text: 'Therapie anonym teilen', ml: 2 },
+            { text: 'und Dich mit der', ml: 5 },
+            { text: 'Community austauschen.', ml: 0, mb: 24 },
+            { text: 'Dann gehörst Du zu', ml: 3 },
+            { text: "den über 400\u2019000", ml: 6 },
+            { text: 'Menschen in der', ml: 1 },
+            { text: 'Schweiz, die wissen,', ml: 4 },
+            { text: 'wie es sich anfühlt:', ml: 0 },
+            { text: 'Psycho\u00ADtherapie.', ml: 5 },
+          ].map((line, i) => (
+            <span key={i} style={{
+              display: 'block',
+              backgroundColor: '#4784ff59',
+              padding: '0px 6px',
+              whiteSpace: 'nowrap',
+              marginLeft: `${line.ml}px`,
+              marginBottom: line.mb ? `${line.mb}px` : '11px',
+              width: 'fit-content'
+            }}>
+              {line.text}
             </span>
-          </p>
-
-          <p style={{ marginBottom: '24px' }}>
-            <span style={{ backgroundColor: '#4784ff59', padding: '4px 6px', boxDecorationBreak: 'clone' as const, WebkitBoxDecorationBreak: 'clone' as const }}>
-              Psycho{'\u00AD'}therapie ist kompli{'\u00AD'}ziert und kann verun{'\u00AD'}sichern. Auf <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> kannst Du Erlebnisse aus Deiner Therapie anonym teilen und Dich mit der Community austau{'\u00AD'}schen.
-            </span>
-          </p>
-
-          <p>
-            <span style={{ backgroundColor: '#4784ff59', padding: '4px 6px', boxDecorationBreak: 'clone' as const, WebkitBoxDecorationBreak: 'clone' as const }}>
-              Dann gehörst Du zu den über 400{'\u2019'}000 Menschen in der Schweiz, die wissen, wie es sich anfühlt: Psycho{'\u00AD'}therapie.
-            </span>
-          </p>
+          ))}
         </div>
 
         {/* Disclaimer text */}
@@ -700,10 +744,69 @@ function AuthForm() {
           fontStyle: 'normal',
           marginTop: '24px'
         }}>
-          <span style={{ backgroundColor: '#4784ff30', padding: '4px 6px', boxDecorationBreak: 'clone' as const, WebkitBoxDecorationBreak: 'clone' as const }}>
-            <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> ist eine Patienten{'\u00AD'}initiative für die Schweiz und unab{'\u00AD'}hängig von staatlichen und privaten Institu{'\u00AD'}tionen.
-          </span>
+          {[
+            { text: <><span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> ist eine</>, ml: 2 },
+            { text: 'Patienten\u00ADinitiative', ml: 5 },
+            { text: 'für die Schweiz und', ml: 0 },
+            { text: 'unabhängig von', ml: 4 },
+            { text: 'staatlichen und', ml: 1 },
+            { text: 'privaten Institutionen.', ml: 6 },
+          ].map((line, i) => (
+            <span key={i} style={{
+              display: 'block',
+              backgroundColor: '#4784ff30',
+              padding: '0px 6px',
+              whiteSpace: 'nowrap',
+              marginLeft: `${line.ml}px`,
+              width: 'fit-content'
+            }}>
+              {line.text}
+            </span>
+          ))}
         </div>
+      </div>
+    </div>
+
+    {/* Footer */}
+    <div style={{
+      width: '100%',
+      height: '100px',
+      backgroundColor: 'rgb(241, 241, 241)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 24px',
+      flexShrink: 0
+    }}>
+      <img
+        src="/images/logo_claim.png"
+        alt="Remy"
+        style={{
+          height: '36px',
+          width: 'auto',
+          filter: 'grayscale(100%)',
+          opacity: 1
+        }}
+      />
+      <span style={{
+        fontFamily: '"Nunito Sans", sans-serif',
+        fontSize: '13px',
+        fontWeight: 600,
+        color: '#8a9ab5',
+        letterSpacing: '0.03em'
+      }}>
+        Impressum
+      </span>
+      <div style={{
+        fontFamily: '"Nunito Sans", sans-serif',
+        fontSize: '11px',
+        fontWeight: 500,
+        color: '#8a9ab5',
+        letterSpacing: '0.02em',
+        textAlign: 'center'
+      }}>
+        <div>Made by</div>
+        <div>Studio LUMINELLI</div>
       </div>
     </div>
   </div>

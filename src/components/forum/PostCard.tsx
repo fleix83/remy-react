@@ -58,12 +58,10 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
 
   return (
     <div 
-      className={`p-6 mb-4 hover:opacity-80 transition-opacity cursor-pointer relative ${className}`}
+      className={`p-6 mb-4 hover:opacity-80 transition-opacity cursor-pointer relative post-card-outline ${className}`}
       style={{
         borderRadius: '20px',
-        background: '#ecffef',
-        outline: '1px solid #95c7ff',
-        outlineOffset: '-11px'
+        background: '#ecffef'
       }}
       onClick={handleClick}
     >
