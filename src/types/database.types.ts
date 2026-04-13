@@ -679,6 +679,14 @@ export type Database = {
     Functions: {
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      toggle_user_ban: {
+        Args: { target_user_id: string; ban_status: boolean }
+        Returns: undefined
+      }
+      update_user_role: {
+        Args: { target_user_id: string; new_role: string }
+        Returns: undefined
+      }
     }
     Enums: {
       access_role: "all" | "user" | "moderator" | "admin"
