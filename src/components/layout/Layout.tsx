@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({
     <div
       className="min-h-screen relative"
       style={{
-        background: '#f6fff7 url(/background.svg) no-repeat 0 0',
+        background: 'rgb(239, 255, 241) url(/background.svg) no-repeat 0 0',
         zIndex: 1
       }}
     >
