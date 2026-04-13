@@ -45,9 +45,13 @@ jobs:
           # Store the current commit hash
           COMMIT_HASH=$(git rev-parse --short HEAD)
 
-          # Create temporary directory for dist files
+          # Create temporary directory for dist files.
+          # IMPORTANT: use `dist/.` (not `dist/*`) so dotfiles such as
+          # `.htaccess` are included — the shell glob `*` skips dotfiles,
+          # which silently dropped .htaccess from every previous deploy
+          # and broke SPA reload on the staging domain.
           mkdir -p /tmp/staging-dist
-          cp -r dist/* /tmp/staging-dist/
+          cp -r dist/. /tmp/staging-dist/
 
           # Clean up git state before switching branches
           git clean -fd
@@ -67,8 +71,9 @@ jobs:
           find . -maxdepth 1 -not -name '.git' -type f -delete
           find . -maxdepth 1 -not -name '.git' -type d ! -name '.' -exec rm -rf {} + 2>/dev/null || true
 
-          # Copy dist files back
-          cp -r /tmp/staging-dist/* .
+          # Copy dist files back — again, use `/.` to include dotfiles
+          # such as .htaccess.
+          cp -r /tmp/staging-dist/. .
 
           # Add and commit files
           git add -A || { echo "Failed to add files"; exit 1; }
