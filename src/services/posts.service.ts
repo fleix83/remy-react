@@ -438,10 +438,10 @@ export class PostsService {
       throw new Error('User not authenticated')
     }
 
-    // First, verify the user owns this post
+    // First, verify the user owns this post and get current state
     const { data: existingPost, error: fetchError } = await supabase
       .from('posts')
-      .select('user_id')
+      .select('user_id, is_draft, moderation_status')
       .eq('id', id)
       .single()
 
@@ -462,12 +462,14 @@ export class PostsService {
       updated_at: new Date().toISOString()
     }
 
-    // If the caller is flipping draft status, mirror the create-flow
-    // semantics: publishing a draft re-enters the moderation queue; saving
-    // as draft clears moderation state.
+    // Only change moderation status when draft state actually changes.
+    // Editing an already-published post should NOT reset it to 'pending'.
     if (is_draft !== undefined) {
+      const wasDraft = existingPost.is_draft ?? false
       updateData.is_draft = is_draft
-      updateData.moderation_status = is_draft ? null : 'pending'
+      if (is_draft !== wasDraft) {
+        updateData.moderation_status = is_draft ? null : 'pending'
+      }
     }
 
     console.log('📤 PostsService: Updating post with data:', updateData)

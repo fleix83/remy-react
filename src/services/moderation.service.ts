@@ -27,36 +27,30 @@ export class ModerationService {
 
   async updateUserRole(userId: string, newRole: 'user' | 'moderator' | 'admin'): Promise<void> {
     const { error } = await supabase
-      .from('users')
-      .update({ role: newRole, updated_at: new Date().toISOString() })
-      .eq('id', userId)
+      .rpc('update_user_role', {
+        target_user_id: userId,
+        new_role: newRole
+      })
 
     if (error) throw error
   }
 
   async banUser(userId: string, _reason?: string): Promise<void> {
     const { error } = await supabase
-      .from('users')
-      .update({ 
-        is_banned: true, 
-        updated_at: new Date().toISOString()
+      .rpc('toggle_user_ban', {
+        target_user_id: userId,
+        ban_status: true
       })
-      .eq('id', userId)
 
     if (error) throw error
-
-    // Optionally log ban reason in a separate moderation_actions table
-    // This would require creating that table first
   }
 
   async unbanUser(userId: string): Promise<void> {
     const { error } = await supabase
-      .from('users')
-      .update({ 
-        is_banned: false, 
-        updated_at: new Date().toISOString()
+      .rpc('toggle_user_ban', {
+        target_user_id: userId,
+        ban_status: false
       })
-      .eq('id', userId)
 
     if (error) throw error
   }
