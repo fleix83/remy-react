@@ -1,10 +1,15 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /
+  # No explicit RewriteBase: Apache uses the directory containing this
+  # .htaccess, and the relative `index.html` substitution is prefixed with
+  # that directory automatically. This makes the rule work both for root
+  # deployment (staging subdomain) and for subdirectory mounts like the
+  # local XAMPP path /remy-react/. Commit 95305cb0 broke subdirectory
+  # mounts by switching to the absolute `/index.html` form.
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  RewriteRule . index.html [L]
 </IfModule>
 
 # Prevent caching of index.html so new deployments are picked up immediately
