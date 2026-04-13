@@ -10,10 +10,27 @@ interface PostCardProps {
   className?: string
 }
 
+const stripHtmlToPlain = (html: string): string => {
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/p>/gi, ' ')
+    .replace(/<\/div>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className = '' }) => {
   const navigate = useNavigate()
 
   // Get comment count from post data (from batched query) or fallback to 0
+  const contentPreview = useMemo(() => stripHtmlToPlain(post.content || ''), [post.content])
+
   const commentCount = useMemo(() => {
     if (post.comments && Array.isArray(post.comments) && post.comments.length > 0) {
       // If comments is an array with count objects
@@ -144,9 +161,27 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       )}
 
       {/* Title - Auto-generated for Rant posts without title */}
-      <h3 className="text-base md:text-xl font-semibold mb-4 leading-tight text-left" style={{color: 'var(--post-title)'}}>
-        {getPostDisplayTitle(post.title, post.content, post.category_id)}
-      </h3>
+      {getPostDisplayTitle(post.title, post.content, post.category_id) && (
+        <h3 className="text-base md:text-xl font-semibold mb-1 leading-tight text-left" style={{color: 'var(--post-title)'}}>
+          {getPostDisplayTitle(post.title, post.content, post.category_id)}
+        </h3>
+      )}
+
+      {/* Content preview - 3 lines with truncation */}
+      {contentPreview && (
+        <p
+          className="text-sm text-gray-600 text-left mb-4"
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            lineHeight: '1.4',
+          }}
+        >
+          {contentPreview}
+        </p>
+      )}
 
       {/* Rejection Reason (for banned posts) */}
       {(post as any).is_banned && (post as any).rejection_reason && (

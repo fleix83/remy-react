@@ -398,7 +398,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
   
   return (
-    <div className="relative rounded-lg bg-white border border-gray-300">
+    <div className="relative rounded-lg bg-white">
       {/* Toolbar */}
       {renderToolbar()}
 
