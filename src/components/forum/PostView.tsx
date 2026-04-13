@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCommentsRealtime } from '../../hooks/useCommentsRealtime'
@@ -14,12 +14,13 @@ import { getPostDisplayTitle } from '../../utils/text.utils'
 const PostView: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const postId = id ? parseInt(id) : null
   const [showEditModal, setShowEditModal] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openCommentForm, setOpenCommentForm] = useState(false)
   const [replyToPostAuthor, setReplyToPostAuthor] = useState(false)
-  
+
   const { currentPost: post, loading, loadPost, updatePost } = useForumStore()
   const { user, userProfile, logout } = useAuthStore()
 
@@ -31,6 +32,24 @@ const PostView: React.FC = () => {
       loadPost(postId)
     }
   }, [postId, loadPost])
+
+  // Honor navigation state from PostCard's "Antworten" link: once the post
+  // is loaded, open the reply form and scroll to the comments section, then
+  // clear the state so a later reload/refresh doesn't re-trigger it.
+  useEffect(() => {
+    const state = location.state as { openReply?: boolean } | null
+    if (!state?.openReply || !post) return
+
+    setOpenCommentForm(true)
+    setReplyToPostAuthor(true)
+    const t = setTimeout(() => {
+      document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+
+    // Clear the state so the effect doesn't re-fire on re-render.
+    navigate(location.pathname, { replace: true, state: null })
+    return () => clearTimeout(t)
+  }, [location.state, location.pathname, post, navigate])
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('de-DE', {

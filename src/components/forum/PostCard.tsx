@@ -65,10 +65,10 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       }}
       onClick={handleClick}
     >
-      {/* Header with Category Badge and Comments */}
+      {/* Header with Category Badge */}
       <div className="flex items-start justify-between mb-4">
         {/* Meta Group - positioned with negative margin and backdrop blur */}
-        <div 
+        <div
           className="flex items-center space-x-2 relative"
           style={{
             marginTop: '-25px',
@@ -90,7 +90,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
           </span>
           {/* Canton Flag (pure, no background) */}
           {post.canton && (
-            <img 
+            <img
               src={`/kantone/${post.canton.toLowerCase()}.png`}
               alt={`${post.canton} flag`}
               className="w-4 h-auto object-cover"
@@ -110,20 +110,6 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
             <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-red-600 text-white text-xs">
               ABGELEHNT
             </span>
-          )}
-        </div>
-        
-        {/* Comments Count */}
-        <div className="relative flex items-center">
-          <div className="relative bg-white rounded-full p-1.5">
-            <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-            </svg>
-          </div>
-          {commentCount > 0 && (
-            <div className="absolute -top-1 -right-1 bg-red-400 text-white font-bold rounded-full w-4 h-4 flex items-center justify-center min-w-[1rem]" style={{fontSize: '0.6rem'}}>
-              {commentCount > 99 ? '99+' : commentCount}
-            </div>
           )}
         </div>
       </div>
@@ -188,6 +174,35 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
           ))}
         </div>
       )}
+
+      {/* Footer: right-aligned Antworten link + comment indicator */}
+      <div className="flex items-center justify-end space-x-3 mt-1">
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            navigate(`/post/${post.id}`, { state: { openReply: true } })
+          }}
+          className="inline-flex items-center space-x-1 text-[var(--primary)] hover:opacity-80 transition-opacity"
+          style={{ fontSize: '12px' }}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+          </svg>
+          <span>Antworten</span>
+        </button>
+        <div className="relative flex items-center">
+          <div className="relative bg-white rounded-full p-1.5">
+            <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+          </div>
+          {commentCount > 0 && (
+            <div className="absolute -top-1 -right-1 bg-red-400 text-white font-bold rounded-full w-4 h-4 flex items-center justify-center min-w-[1rem]" style={{fontSize: '0.6rem'}}>
+              {commentCount > 99 ? '99+' : commentCount}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 })
