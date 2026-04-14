@@ -1,5 +1,8 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useInfinitePosts, useCategories, useCreatePost, useSearchPosts } from '../../hooks/usePosts'
+import { useAuthStore } from '../../stores/auth.store'
+import { useMessagesStore } from '../../stores/messages.store'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
@@ -20,11 +23,16 @@ interface PostFilters {
   search?: string
 }
 
-const ForumView: React.FC<ForumViewProps> = React.memo(({ 
-  showCreatePostDialog = false, 
+const REMY_USER_ID = 'b286390f-652b-4c14-84d1-c1b6fce159d9'
+
+const ForumView: React.FC<ForumViewProps> = React.memo(({
+  showCreatePostDialog = false,
   onCreatePostDialogClose = () => {},
   onCreatePost = () => {}
 }) => {
+  const navigate = useNavigate()
+  const { user } = useAuthStore()
+  const { findOrCreateConversation, setCurrentConversation } = useMessagesStore()
   const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -190,6 +198,35 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           filters={filters}
           onFiltersChange={setFiltersState}
         />
+
+        {/* Message Remy link */}
+        <div className="mb-4" style={{ paddingLeft: '250px', marginTop: '-10px' }}>
+          <button
+            onClick={async () => {
+              if (!user) {
+                navigate('/login')
+                return
+              }
+              try {
+                const conversation = await findOrCreateConversation(REMY_USER_ID, {
+                  id: REMY_USER_ID,
+                  username: 'Remy'
+                })
+                setCurrentConversation(conversation)
+                navigate('/messages')
+              } catch (error) {
+                console.error('Error opening conversation:', error)
+              }
+            }}
+            className="inline-flex items-center space-x-1 hover:opacity-80 transition-opacity"
+            style={{ color: '#4785ff', fontSize: '12px' }}
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span>Remy</span>
+          </button>
+        </div>
 
         {/* Category Filter - Hidden on mobile */}
         <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4">
