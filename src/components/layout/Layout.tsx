@@ -33,53 +33,26 @@ const Layout: React.FC<LayoutProps> = ({
       </main>
       
       {/* Footer */}
-      <footer className="border-t border-gray-200 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* About */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
-                Über Remy Forum
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Eine sichere Community für Psychotherapie-Patienten zum Austausch von Erfahrungen und gegenseitiger Unterstützung.
-              </p>
-            </div>
-            
-            {/* Links */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
-                Hilfreiche Links
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="#" className="hover:text-primary-600 transition-colors">📋 Community-Regeln</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">🔒 Datenschutz</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">📞 Krisenhilfe</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">❓ FAQ</a></li>
-              </ul>
-            </div>
-            
-            {/* Contact */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
-                Kontakt & Support
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="mailto:support@remy-forum.ch" className="hover:text-primary-600 transition-colors">✉️ Support kontaktieren</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">🚨 Problem melden</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">💡 Feedback geben</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-200 mt-8 pt-6">
-            <p className="text-center text-sm text-gray-500">
-              © 2024 Remy Forum. Alle Rechte vorbehalten. 
-              <span className="mx-2">•</span>
-              Behandle andere respektvoll und teile keine persönlichen Daten.
-            </p>
-          </div>
+      <footer className="mt-auto" style={{
+        height: '200px',
+        backgroundColor: 'rgb(241, 241, 241)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0 24px',
+        flexShrink: 0
+      }}>
+        {/* First line: Logo | Impressum | Datenschutz */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: '500px' }}>
+          <img src="/images/logo_claim.png" alt="Remy" style={{ height: '36px', width: 'auto', filter: 'grayscale(100%)' }} />
+          <a href="/impressum" style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>Impressum</a>
+          <a href="/datenschutz" style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>Datenschutz</a>
+        </div>
+        {/* Second line: Made by */}
+        <div style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '11px', fontWeight: 500, color: '#8a9ab5', letterSpacing: '0.02em', textAlign: 'center', marginTop: '16px' }}>
+          <div>Made by</div>
+          <div>Studio LUMINELLI</div>
         </div>
       </footer>
     </div>

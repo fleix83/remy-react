@@ -711,41 +711,23 @@ function AuthForm() {
     {/* Footer */}
     <div style={{
       width: '100%',
-      height: '100px',
+      height: '200px',
       backgroundColor: 'rgb(241, 241, 241)',
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       padding: '0 24px',
       flexShrink: 0
     }}>
-      <img
-        src="/images/logo_claim.png"
-        alt="Remy"
-        style={{
-          height: '36px',
-          width: 'auto',
-          filter: 'grayscale(100%)',
-          opacity: 1
-        }}
-      />
-      <span style={{
-        fontFamily: '"Nunito Sans", sans-serif',
-        fontSize: '13px',
-        fontWeight: 600,
-        color: '#8a9ab5',
-        letterSpacing: '0.03em'
-      }}>
-        Impressum
-      </span>
-      <div style={{
-        fontFamily: '"Nunito Sans", sans-serif',
-        fontSize: '11px',
-        fontWeight: 500,
-        color: '#8a9ab5',
-        letterSpacing: '0.02em',
-        textAlign: 'center'
-      }}>
+      {/* First line: Logo | Impressum | Datenschutz */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: '500px' }}>
+        <img src="/images/logo_claim.png" alt="Remy" style={{ height: '36px', width: 'auto', filter: 'grayscale(100%)' }} />
+        <a href="/impressum" style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>Impressum</a>
+        <a href="/datenschutz" style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>Datenschutz</a>
+      </div>
+      {/* Second line: Made by */}
+      <div style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '11px', fontWeight: 500, color: '#8a9ab5', letterSpacing: '0.02em', textAlign: 'center', marginTop: '16px' }}>
         <div>Made by</div>
         <div>Studio LUMINELLI</div>
       </div>
