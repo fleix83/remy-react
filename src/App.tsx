@@ -310,7 +310,7 @@ function AuthForm() {
                 src={`/images/logo_claim.png`}
                 alt="REMY - Forum für Menschen in Psychotherapie"
                 style={{
-                  width: 'clamp(180px, 42vw, 280px)',
+                  width: 'clamp(117px, 36vw, 275px)',
                   height: 'auto'
                 }}
               />
@@ -656,20 +656,20 @@ function AuthForm() {
 
     {/* Second Section - About */}
     <div className="flex flex-col px-6 md:hidden" style={{
-      background: 'linear-gradient(172deg, #c8e6c9 0.63%, rgb(240, 255, 242) 116.79%)',
+      background: '#cddeff',
       position: 'relative',
       paddingBottom: '60px'
     }}>
       {/* Snail illustration */}
       <img
-        src={`/images/snail.png`}
+        src={`/images/Snail_bg.png`}
         alt=""
         style={{
-          width: 'calc(100% + 48px)',
+          width: 'calc(100% + 304px)',
           height: 'auto',
           alignSelf: 'center',
-          marginBottom: '40px',
-          marginLeft: '0px',
+          marginBottom: '-50px',
+          marginLeft: '190px',
           maxWidth: 'none',
           pointerEvents: 'none'
         }}
@@ -686,83 +686,24 @@ function AuthForm() {
           textTransform: 'uppercase' as const,
           fontWeight: 700,
           fontSize: '22px',
-          lineHeight: '46px',
+          lineHeight: '1.4',
           color: 'rgb(71, 132, 255)',
           letterSpacing: '0.09em',
           textAlign: 'left',
-          marginTop: '20px',
-          fontStyle: 'normal'
+          marginTop: '20px'
         }}>
-          {[
-            { text: 'Willkommen!', ml: 3 },
-            { text: <><span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> ist ein Forum</>, ml: 0 },
-            { text: 'für Menschen, die', ml: 5 },
-            { text: 'sich für Psycho\u00ADtherapie', ml: 2 },
-            { text: 'interessieren oder', ml: 6 },
-            { text: 'aktuell eine', ml: 1 },
-            { text: 'Psycho\u00ADtherapie in', ml: 4 },
-            { text: 'Anspruch nehmen.', ml: 0, mb: 24 },
-            { text: 'Psycho\u00ADtherapie ist', ml: 5 },
-            { text: 'kompliziert und kann', ml: 1 },
-            { text: 'verunsichern. Auf', ml: 4 },
-            { text: <><span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> kannst Du</>, ml: 0 },
-            { text: 'Erlebnisse aus Deiner', ml: 6 },
-            { text: 'Therapie anonym teilen', ml: 2 },
-            { text: 'und Dich mit der', ml: 5 },
-            { text: 'Community austauschen.', ml: 0, mb: 24 },
-            { text: 'Dann gehörst Du zu', ml: 3 },
-            { text: "den über 400\u2019000", ml: 6 },
-            { text: 'Menschen in der', ml: 1 },
-            { text: 'Schweiz, die wissen,', ml: 4 },
-            { text: 'wie es sich anfühlt:', ml: 0 },
-            { text: 'Psycho\u00ADtherapie.', ml: 5 },
-          ].map((line, i) => (
-            <span key={i} style={{
-              display: 'block',
-              backgroundColor: '#4784ff59',
-              padding: '0px 6px',
-              whiteSpace: 'nowrap',
-              marginLeft: `${line.ml}px`,
-              marginBottom: line.mb ? `${line.mb}px` : '11px',
-              width: 'fit-content'
-            }}>
-              {line.text}
-            </span>
-          ))}
-        </div>
-
-        {/* Disclaimer text */}
-        <div style={{
-          fontFamily: '"Nunito Sans", sans-serif',
-          textTransform: 'uppercase' as const,
-          fontWeight: 700,
-          fontSize: '22px',
-          lineHeight: '46px',
-          color: 'rgb(137, 169, 255)',
-          letterSpacing: '0.09em',
-          textAlign: 'left',
-          fontStyle: 'normal',
-          marginTop: '24px'
-        }}>
-          {[
-            { text: <><span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span> ist eine</>, ml: 2 },
-            { text: 'Patienten\u00ADinitiative', ml: 5 },
-            { text: 'für die Schweiz und', ml: 0 },
-            { text: 'unabhängig von', ml: 4 },
-            { text: 'staatlichen und', ml: 1 },
-            { text: 'privaten Institutionen.', ml: 6 },
-          ].map((line, i) => (
-            <span key={i} style={{
-              display: 'block',
-              backgroundColor: '#4784ff30',
-              padding: '0px 6px',
-              whiteSpace: 'nowrap',
-              marginLeft: `${line.ml}px`,
-              width: 'fit-content'
-            }}>
-              {line.text}
-            </span>
-          ))}
+          <p style={{ marginBottom: '24px' }}>
+            {`Über 400\u2019000 Men\u00ADschen in der Schweiz machen eine Psycho\u00ADtherapie. Aber wenige reden darüber, ver\u00ADständ\u00ADlicher\u00ADweise.`}
+          </p>
+          <p style={{ marginBottom: '24px' }}>
+            {`Therapie ist kompli\u00ADziert und kann ver\u00ADunsichern. `}
+            <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span>
+            {` ist der Ort, an dem du dich anonym aus\u00ADtauschen kannst. Über das, was dich be\u00ADschäftigt. Über Therapeut:innen. Über den Weg, den du gehst.`}
+          </p>
+          <p style={{ color: 'rgb(137, 169, 255)' }}>
+            <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span>
+            {` ist eine un\u00ADab\u00ADhängige Patienten\u00ADinitiative für die Schweiz.`}
+          </p>
         </div>
       </div>
     </div>
