@@ -470,44 +470,46 @@ function AuthForm() {
                 </form>
               )}
 
-              {/* Login link */}
-              <div style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
-                <span style={{
-                  color: '#8a9ab5',
-                  fontFamily: '"Nunito Sans", sans-serif',
-                  fontSize: '15px',
-                  fontWeight: 600,
-                  background: 'transparent'
-                }}>
-                  Schon registriert? Zum{' '}
-                </span>
-                <button
-                  onClick={handleLoginClick}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#5482ff',
+              {/* Login link - hide after registration complete */}
+              {!registrationComplete && (
+                <div style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
+                  <span style={{
+                    color: '#8a9ab5',
                     fontFamily: '"Nunito Sans", sans-serif',
                     fontSize: '15px',
-                    fontWeight: 700,
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    padding: 0
-                  }}
-                >
-                  Login.
-                </button>
-              </div>
+                    fontWeight: 600,
+                    background: 'transparent'
+                  }}>
+                    Schon registriert? Zum{' '}
+                  </span>
+                  <button
+                    onClick={handleLoginClick}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#5482ff',
+                      fontFamily: '"Nunito Sans", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 700,
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      padding: 0
+                    }}
+                  >
+                    Login.
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
         {/* Registration Complete - Email Confirmation Required */}
         {showRegisterForm && registrationComplete && (
-          <div className="text-center space-y-6">
-            <div className="text-green-600 text-6xl mb-4">✓</div>
+          <div className="text-center space-y-6" style={{ marginBottom: '30px' }}>
+            <div className="text-6xl mb-4" style={{ color: '#4785ff' }}>✓</div>
 
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+            <div className="rounded-lg p-6">
               <p className="text-lg font-medium mb-2" style={{ color: '#144220' }}>
                 Registrierung erfolgreich!
               </p>
@@ -517,13 +519,14 @@ function AuthForm() {
             </div>
 
             <div className="text-sm" style={{ color: '#144220' }}>
-              <p className="mb-4">Nach der Bestätigung kannst du dich einloggen.</p>
+              <p>Nach der Bestätigung kannst du dich einloggen.</p>
+              <br />
               <button
                 onClick={handleLoginClick}
                 className="font-body text-[16px] underline font-medium"
-                style={{ color: 'var(--primary)' }}
+                style={{ color: 'var(--primary)', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
               >
-                Zum Login
+                Login
               </button>
             </div>
           </div>
