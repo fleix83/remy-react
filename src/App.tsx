@@ -193,6 +193,68 @@ function AuthForm() {
       overflowY: 'auto',
       overflowX: 'hidden'
     }}>
+      {/* Desktop responsive overrides */}
+      <style>{`
+        @media (min-width: 768px) {
+          .landing-logo-wrap {
+            padding-top: 5vh !important;
+            padding-right: 6vw !important;
+          }
+          .landing-logo {
+            width: clamp(117px, 14vw, 205px) !important;
+          }
+          .landing-dog {
+            width: 48% !important;
+            height: 62% !important;
+            object-fit: contain !important;
+            object-position: left top !important;
+            top: 3% !important;
+          }
+          .landing-saul {
+            width: 20% !important;
+            top: 2% !important;
+          }
+          .landing-tagline {
+            font-size: clamp(42px, 4.5vw, 64px) !important;
+            line-height: 0.9 !important;
+            max-width: 560px !important;
+            margin-bottom: 40px !important;
+          }
+          .landing-cta {
+            max-width: 260px !important;
+            width: 260px !important;
+            font-size: 18px !important;
+            padding: 14px 24px !important;
+          }
+          .landing-about {
+            flex-direction: column !important;
+            padding: 0 !important;
+            padding-bottom: 80px !important;
+            overflow: hidden !important;
+          }
+          .landing-about-snail {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            margin-top: 0vw !important;
+            margin-bottom: -4vw !important;
+            object-fit: cover !important;
+            object-position: center !important;
+          }
+          .landing-about-text {
+            max-width: 780px !important;
+            margin: 0 auto !important;
+            padding: 0 40px !important;
+          }
+          .landing-about-text .landing-about-body {
+            font-size: 33px !important;
+            line-height: 1.4 !important;
+          }
+          .landing-about-text .landing-about-body .landing-remy-name {
+            font-size: 44px !important;
+          }
+        }
+      `}</style>
       {/* Info bar */}
       <div style={{
         width: '100%',
@@ -262,6 +324,7 @@ function AuthForm() {
       {/* Dog illustration - upper left, hidden on login */}
       {!showLoginForm && (
         <img
+          className="landing-dog"
           src={`/images/dog.png`}
           alt=""
           style={{
@@ -278,6 +341,7 @@ function AuthForm() {
 
       {/* Saul illustration - wavy river, middle area */}
       <img
+        className="landing-saul"
         src={`/images/saul.png`}
         alt=""
         style={{
@@ -300,13 +364,14 @@ function AuthForm() {
             height: '100%'
           }}>
             {/* Logo and claim image - upper right */}
-            <div style={{
+            <div className="landing-logo-wrap" style={{
               display: 'flex',
               justifyContent: 'flex-end',
               paddingTop: '28px',
               paddingRight: '4px'
             }}>
               <img
+                className="landing-logo"
                 src={`/images/logo_claim.png`}
                 alt="REMY - Forum für Menschen in Psychotherapie"
                 style={{
@@ -330,7 +395,7 @@ function AuthForm() {
             }}>
               {/* Tagline - hidden when register form is open */}
               {!showRegisterForm && (
-                <div style={{
+                <div className="landing-tagline" style={{
                   fontFamily: '"Gaegu", cursive',
                   fontWeight: 700,
                   fontSize: '51px',
@@ -348,6 +413,7 @@ function AuthForm() {
               {/* Registration Button - hidden when form is shown */}
               {!showRegisterForm && (
                 <button
+                  className="landing-cta"
                   onClick={handleRegisterClick}
                   style={{
                     width: '65vw',
@@ -658,13 +724,14 @@ function AuthForm() {
     </div>
 
     {/* Second Section - About */}
-    <div className="flex flex-col px-6 md:hidden" style={{
+    <div className="landing-about flex flex-col px-6" style={{
       background: '#cddeff',
       position: 'relative',
       paddingBottom: '60px'
     }}>
       {/* Snail illustration */}
       <img
+        className="landing-about-snail"
         src={`/images/Snail_bg.png`}
         alt=""
         style={{
@@ -678,13 +745,13 @@ function AuthForm() {
         }}
       />
 
-      <div style={{
+      <div className="landing-about-text" style={{
         width: '100%',
         paddingLeft: '10px',
         paddingRight: '10px'
       }}>
         {/* Main text */}
-        <div style={{
+        <div className="landing-about-body" style={{
           fontFamily: '"Nunito Sans", sans-serif',
           textTransform: 'uppercase' as const,
           fontWeight: 700,
@@ -700,11 +767,11 @@ function AuthForm() {
           </p>
           <p style={{ marginBottom: '24px' }}>
             {`Therapie ist kompli\u00ADziert und kann ver\u00ADunsichern. `}
-            <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span>
+            <span className="landing-remy-name" style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span>
             {` ist der Ort, an dem du dich anonym aus\u00ADtauschen kannst. Über das, was dich be\u00ADschäftigt. Über Therapeut:innen. Über den Weg, den du gehst.`}
           </p>
           <p style={{ color: 'rgb(137, 169, 255)' }}>
-            <span style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span>
+            <span className="landing-remy-name" style={{ fontFamily: '"Gaegu", cursive', fontSize: '30px', letterSpacing: '0.04em' }}>Remy</span>
             {` ist eine un\u00ADab\u00ADhängige Patienten\u00ADinitiative für die Schweiz.`}
           </p>
         </div>
