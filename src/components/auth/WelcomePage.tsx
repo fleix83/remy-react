@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuthStore } from '../../stores/auth.store'
@@ -13,6 +13,13 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
   const navigate = useNavigate()
   const { refreshSession } = useAuthStore()
   const [username, setUsername] = useState('')
+
+  // Override body background so no other bg bleeds through
+  useEffect(() => {
+    const prev = document.body.style.background
+    document.body.style.background = '#eefaf0'
+    return () => { document.body.style.background = prev }
+  }, [])
   const [error, setError] = useState('')
   const [isChecking, setIsChecking] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
