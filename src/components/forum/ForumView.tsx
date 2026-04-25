@@ -273,20 +273,32 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             >
               Alle Kategorien
             </button>
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryFilter(category.id)}
-                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                  filters.category === category.id
-                    ? 'bg-[var(--primary)] text-white'
-                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-                }`}
-                style={{fontSize: '0.65rem'}}
-              >
-                {category.name_de}
-              </button>
-            ))}
+            {categories.map((category) => {
+              const categoryBgs: Record<number, string> = {
+                1: 'var(--bg-erfahrung)',
+                2: 'var(--bg-suche)',
+                3: 'var(--bg-austausch)',
+                4: 'var(--bg-rant)',
+                5: 'var(--bg-ressourcen)',
+              }
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategoryFilter(category.id)}
+                  className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                    filters.category === category.id
+                      ? 'text-gray-700'
+                      : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                  }`}
+                  style={{
+                    fontSize: '0.65rem',
+                    backgroundColor: filters.category === category.id ? categoryBgs[category.id] : undefined
+                  }}
+                >
+                  {category.name_de}
+                </button>
+              )
+            })}
           </div>
 
           {loading ? (
