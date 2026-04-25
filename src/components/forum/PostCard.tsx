@@ -146,42 +146,45 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
         </div>
       </div>
 
-      {/* Therapist Info - Only for posts with therapists */}
-      {post.therapists && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            navigate(`/therapists?therapist=${post.therapists!.id}`)
-          }}
-          className="text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full mb-0"
-          style={{color: '#4785ff', fontSize: '12px', lineHeight: '1.2'}}
-        >
-          Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
-        </button>
-      )}
+      {/* Title / Therapist / Content — wrapped for desktop reorder */}
+      <div className="post-card-body">
+        {/* Therapist Info - Only for posts with therapists */}
+        {post.therapists && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              navigate(`/therapists?therapist=${post.therapists!.id}`)
+            }}
+            className="post-card-therapist text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full mb-0"
+            style={{color: '#4785ff', fontSize: '12px', lineHeight: '1.2'}}
+          >
+            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
+          </button>
+        )}
 
-      {/* Title - Auto-generated for Rant posts without title */}
-      {getPostDisplayTitle(post.title, post.content, post.category_id) && (
-        <h3 className="text-base md:text-xl font-semibold mb-1 leading-tight text-left" style={{color: 'var(--post-title)'}}>
-          {getPostDisplayTitle(post.title, post.content, post.category_id)}
-        </h3>
-      )}
+        {/* Title - Auto-generated for Rant posts without title */}
+        {getPostDisplayTitle(post.title, post.content, post.category_id) && (
+          <h3 className="post-card-title text-base md:text-xl font-semibold mb-1 leading-tight text-left" style={{color: 'var(--post-title)'}}>
+            {getPostDisplayTitle(post.title, post.content, post.category_id)}
+          </h3>
+        )}
 
-      {/* Content preview - 3 lines with truncation */}
-      {contentPreview && (
-        <p
-          className="text-sm text-gray-600 text-left mb-4"
-          style={{
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            lineHeight: '1.4',
-          }}
-        >
-          {contentPreview}
-        </p>
-      )}
+        {/* Content preview - 3 lines with truncation */}
+        {contentPreview && (
+          <p
+            className="text-sm text-gray-600 text-left mb-4"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              lineHeight: '1.4',
+            }}
+          >
+            {contentPreview}
+          </p>
+        )}
+      </div>
 
       {/* Rejection Reason (for banned posts) */}
       {(post as any).is_banned && (post as any).rejection_reason && (

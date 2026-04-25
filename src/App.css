@@ -107,4 +107,35 @@
   .post-card-outline .flex.justify-end.mt-1 {
     margin-right: 24px;
   }
+
+  /* Remove background.svg on desktop */
+  .layout-root {
+    background-image: none !important;
+  }
+
+  /* Reorder: title above therapist on desktop */
+  .post-card-body {
+    display: flex;
+    flex-direction: column;
+  }
+  .post-card-title {
+    order: 1;
+  }
+  .post-card-therapist {
+    order: 2;
+  }
+  .post-card-body > p {
+    order: 3;
+  }
+
+  /* Category filter tabs: larger, centered, less bottom spacing */
+  .category-filters {
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .category-filters button {
+    font-size: 0.85rem !important;
+    padding: 6px 16px;
+  }
 }

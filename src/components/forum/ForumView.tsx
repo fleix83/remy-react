@@ -229,7 +229,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         </div>
 
         {/* Category Filter - Hidden on mobile */}
-        <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4">
+        <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4 category-filters">
           <button
             onClick={() => handleCategoryFilter(null)}
             className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
