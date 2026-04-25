@@ -56,3 +56,55 @@
   mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 50%);
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 50%);
 }
+
+/* ── Desktop-only overrides for forum list ── */
+@media (min-width: 768px) {
+  /* Main forum column width */
+  .forum-list-column {
+    max-width: 50rem;
+  }
+
+  /* Post card padding */
+  .post-card-outline.p-6 {
+    padding: 60px 46px;
+    padding-bottom: 35px;
+  }
+
+  /* Post card bottom spacing */
+  .post-card-outline.mb-4 {
+    margin-bottom: 48px;
+  }
+
+  /* Outline border inset */
+  .post-card-outline::before {
+    inset: 25px;
+  }
+
+  /* Meta group (category badge row) position */
+  .post-card-outline .flex.items-center.space-x-2[style] {
+    margin-top: -45px !important;
+  }
+
+  /* Post title */
+  .post-card-outline h3.md\:text-xl {
+    font-size: 1.5rem;
+    line-height: 2.8rem;
+  }
+
+  /* Therapist link */
+  .post-card-outline button.hover\:underline {
+    font-size: 17px !important;
+    line-height: 1.6 !important;
+    color: rgb(71, 133, 255);
+  }
+
+  /* Content preview */
+  .post-card-outline p.text-sm.text-gray-600 {
+    font-size: 1.18rem;
+  }
+
+  /* Antworten footer */
+  .post-card-outline .flex.justify-end.mt-1 {
+    margin-right: 24px;
+  }
+}

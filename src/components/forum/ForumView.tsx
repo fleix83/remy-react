@@ -142,7 +142,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto pt-0 pb-6 px-0 md:px-4">
+      <div className="max-w-6xl forum-list-column mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
         <div className="p-4 mb-4 mx-4 md:mx-0 relative" style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
           <div className="flex items-center gap-4">
