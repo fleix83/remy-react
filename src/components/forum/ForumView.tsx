@@ -158,10 +158,10 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               Neu
             </button>
             
-            {/* Filter Button */}
+            {/* Filter Button — hidden on desktop (category tabs visible) */}
             <button
               onClick={() => setShowFilterModal(true)}
-              className="bg-[var(--bg-body)] hover:bg-[var(--bg-element-hover)] text-gray-400 px-4 py-2 font-medium transition-colors text-sm relative flex items-center space-x-2"
+              className="forum-filter-btn bg-[var(--bg-body)] hover:bg-[var(--bg-element-hover)] text-gray-400 px-4 py-2 font-medium transition-colors text-sm relative flex items-center space-x-2"
               style={{borderRadius: '20px'}}
             >
               <span>Filter</span>

@@ -63,11 +63,11 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   if (!isOpen) return null
 
   return (
-    <div 
-      className="fixed inset-0 z-50 md:hidden"
+    <div
+      className="fixed inset-0 z-50"
       role="dialog"
       aria-modal="true"
-      aria-label="Mobile navigation menu"
+      aria-label="Navigation menu"
     >
       {/* Backdrop with custom green overlay */}
       <div 
@@ -101,6 +101,19 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
 
         {/* Menu content */}
         <div className="flex flex-col h-full pt-16">
+          {/* Language selector at top */}
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            {['DE', 'FR', 'IT'].map((lang) => (
+              <button
+                key={lang}
+                className="text-sm font-medium transition-opacity hover:opacity-80"
+                style={{ color: '#4785ff' }}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
+
           <nav className="flex-1 flex items-center justify-center">
             <ul className="space-y-3 text-left">
               {/* Forum */}

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
-import { usePermissions } from '../../hooks/usePermissions'
 import { useNotificationsStore } from '../../stores/notifications.store'
 import { useMessagesStore } from '../../stores/messages.store'
-import MessagesButton from '../messaging/MessagesButton'
 import UserAvatar from '../user/UserAvatar'
 import MobileSlideMenu from './MobileSlideMenu'
 
@@ -15,12 +13,9 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({
-  onCreatePost,
-  showCreatePostButton = true,
   headerBg
 }) => {
   const { user, userProfile, logout } = useAuthStore()
-  const permissions = usePermissions()
   const { unreadCount: notificationCount, loadNotifications } = useNotificationsStore()
   const { unreadCount: messageCount } = useMessagesStore()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -66,108 +61,30 @@ const Navigation: React.FC<NavigationProps> = ({
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
-            
-            {/* Main Navigation Links */}
-            <div className="flex items-center space-x-6">
-              <Link 
-                to="/" 
-                className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                🏠 Forum
-              </Link>
-              
-              <Link 
-                to="/therapists" 
-                className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                👩‍⚕️ Therapeuten
-              </Link>
-              
-              {user && (
-                <MessagesButton 
-                  className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  showLabel={true}
-                />
-              )}
-              
-              {/* Admin & Moderation Links - Only for moderators and admins */}
-              {permissions.canModerate && (
-                <>
-                  <Link 
-                    to="/admin/moderation" 
-                    className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  >
-                    🛡️ Moderation
-                  </Link>
-                  {permissions.isAdmin && (
-                    <Link 
-                      to="/admin" 
-                      className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                    >
-                      ⚙️ Admin
-                    </Link>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Create Post Button */}
-            {showCreatePostButton && (
-              <button
-                onClick={onCreatePost}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-all transform hover:scale-105 shadow-md flex items-center space-x-2"
-                style={{ 
-                  backgroundColor: '#0284c7',
-                  boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
-                }}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Beitrag erstellen</span>
-              </button>
-            )}
-
-            {/* User Menu */}
+          {/* Desktop Navigation — avatar + username triggers slide menu */}
+          <div className="hidden md:flex items-center">
             {user ? (
-              <div className="flex items-center space-x-3">
-                <Link 
-                  to="/profile" 
-                  className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  {userProfile && (
-                    <UserAvatar 
-                      user={userProfile} 
-                      size="small" 
-                    />
-                  )}
-                  <span className="hidden lg:inline">Profil</span>
-                </Link>
-                
-                <button
-                  onClick={handleSignOut}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  Abmelden
-                </button>
-              </div>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="flex items-center space-x-2 text-gray-700 hover:opacity-80 transition-opacity relative"
+              >
+                {userProfile && (
+                  <UserAvatar user={userProfile} size="small" />
+                )}
+                <span className="text-sm font-medium">{userProfile?.username || 'Menü'}</span>
+                {totalUnreadCount > 0 && (
+                  <div className="absolute -top-1 -right-3 bg-red-400 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center min-w-[1.25rem]" style={{fontSize: '0.65rem'}}>
+                    {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
+                  </div>
+                )}
+              </button>
             ) : (
-              <div className="flex items-center space-x-2">
-                <Link 
-                  to="/login" 
-                  className="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Anmelden
-                </Link>
-                <Link 
-                  to="/register" 
-                  className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  Registrieren
-                </Link>
-              </div>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-gray-700 hover:opacity-80 px-3 py-2 rounded-md text-sm font-medium transition-opacity"
+              >
+                Menü
+              </button>
             )}
           </div>
 

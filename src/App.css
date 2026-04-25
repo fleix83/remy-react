@@ -133,9 +133,15 @@
     justify-content: center;
     gap: 10px;
     margin-bottom: 8px;
+    margin-top: 16px;
   }
   .category-filters button {
     font-size: 0.85rem !important;
     padding: 6px 16px;
+  }
+
+  /* Hide Filter button on desktop (category tabs are visible) */
+  .forum-filter-btn {
+    display: none;
   }
 }
