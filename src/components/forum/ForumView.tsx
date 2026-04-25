@@ -144,12 +144,12 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     <div className="min-h-screen">
       <div className="max-w-6xl forum-list-column mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className="p-4 mb-4 mx-4 md:mx-0 relative" style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
+        <div className="forum-navbar p-4 mb-4 mx-4 md:mx-0 relative" style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
           <div className="flex items-center gap-4">
             {/* Neu Button */}
             <button
               onClick={onCreatePost}
-              className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
+              className="forum-neu-btn bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
               style={{borderRadius: '20px'}}
             >
               <svg className="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,7 +157,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               </svg>
               Neu
             </button>
-            
+
             {/* Filter Button — hidden on desktop (category tabs visible) */}
             <button
               onClick={() => setShowFilterModal(true)}
@@ -171,9 +171,9 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 </span>
               )}
             </button>
-            
+
             {/* Search Input */}
-            <div className="relative flex-1">
+            <div className="forum-search relative flex-1">
               <input
                 type="text"
                 placeholder="Suche..."
