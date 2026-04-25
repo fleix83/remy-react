@@ -228,36 +228,6 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           </button>
         </div>
 
-        {/* Category Filter - Hidden on mobile */}
-        <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4 category-filters">
-          <button
-            onClick={() => handleCategoryFilter(null)}
-            className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-              !filters.category
-                ? 'bg-[var(--primary)] text-white'
-                : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-            }`}
-            style={{fontSize: '0.65rem'}}
-          >
-            Alle Kategorien
-          </button>
-          
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleCategoryFilter(category.id)}
-              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                filters.category === category.id
-                  ? 'bg-[var(--primary)] text-white'
-                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-              }`}
-              style={{fontSize: '0.65rem'}}
-            >
-              {category.name_de}
-            </button>
-          ))}
-        </div>
-
       {/* Post Editor Dialog */}
       {showCreatePostDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-40">
@@ -288,8 +258,37 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         </div>
       )}
 
-        {/* Posts List */}
-        <div>
+        {/* Posts area — filters sidebar + list */}
+        <div className="forum-posts-area relative">
+          {/* Category Filter - Hidden on mobile, sidebar on desktop */}
+          <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4 category-filters">
+            <button
+              onClick={() => handleCategoryFilter(null)}
+              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                !filters.category
+                  ? 'bg-[var(--primary)] text-white'
+                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+              }`}
+              style={{fontSize: '0.65rem'}}
+            >
+              Alle Kategorien
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => handleCategoryFilter(category.id)}
+                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                  filters.category === category.id
+                    ? 'bg-[var(--primary)] text-white'
+                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                }`}
+                style={{fontSize: '0.65rem'}}
+              >
+                {category.name_de}
+              </button>
+            ))}
+          </div>
+
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
