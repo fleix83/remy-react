@@ -158,15 +158,18 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               Neu
             </button>
 
-            {/* Filter Button — hidden on desktop (category tabs visible) */}
+            {/* Filter Button — icon only on desktop */}
             <button
               onClick={() => setShowFilterModal(true)}
-              className="forum-filter-btn bg-[var(--bg-body)] hover:bg-[var(--bg-element-hover)] text-gray-400 px-4 py-2 font-medium transition-colors text-sm relative flex items-center space-x-2"
-              style={{borderRadius: '20px'}}
+              className="forum-filter-btn bg-white hover:bg-gray-50 transition-colors relative flex items-center justify-center"
+              style={{borderRadius: '20px', color: 'var(--color-gray-400)', padding: '8px 12px'}}
             >
-              <span>Filter</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              <span className="md:hidden ml-2 text-sm font-medium">Filter</span>
               {getActiveFilterCount > 0 && (
-                <span className="bg-[var(--primary)] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="bg-[var(--primary)] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-1 -right-1">
                   {getActiveFilterCount}
                 </span>
               )}
@@ -179,7 +182,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 placeholder="Suche..."
                 value={searchInput}
                 onChange={handleSearchChange}
-                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-sm"
+                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-lg"
                 style={{borderRadius: '20px'}}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

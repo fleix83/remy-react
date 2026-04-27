@@ -153,11 +153,6 @@
     width: 100%;
   }
 
-  /* Hide Filter button on desktop (category tabs are visible) */
-  .forum-filter-btn {
-    display: none;
-  }
-
   /* Forum navbar: transparent bg, more top margin */
   .forum-navbar {
     background-color: rgb(239, 255, 241) !important;
@@ -168,13 +163,6 @@
   /* Search input: white background */
   .forum-search input {
     background-color: #fff !important;
-  }
-
-  /* Neu button: move above the search bar, top-right */
-  .forum-neu-btn {
-    position: absolute;
-    top: -44px;
-    right: 0;
   }
 
   /* First post card: reduce top margin */
