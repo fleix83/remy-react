@@ -291,7 +291,7 @@ const PostView: React.FC = () => {
             <button
               onClick={() => navigate(`/therapists?therapist=${post.therapists!.id}`)}
               className="text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
-              style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2', marginBottom: '12px'}}
+              style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2'}}
             >
               Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
             </button>
