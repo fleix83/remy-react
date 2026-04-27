@@ -241,20 +241,9 @@ const PostView: React.FC = () => {
 
           {/* Title - Hidden for Rant posts, auto-generated for others */}
           {post.category_id !== 4 && (
-            <h1 className="text-left" style={{color: 'var(--post-title)', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: post.therapists ? '8px' : '24px'}}>
+            <h1 className="text-left" style={{color: 'var(--post-title)', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
               {getPostDisplayTitle(post.title, post.content, post.category_id)}
             </h1>
-          )}
-
-          {/* Therapist Info - between title and user info */}
-          {post.therapists && (
-            <button
-              onClick={() => navigate(`/therapists?therapist=${post.therapists!.id}`)}
-              className="text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
-              style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2', marginBottom: '24px'}}
-            >
-              Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
-            </button>
           )}
 
           {/* User Info */}
@@ -296,6 +285,17 @@ const PostView: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Therapist Info - above post content */}
+          {post.therapists && (
+            <button
+              onClick={() => navigate(`/therapists?therapist=${post.therapists!.id}`)}
+              className="text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
+              style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2', marginBottom: '12px'}}
+            >
+              Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
+            </button>
+          )}
 
           {/* Post Content */}
           <SelectableText onTextSelect={() => {}}>
