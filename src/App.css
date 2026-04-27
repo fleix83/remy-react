@@ -57,6 +57,21 @@
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 50%);
 }
 
+/* Reorder: title above therapist line (all screen sizes) */
+.post-card-body {
+  display: flex;
+  flex-direction: column;
+}
+.post-card-title {
+  order: 1;
+}
+.post-card-therapist {
+  order: 2;
+}
+.post-card-body > p {
+  order: 3;
+}
+
 /* ── Desktop-only overrides for forum list ── */
 @media (min-width: 768px) {
   /* Main column width — all pages */
@@ -113,20 +128,7 @@
     background-image: none !important;
   }
 
-  /* Reorder: title above therapist on desktop */
-  .post-card-body {
-    display: flex;
-    flex-direction: column;
-  }
-  .post-card-title {
-    order: 1;
-  }
-  .post-card-therapist {
-    order: 2;
-  }
-  .post-card-body > p {
-    order: 3;
-  }
+  /* post-card-body ordering moved to global scope */
 
   /* Category filter tabs: vertical sidebar on the left */
   .category-filters {
