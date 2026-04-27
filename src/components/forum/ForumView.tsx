@@ -146,17 +146,22 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         {/* New Navbar */}
         <div className="forum-navbar p-4 mb-4 mx-4 md:mx-0 relative" style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
           <div className="flex items-center gap-4">
-            {/* Neu Button */}
-            <button
-              onClick={onCreatePost}
-              className="forum-neu-btn bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
-              style={{borderRadius: '20px'}}
-            >
-              <svg className="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-              Neu
-            </button>
+            {/* Search Input */}
+            <div className="forum-search relative flex-1">
+              <input
+                type="text"
+                placeholder="Suche..."
+                value={searchInput}
+                onChange={handleSearchChange}
+                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-lg"
+                style={{borderRadius: '20px'}}
+              />
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <svg className="h-4 w-4 text-[#2ebe7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
 
             {/* Filter Button — icon only on desktop */}
             <button
@@ -175,22 +180,17 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               )}
             </button>
 
-            {/* Search Input */}
-            <div className="forum-search relative flex-1">
-              <input
-                type="text"
-                placeholder="Suche..."
-                value={searchInput}
-                onChange={handleSearchChange}
-                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-lg"
-                style={{borderRadius: '20px'}}
-              />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <svg className="h-4 w-4 text-[#2ebe7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-            </div>
+            {/* Neu Button */}
+            <button
+              onClick={onCreatePost}
+              className="forum-neu-btn bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
+              style={{borderRadius: '20px'}}
+            >
+              <svg className="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+              Neu
+            </button>
           </div>
         </div>
 
