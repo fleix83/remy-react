@@ -338,15 +338,18 @@ export const initializeMessagingAuth = () => {
   authListenerInitialized = true
   
   // Listen for auth changes
-  supabase.auth.onAuthStateChange(async (event, session) => {
+  supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session?.user) {
-      const store = useMessagesStore.getState()
-      if (!store.initialized) {
-        store.loadConversations()
-        store.loadUnreadCount()
-        await store.subscribeToMessages()
-        useMessagesStore.setState({ initialized: true })
-      }
+      // Avoid awaiting Supabase calls inside onAuthStateChange (deadlock risk)
+      queueMicrotask(() => {
+        const store = useMessagesStore.getState()
+        if (!store.initialized) {
+          store.loadConversations()
+          store.loadUnreadCount()
+          store.subscribeToMessages()
+          useMessagesStore.setState({ initialized: true })
+        }
+      })
     } else if (event === 'SIGNED_OUT') {
       const store = useMessagesStore.getState()
       store.unsubscribeFromMessages()

@@ -44,10 +44,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Step 2: Set up listener for auth state changes
       // This listener will handle login/logout/token refresh
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (_event, session) => {
+        (_event, session) => {
           if (session?.user) {
             set({ user: session.user, session })
-            await get().loadUserProfile()
+            // Avoid awaiting Supabase calls inside onAuthStateChange (deadlock risk)
+            queueMicrotask(() => get().loadUserProfile())
           } else {
             set({ user: null, session: null, userProfile: null })
           }
