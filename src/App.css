@@ -114,9 +114,11 @@
     color: rgb(71, 133, 255);
   }
 
-  /* Content preview */
-  .post-card-outline p.text-sm.text-gray-600 {
-    font-size: 1.18rem;
+  /* Content preview / body text */
+  .post-card-outline p.text-sm.text-gray-600,
+  .post-view-body {
+    font-size: 1.18rem !important;
+    line-height: 1.4 !important;
   }
 
   /* Antworten footer */

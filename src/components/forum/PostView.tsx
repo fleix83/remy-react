@@ -300,7 +300,7 @@ const PostView: React.FC = () => {
           {/* Post Content */}
           <SelectableText onTextSelect={() => {}}>
             <div
-              className="prose prose-gray max-w-none text-left"
+              className="prose prose-gray max-w-none text-left post-view-body"
               style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px', color: 'var(--post-text)' }}
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
