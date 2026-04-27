@@ -107,7 +107,8 @@
   }
 
   /* Therapist link */
-  .post-card-outline button.hover\:underline {
+  .post-card-outline button.hover\:underline,
+  .post-view-therapist {
     font-size: 17px !important;
     line-height: 1.6 !important;
     color: rgb(71, 133, 255);
