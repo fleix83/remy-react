@@ -1,8 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useInfinitePosts, useCategories, useCreatePost, useSearchPosts } from '../../hooks/usePosts'
-import { useAuthStore } from '../../stores/auth.store'
-import { useMessagesStore } from '../../stores/messages.store'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
@@ -24,16 +21,11 @@ interface PostFilters {
   search?: string
 }
 
-const REMY_USER_ID = 'b286390f-652b-4c14-84d1-c1b6fce159d9'
-
 const ForumView: React.FC<ForumViewProps> = React.memo(({
   showCreatePostDialog = false,
   onCreatePostDialogClose = () => {},
   onCreatePost = () => {}
 }) => {
-  const navigate = useNavigate()
-  const { user } = useAuthStore()
-  const { findOrCreateConversation, setCurrentConversation } = useMessagesStore()
   const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null)
