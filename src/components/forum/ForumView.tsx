@@ -4,6 +4,8 @@ import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
+import { DesignationsService } from '../../services/designations.service'
+import type { Designation } from '../../types/database.types'
 
 interface ForumViewProps {
   showCreatePostDialog?: boolean
@@ -31,6 +33,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [filters, setFiltersState] = useState<PostFilters>({})
+  const [designations, setDesignations] = useState<Designation[]>([])
+  const [showAllDesignations, setShowAllDesignations] = useState(false)
 
   // React Query hooks - use searchTerm when it exists, otherwise use filters
   const isSearchMode = Boolean(searchTerm.trim())
@@ -102,6 +106,18 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     setSearchInput('')
     setSearchTerm('')
     setFiltersState(prev => ({ category: categoryId || undefined, cantons: prev.cantons }))
+  }, [])
+
+  // Load designations
+  const designationsService = useMemo(() => new DesignationsService(), [])
+  useEffect(() => {
+    designationsService.getActiveDesignations().then(setDesignations).catch(console.error)
+  }, [designationsService])
+
+  const handleDesignationFilter = useCallback((displayName: string | null) => {
+    setSearchInput('')
+    setSearchTerm('')
+    setFiltersState(prev => ({ ...prev, designation: displayName || undefined }))
   }, [])
 
   const handleCantonToggle = useCallback((cantonCode: string) => {
@@ -311,6 +327,64 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 </button>
               )
             })}
+          </div>
+
+          {/* Designation Filter - sidebar on desktop, below categories */}
+          <div className="hidden md:flex designation-filters">
+            {(() => {
+              const primaryNames = ['Psychologe', 'Psychiater', 'Tagesklinik']
+              const allDesignationItems = designations.map(d => ({
+                id: d.id,
+                name: designationsService.getDisplayName(d)
+              })).filter(d => d.name)
+              const primaryItems = allDesignationItems.filter(d => primaryNames.some(p => d.name.startsWith(p)))
+              const restItems = allDesignationItems.filter(d => !primaryNames.some(p => d.name.startsWith(p)))
+
+              return (
+                <>
+                  {/* Primary designations - always visible */}
+                  {primaryItems.map(d => (
+                    <button
+                      key={d.id}
+                      onClick={() => handleDesignationFilter(filters.designation === d.name ? null : d.name)}
+                      className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                        filters.designation === d.name
+                          ? 'bg-[var(--primary)] text-white'
+                          : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                      }`}
+                      style={{ fontSize: '0.65rem' }}
+                    >
+                      {d.name}
+                    </button>
+                  ))}
+
+                  {/* "Alle Bezeichnungen" toggle */}
+                  <button
+                    onClick={() => setShowAllDesignations(prev => !prev)}
+                    className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors text-white"
+                    style={{ fontSize: '0.65rem', backgroundColor: '#4785ff' }}
+                  >
+                    {showAllDesignations ? 'Weniger' : 'Alle Bezeichnungen'}
+                  </button>
+
+                  {/* Collapsed rest */}
+                  {showAllDesignations && restItems.map(d => (
+                    <button
+                      key={d.id}
+                      onClick={() => handleDesignationFilter(filters.designation === d.name ? null : d.name)}
+                      className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                        filters.designation === d.name
+                          ? 'bg-[var(--primary)] text-white'
+                          : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                      }`}
+                      style={{ fontSize: '0.65rem' }}
+                    >
+                      {d.name}
+                    </button>
+                  ))}
+                </>
+              )
+            })()}
           </div>
 
           {loading ? (
