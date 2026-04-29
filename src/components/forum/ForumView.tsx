@@ -225,15 +225,6 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 
         {/* Canton Filter - inline below navbar on desktop */}
         <div className="hidden md:flex items-center flex-wrap gap-1 canton-inline" style={{ padding: '0 20px', marginBottom: '80px' }}>
-          {filters.cantons && filters.cantons.length > 0 && (
-            <button
-              onClick={() => setFiltersState(prev => ({ ...prev, cantons: undefined }))}
-              className="text-[var(--primary)] hover:opacity-80 mr-1"
-              style={{ fontSize: '0.75rem', background: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              ✕
-            </button>
-          )}
           {SWISS_CANTONS.filter(c => c.code !== '').map(canton => (
             <button
               key={canton.code}
@@ -254,6 +245,15 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               {canton.code}
             </button>
           ))}
+          {filters.cantons && filters.cantons.length > 0 && (
+            <button
+              onClick={() => setFiltersState(prev => ({ ...prev, cantons: undefined }))}
+              className="text-[var(--primary)] hover:opacity-80 ml-1"
+              style={{ fontSize: '0.7rem', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              zurücksetzen
+            </button>
+          )}
         </div>
 
       {/* Post Editor Dialog */}
