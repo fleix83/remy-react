@@ -137,7 +137,7 @@
   .category-filters {
     position: fixed;
     right: calc(50% + 25rem + 40px);
-    top: 350px;
+    top: 300px;
     flex-direction: column;
     align-items: stretch;
     gap: 20px;
@@ -157,14 +157,20 @@
   .designation-filters {
     position: fixed;
     right: calc(50% + 25rem + 40px);
-    top: 660px;
+    top: 610px;
     flex-direction: column;
     align-items: stretch;
     gap: 20px;
     margin: 0;
     padding: 0;
     width: max-content;
-    overflow: visible;
+    max-height: calc(100vh - 630px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .designation-filters::-webkit-scrollbar {
+    display: none;
   }
   .designation-filters button {
     font-size: 0.9rem !important;
