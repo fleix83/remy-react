@@ -343,7 +343,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                     alt={canton.name}
                     className="w-4 h-4 object-contain"
                   />
-                  <span>{canton.code}</span>
+                  <span>{canton.name}</span>
                 </button>
               ))}
             </div>

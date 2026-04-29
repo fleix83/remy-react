@@ -163,10 +163,15 @@
     width: max-content;
     max-height: calc(100vh - 660px);
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .canton-filters::-webkit-scrollbar {
+    display: none;
   }
   .canton-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 3px;
   }
   .canton-btn {
