@@ -6,7 +6,7 @@ import type { Designation, Therapist } from '../../types/database.types'
 
 interface PostFilters {
   category?: number
-  canton?: string
+  cantons?: string[]
   therapist?: string
   designation?: string
   dateFrom?: string
@@ -22,7 +22,7 @@ interface FilterModalProps {
 
 interface FilterState {
   category?: number
-  canton?: string
+  cantons?: string[]
   therapist?: string
   designation?: string
   dateFrom?: string
@@ -70,7 +70,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
   // Check if any filters are active
   const hasActiveFilters = Boolean(
     filters.category ||
-    filters.canton ||
+    (filters.cantons && filters.cantons.length > 0) ||
     filters.therapist ||
     filters.designation ||
     filters.dateFrom ||
@@ -227,8 +227,12 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             {/* Kantone */}
             <div className="relative">
               <select
-                value={filters.canton || ''}
-                onChange={(e) => handleFilterChange('canton', e.target.value || undefined)}
+                value={filters.cantons?.[0] || ''}
+                onChange={(e) => {
+                  const val = e.target.value
+                  const newFilters = { ...filters, cantons: val ? [val] : undefined }
+                  onFiltersChange(newFilters)
+                }}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >
                 <option value="">Alle Kantone</option>

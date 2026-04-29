@@ -4,7 +4,7 @@ import type { PostWithRelations, Category } from '../types/database.types'
 
 interface PostFilters {
   category?: number
-  canton?: string
+  cantons?: string[]
   therapist?: string
   designation?: string
   dateFrom?: string
@@ -87,7 +87,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
       const currentFilters = filters || get().filters
       const data = await postsService.getPosts({
         category: currentFilters.category,
-        canton: currentFilters.canton,
+        cantons: currentFilters.cantons,
         therapist: currentFilters.therapist,
         designation: currentFilters.designation,
         dateFrom: currentFilters.dateFrom,
@@ -124,7 +124,7 @@ export const useForumStore = create<ForumState>((set, get) => ({
       // For now, we'll just simulate it
       const newPosts = await postsService.getPosts({
         category: filters.category,
-        canton: filters.canton,
+        cantons: filters.cantons,
         therapist: filters.therapist,
         designation: filters.designation,
         dateFrom: filters.dateFrom,

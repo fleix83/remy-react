@@ -19,7 +19,7 @@ export class PostSideEffectError extends Error {
 
 interface PostFilters {
   category?: number
-  canton?: string
+  cantons?: string[]
   therapist?: string
   designation?: string
   dateFrom?: string
@@ -78,8 +78,8 @@ export class PostsService {
       query = query.eq('category_id', postFilters.category)
     }
 
-    if (postFilters.canton) {
-      query = query.eq('canton', postFilters.canton)
+    if (postFilters.cantons && postFilters.cantons.length > 0) {
+      query = query.in('canton', postFilters.cantons)
     }
 
     if (postFilters.therapist) {

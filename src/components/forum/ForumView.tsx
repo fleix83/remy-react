@@ -6,6 +6,7 @@ import { useMessagesStore } from '../../stores/messages.store'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
+import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 
 interface ForumViewProps {
   showCreatePostDialog?: boolean
@@ -15,7 +16,7 @@ interface ForumViewProps {
 
 interface PostFilters {
   category?: number
-  canton?: string
+  cantons?: string[]
   therapist?: string
   designation?: string
   dateFrom?: string
@@ -105,16 +106,28 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   }, [createPostMutation, onCreatePostDialogClose])
 
   const handleCategoryFilter = useCallback((categoryId: number | null) => {
-    // Clear search when applying filters
+    // Clear search when applying filters, preserve canton selections
     setSearchInput('')
     setSearchTerm('')
-    setFiltersState({ category: categoryId || undefined })
+    setFiltersState(prev => ({ category: categoryId || undefined, cantons: prev.cantons }))
+  }, [])
+
+  const handleCantonToggle = useCallback((cantonCode: string) => {
+    setSearchInput('')
+    setSearchTerm('')
+    setFiltersState(prev => {
+      const current = prev.cantons || []
+      const updated = current.includes(cantonCode)
+        ? current.filter(c => c !== cantonCode)
+        : [...current, cantonCode]
+      return { ...prev, cantons: updated.length > 0 ? updated : undefined }
+    })
   }, [])
 
   const getActiveFilterCount = useMemo(() => {
     let count = 0
     if (filters.category) count++
-    if (filters.canton) count++
+    if (filters.cantons && filters.cantons.length > 0) count++
     if (filters.therapist) count++
     if (filters.designation) count++
     if (filters.dateFrom || filters.dateTo) count++
@@ -153,7 +166,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 placeholder="Suche..."
                 value={searchInput}
                 onChange={handleSearchChange}
-                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] text-lg"
+                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-[oklch(0.32_0_0)] focus:outline-none focus:ring-2 focus:ring-[#d9f7de] text-lg"
                 style={{borderRadius: '20px'}}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -302,6 +315,38 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 </button>
               )
             })}
+          </div>
+
+          {/* Canton Filter - Hidden on mobile, sidebar on desktop */}
+          <div className="hidden md:flex canton-filters">
+            <div className="text-xs font-medium text-gray-400 mb-2 text-right">Kantone</div>
+            {filters.cantons && filters.cantons.length > 0 && (
+              <button
+                onClick={() => setFiltersState(prev => ({ ...prev, cantons: undefined }))}
+                className="text-xs text-[var(--primary)] hover:opacity-80 mb-1 text-right"
+              >
+                Zurücksetzen
+              </button>
+            )}
+            <div className="canton-grid">
+              {SWISS_CANTONS.filter(c => c.code !== '').map(canton => (
+                <button
+                  key={canton.code}
+                  onClick={() => handleCantonToggle(canton.code)}
+                  className={`canton-btn ${
+                    filters.cantons?.includes(canton.code) ? 'canton-btn-active' : ''
+                  }`}
+                  title={canton.name}
+                >
+                  <img
+                    src={`/kantone/${canton.code.toLowerCase()}.png`}
+                    alt={canton.name}
+                    className="w-4 h-4 object-contain"
+                  />
+                  <span>{canton.code}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {loading ? (

@@ -5,7 +5,7 @@ const postsService = new PostsService()
 
 interface PostFilters {
   category?: number
-  canton?: string
+  cantons?: string[]
   therapist?: string
   designation?: string
   dateFrom?: string
