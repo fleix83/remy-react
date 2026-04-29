@@ -200,6 +200,12 @@
     opacity: 0.85;
   }
 
+  /* Inline canton hover */
+  .canton-inline button:hover {
+    background-color: rgba(71, 133, 255, 0.08) !important;
+    color: #4785ff;
+  }
+
   /* Forum navbar: transparent bg, more top margin */
   .forum-navbar {
     background-color: rgb(239, 255, 241) !important;
