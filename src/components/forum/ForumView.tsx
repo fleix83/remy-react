@@ -215,33 +215,78 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           onFiltersChange={setFiltersState}
         />
 
-        {/* Message Remy link */}
-        <div className="mb-4" style={{ paddingLeft: '250px', marginTop: '-10px' }}>
+        {/* Category Filter - inline horizontal below navbar */}
+        <div className="flex items-center flex-wrap gap-1.5 px-4 md:px-0 mb-2">
           <button
-            onClick={async () => {
-              if (!user) {
-                navigate('/login')
-                return
-              }
-              try {
-                const conversation = await findOrCreateConversation(REMY_USER_ID, {
-                  id: REMY_USER_ID,
-                  username: 'Remy'
-                })
-                setCurrentConversation(conversation)
-                navigate('/messages')
-              } catch (error) {
-                console.error('Error opening conversation:', error)
-              }
-            }}
-            className="inline-flex items-center space-x-1 hover:opacity-80 transition-opacity"
-            style={{ color: '#4785ff', fontSize: '12px' }}
+            onClick={() => handleCategoryFilter(null)}
+            className={`inline-flex items-center px-2 py-0.5 rounded font-medium whitespace-nowrap transition-colors ${
+              !filters.category
+                ? 'bg-[var(--primary)] text-white'
+                : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+            }`}
+            style={{fontSize: '0.6rem'}}
           >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span>Remy</span>
+            Alle
           </button>
+          {categories.map((category) => {
+            const categoryBgs: Record<number, string> = {
+              1: 'var(--bg-erfahrung)',
+              2: 'var(--bg-suche)',
+              3: 'var(--bg-austausch)',
+              4: 'var(--bg-rant)',
+              5: 'var(--bg-ressourcen)',
+            }
+            return (
+              <button
+                key={category.id}
+                onClick={() => handleCategoryFilter(category.id)}
+                className={`inline-flex items-center px-2 py-0.5 rounded font-medium whitespace-nowrap transition-colors ${
+                  filters.category === category.id
+                    ? 'text-gray-700'
+                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                }`}
+                style={{
+                  fontSize: '0.6rem',
+                  backgroundColor: filters.category === category.id ? categoryBgs[category.id] : undefined
+                }}
+              >
+                {category.name_de}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Canton Filter - inline horizontal with flags, wrapping */}
+        <div className="flex items-center flex-wrap gap-1 px-4 md:px-0 mb-8">
+          {filters.cantons && filters.cantons.length > 0 && (
+            <button
+              onClick={() => setFiltersState(prev => ({ ...prev, cantons: undefined }))}
+              className="text-[var(--primary)] hover:opacity-80 mr-1"
+              style={{ fontSize: '0.55rem' }}
+            >
+              ✕
+            </button>
+          )}
+          {SWISS_CANTONS.filter(c => c.code !== '').map(canton => (
+            <button
+              key={canton.code}
+              onClick={() => handleCantonToggle(canton.code)}
+              className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded transition-colors ${
+                filters.cantons?.includes(canton.code)
+                  ? 'bg-[var(--primary)] text-white'
+                  : 'text-gray-500 hover:bg-[var(--bg-element-hover)]'
+              }`}
+              style={{ fontSize: '0.55rem', border: 'none', cursor: 'pointer', background: filters.cantons?.includes(canton.code) ? undefined : 'transparent' }}
+              title={canton.name}
+            >
+              <img
+                src={`/kantone/${canton.code.toLowerCase()}.png`}
+                alt={canton.name}
+                className="w-3 h-3 object-contain"
+              />
+              {canton.code}
+            </button>
+          ))}
         </div>
 
       {/* Post Editor Dialog */}
@@ -274,81 +319,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         </div>
       )}
 
-        {/* Posts area — filters sidebar + list */}
+        {/* Posts area */}
         <div className="forum-posts-area relative">
-          {/* Category Filter - Hidden on mobile, sidebar on desktop */}
-          <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4 category-filters">
-            <button
-              onClick={() => handleCategoryFilter(null)}
-              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                !filters.category
-                  ? 'bg-[var(--primary)] text-white'
-                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-              }`}
-              style={{fontSize: '0.65rem'}}
-            >
-              Alle Kategorien
-            </button>
-            {categories.map((category) => {
-              const categoryBgs: Record<number, string> = {
-                1: 'var(--bg-erfahrung)',
-                2: 'var(--bg-suche)',
-                3: 'var(--bg-austausch)',
-                4: 'var(--bg-rant)',
-                5: 'var(--bg-ressourcen)',
-              }
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategoryFilter(category.id)}
-                  className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                    filters.category === category.id
-                      ? 'text-gray-700'
-                      : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-                  }`}
-                  style={{
-                    fontSize: '0.65rem',
-                    backgroundColor: filters.category === category.id ? categoryBgs[category.id] : undefined
-                  }}
-                >
-                  {category.name_de}
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Canton Filter - Hidden on mobile, sidebar on desktop */}
-          <div className="hidden md:flex canton-filters">
-            <div className="text-xs font-medium text-gray-400 mb-2 text-right">Kantone</div>
-            {filters.cantons && filters.cantons.length > 0 && (
-              <button
-                onClick={() => setFiltersState(prev => ({ ...prev, cantons: undefined }))}
-                className="text-xs text-[var(--primary)] hover:opacity-80 mb-1 text-right"
-              >
-                Zurücksetzen
-              </button>
-            )}
-            <div className="canton-grid">
-              {SWISS_CANTONS.filter(c => c.code !== '').map(canton => (
-                <button
-                  key={canton.code}
-                  onClick={() => handleCantonToggle(canton.code)}
-                  className={`canton-btn ${
-                    filters.cantons?.includes(canton.code) ? 'canton-btn-active' : ''
-                  }`}
-                  title={canton.name}
-                >
-                  <img
-                    src={`/kantone/${canton.code.toLowerCase()}.png`}
-                    alt={canton.name}
-                    className="w-4 h-4 object-contain"
-                  />
-                  <span>{canton.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
