@@ -342,6 +342,19 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 
               return (
                 <>
+                  {/* "Alle Bezeichnungen" reset button - first position */}
+                  <button
+                    onClick={() => { handleDesignationFilter(null); setShowAllDesignations(false) }}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                      !filters.designation
+                        ? 'bg-[var(--primary)] text-white'
+                        : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                    }`}
+                    style={{ fontSize: '0.65rem' }}
+                  >
+                    Alle Bezeichnungen
+                  </button>
+
                   {/* Primary designations - always visible */}
                   {primaryItems.map(d => (
                     <button
@@ -358,16 +371,18 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                     </button>
                   ))}
 
-                  {/* "Alle Bezeichnungen" toggle */}
-                  <button
-                    onClick={() => setShowAllDesignations(prev => !prev)}
-                    className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors text-white"
-                    style={{ fontSize: '0.65rem', backgroundColor: '#4785ff' }}
-                  >
-                    {showAllDesignations ? 'Weniger' : 'Alle Bezeichnungen'}
-                  </button>
+                  {/* "Mehr" toggle - hidden when expanded */}
+                  {!showAllDesignations && restItems.length > 0 && (
+                    <button
+                      onClick={() => setShowAllDesignations(true)}
+                      className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors text-gray-700"
+                      style={{ fontSize: '0.65rem', backgroundColor: '#c6dcc9' }}
+                    >
+                      Mehr
+                    </button>
+                  )}
 
-                  {/* Collapsed rest */}
+                  {/* Expanded rest */}
                   {showAllDesignations && restItems.map(d => (
                     <button
                       key={d.id}
