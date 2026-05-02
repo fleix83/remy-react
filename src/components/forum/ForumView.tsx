@@ -329,6 +329,31 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             })}
           </div>
 
+          {/* Date Filter - sidebar on desktop, above designations */}
+          <div className="hidden md:flex date-filters">
+            <input
+              type="date"
+              value={filters.dateFrom || ''}
+              onChange={(e) => setFiltersState(prev => ({ ...prev, dateFrom: e.target.value || undefined }))}
+              placeholder="Von"
+            />
+            <input
+              type="date"
+              value={filters.dateTo || ''}
+              onChange={(e) => setFiltersState(prev => ({ ...prev, dateTo: e.target.value || undefined }))}
+              placeholder="Bis"
+            />
+            {(filters.dateFrom || filters.dateTo) && (
+              <button
+                onClick={() => setFiltersState(prev => ({ ...prev, dateFrom: undefined, dateTo: undefined }))}
+                className="text-[var(--primary)] hover:opacity-80"
+                style={{ fontSize: '0.75rem', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right' }}
+              >
+                zurücksetzen
+              </button>
+            )}
+          </div>
+
           {/* Designation Filter - sidebar on desktop, below categories */}
           <div className="hidden md:flex designation-filters">
             {(() => {

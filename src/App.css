@@ -153,6 +153,35 @@
     width: 100%;
   }
 
+  /* Date filter: sidebar between categories and designations */
+  .date-filters {
+    position: fixed;
+    right: calc(50% + 25rem + 40px);
+    top: 540px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    width: max-content;
+  }
+  .date-filters input {
+    font-size: 0.8rem;
+    padding: 6px 16px;
+    text-align: right;
+    width: 100%;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    color: #374151;
+    cursor: pointer;
+    outline: none;
+  }
+  .date-filters input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.5;
+  }
+
   /* Designation filter: sidebar below categories */
   .designation-filters {
     position: fixed;
