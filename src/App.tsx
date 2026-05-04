@@ -215,9 +215,10 @@ function AuthForm() {
           }
           .landing-cta-area {
             align-items: flex-start !important;
-            margin-left: 55% !important;
-            padding-left: 0 !important;
+            margin-left: 50% !important;
+            padding-left: 5vw !important;
             padding-right: 6vw !important;
+            padding-bottom: 12vh !important;
           }
           .landing-tagline {
             font-size: clamp(42px, 4.5vw, 64px) !important;
