@@ -103,13 +103,14 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
         }}
       >
         {/* Close button */}
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-8 right-8">
           <button
             onClick={onClose}
-            className="p-2 text-black hover:text-gray-700 transition-colors"
+            className="p-2 hover:opacity-70 transition-opacity"
+            style={{ color: 'rgb(241, 251, 244)' }}
             aria-label="Close menu"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
