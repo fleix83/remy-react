@@ -203,28 +203,39 @@ function AuthForm() {
           .landing-logo {
             width: clamp(117px, 14vw, 205px) !important;
           }
-          .landing-dog {
-            width: 48% !important;
-            height: 62% !important;
-            object-fit: contain !important;
-            object-position: left top !important;
-            top: 3% !important;
-          }
+          .landing-dog,
           .landing-saul {
-            width: 20% !important;
-            top: 2% !important;
+            display: none !important;
+          }
+          .landing-hero {
+            background-image: url('/images/bow.png') !important;
+            background-repeat: no-repeat !important;
+            background-position: left center !important;
+            background-size: 50% auto !important;
+          }
+          .landing-cta-area {
+            align-items: flex-start !important;
+            margin-left: 55% !important;
+            padding-left: 0 !important;
+            padding-right: 6vw !important;
           }
           .landing-tagline {
             font-size: clamp(42px, 4.5vw, 64px) !important;
             line-height: 0.9 !important;
             max-width: 560px !important;
             margin-bottom: 40px !important;
+            align-self: flex-start !important;
+            text-align: left !important;
           }
           .landing-cta {
             max-width: 260px !important;
             width: 260px !important;
             font-size: 18px !important;
             padding: 14px 24px !important;
+            align-self: flex-start !important;
+          }
+          .landing-login-link {
+            text-align: left !important;
           }
           .landing-about {
             flex-direction: column !important;
@@ -311,7 +322,7 @@ function AuthForm() {
       </div>
 
       {/* First Section - Landing Page */}
-      <div style={{
+      <div className="landing-hero" style={{
         height: 'calc(100vh - 36px)',
         background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
         position: 'relative',
@@ -385,7 +396,7 @@ function AuthForm() {
             <div style={{ flex: 1 }} />
 
             {/* Text and CTA group - bottom portion */}
-            <div onClick={() => { if (showRegisterForm) { setShowRegisterForm(false); setMessage('') } }} style={{
+            <div className="landing-cta-area" onClick={() => { if (showRegisterForm) { setShowRegisterForm(false); setMessage('') } }} style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -538,7 +549,7 @@ function AuthForm() {
 
               {/* Login link - hide after registration complete */}
               {!registrationComplete && (
-                <div style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
+                <div className="landing-login-link" style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
                   <span style={{
                     color: '#8a9ab5',
                     fontFamily: '"Nunito Sans", sans-serif',
