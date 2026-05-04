@@ -259,6 +259,15 @@ function AuthForm() {
       }}>
 
 
+      {/* Bow illustration - desktop only, left half */}
+      {!showLoginForm && (
+        <img
+          className="landing-bow hidden"
+          src="/images/bow.png"
+          alt=""
+        />
+      )}
+
       {/* Dog illustration - upper left, hidden on login */}
       {!showLoginForm && (
         <img
