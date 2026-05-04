@@ -97,15 +97,14 @@
     z-index: 1 !important;
   }
   .landing-cta-area {
-    align-items: flex-start !important;
+    position: absolute !important;
+    right: 5% !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     width: 45% !important;
-    margin-left: auto !important;
-    margin-right: 5% !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-bottom: 0 !important;
-    justify-content: center !important;
-    flex: 1 !important;
+    align-items: flex-start !important;
+    padding: 0 !important;
+    z-index: 10 !important;
   }
   .landing-tagline {
     font-size: clamp(42px, 4.5vw, 64px) !important;
