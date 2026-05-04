@@ -326,13 +326,19 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           <div className="hidden md:flex date-filters" ref={datePickerRef}>
             <button
               onClick={() => setShowDatePicker(prev => !prev)}
-              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+              className={`inline-flex items-center gap-2 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
                 filters.dateFrom || filters.dateTo
                   ? 'bg-[var(--primary)] text-white'
                   : 'text-gray-700 hover:bg-[var(--bg-element-hover)]'
               }`}
-              style={{ fontSize: '0.65rem', backgroundColor: !(filters.dateFrom || filters.dateTo) ? 'white' : undefined }}
+              style={{ backgroundColor: !(filters.dateFrom || filters.dateTo) ? 'white' : undefined }}
             >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
               {filters.dateFrom && filters.dateTo
                 ? `${format(new Date(filters.dateFrom), 'dd.MM.yy')} – ${format(new Date(filters.dateTo), 'dd.MM.yy')}`
                 : filters.dateFrom

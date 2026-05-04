@@ -164,6 +164,7 @@
     margin: 0;
     padding: 0;
     width: max-content;
+    z-index: 60;
   }
   .date-filters button {
     font-size: 0.9rem !important;
@@ -173,12 +174,12 @@
   }
   .date-picker-dropdown {
     position: absolute;
-    top: 0;
-    right: calc(100% + 16px);
+    top: 40px;
+    right: 0;
     background: white;
     border-radius: 12px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    z-index: 50;
+    z-index: 60;
     padding: 8px;
   }
   .date-picker-dropdown .rdp-root {
