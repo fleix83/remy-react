@@ -86,10 +86,11 @@
   .landing-bow {
     display: block !important;
     position: absolute !important;
-    left: 0 !important;
+    left: 5% !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
-    width: 50% !important;
+    width: 38% !important;
+    max-height: 60vh !important;
     height: auto !important;
     object-fit: contain !important;
     pointer-events: none !important;
@@ -97,11 +98,11 @@
   }
   .landing-cta-area {
     align-items: flex-start !important;
-    width: 50% !important;
+    width: 45% !important;
     margin-left: auto !important;
-    margin-right: 0 !important;
-    padding-left: 5vw !important;
-    padding-right: 5vw !important;
+    margin-right: 5% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     padding-bottom: 0 !important;
     justify-content: center !important;
     flex: 1 !important;
