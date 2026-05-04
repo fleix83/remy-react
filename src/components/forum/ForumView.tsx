@@ -221,7 +221,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             {/* Filter Button — icon only on desktop */}
             <button
               onClick={() => setShowFilterModal(true)}
-              className="forum-filter-btn bg-white hover:bg-gray-50 transition-colors relative flex items-center justify-center"
+              className="forum-filter-btn bg-white hover:bg-gray-50 transition-colors relative flex md:hidden items-center justify-center"
               style={{borderRadius: '20px', color: 'var(--color-gray-400)', padding: '8px 12px'}}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
