@@ -1,11 +1,16 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useInfinitePosts, useCategories, useCreatePost, useSearchPosts } from '../../hooks/usePosts'
+import { DayPicker } from 'react-day-picker'
+import { format } from 'date-fns'
+import { de } from 'date-fns/locale'
+import 'react-day-picker/style.css'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { DesignationsService } from '../../services/designations.service'
 import type { Designation } from '../../types/database.types'
+import type { DateRange } from 'react-day-picker'
 
 interface ForumViewProps {
   showCreatePostDialog?: boolean
@@ -35,6 +40,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   const [filters, setFiltersState] = useState<PostFilters>({})
   const [designations, setDesignations] = useState<Designation[]>([])
   const [showAllDesignations, setShowAllDesignations] = useState(false)
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const datePickerRef = useRef<HTMLDivElement>(null)
 
   // React Query hooks - use searchTerm when it exists, otherwise use filters
   const isSearchMode = Boolean(searchTerm.trim())
@@ -113,6 +120,33 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   useEffect(() => {
     designationsService.getActiveDesignations().then(setDesignations).catch(console.error)
   }, [designationsService])
+
+  // Close date picker on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (datePickerRef.current && !datePickerRef.current.contains(e.target as Node)) {
+        setShowDatePicker(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const dateRange: DateRange | undefined = useMemo(() => {
+    if (!filters.dateFrom && !filters.dateTo) return undefined
+    return {
+      from: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
+      to: filters.dateTo ? new Date(filters.dateTo) : undefined
+    }
+  }, [filters.dateFrom, filters.dateTo])
+
+  const handleDateRangeSelect = useCallback((range: DateRange | undefined) => {
+    setFiltersState(prev => ({
+      ...prev,
+      dateFrom: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,
+      dateTo: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined
+    }))
+  }, [])
 
   const handleDesignationFilter = useCallback((displayName: string | null) => {
     setSearchInput('')
@@ -288,6 +322,45 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 
         {/* Posts area — filters sidebar + list */}
         <div className="forum-posts-area relative">
+          {/* Date Range Filter - sidebar on desktop, above categories */}
+          <div className="hidden md:flex date-filters" ref={datePickerRef}>
+            <button
+              onClick={() => setShowDatePicker(prev => !prev)}
+              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                filters.dateFrom || filters.dateTo
+                  ? 'bg-[var(--primary)] text-white'
+                  : 'text-gray-700 hover:bg-[var(--bg-element-hover)]'
+              }`}
+              style={{ fontSize: '0.65rem', backgroundColor: !(filters.dateFrom || filters.dateTo) ? 'white' : undefined }}
+            >
+              {filters.dateFrom && filters.dateTo
+                ? `${format(new Date(filters.dateFrom), 'dd.MM.yy')} – ${format(new Date(filters.dateTo), 'dd.MM.yy')}`
+                : filters.dateFrom
+                  ? `Ab ${format(new Date(filters.dateFrom), 'dd.MM.yy')}`
+                  : 'Datum'}
+            </button>
+            {(filters.dateFrom || filters.dateTo) && (
+              <button
+                onClick={() => { handleDateRangeSelect(undefined); setShowDatePicker(false) }}
+                className="text-[var(--primary)] hover:opacity-80"
+                style={{ fontSize: '0.75rem', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right' }}
+              >
+                zurücksetzen
+              </button>
+            )}
+            {showDatePicker && (
+              <div className="date-picker-dropdown">
+                <DayPicker
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={handleDateRangeSelect}
+                  locale={de}
+                  numberOfMonths={1}
+                />
+              </div>
+            )}
+          </div>
+
           {/* Category Filter - Hidden on mobile, sidebar on desktop */}
           <div className="hidden md:flex items-center space-x-2 overflow-x-auto px-4 md:px-0 mb-4 category-filters">
             <button
@@ -327,31 +400,6 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 </button>
               )
             })}
-          </div>
-
-          {/* Date Filter - sidebar on desktop, above designations */}
-          <div className="hidden md:flex date-filters">
-            <input
-              type="date"
-              value={filters.dateFrom || ''}
-              onChange={(e) => setFiltersState(prev => ({ ...prev, dateFrom: e.target.value || undefined }))}
-              placeholder="Von"
-            />
-            <input
-              type="date"
-              value={filters.dateTo || ''}
-              onChange={(e) => setFiltersState(prev => ({ ...prev, dateTo: e.target.value || undefined }))}
-              placeholder="Bis"
-            />
-            {(filters.dateFrom || filters.dateTo) && (
-              <button
-                onClick={() => setFiltersState(prev => ({ ...prev, dateFrom: undefined, dateTo: undefined }))}
-                className="text-[var(--primary)] hover:opacity-80"
-                style={{ fontSize: '0.75rem', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right' }}
-              >
-                zurücksetzen
-              </button>
-            )}
           </div>
 
           {/* Designation Filter - sidebar on desktop, below categories */}
