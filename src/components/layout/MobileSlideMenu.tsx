@@ -1,6 +1,8 @@
 import React, { useEffect, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMessagesStore } from '../../stores/messages.store'
+import { format } from 'date-fns'
+import { de } from 'date-fns/locale'
 import type { Conversation } from '../../services/messages.service'
 
 interface MobileSlideMenuProps {
@@ -17,7 +19,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate()
-  const { unreadCount: messageCount, loadConversations } = useMessagesStore()
+  const { unreadCount: messageCount, loadConversations, setCurrentConversation } = useMessagesStore()
   const [recentConversations, setRecentConversations] = useState<Conversation[]>([])
 
   // Load recent conversations when menu opens
@@ -115,37 +117,37 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
 
         {/* Menu content */}
         <div className="flex flex-col h-full pt-16">
-          {/* Recent messages - desktop only */}
+          {/* Recent messages - desktop only, aligned with nav items */}
           {recentConversations.length > 0 && (
-            <div className="hidden md:block px-6 mb-6">
-              <div className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">Nachrichten</div>
-              <div className="space-y-2">
+            <div className="hidden md:block mb-8 menu-messages-section">
+              <div className="space-y-1">
                 {recentConversations.map(conv => (
                   <button
                     key={conv.id}
-                    onClick={() => handleNavigation('/messages')}
-                    className="flex items-center gap-3 w-full text-left hover:opacity-80 transition-opacity"
+                    onClick={() => {
+                      setCurrentConversation(conv)
+                      handleNavigation('/messages')
+                    }}
+                    className="block w-full text-left hover:opacity-80 transition-opacity"
+                    style={{
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      width: 'fit-content',
+                      backgroundColor: conv.unreadCount > 0 ? '#ffffffb3' : 'transparent'
+                    }}
                   >
-                    <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0 overflow-hidden">
-                      {conv.participant.avatar_url ? (
-                        <img src={conv.participant.avatar_url} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: '#4785ff' }}>
-                          {conv.participant.username?.charAt(0).toUpperCase()}
-                        </div>
-                      )}
+                    <div className="text-sm text-gray-700">
+                      <span className="font-medium">{conv.participant.username}</span>
+                      <span className="text-gray-400 mx-1">·</span>
+                      <span className="text-gray-400" style={{ fontSize: '0.75rem' }}>
+                        {conv.lastMessage?.created_at
+                          ? format(new Date(conv.lastMessage.created_at), 'dd. MMM', { locale: de })
+                          : ''}
+                      </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-800 truncate">{conv.participant.username}</div>
-                      <div className="text-xs text-gray-500 truncate">
-                        {conv.lastMessage?.content?.replace(/<[^>]*>/g, '').slice(0, 40) || '...'}
-                      </div>
+                    <div className="text-xs text-gray-500 truncate" style={{ maxWidth: '220px' }}>
+                      {conv.lastMessage?.content?.replace(/<[^>]*>/g, '').slice(0, 50) || '...'}
                     </div>
-                    {conv.unreadCount > 0 && (
-                      <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: '#ff6467', fontSize: '0.6rem' }}>
-                        {conv.unreadCount}
-                      </div>
-                    )}
                   </button>
                 ))}
               </div>

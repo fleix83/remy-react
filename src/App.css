@@ -68,6 +68,9 @@
     min-width: 320px;
     box-shadow: -8px 0 30px rgba(0, 0, 0, 0.1);
   }
+  .slide-menu-panel .menu-messages-section {
+    padding-left: calc(50% - 80px);
+  }
 }
 
 /* Reorder: title above therapist line (all screen sizes) */
