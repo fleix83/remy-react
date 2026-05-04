@@ -17,18 +17,19 @@ const Navigation: React.FC<NavigationProps> = ({
 }) => {
   const { user, userProfile, logout } = useAuthStore()
   const { unreadCount: notificationCount, loadNotifications } = useNotificationsStore()
-  const { unreadCount: messageCount } = useMessagesStore()
+  const { unreadCount: messageCount, loadUnreadCount } = useMessagesStore()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Total unread count (notifications + messages)
   const totalUnreadCount = notificationCount + messageCount
 
-  // Load notifications when user is available
+  // Load notifications and unread message count when user is available
   useEffect(() => {
     if (user) {
       loadNotifications()
+      loadUnreadCount()
     }
-  }, [user, loadNotifications])
+  }, [user, loadNotifications, loadUnreadCount])
 
   const handleSignOut = async () => {
     await logout()

@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMessagesStore } from '../../stores/messages.store'
+import { useAuthStore } from '../../stores/auth.store'
 import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
 import type { Conversation } from '../../services/messages.service'
@@ -19,6 +20,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate()
+  const { user } = useAuthStore()
   const { unreadCount: messageCount, loadConversations, setCurrentConversation } = useMessagesStore()
   const [recentConversations, setRecentConversations] = useState<Conversation[]>([])
 
@@ -27,7 +29,11 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
     if (isOpen) {
       loadConversations().then(() => {
         const convs = useMessagesStore.getState().conversations
-        const sorted = [...convs].sort((a, b) =>
+        // Only show conversations where the last message is incoming
+        const incoming = convs.filter(c =>
+          c.lastMessage && c.lastMessage.sender_id !== user?.id
+        )
+        const sorted = [...incoming].sort((a, b) =>
           new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
         )
         setRecentConversations(sorted.slice(0, 5))
