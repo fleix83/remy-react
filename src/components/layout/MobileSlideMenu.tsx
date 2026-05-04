@@ -1,6 +1,7 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMessagesStore } from '../../stores/messages.store'
+import type { Conversation } from '../../services/messages.service'
 
 interface MobileSlideMenuProps {
   isOpen: boolean
@@ -16,7 +17,21 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate()
-  const { unreadCount: messageCount } = useMessagesStore()
+  const { unreadCount: messageCount, loadConversations } = useMessagesStore()
+  const [recentConversations, setRecentConversations] = useState<Conversation[]>([])
+
+  // Load recent conversations when menu opens
+  useEffect(() => {
+    if (isOpen) {
+      loadConversations().then(() => {
+        const convs = useMessagesStore.getState().conversations
+        const sorted = [...convs].sort((a, b) =>
+          new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
+        )
+        setRecentConversations(sorted.slice(0, 5))
+      })
+    }
+  }, [isOpen, loadConversations])
 
   // Handle clicking outside the menu
   const handleBackdropClick = useCallback((event: React.MouseEvent) => {
@@ -76,13 +91,12 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
         onClick={handleBackdropClick}
       />
       
-      {/* Slide-in menu - 2/3 of screen width */}
-      <div 
-        className={`absolute right-0 top-0 h-full transform transition-transform duration-300 ease-in-out ${
+      {/* Slide-in menu - full on mobile, 30% on desktop */}
+      <div
+        className={`slide-menu-panel absolute right-0 top-0 h-full transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{
-          width: '100vw',
           backgroundColor: '#d1f2d7'
         }}
       >
@@ -101,8 +115,45 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
 
         {/* Menu content */}
         <div className="flex flex-col h-full pt-16">
-          {/* Language selector at top */}
-          <div className="flex items-center justify-center space-x-4 mb-6">
+          {/* Recent messages - desktop only */}
+          {recentConversations.length > 0 && (
+            <div className="hidden md:block px-6 mb-6">
+              <div className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">Nachrichten</div>
+              <div className="space-y-2">
+                {recentConversations.map(conv => (
+                  <button
+                    key={conv.id}
+                    onClick={() => handleNavigation('/messages')}
+                    className="flex items-center gap-3 w-full text-left hover:opacity-80 transition-opacity"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0 overflow-hidden">
+                      {conv.participant.avatar_url ? (
+                        <img src={conv.participant.avatar_url} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: '#4785ff' }}>
+                          {conv.participant.username?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-gray-800 truncate">{conv.participant.username}</div>
+                      <div className="text-xs text-gray-500 truncate">
+                        {conv.lastMessage?.content?.replace(/<[^>]*>/g, '').slice(0, 40) || '...'}
+                      </div>
+                    </div>
+                    {conv.unreadCount > 0 && (
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: '#ff6467', fontSize: '0.6rem' }}>
+                        {conv.unreadCount}
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Language selector - mobile only */}
+          <div className="flex md:hidden items-center justify-center space-x-4 mb-6">
             {['DE', 'FR', 'IT'].map((lang) => (
               <button
                 key={lang}
