@@ -148,7 +148,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                         padding: '4px 8px',
                         borderRadius: '6px',
                         width: 'fit-content',
-                        backgroundColor: conv.unreadCount > 0 ? '#ffffffb3' : 'transparent'
+                        backgroundColor: conv.unreadCount > 0 ? '#ffffffb3' : '#f1fbf47a'
                       }}
                     >
                       <div className="text-sm text-gray-700">

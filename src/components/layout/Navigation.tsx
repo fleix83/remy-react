@@ -73,9 +73,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 )}
                 <span className="text-sm font-medium">{userProfile?.username || 'Menü'}</span>
                 {totalUnreadCount > 0 && (
-                  <div className="absolute -top-1 -right-3 bg-red-400 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center min-w-[1.25rem]" style={{fontSize: '0.65rem'}}>
-                    {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
-                  </div>
+                  <div className="absolute -top-0.5 -right-2 rounded-full w-3 h-3" style={{ backgroundColor: '#ff6b35' }} />
                 )}
               </button>
             ) : (
@@ -97,17 +95,15 @@ const Navigation: React.FC<NavigationProps> = ({
               >
                 {/* User Avatar */}
                 {userProfile && (
-                  <UserAvatar 
-                    user={userProfile} 
-                    size="small" 
+                  <UserAvatar
+                    user={userProfile}
+                    size="small"
                   />
                 )}
-                
-                {/* Notification Badge */}
+
+                {/* Notification Dot */}
                 {totalUnreadCount > 0 && (
-                  <div className="absolute -top-1 -right-1 bg-red-400 text-white font-bold rounded-full w-5 h-5 flex items-center justify-center min-w-[1.25rem]" style={{fontSize: '0.65rem'}}>
-                    {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
-                  </div>
+                  <div className="absolute -top-0.5 -right-0.5 rounded-full w-3 h-3" style={{ backgroundColor: '#ff6b35' }} />
                 )}
               </button>
             ) : (
