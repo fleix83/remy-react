@@ -117,43 +117,6 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
 
         {/* Menu content */}
         <div className="flex flex-col h-full pt-16">
-          {/* Recent messages - desktop only, aligned with nav items */}
-          {recentConversations.length > 0 && (
-            <div className="hidden md:block mb-8 menu-messages-section">
-              <div className="space-y-1">
-                {recentConversations.map(conv => (
-                  <button
-                    key={conv.id}
-                    onClick={() => {
-                      setCurrentConversation(conv)
-                      handleNavigation('/messages')
-                    }}
-                    className="block w-full text-left hover:opacity-80 transition-opacity"
-                    style={{
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      width: 'fit-content',
-                      backgroundColor: conv.unreadCount > 0 ? '#ffffffb3' : 'transparent'
-                    }}
-                  >
-                    <div className="text-sm text-gray-700">
-                      <span className="font-medium">{conv.participant.username}</span>
-                      <span className="text-gray-400 mx-1">·</span>
-                      <span className="text-gray-400" style={{ fontSize: '0.75rem' }}>
-                        {conv.lastMessage?.created_at
-                          ? format(new Date(conv.lastMessage.created_at), 'dd. MMM', { locale: de })
-                          : ''}
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-500 truncate" style={{ maxWidth: '220px' }}>
-                      {conv.lastMessage?.content?.replace(/<[^>]*>/g, '').slice(0, 50) || '...'}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Language selector - mobile only */}
           <div className="flex md:hidden items-center justify-center space-x-4 mb-6">
             {['DE', 'FR', 'IT'].map((lang) => (
@@ -168,6 +131,44 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
           </div>
 
           <nav className="flex-1 flex items-center justify-center">
+            <div className="text-left">
+            {/* Recent messages - desktop only */}
+            {recentConversations.length > 0 && (
+              <div className="hidden md:block mb-4">
+                <div className="space-y-1">
+                  {recentConversations.map(conv => (
+                    <button
+                      key={conv.id}
+                      onClick={() => {
+                        setCurrentConversation(conv)
+                        handleNavigation('/messages')
+                      }}
+                      className="block text-left hover:opacity-80 transition-opacity"
+                      style={{
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        width: 'fit-content',
+                        backgroundColor: conv.unreadCount > 0 ? '#ffffffb3' : 'transparent'
+                      }}
+                    >
+                      <div className="text-sm text-gray-700">
+                        <span className="font-medium">{conv.participant.username}</span>
+                        <span className="text-gray-400 mx-1">·</span>
+                        <span className="text-gray-400" style={{ fontSize: '0.75rem' }}>
+                          {conv.lastMessage?.created_at
+                            ? format(new Date(conv.lastMessage.created_at), 'dd. MMM', { locale: de })
+                            : ''}
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-500 truncate" style={{ maxWidth: '220px' }}>
+                        {conv.lastMessage?.content?.replace(/<[^>]*>/g, '').slice(0, 50) || '...'}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <ul className="space-y-3 text-left">
               {/* Forum */}
               <li>
@@ -306,6 +307,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                 </button>
               </li>
             </ul>
+            </div>
           </nav>
         </div>
       </div>
