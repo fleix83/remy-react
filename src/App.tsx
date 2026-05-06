@@ -263,7 +263,7 @@ function AuthForm() {
       {!showLoginForm && (
         <img
           className="landing-bow hidden"
-          src="/images/w.png"
+          src="/images/wz.png"
           alt=""
         />
       )}
