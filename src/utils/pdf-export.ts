@@ -1,5 +1,6 @@
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
+// jspdf and html2canvas are loaded on demand — they together add ~290 KB
+// gzipped that the main bundle has no reason to ship until a user actually
+// triggers an export.
 
 interface ExportOptions {
   filename?: string
@@ -12,7 +13,7 @@ export class PDFExporter {
    * Export an HTML element to PDF
    */
   static async exportElementToPDF(
-    element: HTMLElement, 
+    element: HTMLElement,
     options: ExportOptions = {}
   ): Promise<void> {
     try {
@@ -21,6 +22,11 @@ export class PDFExporter {
         format = 'a4',
         orientation = 'portrait'
       } = options
+
+      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+        import('jspdf'),
+        import('html2canvas'),
+      ])
 
       // Create canvas from HTML element
       const canvas = await html2canvas(element, {
@@ -101,7 +107,7 @@ export class PDFExporter {
    * Export text content to PDF
    */
   static async exportTextToPDF(
-    text: string, 
+    text: string,
     options: ExportOptions & { title?: string } = {}
   ): Promise<void> {
     try {
@@ -112,6 +118,7 @@ export class PDFExporter {
         title = 'Document'
       } = options
 
+      const { default: jsPDF } = await import('jspdf')
       const pdf = new jsPDF({
         orientation,
         unit: 'mm',

@@ -45,7 +45,7 @@ const Layout: React.FC<LayoutProps> = ({
       }}>
         {/* First line: Logo | Impressum | Datenschutz */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: '500px' }}>
-          <img src="/images/logo_claim.png" alt="Remy" style={{ height: '36px', width: 'auto', filter: 'grayscale(100%)' }} />
+          <img src="/images/logo_claim.png" alt="Remy" width={437} height={169} loading="lazy" decoding="async" style={{ height: '36px', width: 'auto', filter: 'grayscale(100%)' }} />
           <a href="/impressum" style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>Impressum</a>
           <a href="/datenschutz" style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>Datenschutz</a>
         </div>

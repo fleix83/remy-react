@@ -2,12 +2,13 @@ import { supabase } from '../lib/supabase'
 import type { Tag } from '../types/database.types'
 
 export class TagsService {
-  // Get all tags for autocomplete
+  // Get all tags for autocomplete (capped to keep payload small)
   async getAllTags(): Promise<Tag[]> {
     const { data, error } = await supabase
       .from('tags')
       .select('*')
       .order('name', { ascending: true })
+      .limit(200)
 
     if (error) {
       console.error('Error fetching tags:', error)

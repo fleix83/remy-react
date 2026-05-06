@@ -195,6 +195,10 @@ const BlockedUsers: React.FC = () => {
                       src={user.avatar_url || AvatarService.getDefaultAvatar(user.username || 'User')}
                       alt={`${user.username || 'User'}'s avatar`}
                       className="w-8 h-8 rounded-full mr-3"
+                      loading="lazy"
+                      decoding="async"
+                      width={32}
+                      height={32}
                     />
                     <div>
                       <p className="font-medium text-gray-900">{user.username}</p>
@@ -243,11 +247,15 @@ const BlockedUsers: React.FC = () => {
                   <div className="flex items-center">
                     <img
                       src={
-                        blockedUser.blocked_user?.avatar_url || 
+                        blockedUser.blocked_user?.avatar_url ||
                         AvatarService.getDefaultAvatar(blockedUser.blocked_user?.username || 'User')
                       }
                       alt={`${blockedUser.blocked_user?.username || 'User'}'s avatar`}
                       className="w-10 h-10 rounded-full mr-4"
+                      loading="lazy"
+                      decoding="async"
+                      width={40}
+                      height={40}
                     />
                     <div>
                       <p className="font-medium text-gray-900">

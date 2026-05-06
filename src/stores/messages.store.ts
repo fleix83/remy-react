@@ -72,22 +72,27 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
     set({ loadingMessages: true })
     try {
       const { messagesService } = get()
-      const messages = await messagesService.getConversationMessages(participantId)
+
+      // Fetch messages and mark-as-read in parallel — the read-receipt write
+      // doesn't need to block message rendering.
+      const [messages] = await Promise.all([
+        messagesService.getConversationMessages(participantId),
+        messagesService.markMessagesAsRead(participantId).catch((err) => {
+          console.warn('markMessagesAsRead failed:', err)
+        }),
+      ])
       set({ currentMessages: messages })
-      
-      // Mark messages as read
-      await messagesService.markMessagesAsRead(participantId)
-      
+
       // Update unread count
       get().loadUnreadCount()
-      
+
       // Update conversation unread count
       const { conversations } = get()
-      const updatedConversations = conversations.map(conv => 
+      const updatedConversations = conversations.map(conv =>
         conv.id === participantId ? { ...conv, unreadCount: 0 } : conv
       )
       set({ conversations: updatedConversations })
-      
+
     } catch (error) {
       console.error('Error loading conversation messages:', error)
     } finally {

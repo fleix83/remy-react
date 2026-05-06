@@ -328,6 +328,10 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 src={`/kantone/${post.canton.toLowerCase()}.png`}
                                 alt={`${post.canton} flag`}
                                 className="w-4 h-auto object-cover"
+                                loading="lazy"
+                                decoding="async"
+                                width={16}
+                                height={11}
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).style.display = 'none'
                                 }}
@@ -518,6 +522,10 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 src={`/kantone/${draft.canton.toLowerCase()}.png`}
                                 alt={`${draft.canton} flag`}
                                 className="w-4 h-auto object-cover"
+                                loading="lazy"
+                                decoding="async"
+                                width={16}
+                                height={11}
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).style.display = 'none'
                                 }}

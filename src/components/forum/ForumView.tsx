@@ -275,6 +275,10 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 src={`/kantone/${canton.code.toLowerCase()}.png`}
                 alt={canton.name}
                 className="w-4 h-4 object-contain"
+                loading="lazy"
+                decoding="async"
+                width={16}
+                height={16}
               />
               {canton.code}
             </button>

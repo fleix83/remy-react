@@ -90,10 +90,14 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
               {/* Canton Flag and Abbreviation */}
               {item.canton && (
                 <div className="flex items-center space-x-2">
-                  <img 
+                  <img
                     src={`/kantone/${item.canton.toLowerCase()}.png`}
                     alt={`${item.canton} flag`}
                     className="w-4 h-auto object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    width={16}
+                    height={11}
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none'
                     }}

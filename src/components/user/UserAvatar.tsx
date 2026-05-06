@@ -127,7 +127,8 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
           src={avatarUrl}
           alt={`${user.username}'s avatar`}
           className="w-full h-full object-cover bg-gray-200"
-          onLoad={() => console.log('Avatar loaded successfully:', avatarUrl)}
+          loading="lazy"
+          decoding="async"
           onError={(e) => {
             console.error('Avatar failed to load:', avatarUrl)
             // Fallback to default avatar on error

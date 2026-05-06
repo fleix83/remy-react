@@ -219,4 +219,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
   )
 }
 
-export default CommentCard
+// Memoize to keep nested comment threads from re-rendering when sibling
+// branches change. CommentWithRelations is a plain DB row so referential
+// equality is preserved across renders unless the comment actually changes.
+export default React.memo(CommentCard)

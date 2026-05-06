@@ -111,6 +111,10 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
               src={`/kantone/${post.canton.toLowerCase()}.png`}
               alt={`${post.canton} flag`}
               className="w-4 h-auto object-cover"
+              loading="lazy"
+              decoding="async"
+              width={16}
+              height={11}
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none'
               }}
@@ -155,7 +159,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
               e.stopPropagation()
               navigate(`/therapists?therapist=${post.therapists!.id}`)
             }}
-            className="post-card-therapist text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
+            className="post-card-therapist text-left hover:underline active:opacity-60 cursor-pointer bg-transparent border-none p-0 m-0 block w-full transition-opacity duration-100"
             style={{color: '#4785ff', fontSize: '12px', lineHeight: '1.2'}}
           >
             Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
@@ -220,7 +224,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
             e.stopPropagation()
             navigate(`/post/${post.id}`, { state: { openReply: true } })
           }}
-          className="inline-flex items-center space-x-1 text-[var(--primary)] hover:opacity-80 transition-opacity"
+          className="inline-flex items-center space-x-1 text-[var(--primary)] hover:opacity-80 active:opacity-50 active:scale-95 transition-[opacity,transform] duration-100"
           style={{ fontSize: '12px' }}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

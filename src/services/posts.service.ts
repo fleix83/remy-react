@@ -269,147 +269,88 @@ export class PostsService {
   // Search posts
   searchPosts = withPerformanceTracking(
     async (searchTerm: string): Promise<PostWithRelations[]> => {
-    const searchLower = searchTerm.toLowerCase()
-    const postMap = new Map()
-
-    // 1. Search posts by title or content (username search done separately)
-    const { data: titleContentPosts, error: titleContentError } = await supabase
-      .from('posts')
-      .select(`
+    const term = `%${searchTerm}%`
+    const baseSelect = `
         id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
-      `)
-      .eq('is_published', true)
-      .eq('is_active', true)
-      .eq('is_banned', false)
-      .eq('moderation_status', 'approved')
-      .or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
-      .order('created_at', { ascending: false })
-
-    if (titleContentError) {
-      console.error('Error searching posts by title/content:', titleContentError)
-      throw titleContentError
-    }
-
-    // Add title/content matches to map
-    titleContentPosts?.forEach((post: any) => {
-      postMap.set(post.id, post)
-    })
-
-    // 2. Search for posts with matching tags
-    const { data: tagResults, error: tagError } = await supabase
-      .from('post_tags')
-      .select(`
-        post_id,
-        tags!inner(name)
-      `)
-      .ilike('tags.name', `%${searchTerm}%`)
-
-    if (tagError) {
-      console.error('Error searching tags:', tagError)
-    }
-
-    // Get unique post IDs from tag matches
-    const taggedPostIds = [...new Set(tagResults?.map((tr: any) => tr.post_id) || [])]
-
-    // Fetch full post data for tag-matched posts that aren't already in our map
-    if (taggedPostIds.length > 0) {
-      const newTaggedPostIds = taggedPostIds.filter(id => !postMap.has(id))
-
-      if (newTaggedPostIds.length > 0) {
-        const { data: taggedPosts, error: taggedPostsError } = await supabase
-          .from('posts')
-          .select(`
-            id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
-            users!posts_user_id_fkey(id, username, avatar_url, role),
-            categories!inner(id, name_de, name_fr, name_it),
-            therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
-          `)
-          .in('id', newTaggedPostIds)
-          .eq('is_published', true)
-          .eq('is_active', true)
-          .eq('is_banned', false)
-          .eq('moderation_status', 'approved')
-
-        if (taggedPostsError) {
-          console.error('Error fetching tagged posts:', taggedPostsError)
-        } else {
-          taggedPosts?.forEach((post: any) => {
-            postMap.set(post.id, post)
-          })
-        }
-      }
-    }
-
-    // 3. Search for posts with matching usernames (fetch all posts, filter client-side)
-    const { data: allUserPosts, error: userError } = await supabase
-      .from('posts')
-      .select(`
+      `
+    const userInnerSelect = `
         id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
-        users!posts_user_id_fkey(id, username, avatar_url, role),
+        users!posts_user_id_fkey!inner(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
-      `)
-      .eq('is_published', true)
-      .eq('is_active', true)
-      .eq('is_banned', false)
-      .eq('moderation_status', 'approved')
-
-    if (userError) {
-      console.error('Error fetching user posts:', userError)
-    } else {
-      // Filter for matching usernames
-      allUserPosts?.forEach((post: any) => {
-        const username = post.users?.username
-        const matchesUsername = username && username.toLowerCase().includes(searchLower)
-
-        if (matchesUsername && !postMap.has(post.id)) {
-          postMap.set(post.id, post)
-        }
-      })
-    }
-
-    // 4. Search for posts with matching therapist names (fetch all posts with therapists, filter client-side)
-    const { data: therapistPosts, error: therapistError } = await supabase
-      .from('posts')
-      .select(`
+      `
+    const therapistInnerSelect = `
         id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists!inner(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
-      `)
+      `
+    const publishedFilter = (q: any) => q
       .eq('is_published', true)
       .eq('is_active', true)
       .eq('is_banned', false)
       .eq('moderation_status', 'approved')
-      .not('therapist_id', 'is', null)
 
-    if (therapistError) {
-      console.error('Error fetching therapist posts:', therapistError)
-    } else {
-      // Filter for matching therapist names
-      therapistPosts?.forEach((post: any) => {
-        const therapist = post.therapists
-        const matchesTherapist = therapist && (
-          therapist.first_name?.toLowerCase().includes(searchLower) ||
-          therapist.last_name?.toLowerCase().includes(searchLower) ||
-          therapist.institution?.toLowerCase().includes(searchLower)
+    // Run the four independent searches in parallel.
+    // Username and therapist matches now filter server-side via inner-join + ilike,
+    // instead of fetching all rows and filtering in JavaScript.
+    const [titleContentResult, tagIdsResult, usernameResult, therapistResult] = await Promise.all([
+      publishedFilter(supabase.from('posts').select(baseSelect))
+        .or(`title.ilike.${term},content.ilike.${term}`)
+        .order('created_at', { ascending: false }),
+
+      supabase
+        .from('post_tags')
+        .select('post_id, tags!inner(name)')
+        .ilike('tags.name', term),
+
+      publishedFilter(supabase.from('posts').select(userInnerSelect))
+        .ilike('users.username', term)
+        .order('created_at', { ascending: false }),
+
+      publishedFilter(supabase.from('posts').select(therapistInnerSelect))
+        .not('therapist_id', 'is', null)
+        .or(
+          `first_name.ilike.${term},last_name.ilike.${term},institution.ilike.${term}`,
+          { foreignTable: 'therapists' }
         )
+        .order('created_at', { ascending: false }),
+    ])
 
-        if (matchesTherapist && !postMap.has(post.id)) {
-          postMap.set(post.id, post)
-        }
-      })
+    if (titleContentResult.error) {
+      console.error('Error searching posts by title/content:', titleContentResult.error)
+      throw titleContentResult.error
+    }
+    if (tagIdsResult.error) console.error('Error searching tags:', tagIdsResult.error)
+    if (usernameResult.error) console.error('Error fetching user posts:', usernameResult.error)
+    if (therapistResult.error) console.error('Error fetching therapist posts:', therapistResult.error)
+
+    const postMap = new Map<number, any>()
+    titleContentResult.data?.forEach((post: any) => postMap.set(post.id, post))
+    usernameResult.data?.forEach((post: any) => { if (!postMap.has(post.id)) postMap.set(post.id, post) })
+    therapistResult.data?.forEach((post: any) => { if (!postMap.has(post.id)) postMap.set(post.id, post) })
+
+    // Tag matches: fetch full post data only for IDs not already covered
+    const taggedPostIds = [...new Set(tagIdsResult.data?.map((tr: any) => tr.post_id) || [])]
+    const newTaggedIds = taggedPostIds.filter(id => !postMap.has(id))
+    if (newTaggedIds.length > 0) {
+      const { data: taggedPosts, error: taggedPostsError } = await publishedFilter(
+        supabase.from('posts').select(baseSelect).in('id', newTaggedIds)
+      )
+      if (taggedPostsError) {
+        console.error('Error fetching tagged posts:', taggedPostsError)
+      } else {
+        taggedPosts?.forEach((post: any) => postMap.set(post.id, post))
+      }
     }
 
-    // Convert map to array and sort by created_at
     const matchedPosts = Array.from(postMap.values()).sort((a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
 
-    // Add comment counts and tags
     const postsWithComments = await this.addCommentCounts(matchedPosts)
     return postsWithComments
   }, 'posts.searchPosts')

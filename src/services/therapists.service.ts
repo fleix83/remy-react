@@ -2,15 +2,20 @@ import { supabase } from '../lib/supabase'
 import type { Therapist } from '../types/database.types'
 
 export class TherapistsService {
+  // Soft cap so list endpoints stay bounded as the directory grows.
+  // Tighten or paginate further if it ever approaches this limit.
+  private static readonly LIST_LIMIT = 1000
+
   // Get all therapists
   async getTherapists(): Promise<Therapist[]> {
     console.log('🔧 TherapistsService: Getting all therapists...')
-    
+
     const { data, error } = await supabase
       .from('therapists')
       .select('*')
       .order('last_name', { ascending: true })
       .order('first_name', { ascending: true })
+      .limit(TherapistsService.LIST_LIMIT)
 
     if (error) {
       console.error('❌ TherapistsService: Error fetching therapists:', error)
@@ -33,6 +38,7 @@ export class TherapistsService {
       .or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,institution.ilike.%${searchTerm}%,designation.ilike.%${searchTerm}%,short_designation.ilike.%${searchTerm}%`)
       .order('last_name', { ascending: true })
       .order('first_name', { ascending: true })
+      .limit(TherapistsService.LIST_LIMIT)
 
     if (error) {
       console.error('Error searching therapists:', error)
@@ -50,6 +56,7 @@ export class TherapistsService {
       .eq('canton', canton)
       .order('last_name', { ascending: true })
       .order('first_name', { ascending: true })
+      .limit(TherapistsService.LIST_LIMIT)
 
     if (error) {
       console.error('Error fetching therapists by canton:', error)

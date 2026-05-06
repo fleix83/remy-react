@@ -226,6 +226,10 @@ const PostView: React.FC = () => {
                     src={`/kantone/${post.canton.toLowerCase()}.png`}
                     alt={`${post.canton} flag`}
                     className="w-4 h-auto object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    width={16}
+                    height={11}
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none'
                     }}

@@ -1,5 +1,8 @@
 # Remy React Forum - Implementation Status
 
+## Performance Standards
+All performance-related work in this project must follow `docs/performance.md`. That doc is the canonical checklist for snappiness — when adding new features or touching interactive surfaces, cross-check against its 11 sections (optimistic UI, instant feedback, parallel fetches, skeletons, transform-only animations, virtualization, code splitting, etc.). Re-run the audit if the app starts feeling sluggish.
+
 ## Project Overview
 Modern React + Supabase implementation of the Remy psychotherapy patient forum. Converting from PHP to a real-time, mobile-optimized web application.
 

@@ -206,6 +206,10 @@ const PostEditor: React.FC<PostEditorProps> = ({
                         src={`/kantone/${c.code.toLowerCase()}.png`}
                         alt={`${c.code} flag`}
                         className="w-5 h-3 object-contain"
+                        loading="lazy"
+                        decoding="async"
+                        width={20}
+                        height={12}
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none'
                         }}

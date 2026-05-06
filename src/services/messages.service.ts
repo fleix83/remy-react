@@ -122,6 +122,8 @@ export class MessagesService {
       throw new Error('Cannot view conversation - user has blocked you')
     }
 
+    // Fetch the 200 most recent messages (descending), then reverse so the UI
+    // can render oldest-first without loading the full conversation history.
     const { data: messages, error } = await supabase
       .from('messages')
       .select(`
@@ -130,7 +132,8 @@ export class MessagesService {
         receiver:users!messages_receiver_id_fkey(id, username, avatar_url)
       `)
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${participantId}),and(sender_id.eq.${participantId},receiver_id.eq.${user.id})`)
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
+      .limit(200)
 
     if (error) {
       console.error('Error fetching conversation messages:', error)
@@ -141,7 +144,7 @@ export class MessagesService {
       throw error
     }
 
-    return messages as MessageWithUser[] || []
+    return ((messages as MessageWithUser[]) || []).slice().reverse()
   }
 
   // Send a new message
@@ -149,28 +152,24 @@ export class MessagesService {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('User not authenticated')
 
-    // Check if recipient has messaging enabled
-    const { data: recipient, error: recipientError } = await supabase
-      .from('users')
-      .select('messages_active')
-      .eq('id', messageData.receiver_id)
-      .single()
-
-    if (recipientError) {
-      console.error('Error checking recipient:', recipientError)
-      throw new Error('Unable to send message - recipient not found')
-    }
-
-    if (!recipient.messages_active) {
-      throw new Error('User has disabled private messages')
-    }
-
-    // Check if either user has blocked the other
-    const [senderBlocked, receiverBlocked] = await Promise.all([
+    // Recipient lookup and block checks are independent — fire all three in parallel.
+    const [recipientResult, senderBlocked, receiverBlocked] = await Promise.all([
+      supabase
+        .from('users')
+        .select('messages_active')
+        .eq('id', messageData.receiver_id)
+        .single(),
       this.isUserBlocked(messageData.receiver_id, user.id), // receiver blocked sender
-      this.isUserBlocked(user.id, messageData.receiver_id) // sender blocked receiver
+      this.isUserBlocked(user.id, messageData.receiver_id), // sender blocked receiver
     ])
 
+    if (recipientResult.error) {
+      console.error('Error checking recipient:', recipientResult.error)
+      throw new Error('Unable to send message - recipient not found')
+    }
+    if (!recipientResult.data?.messages_active) {
+      throw new Error('User has disabled private messages')
+    }
     if (senderBlocked || receiverBlocked) {
       throw new Error('Cannot send message - blocked user')
     }

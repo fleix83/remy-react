@@ -140,12 +140,18 @@ const GuidelineSection: React.FC<GuidelineSectionProps> = ({
         </button>
       </div>
 
-      {/* Content - Expandable */}
+      {/* Content - Expandable. Uses an animated CSS grid row so we don't
+          animate `max-height` (which forces a layout recalculation every frame
+          and pins the duration to a fixed pixel cap). The 0fr → 1fr trick
+          interpolates against the natural content height without layout
+          thrash, and the inner wrapper needs min-h-0 + overflow-hidden so the
+          row can actually collapse to zero. */}
       <div
-        className={`transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-[3000px] opacity-100' : 'max-h-0 opacity-0'
-        } overflow-hidden`}
+        className={`grid overflow-hidden transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
+          isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+        }`}
       >
+        <div className="min-h-0 overflow-hidden">
         <div className="pb-6 pt-2">
           {/* Main content text */}
           {isEditMode ? (
@@ -294,6 +300,7 @@ const GuidelineSection: React.FC<GuidelineSectionProps> = ({
               )}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

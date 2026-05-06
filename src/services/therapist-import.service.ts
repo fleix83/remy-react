@@ -1,4 +1,4 @@
-import Papa from 'papaparse'
+import type { ParseResult, ParseError } from 'papaparse'
 import { validateCSVHeaders, type TherapistCSVRow } from '../utils/therapist-csv-template'
 import type { Therapist } from '../types/database.types'
 import { DesignationMatchingService } from './designation-matching.service'
@@ -39,15 +39,17 @@ export class TherapistImportService {
   private designationMatchingService = new DesignationMatchingService()
 
   /**
-   * Parse CSV file
+   * Parse CSV file. papaparse is dynamically imported so it stays out of the
+   * main bundle until a user actually triggers a CSV import.
    */
-  async parseCSV(file: File): Promise<Papa.ParseResult<TherapistCSVRow>> {
+  async parseCSV(file: File): Promise<ParseResult<TherapistCSVRow>> {
+    const { default: Papa } = await import('papaparse')
     return new Promise((resolve, reject) => {
       Papa.parse<TherapistCSVRow>(file, {
         header: true,
         skipEmptyLines: true,
         transformHeader: (header: string) => header.trim().toLowerCase(),
-        complete: (results: Papa.ParseResult<TherapistCSVRow>) => resolve(results),
+        complete: (results: ParseResult<TherapistCSVRow>) => resolve(results),
         error: (error: Error) => reject(error)
       })
     })
@@ -56,7 +58,7 @@ export class TherapistImportService {
   /**
    * Validate CSV structure and data
    */
-  validateCSV(parseResult: Papa.ParseResult<TherapistCSVRow>): { valid: boolean; errors: string[] } {
+  validateCSV(parseResult: ParseResult<TherapistCSVRow>): { valid: boolean; errors: string[] } {
     const errors: string[] = []
 
     // Check if file has data
@@ -79,7 +81,7 @@ export class TherapistImportService {
 
     // Check for parsing errors
     if (parseResult.errors && parseResult.errors.length > 0) {
-      parseResult.errors.forEach((error: Papa.ParseError) => {
+      parseResult.errors.forEach((error: ParseError) => {
         errors.push(`Row ${error.row}: ${error.message}`)
       })
     }

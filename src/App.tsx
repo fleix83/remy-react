@@ -265,6 +265,9 @@ function AuthForm() {
           className="landing-bow hidden"
           src="/images/wz.png"
           alt=""
+          width={962}
+          height={943}
+          decoding="async"
         />
       )}
 
@@ -274,6 +277,9 @@ function AuthForm() {
           className="landing-dog"
           src={`/images/dog.png`}
           alt=""
+          width={393}
+          height={485}
+          decoding="async"
           style={{
             position: 'absolute',
             top: '5%',
@@ -291,6 +297,9 @@ function AuthForm() {
         className="landing-saul"
         src={`/images/saul.png`}
         alt=""
+        width={171}
+        height={196}
+        decoding="async"
         style={{
           position: 'absolute',
           top: '0%',
@@ -321,6 +330,10 @@ function AuthForm() {
                 className="landing-logo"
                 src={`/images/logo_claim.png`}
                 alt="REMY - Forum für Menschen in Psychotherapie"
+                width={437}
+                height={169}
+                decoding="async"
+                fetchPriority="high"
                 style={{
                   width: 'clamp(117px, 36vw, 275px)',
                   height: 'auto'
@@ -676,11 +689,15 @@ function AuthForm() {
       position: 'relative',
       paddingBottom: '60px'
     }}>
-      {/* Snail illustration */}
+      {/* Snail illustration — below the fold, lazy load to defer the 209KB asset */}
       <img
         className="landing-about-snail"
         src={`/images/Snail_bg.png`}
         alt=""
+        width={1386}
+        height={587}
+        loading="lazy"
+        decoding="async"
         style={{
           width: 'calc(100% + 304px)',
           height: 'auto',
@@ -739,7 +756,7 @@ function AuthForm() {
     }}>
       {/* First line: Logo | Impressum | Datenschutz */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: '500px' }}>
-        <img src="/images/logo_claim.png" alt="Remy" style={{ height: '36px', width: 'auto', filter: 'grayscale(100%)' }} />
+        <img src="/images/logo_claim.png" alt="Remy" width={437} height={169} loading="lazy" decoding="async" style={{ height: '36px', width: 'auto', filter: 'grayscale(100%)' }} />
         <a href="/impressum" style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>Impressum</a>
         <a href="/datenschutz" style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>Datenschutz</a>
       </div>
