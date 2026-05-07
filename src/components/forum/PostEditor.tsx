@@ -398,7 +398,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm"
+                  className="bg-white hover:bg-gray-50 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm border border-gray-200"
                   disabled={publishing}
                 >
                   Abbrechen
@@ -408,7 +408,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e, false)}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm"
+                className="bg-white hover:bg-gray-50 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm border border-gray-200"
                 disabled={publishing}
               >
                 Entwurf

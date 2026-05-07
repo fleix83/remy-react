@@ -199,7 +199,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     <div className="min-h-screen">
       <div className="max-w-6xl forum-list-column mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className="forum-navbar p-4 mb-4 mx-4 md:mx-0 relative" style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
+        <div className={`forum-navbar p-4 mb-4 mx-4 md:mx-0 relative ${showCreatePostDialog ? 'md:hidden' : ''}`} style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
           <div className="flex items-center gap-4">
             {/* Search Input */}
             <div className="forum-search relative flex-1">
@@ -258,7 +258,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         />
 
         {/* Canton Filter - inline below navbar on desktop */}
-        <div className="hidden md:flex items-center flex-wrap gap-1 canton-inline" style={{ padding: '0 20px', marginBottom: '80px' }}>
+        <div className={`${showCreatePostDialog ? 'hidden' : 'hidden md:flex'} items-center flex-wrap gap-1 canton-inline`} style={{ padding: '0 20px', marginBottom: '80px' }}>
           {SWISS_CANTONS.filter(c => c.code !== '').map(canton => (
             <button
               key={canton.code}
@@ -294,26 +294,23 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           )}
         </div>
 
-      {/* Post Editor Dialog */}
+      {/* Post Editor Dialog — Mobile only (full-screen modal) */}
       {showCreatePostDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 md:p-4 z-40">
-          <div className="w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto" style={{backgroundColor: '#ecffef'}}>
-            <div className="px-4 md:px-6 pb-0" style={{paddingTop: '35px'}}>
-              <button
-                onClick={onCreatePostDialogClose}
-                className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1"
-                style={{ top: '35px', right: '25px' }}
-              >
-                <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <div className="mb-10"></div>
-              <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 z-[70]">
+          <div className="w-screen h-screen overflow-hidden flex flex-col relative" style={{backgroundColor: '#ecffef'}}>
+            <button
+              onClick={onCreatePostDialogClose}
+              className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1 z-10"
+              style={{ top: '25px', right: '25px' }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="overflow-y-auto flex-1 px-4 pt-[35px] pb-20">
+              <h2 className="font-headline font-bold text-left mb-10" style={{ color: '#4785ff', fontSize: '20px' }}>
                 Neuen Beitrag erstellen
               </h2>
-            </div>
-            <div className="px-4 md:px-6 pb-20 md:pb-6">
               <PostEditor
                 onSubmit={handleCreatePost}
                 onCancel={onCreatePostDialogClose}
@@ -324,8 +321,33 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         </div>
       )}
 
+      {/* Post Editor — Desktop inline section */}
+      {showCreatePostDialog && (
+        <div className="hidden md:block px-4 md:px-0" style={{marginTop: '132px'}}>
+          <div style={{ backgroundColor: 'white', borderRadius: '30px', padding: '30px' }}>
+            <div className="flex items-start justify-between mb-6">
+              <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
+                Neuen Beitrag erstellen
+              </h2>
+              <button
+                onClick={onCreatePostDialogClose}
+                className="text-base font-medium hover:underline transition-colors bg-transparent border-none cursor-pointer"
+                style={{ color: '#4785ff' }}
+              >
+                zurück zum forum
+              </button>
+            </div>
+            <PostEditor
+              onSubmit={handleCreatePost}
+              onCancel={onCreatePostDialogClose}
+              mobileOptimized={true}
+            />
+          </div>
+        </div>
+      )}
+
         {/* Posts area — filters sidebar + list */}
-        <div className="forum-posts-area relative">
+        <div className={`forum-posts-area relative ${showCreatePostDialog ? 'md:hidden' : ''}`}>
           {/* Date Range Filter - sidebar on desktop, above categories */}
           <div className="hidden md:flex date-filters" ref={datePickerRef}>
             <button

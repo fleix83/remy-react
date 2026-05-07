@@ -107,9 +107,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const { selectedText, citationMode, insertCitation, clearSelection } = useCitationManager()
   
-  // Dynamic height calculation for mobile optimization
-  const dynamicMinHeight = mobileOptimized ? '60vh' : minHeight
-  
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -134,8 +131,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: `prose prose-sm max-w-none focus:outline-none p-4 text-left ${className}`,
-        style: `min-height: ${dynamicMinHeight}; text-align: left;`
+        class: `prose prose-sm max-w-none focus:outline-none p-4 text-left ${mobileOptimized ? 'min-h-[60vh] md:min-h-[200px]' : ''} ${className}`,
+        style: mobileOptimized ? 'text-align: left;' : `min-height: ${minHeight}; text-align: left;`
       }
     },
     autofocus: autoFocus
