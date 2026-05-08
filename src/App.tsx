@@ -259,16 +259,26 @@ function AuthForm() {
       }}>
 
 
-      {/* Bow illustration - desktop only, left half */}
+      {/* Frau + Mann illustrations - desktop only, co-registered canvases */}
       {!showLoginForm && (
-        <img
-          className="landing-bow hidden"
-          src="/images/wz.png"
-          alt=""
-          width={962}
-          height={943}
-          decoding="async"
-        />
+        <>
+          <img
+            className="landing-frau hidden"
+            src="/images/Frau.png"
+            alt=""
+            width={2247}
+            height={1432}
+            decoding="async"
+          />
+          <img
+            className="landing-mann hidden"
+            src="/images/Mann.png"
+            alt=""
+            width={2247}
+            height={1432}
+            decoding="async"
+          />
+        </>
       )}
 
       {/* Dog illustration - upper left, hidden on login */}
