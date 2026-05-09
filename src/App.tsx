@@ -259,6 +259,31 @@ function AuthForm() {
       }}>
 
 
+      {/* Top-right nav - desktop only via CSS */}
+      {!showLoginForm && !showRegisterForm && (
+        <div className="landing-topnav">
+          <button
+            type="button"
+            className="landing-topnav-link"
+            onClick={() => document.querySelector('.landing-about')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Wer oder was ist Remy?
+          </button>
+          <button
+            type="button"
+            className="landing-topnav-link"
+            onClick={handleLoginClick}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
+            </svg>
+            Login
+          </button>
+        </div>
+      )}
+
       {/* Frau + Mann illustrations - desktop only, co-registered canvases */}
       {!showLoginForm && (
         <>
@@ -270,14 +295,16 @@ function AuthForm() {
             height={1432}
             decoding="async"
           />
-          <img
-            className="landing-mann hidden"
-            src="/images/Mann.png"
-            alt=""
-            width={2247}
-            height={1432}
-            decoding="async"
-          />
+          <div className="landing-mann-clip">
+            <img
+              className="landing-mann hidden"
+              src="/images/Mann.png"
+              alt=""
+              width={2247}
+              height={1432}
+              decoding="async"
+            />
+          </div>
         </>
       )}
 
@@ -363,7 +390,7 @@ function AuthForm() {
               paddingRight: '24px',
               paddingBottom: '8vh'
             }}>
-              {/* Tagline - hidden when register form is open */}
+              {/* Tagline - mobile single block (hidden on desktop via CSS) */}
               {!showRegisterForm && (
                 <div className="landing-tagline" style={{
                   fontFamily: '"Gaegu", cursive',
@@ -376,12 +403,23 @@ function AuthForm() {
                   alignSelf: 'center',
                   maxWidth: '500px'
                 }}>
-                  Du machst eine Psycho­therapie?
+                  Du machst<br />eine<br />Psycho­therapie?
                 </div>
+              )}
+
+              {/* Tagline - desktop scattered word pills */}
+              {!showRegisterForm && (
+                <>
+                  <div className="landing-tag landing-tag-du">Du</div>
+                  <div className="landing-tag landing-tag-machst">machst</div>
+                  <div className="landing-tag landing-tag-eine">eine</div>
+                  <div className="landing-tag landing-tag-psycho">Psycho­therapie?</div>
+                </>
               )}
 
               {/* Registration Button - hidden when form is shown */}
               {!showRegisterForm && (
+                <div className="landing-cta-wrap">
                 <button
                   className="landing-cta"
                   onClick={handleRegisterClick}
@@ -414,6 +452,7 @@ function AuthForm() {
                 >
                   Austauschen
                 </button>
+                </div>
               )}
 
               {/* Inline Registration Form */}
@@ -699,24 +738,16 @@ function AuthForm() {
       position: 'relative',
       paddingBottom: '60px'
     }}>
-      {/* Snail illustration — below the fold, lazy load to defer the 209KB asset */}
+      {/* Snail illustration — below the fold, lazy load */}
       <img
         className="landing-about-snail"
-        src={`/images/Snail_bg.png`}
+        src={`/images/snail.png`}
         alt=""
-        width={1386}
-        height={587}
+        width={590}
+        height={272}
         loading="lazy"
         decoding="async"
-        style={{
-          width: 'calc(100% + 304px)',
-          height: 'auto',
-          alignSelf: 'center',
-          marginBottom: '-50px',
-          marginLeft: '190px',
-          maxWidth: 'none',
-          pointerEvents: 'none'
-        }}
+        style={{ pointerEvents: 'none' }}
       />
 
       <div className="landing-about-text" style={{

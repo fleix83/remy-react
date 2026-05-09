@@ -70,6 +70,33 @@
   }
 }
 
+/* Desktop word pills hidden on mobile (mobile uses .landing-tagline single block) */
+.landing-tag {
+  display: none;
+}
+
+/* Top-right nav hidden on mobile (desktop only) */
+.landing-topnav {
+  display: none;
+}
+
+/* Mann clip wrapper passthrough on mobile */
+.landing-mann-clip {
+  display: contents;
+}
+
+@keyframes landing-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-tag,
+  .landing-cta {
+    animation: none !important;
+  }
+}
+
 /* ── Desktop landing page overrides ── */
 @media (min-width: 768px) {
   .landing-logo-wrap {
@@ -97,58 +124,165 @@
   }
   .landing-frau {
     top: 12vh !important;
-    margin-left: -68px !important;
+    margin-left: -100px !important;
     margin-top: -36px !important;
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 100px), transparent) !important;
+    mask-image: linear-gradient(to bottom, black calc(100% - 100px), transparent) !important;
+  }
+  .landing-mann-clip {
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
   }
   .landing-mann {
     top: 35vh !important;
     margin-top: -304px !important;
-    margin-left: 190px !important;
+    margin-left: 489px !important;
     transform: rotate(1deg) !important;
+  }
+  .landing-hero {
+    overflow: visible !important;
   }
   .landing-cta-area {
     position: absolute !important;
-    top: 41% !important;
-    left: 31% !important;
-    width: 40% !important;
-    align-items: center !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     padding: 0 !important;
     z-index: 10 !important;
     transform: none !important;
   }
-  .landing-tagline {
-    font-size: clamp(40px, 4.2vw, 60px) !important;
+  .landing-cta-area:has(form) {
+    top: 360px !important;
+    left: 203px !important;
+    width: calc(100% - 203px) !important;
+    padding-left: 90px !important;
+  }
+  .landing-topnav {
+    display: flex !important;
+    position: absolute !important;
+    top: 28px !important;
+    right: 24px !important;
+    gap: 8px !important;
+    z-index: 20 !important;
+  }
+  .landing-topnav-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    background-color: #ffffff !important;
+    color: #000 !important;
+    font-family: "Gaegu", cursive !important;
+    font-weight: 500 !important;
+    font-size: 18px !important;
     line-height: 1 !important;
-    max-width: 560px !important;
-    margin-bottom: 28px !important;
-    align-self: center !important;
-    text-align: center !important;
+    padding: 10px 16px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+  }
+  .landing-topnav-link:hover {
+    background-color: #f5f5f5 !important;
+  }
+  .landing-tagline {
+    display: none !important;
+  }
+  .landing-tag {
+    display: block !important;
+    position: absolute !important;
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    border-radius: 60px !important;
+    font-family: "Gaegu", cursive !important;
+    font-weight: 700 !important;
+    color: rgb(84, 130, 255) !important;
+    white-space: nowrap !important;
+    line-height: 0.95 !important;
+    z-index: 10 !important;
+  }
+  .landing-tag-du {
+    top: 14% !important;
+    left: 38% !important;
+    font-size: 86px !important;
+    padding: 8px 36px !important;
+    animation: landing-float 4s ease-in-out infinite !important;
+  }
+  .landing-tag-machst {
+    top: 27% !important;
+    left: 54% !important;
+    font-size: 51px !important;
+    padding: 8px 28px !important;
+    animation: landing-float 5s ease-in-out 0.3s infinite !important;
+  }
+  .landing-tag-eine {
+    top: 37% !important;
+    left: 45% !important;
+    font-size: 51px !important;
+    padding: 8px 28px !important;
+    animation: landing-float 4.5s ease-in-out 0.7s infinite !important;
+  }
+  .landing-tag-psycho {
+    top: 52% !important;
+    left: 41% !important;
+    font-size: 86px !important;
+    padding: 8px 40px !important;
+    animation: landing-float 5.5s ease-in-out 0.5s infinite !important;
+  }
+  .landing-cta-wrap {
+    position: absolute !important;
+    bottom: 18% !important;
+    right: 33% !important;
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    border-radius: 60px !important;
+    padding: 26px !important;
+    z-index: 10 !important;
+    animation: landing-float 4s ease-in-out 1s infinite !important;
   }
   .landing-cta {
     width: auto !important;
     min-width: 180px !important;
-    max-width: 220px !important;
-    font-size: 17px !important;
+    max-width: 240px !important;
+    font-family: "Gaegu", cursive !important;
+    font-size: 28px !important;
     padding: 12px 28px !important;
-    align-self: center !important;
+    align-self: auto !important;
   }
   .landing-login-link {
-    text-align: center !important;
+    display: none !important;
   }
   .landing-about {
     flex-direction: column !important;
     padding: 0 !important;
+    padding-top: 100px !important;
     padding-bottom: 80px !important;
     overflow: hidden !important;
   }
+  .landing-about::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 100px !important;
+    background: linear-gradient(to bottom, #c8e6c9 0%, #cddeff 100%) !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
   .landing-about-snail {
-    width: 100% !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: clamp(220px, 22vw, 360px) !important;
+    height: auto !important;
     max-width: none !important;
     margin: 0 !important;
-    margin-top: 0vw !important;
-    margin-bottom: -4vw !important;
-    object-fit: cover !important;
-    object-position: center !important;
+    object-fit: contain !important;
   }
   .landing-about-text {
     max-width: 780px !important;
