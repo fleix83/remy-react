@@ -193,8 +193,8 @@ function AuthForm() {
       overflowY: 'auto',
       overflowX: 'hidden'
     }}>
-      {/* Info bar */}
-      <div style={{
+      {/* Info bar - mobile only (hidden on desktop via CSS) */}
+      <div className="landing-info-bar" style={{
         width: '100%',
         height: '36px',
         backgroundColor: '#ffffffd1',
@@ -403,7 +403,7 @@ function AuthForm() {
                   alignSelf: 'center',
                   maxWidth: '500px'
                 }}>
-                  Du machst<br />eine<br />Psycho­therapie?
+                  Du machst eine<br />Psycho­therapie?
                 </div>
               )}
 

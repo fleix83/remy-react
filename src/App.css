@@ -146,7 +146,11 @@
     margin-left: 489px !important;
     transform: rotate(1deg) !important;
   }
+  .landing-info-bar {
+    display: none !important;
+  }
   .landing-hero {
+    height: 100vh !important;
     overflow: visible !important;
   }
   .landing-cta-area {
