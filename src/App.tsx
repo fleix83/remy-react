@@ -284,28 +284,16 @@ function AuthForm() {
         </div>
       )}
 
-      {/* Frau + Mann illustrations - desktop only, co-registered canvases */}
+      {/* Masken illustration - desktop only */}
       {!showLoginForm && (
-        <>
-          <img
-            className="landing-frau hidden"
-            src="/images/Frau.png"
-            alt=""
-            width={2247}
-            height={1432}
-            decoding="async"
-          />
-          <div className="landing-mann-clip">
-            <img
-              className="landing-mann hidden"
-              src="/images/Mann.png"
-              alt=""
-              width={2247}
-              height={1432}
-              decoding="async"
-            />
-          </div>
-        </>
+        <img
+          className="landing-frau hidden"
+          src="/images/Masken.png"
+          alt=""
+          width={2247}
+          height={1432}
+          decoding="async"
+        />
       )}
 
       {/* Dog illustration - upper left, hidden on login */}
