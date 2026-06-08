@@ -3,6 +3,7 @@ import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationService } from '../../services/moderation.service'
 import UserAvatar from '../user/UserAvatar'
 import DesignationsTab from './DesignationsTab'
+import CmsTab from './CmsTab'
 import type { User } from '../../types/database.types'
 
 interface ModerationStats {
@@ -14,14 +15,14 @@ interface ModerationStats {
   totalComments: number
 }
 
-type TabId = 'overview' | 'users' | 'designations' | 'content'
+type TabId = 'overview' | 'users' | 'designations' | 'cms'
 
 // Outline icon paths (24x24, stroke) matching the app's icon style
 const TAB_ICONS: Record<TabId, string> = {
   overview: 'M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 8.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25A2.25 2.25 0 0113.5 8.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z',
   users: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z',
   designations: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z',
-  content: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+  cms: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
 }
 
 const AdminDashboard: React.FC = () => {
@@ -105,7 +106,7 @@ const AdminDashboard: React.FC = () => {
     { id: 'overview', label: 'Übersicht' },
     { id: 'users', label: 'Benutzer' },
     ...(permissions.isAdmin ? [{ id: 'designations' as TabId, label: 'Bezeichnungen' }] : []),
-    { id: 'content', label: 'Inhalte' },
+    ...(permissions.isAdmin ? [{ id: 'cms' as TabId, label: 'Cms' }] : []),
   ]
 
   return (
@@ -277,27 +278,9 @@ const AdminDashboard: React.FC = () => {
           <DesignationsTab />
         )}
 
-        {/* Content Tab */}
-        {activeTab === 'content' && (
-          <div className="rounded-2xl border border-[#ece7dd] bg-white p-6 shadow-[0_2px_10px_rgba(20,66,32,0.04)]">
-            <h2 className="mb-3 text-base font-bold text-[var(--type)]">Inhaltsverwaltung</h2>
-            <div className="text-slate-600 leading-relaxed">
-              <p className="mb-3">Die Moderation von Beiträgen und Kommentaren erfolgt direkt über die jeweiligen Moderationsbuttons in den Inhalten.</p>
-              <p className="mb-2.5">Als {permissions.isAdmin ? 'Administrator' : 'Moderator'} können Sie:</p>
-              <ul className="space-y-2">
-                {[
-                  'Beiträge und Kommentare bearbeiten',
-                  'Unangemessene Inhalte löschen',
-                  ...(permissions.isAdmin ? ['Benutzer sperren und Rollen verwalten'] : []),
-                ].map((line) => (
-                  <li key={line} className="flex items-start gap-2.5">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+        {/* CMS Tab */}
+        {activeTab === 'cms' && permissions.isAdmin && (
+          <CmsTab />
         )}
       </div>
     </div>
