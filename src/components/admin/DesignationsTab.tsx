@@ -77,8 +77,8 @@ const DesignationsTab: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
-        <span className="ml-3 text-gray-600">Lade Bezeichnungen...</span>
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent"></div>
+        <span className="ml-3 text-slate-500">Lade Bezeichnungen...</span>
       </div>
     )
   }
@@ -101,56 +101,57 @@ const DesignationsTab: React.FC = () => {
     <div className="space-y-4">
       {/* Header with Create Button */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Berufsbezeichnung</h2>
+        <h2 className="text-xl font-bold text-[var(--type)]">Berufsbezeichnung</h2>
         <button
           onClick={handleCreateNew}
           disabled={isCreating}
-          className="text-blue-600 hover:text-blue-800 font-medium transition-colors disabled:opacity-50"
-          style={{ color: '#4785ff' }}
+          className="inline-flex items-center gap-1 rounded-lg bg-[#eef3ff] px-3 py-1.5 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[#e0eaff] disabled:opacity-50"
         >
-          {isCreating ? '+ Erstellen...' : '+ Neu'}
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m-7-7h14" />
+          </svg>
+          {isCreating ? 'Erstellen…' : 'Neu'}
         </button>
       </div>
 
       {/* Scrollable Table Container */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-xl border border-[#efe9df]">
         {/* Table Header */}
-        <div className="bg-gray-100 border-b-2 border-gray-300 min-w-[1200px]">
+        <div className="border-b border-[#efe9df] bg-[#faf8f4] min-w-[1200px]">
           <div className="flex items-center gap-2 px-2 py-3">
             <div className="w-8"></div>
-            <div className="w-10 text-xs font-semibold text-gray-600 uppercase">
+            <div className="w-10 text-xs font-semibold text-slate-500 uppercase">
               Spr.
             </div>
-            <div className="w-44 text-xs font-semibold text-gray-600 uppercase text-left">
+            <div className="w-44 text-xs font-semibold text-slate-500 uppercase text-left">
               Kurzb. (m)
             </div>
-            <div className="w-44 text-xs font-semibold text-gray-600 uppercase text-left">
+            <div className="w-44 text-xs font-semibold text-slate-500 uppercase text-left">
               Kurzb. (w)
             </div>
-            <div className="flex-1 text-xs font-semibold text-gray-600 uppercase text-left">
+            <div className="flex-1 text-xs font-semibold text-slate-500 uppercase text-left">
               Lang (m)
             </div>
-            <div className="flex-1 text-xs font-semibold text-gray-600 uppercase text-left">
+            <div className="flex-1 text-xs font-semibold text-slate-500 uppercase text-left">
               Lang (w)
             </div>
-            <div className="w-16 text-xs font-semibold text-gray-600 uppercase flex justify-center">
+            <div className="w-16 text-xs font-semibold text-slate-500 uppercase flex justify-center">
               Aktiv
             </div>
-            <div className="w-20 text-xs font-semibold text-gray-600 uppercase flex justify-end">
+            <div className="w-20 text-xs font-semibold text-slate-500 uppercase flex justify-end">
               Aktionen
             </div>
           </div>
         </div>
 
         {/* Designations List */}
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden min-w-[1200px]">
+        <div className="bg-white overflow-hidden min-w-[1200px]">
           {designations.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-slate-500">
               Keine Bezeichnungen vorhanden.
               <button
                 onClick={handleCreateNew}
-                className="block mx-auto mt-4 text-blue-600 hover:text-blue-800 font-medium"
-                style={{ color: '#4785ff' }}
+                className="mx-auto mt-4 block font-semibold text-[var(--primary)] hover:underline"
               >
                 + Erste Bezeichnung erstellen
               </button>
@@ -169,7 +170,7 @@ const DesignationsTab: React.FC = () => {
       </div>
 
       {/* Footer Stats */}
-      <div className="text-sm text-gray-500 text-right">
+      <div className="text-sm text-slate-500 text-right">
         {designations.length} Bezeichnung{designations.length !== 1 ? 'en' : ''} insgesamt
         {' • '}
         {designations.filter(d => d.is_active).length} aktiv

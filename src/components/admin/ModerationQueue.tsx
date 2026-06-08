@@ -570,10 +570,10 @@ const ModerationQueue: React.FC = () => {
   // Redirect if no permissions
   if (!permissions.canModerate) {
     return (
-      <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center">
-        <div className="text-white text-center">
-          <h1 className="text-2xl font-bold mb-4">Zugriff verweigert</h1>
-          <p className="text-gray-300">Sie haben keine Berechtigung für die Moderationsqueue.</p>
+      <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center px-4">
+        <div className="max-w-sm rounded-2xl border border-[#ece7dd] bg-white px-8 py-10 text-center shadow-[0_8px_30px_rgba(20,66,32,0.06)]">
+          <h1 className="text-2xl font-bold text-[var(--type)] mb-2">Zugriff verweigert</h1>
+          <p className="text-slate-500">Sie haben keine Berechtigung für die Moderationsqueue.</p>
         </div>
       </div>
     )
@@ -582,7 +582,7 @@ const ModerationQueue: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent"></div>
       </div>
     )
   }
@@ -614,12 +614,12 @@ const ModerationQueue: React.FC = () => {
 
             {selectedItems.size > 0 && (
               <div className="flex items-center space-x-3">
-                <span className="text-gray-300 text-sm">
+                <span className="text-sm font-medium text-slate-600">
                   {selectedItems.size} ausgewählt
                 </span>
                 <button
                   onClick={handleBulkApprove}
-                  className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                  className="bg-[var(--primary)] hover:bg-[#3b71e6] text-white px-4 py-2 rounded-lg transition-colors text-sm"
                 >
                   Publizieren
                 </button>
@@ -679,7 +679,7 @@ const ModerationQueue: React.FC = () => {
         {/* Queue Items */}
         {filteredQueueItems.length === 0 ? (
           <div className="bg-[#fff0b5] p-8 text-center" style={{borderRadius: '20px'}}>
-            <div className="text-[#2ebe7a] mb-4">
+            <div className="text-[#1f9d57] mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -751,7 +751,7 @@ const ModerationQueue: React.FC = () => {
                           e.stopPropagation()
                           toggleSelection(item.id)
                         }}
-                        className="w-4 h-4 text-[#2ebe7a] bg-gray-100 border-gray-300 rounded focus:ring-[var(--primary)] focus:ring-2"
+                        className="w-4 h-4 accent-[var(--primary)] bg-gray-100 border-gray-300 rounded focus:ring-[var(--primary)] focus:ring-2"
                       />
                     </div>
                   </div>
@@ -984,7 +984,7 @@ const ModerationQueue: React.FC = () => {
                           setShowMessageModal(true)
                         }}
                         disabled={processingId === item.id}
-                        className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
+                        className="bg-[var(--primary)] hover:bg-[#3b71e6] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
                         title="Publizieren"
                       >
                         Publizieren

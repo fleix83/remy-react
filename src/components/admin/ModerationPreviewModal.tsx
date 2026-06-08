@@ -161,7 +161,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                       </Link>
                     </div>
                   )}
-                  <div className="prose prose-gray max-w-none text-white leading-tight text-left text-sm border-l-2 border-gray-600 pl-4">
+                  <div className="prose prose-gray max-w-none text-[var(--type)] leading-tight text-left text-sm border-l-2 border-[var(--primary)] pl-4">
                     <div dangerouslySetInnerHTML={{ __html: item.content || '' }} />
                   </div>
                 </div>
@@ -216,7 +216,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             <button
               onClick={() => onApprove(item)}
               disabled={isProcessing}
-              className="bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
+              className="bg-[var(--primary)] hover:bg-[#3b71e6] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
               title="Publizieren"
             >
               {isProcessing ? 'Verarbeitung...' : 'Publizieren'}

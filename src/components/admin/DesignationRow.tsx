@@ -58,14 +58,14 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
   }
 
   return (
-    <div className="border-b border-gray-200">
+    <div className="border-b border-[#f1ece3] last:border-b-0">
       {/* German Row (Always Visible) */}
-      <div className="flex items-center gap-2 hover:bg-gray-50 transition-colors px-2">
+      <div className="flex items-center gap-2 hover:bg-[#faf8f4] transition-colors px-2">
         {/* Expand/Collapse Icon */}
         <div className="w-8">
           <button
             onClick={toggleExpanded}
-            className="p-1 hover:bg-gray-200 rounded transition-colors"
+            className="p-1 hover:bg-[#ece7dd] rounded transition-colors text-slate-500"
             title={isExpanded ? 'Sprachen ausblenden' : 'Sprachen anzeigen'}
           >
             <svg
@@ -80,7 +80,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
         </div>
 
         {/* Language Label */}
-        <div className="w-10 text-sm font-medium text-gray-600">
+        <div className="w-10 text-sm font-medium text-slate-500">
           DE
         </div>
 
@@ -132,7 +132,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
             onChange={async (e) => {
               await handleUpdate('is_active', e.target.checked as any)
             }}
-            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="h-5 w-5 cursor-pointer rounded border-gray-300 accent-[var(--primary)] focus:ring-[var(--primary)]"
             title={designation.is_active ? 'Aktiv' : 'Inaktiv'}
           />
         </div>
@@ -151,9 +151,9 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
 
       {/* French Row (Collapsible) */}
       {isExpanded && (
-        <div className="flex items-center gap-2 bg-gray-50 px-2">
+        <div className="flex items-center gap-2 bg-[#faf8f4] px-2">
           <div className="w-8"></div>
-          <div className="w-10 text-sm font-medium text-gray-600">
+          <div className="w-10 text-sm font-medium text-slate-500">
             FR
           </div>
           <div className="w-44">
@@ -195,9 +195,9 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
 
       {/* Italian Row (Collapsible) */}
       {isExpanded && (
-        <div className="flex items-center gap-2 bg-gray-50 px-2">
+        <div className="flex items-center gap-2 bg-[#faf8f4] px-2">
           <div className="w-8"></div>
-          <div className="w-10 text-sm font-medium text-gray-600">
+          <div className="w-10 text-sm font-medium text-slate-500">
             IT
           </div>
           <div className="w-44">

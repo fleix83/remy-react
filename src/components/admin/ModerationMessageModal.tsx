@@ -53,7 +53,7 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
   const getActionButton = () => {
     switch (actionType) {
       case 'approve':
-        return { text: 'Genehmigen', color: 'bg-[var(--primary)] hover:bg-[var(--primary)]' }
+        return { text: 'Genehmigen', color: 'bg-[var(--primary)] hover:bg-[#3b71e6]' }
       case 'reject':
         return { text: 'Ablehnen', color: 'bg-red-600 hover:bg-red-700' }
       case 'message':
