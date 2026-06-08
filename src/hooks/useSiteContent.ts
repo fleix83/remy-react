@@ -21,11 +21,27 @@ const GC_TIME = 24 * 60 * 60 * 1000 // 1 day
 export interface ContentDocument<T> {
   /** Always defined: the defaults (placeholder) until the DB row hydrates, then the merged result. */
   content: T
-  /** True until the first DB fetch settles. Defaults are shown meanwhile. */
+  /** True once real DB content is available (or a fetch has settled). Defaults are shown meanwhile. */
   isFetched: boolean
   save: (value: T) => Promise<void>
   isSaving: boolean
   saveError: Error | null
+}
+
+/**
+ * Whether the editor may trust the content as real (DB) data rather than the
+ * placeholder defaults.
+ *
+ * `initialData` is stamped at epoch 0, so `dataUpdatedAt > 0` means a real fetch
+ * has populated the cache at SOME point — including one triggered earlier by the
+ * public landing page (`AuthForm`). A mount-relative signal like
+ * `isFetchedAfterMount` misses that: when the cache is already fresh, the editor's
+ * mount triggers no refetch, the flag never flips, and the editor hangs on its
+ * spinner. We also accept `isFetchedAfterMount` so a cold-cache fetch that settles
+ * with an error still releases the spinner instead of hanging.
+ */
+export function contentReady(query: { dataUpdatedAt: number; isFetchedAfterMount: boolean }): boolean {
+  return query.dataUpdatedAt > 0 || query.isFetchedAfterMount
 }
 
 function useContentDocument<T>(key: string, defaults: T): ContentDocument<T> {
@@ -54,9 +70,10 @@ function useContentDocument<T>(key: string, defaults: T): ContentDocument<T> {
 
   return {
     content: query.data ?? defaults,
-    // True only once a real fetch has completed after mount — so the admin
-    // editor waits for DB values instead of populating from the defaults.
-    isFetched: query.isFetchedAfterMount,
+    // Ready once real DB content exists in the cache (from this mount OR an
+    // earlier one, e.g. the landing page) — not only after a post-mount refetch,
+    // which never happens while the cache is still fresh and hangs the editor.
+    isFetched: contentReady(query),
     save: mutation.mutateAsync,
     isSaving: mutation.isPending,
     saveError: (mutation.error as Error) ?? null,
