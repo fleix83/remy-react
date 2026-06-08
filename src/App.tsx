@@ -825,29 +825,39 @@ function AuthForm() {
     </div>
 
     {/* Footer */}
-    <div style={{
-      width: '100%',
-      height: '200px',
-      backgroundColor: 'rgb(241, 241, 241)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '0 24px',
-      flexShrink: 0
-    }}>
-      {/* First line: Logo | Impressum | Datenschutz */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: '500px' }}>
-        <img src="/images/logo_claim.png" alt="Remy" width={437} height={169} loading="lazy" decoding="async" style={{ height: '36px', width: 'auto', filter: 'grayscale(100%)' }} />
-        <a href={footer.impressumHref} style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>{footer.impressumLabel}</a>
-        <a href={footer.datenschutzHref} style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '13px', fontWeight: 600, color: '#8a9ab5', letterSpacing: '0.03em', textDecoration: 'none' }}>{footer.datenschutzLabel}</a>
+    <footer className="flex h-[350px] flex-shrink-0 items-center bg-[#f1f1f1] px-6 md:px-10">
+      <div className="flex w-full flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:text-left">
+        {/* Left: logo + credits on one line, to the right of the logo */}
+        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-14">
+          <img
+            src="/images/logo_claim.png"
+            alt="Remy"
+            width={437}
+            height={169}
+            loading="lazy"
+            decoding="async"
+            className="h-[65px] w-auto"
+            style={{ filter: 'grayscale(100%)' }}
+          />
+          <div
+            className="flex flex-wrap items-center justify-center gap-x-10 gap-y-2 text-[17px] text-[#828282]"
+            style={{ fontFamily: '"Nunito Sans", sans-serif' }}
+          >
+            <a href={footer.impressumHref} className="transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
+            <a href={footer.datenschutzHref} className="transition-opacity hover:opacity-70">{footer.datenschutzLabel}</a>
+            <span>{footer.madeByPrefix} {footer.madeByName}</span>
+          </div>
+        </div>
+
+        {/* Right: lead text (desktop only) */}
+        <div
+          className="hidden text-[42px] uppercase leading-[1.15] text-[#828282] md:block md:text-right"
+          style={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, letterSpacing: '0.06em', wordSpacing: '0.2em' }}
+        >
+          REMY, DAS FORUM<br />FÜR MENSCHEN IN<br />PSYCHOTHERAPIE
+        </div>
       </div>
-      {/* Second line: Made by */}
-      <div style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '11px', fontWeight: 500, color: '#8a9ab5', letterSpacing: '0.02em', textAlign: 'center', marginTop: '16px' }}>
-        <div>{footer.madeByPrefix}</div>
-        <div>{footer.madeByName}</div>
-      </div>
-    </div>
+    </footer>
   </div>
   )
 }
