@@ -1,7 +1,7 @@
 import React from 'react'
 
 const inputClass =
-  'w-full rounded-lg border border-[#efe9df] bg-white px-3 py-2 text-sm text-[var(--type)] ' +
+  'w-full rounded-lg border border-[#efe9df] bg-[#ffffff] px-3 py-2 text-left text-sm text-[var(--type)] ' +
   'focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]'
 
 interface CmsFieldProps {
@@ -22,7 +22,7 @@ export const CmsField: React.FC<CmsFieldProps> = ({
   rows = 3,
   hint,
 }) => (
-  <label className="block">
+  <label className="block text-left">
     <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
       {label}
     </span>
@@ -42,7 +42,7 @@ export const CmsField: React.FC<CmsFieldProps> = ({
 
 /** Titled group of fields. */
 export const CmsSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <section className="rounded-xl border border-[#efe9df] bg-white p-5">
+  <section className="rounded-xl border border-[#efe9df] bg-[#f8f6f4] p-5 text-left">
     <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-[var(--primary)]">{title}</h3>
     <div className="space-y-4">{children}</div>
   </section>
