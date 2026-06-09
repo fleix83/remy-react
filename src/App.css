@@ -636,6 +636,15 @@
   .canton-filters::-webkit-scrollbar {
     display: none;
   }
+
+  /* Hide vertical scrollbar on desktop (e.g. post modals) while keeping scroll */
+  .hide-scrollbar-desktop {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .hide-scrollbar-desktop::-webkit-scrollbar {
+    display: none;
+  }
   .canton-grid {
     display: flex;
     flex-direction: column;

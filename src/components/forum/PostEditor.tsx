@@ -237,7 +237,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 focus:outline-none text-base"
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-[var(--primary)] text-base"
                   placeholder="Titel eingeben..."
                   maxLength={255}
                 />
@@ -288,7 +288,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-[var(--primary)]"
                   placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
                   maxLength={255}
                 />
