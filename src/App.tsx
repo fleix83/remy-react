@@ -113,7 +113,7 @@ function App() {
               <Route path="/messages" element={<Layout onCreatePost={handleCreatePost}><MessagesPage /></Layout>} />
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/admin" element={<Layout onCreatePost={handleCreatePost}><AdminDashboard /></Layout>} />
-              <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost} headerBg="#fff0b5"><ModerationQueue /></Layout>} />
+              <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost} background="#f8f5e6"><ModerationQueue /></Layout>} />
             </>
           )}
             </Routes>

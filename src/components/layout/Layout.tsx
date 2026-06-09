@@ -6,19 +6,21 @@ interface LayoutProps {
   onCreatePost?: () => void
   showCreatePostButton?: boolean
   headerBg?: string
+  background?: string
 }
 
 const Layout: React.FC<LayoutProps> = ({
   children,
   onCreatePost = () => {},
   showCreatePostButton = true,
-  headerBg
+  headerBg,
+  background
 }) => {
   return (
     <div
       className="min-h-screen relative layout-root"
       style={{
-        background: 'rgb(239, 255, 241) url(/background.svg) no-repeat 0 0',
+        background: background ?? 'rgb(239, 255, 241) url(/background.svg) no-repeat 0 0',
         zIndex: 1
       }}
     >

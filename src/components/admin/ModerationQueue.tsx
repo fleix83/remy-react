@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationQueueService } from '../../services/moderation-queue.service'
@@ -15,12 +15,10 @@ const ModerationQueue: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState<number | null>(null)
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set())
-  const [rejectReason, setRejectReason] = useState('')
-  const [showRejectModal, setShowRejectModal] = useState(false)
-  const [itemToReject, setItemToReject] = useState<ModerationQueueItem | null>(null)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
   const [previewItem, setPreviewItem] = useState<ModerationQueueItem | null>(null)
   const [touchTimer, setTouchTimer] = useState<NodeJS.Timeout | null>(null)
+  const longPressTriggered = useRef(false)
   const [postTitles, setPostTitles] = useState<Record<number, string>>({})
   const [categories, setCategories] = useState<Record<number, string>>({})
   const [allCategories, setAllCategories] = useState<{id: number, name_de: string}[]>([])
@@ -245,15 +243,6 @@ const ModerationQueue: React.FC = () => {
     }
   }
 
-  // Legacy reject handler for the old modal (can be removed later)
-  const handleRejectLegacy = async (reason: string) => {
-    if (!permissions.canModerate || !permissions.userProfile?.id || !itemToReject) return
-    await handleReject(itemToReject, reason)
-    setShowRejectModal(false)
-    setItemToReject(null)
-    setRejectReason('')
-  }
-
   const handleBulkApprove = async () => {
     if (!permissions.canModerate || !permissions.userProfile?.id || selectedItems.size === 0) return
 
@@ -342,12 +331,19 @@ const ModerationQueue: React.FC = () => {
   }
 
   const handleItemClick = (item: ModerationQueueItem) => {
+    // A long-press just toggled selection — swallow the click that follows
+    if (longPressTriggered.current) {
+      longPressTriggered.current = false
+      return
+    }
     setPreviewItem(item)
     setShowPreviewModal(true)
   }
 
   const handleTouchStart = (item: ModerationQueueItem) => {
+    longPressTriggered.current = false
     const timer = setTimeout(() => {
+      longPressTriggered.current = true
       toggleSelection(item.id)
       // Add haptic feedback if available
       if (navigator.vibrate) {
@@ -470,11 +466,8 @@ const ModerationQueue: React.FC = () => {
     return text.substring(0, maxLength) + '...'
   }
 
-  const getFirstLineOfComment = (content: string) => {
-    // Remove HTML tags and get first line
-    const plainText = content.replace(/<[^>]*>/g, '')
-    const firstLine = plainText.split('\n')[0] || plainText
-    return truncateText(firstLine, 80)
+  const getPlainText = (content: string) => {
+    return content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
   }
 
   const loadPostTitles = async (items: ModerationQueueItem[]) => {
@@ -567,10 +560,30 @@ const ModerationQueue: React.FC = () => {
     }
   }
 
+  // Card tints per content type — #fff9e2 is the base (posts), comments and
+  // therapists shift the hue toward their badge color (salmon / green)
+  const cardTint: Record<string, string> = {
+    post: 'bg-[#fff9e2] hover:bg-[#fff3cd]',
+    comment: 'bg-[#ffeee2] hover:bg-[#ffe4d3]',
+    therapist: 'bg-[#edf6e2] hover:bg-[#e3f0d2]'
+  }
+
+  const cardTintSelected: Record<string, string> = {
+    post: 'ring-2 ring-[var(--primary)] bg-[#ffefc2]',
+    comment: 'ring-2 ring-[var(--primary)] bg-[#ffddc7]',
+    therapist: 'ring-2 ring-[var(--primary)] bg-[#d9ecc4]'
+  }
+
+  const badgeTint: Record<string, string> = {
+    post: 'bg-[var(--primary)]',
+    comment: 'bg-[#fa8072]',
+    therapist: 'bg-[#37a653]'
+  }
+
   // Redirect if no permissions
   if (!permissions.canModerate) {
     return (
-      <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#f8f5e6] flex items-center justify-center px-4">
         <div className="max-w-sm rounded-2xl border border-[#ece7dd] bg-white px-8 py-10 text-center shadow-[0_8px_30px_rgba(20,66,32,0.06)]">
           <h1 className="text-2xl font-bold text-[var(--type)] mb-2">Zugriff verweigert</h1>
           <p className="text-slate-500">Sie haben keine Berechtigung für die Moderationsqueue.</p>
@@ -581,7 +594,7 @@ const ModerationQueue: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#f8f5e6] flex items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent"></div>
       </div>
     )
@@ -596,89 +609,79 @@ const ModerationQueue: React.FC = () => {
   })
 
   return (
-    <div className="min-h-screen bg-[#fff9de] overflow-x-hidden">
-      <div className="max-w-6xl mx-auto py-6 px-4">
+    <div className="min-h-screen bg-[#f8f5e6] overflow-x-hidden">
+      <div className="max-w-6xl lg:max-w-[78rem] mx-auto py-6 px-4">
         {/* Header */}
-        <div className="mb-6 bg-[#fff0b5] pt-6 px-6 pb-1 rounded-[20px]">
-          {/* Top Row: Title and Bulk Actions */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-left">
-              <h1 className="text-2xl font-bold text-[var(--primary)] mb-2 text-left">Moderation</h1>
-              <p className="text-[var(--primary)] text-left flex items-center gap-2">
-                <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold" style={{fontSize: '22px', color: '#fa8072'}}>
-                  {filteredQueueItems.length}
-                </span>
-                Elemente warten auf Moderation
-              </p>
-            </div>
-
-            {selectedItems.size > 0 && (
-              <div className="flex items-center space-x-3">
-                <span className="text-sm font-medium text-slate-600">
-                  {selectedItems.size} ausgewählt
-                </span>
-                <button
-                  onClick={handleBulkApprove}
-                  className="bg-[var(--primary)] hover:bg-[#3b71e6] text-white px-4 py-2 rounded-lg transition-colors text-sm"
-                >
-                  Publizieren
-                </button>
-                <button
-                  onClick={handleBulkReject}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
-                >
-                  Ablehnen
-                </button>
-                <button
-                  onClick={handleBulkDelete}
-                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
-                >
-                  Löschen
-                </button>
-                <button
-                  onClick={() => setSelectedItems(new Set())}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm"
-                >
-                  Auswahl aufheben
-                </button>
-              </div>
-            )}
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="text-left">
+            <h1 className="text-2xl font-bold text-[var(--primary)] mb-2 text-left">Moderation</h1>
+            <p className="text-[var(--primary)] text-left flex items-center gap-2">
+              <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-sm" style={{fontSize: '22px', color: '#fa8072'}}>
+                {filteredQueueItems.length}
+              </span>
+              Elemente warten auf Moderation
+            </p>
           </div>
 
-          {/* Bottom Row: Filter (Right aligned) */}
-          <div className="flex justify-end">
-            <div className="flex items-center space-x-3 text-sm text-[var(--primary)]">
+          {/* Filter pills */}
+          <div className="flex items-center gap-1 rounded-full bg-white/80 p-1 shadow-sm self-start md:self-auto">
+            {([
+              ['alle', 'Alle'],
+              ['beiträge', 'Beiträge'],
+              ['kommentare', 'Kommentare'],
+              ['therapeuten', 'Therapeuten']
+            ] as const).map(([value, label]) => (
               <button
-                onClick={() => setContentFilter('alle')}
-                className={`underline ${contentFilter === 'alle' ? 'font-bold' : ''}`}
+                key={value}
+                onClick={() => setContentFilter(value)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  contentFilter === value
+                    ? 'bg-[var(--primary)] text-white'
+                    : 'text-[var(--primary)] hover:bg-[#eef3ff]'
+                }`}
               >
-                Alle
+                {label}
               </button>
-              <button
-                onClick={() => setContentFilter('beiträge')}
-                className={`underline ${contentFilter === 'beiträge' ? 'font-bold' : ''}`}
-              >
-                Beiträge
-              </button>
-              <button
-                onClick={() => setContentFilter('kommentare')}
-                className={`underline ${contentFilter === 'kommentare' ? 'font-bold' : ''}`}
-              >
-                Kommentare
-              </button>
-              <button
-                onClick={() => setContentFilter('therapeuten')}
-                className={`underline ${contentFilter === 'therapeuten' ? 'font-bold' : ''}`}
-              >
-                Therapeuten
-              </button>
-            </div>
+            ))}
           </div>
         </div>
 
+        {/* Bulk action bar */}
+        {selectedItems.size > 0 && (
+          <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/80 px-5 py-3 shadow-sm">
+            <span className="text-sm font-medium text-slate-600">
+              {selectedItems.size} ausgewählt
+            </span>
+            <button
+              onClick={handleBulkApprove}
+              className="rounded-full bg-[var(--primary)] hover:bg-[#3b71e6] text-white px-4 py-1.5 text-xs font-medium transition-colors"
+            >
+              Publizieren
+            </button>
+            <button
+              onClick={handleBulkReject}
+              className="text-xs font-medium text-red-500 hover:text-red-700 transition-colors"
+            >
+              Ablehnen
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              className="text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              Löschen
+            </button>
+            <button
+              onClick={() => setSelectedItems(new Set())}
+              className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              Auswahl aufheben
+            </button>
+          </div>
+        )}
+
         {/* Queue Items */}
         {filteredQueueItems.length === 0 ? (
-          <div className="bg-[#fff0b5] p-8 text-center" style={{borderRadius: '20px'}}>
+          <div className="bg-[#fff9e2] p-8 text-center shadow-[0_2px_12px_rgba(20,66,32,0.05)]" style={{borderRadius: '20px'}}>
             <div className="text-[#1f9d57] mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -696,26 +699,21 @@ const ModerationQueue: React.FC = () => {
             {filteredQueueItems.map((item) => (
               <div
                 key={`${item.content_type}-${item.id}`}
-                className={`p-6 mb-4 hover:bg-[#ffe580] transition-colors cursor-pointer relative ${
-                  selectedItems.has(item.id) ? 'ring-2 ring-[var(--primary)] bg-[#ffd966]' : 'bg-[#fff0b5]'
+                className={`p-6 mb-4 transition-colors cursor-pointer relative shadow-[0_2px_12px_rgba(20,66,32,0.05)] ${
+                  selectedItems.has(item.id) ? cardTintSelected[item.content_type] : cardTint[item.content_type]
                 }`}
                 style={{borderRadius: '20px'}}
                 onClick={() => handleItemClick(item)}
                 onTouchStart={() => handleTouchStart(item)}
                 onTouchEnd={handleTouchEnd}
+                onTouchMove={handleTouchEnd}
                 onTouchCancel={handleTouchEnd}
               >
                 {/* Content Type Badge - Overlapping */}
-                <span className={`absolute -top-2 left-4 z-10 inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-lg ${
-                  item.content_type === 'post'
-                    ? 'bg-gray-600 text-white'
-                    : item.content_type === 'therapist'
-                    ? 'text-white'
-                    : 'bg-blue-600 text-white'
-                }`} style={{
-                  fontSize: '0.65rem',
-                  ...(item.content_type === 'therapist' ? { backgroundColor: '#37a653' } : {})
-                }}>
+                <span
+                  className={`absolute -top-2 left-4 z-10 inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-md text-white ${badgeTint[item.content_type]}`}
+                  style={{fontSize: '0.65rem'}}
+                >
                   {item.content_type === 'post' ? 'Beitrag' : item.content_type === 'therapist' ? 'Therapeut' : 'Kommentar'}
                 </span>
                 {/* Header with Canton */}
@@ -743,17 +741,16 @@ const ModerationQueue: React.FC = () => {
                     )}
                     
                     {/* Selection Checkbox */}
-                    <div className="hidden md:block">
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.has(item.id)}
-                        onChange={(e) => {
-                          e.stopPropagation()
-                          toggleSelection(item.id)
-                        }}
-                        className="w-4 h-4 accent-[var(--primary)] bg-gray-100 border-gray-300 rounded focus:ring-[var(--primary)] focus:ring-2"
-                      />
-                    </div>
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.has(item.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        e.stopPropagation()
+                        toggleSelection(item.id)
+                      }}
+                      className="w-4 h-4 accent-[var(--primary)] bg-gray-100 border-gray-300 rounded focus:ring-[var(--primary)] focus:ring-2 cursor-pointer"
+                    />
                   </div>
                 </div>
 
@@ -826,19 +823,25 @@ const ModerationQueue: React.FC = () => {
                 </div>
 
                 {/* Content Display */}
-                <div className="mb-4">
+                <div className="mb-3">
                   {item.content_type === 'post' ? (
-                    // For Posts: Show title (auto-generated for Rant posts)
-                    <h3 className="text-base md:text-xl font-semibold text-[var(--type)] leading-tight text-left">
-                      {getPostDisplayTitle(item.title, item.content || '', item.category_id || 1)}
-                    </h3>
+                    // For Posts: Show title (auto-generated for Rant posts) + content excerpt
+                    <div>
+                      <h3 className="text-base md:text-xl font-semibold text-[var(--post-title)] leading-tight text-left mb-2">
+                        {getPostDisplayTitle(item.title, item.content || '', item.category_id || 1)}
+                      </h3>
+                      {item.content && (
+                        <p className="text-sm md:text-[15px] text-[var(--type)] leading-relaxed text-left line-clamp-3">
+                          {getPlainText(item.content)}
+                        </p>
+                      )}
+                    </div>
                   ) : item.content_type === 'therapist' ? (
-                    // For Therapists: Show name as blue link + designation
+                    // For Therapists: Show name as link + designation
                     <div>
                       <Link
                         to={`/therapeuten/${item.id}`}
-                        className="text-base md:text-xl font-semibold leading-tight text-left block mb-1"
-                        style={{ color: '#0066cc' }}
+                        className="text-base md:text-xl font-semibold leading-tight text-left block mb-1 text-[var(--primary)] hover:underline"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {item.first_name} {item.last_name}
@@ -850,10 +853,10 @@ const ModerationQueue: React.FC = () => {
                       )}
                     </div>
                   ) : (
-                    // For Comments: Show first line in quotes + post reference
+                    // For Comments: Show comment text + post reference
                     <div>
-                      <div className="text-gray-600 text-sm mb-2 italic text-left">
-                        "{getFirstLineOfComment(item.content || '')}"
+                      <div className="text-sm md:text-[15px] text-[var(--type)] leading-relaxed text-left line-clamp-3 mb-2 border-l-2 border-[#fa8072] pl-3 italic">
+                        "{getPlainText(item.content || '')}"
                       </div>
                       {item.post_id && (
                         <div className="text-xs text-gray-500 text-left">
@@ -873,10 +876,10 @@ const ModerationQueue: React.FC = () => {
                   )}
                 </div>
                 
-                {/* Small Action Buttons - Bottom Right */}
-                <div className="absolute bottom-3 right-3 flex items-center space-x-1">
+                {/* Action Buttons - profile-post style text/icon buttons */}
+                <div className="flex items-center justify-end gap-4 mt-2">
                   {item.content_type === 'therapist' ? (
-                    // Therapist action buttons - only Delete and Freigeben
+                    // Therapist actions - only Delete and Freigeben
                     <>
                       <button
                         onClick={(e) => {
@@ -884,15 +887,12 @@ const ModerationQueue: React.FC = () => {
                           handleDelete(item)
                         }}
                         disabled={processingId === item.id}
-                        className="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+                        className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200 disabled:opacity-50"
                         title="Löschen"
                       >
-                        <span className="md:hidden">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </span>
-                        <span className="hidden md:inline text-xs">Löschen</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                       </button>
 
                       <button
@@ -913,15 +913,14 @@ const ModerationQueue: React.FC = () => {
                           }
                         }}
                         disabled={processingId === item.id}
-                        className="text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
-                        style={{ backgroundColor: '#37a653' }}
+                        className="text-xs font-medium text-[#37a653] hover:text-[#2c8743] transition-colors duration-200 disabled:opacity-50"
                         title="Freigeben"
                       >
                         Freigeben
                       </button>
                     </>
                   ) : (
-                    // Post/Comment action buttons - original layout
+                    // Post/Comment actions
                     <>
                       <button
                         onClick={(e) => {
@@ -929,15 +928,12 @@ const ModerationQueue: React.FC = () => {
                           handleMessage(item)
                         }}
                         disabled={processingId === item.id}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
-                        title="Message"
+                        className="text-gray-400 hover:text-[var(--primary)] p-1 transition-colors duration-200 disabled:opacity-50"
+                        title="Nachricht senden"
                       >
-                        <span className="md:hidden">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                          </svg>
-                        </span>
-                        <span className="hidden md:inline text-xs">Message</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
                       </button>
 
                       <button
@@ -946,15 +942,12 @@ const ModerationQueue: React.FC = () => {
                           handleDelete(item)
                         }}
                         disabled={processingId === item.id}
-                        className="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+                        className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200 disabled:opacity-50"
                         title="Löschen"
                       >
-                        <span className="md:hidden">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </span>
-                        <span className="hidden md:inline text-xs">Löschen</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                       </button>
 
                       <button
@@ -965,15 +958,10 @@ const ModerationQueue: React.FC = () => {
                           setShowMessageModal(true)
                         }}
                         disabled={processingId === item.id}
-                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded transition-colors disabled:opacity-50"
+                        className="text-xs font-medium text-red-500 hover:text-red-700 transition-colors duration-200 disabled:opacity-50"
                         title="Ablehnen"
                       >
-                        <span className="md:hidden">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </span>
-                        <span className="hidden md:inline text-xs">Ablehnen</span>
+                        Ablehnen
                       </button>
 
                       <button
@@ -984,7 +972,7 @@ const ModerationQueue: React.FC = () => {
                           setShowMessageModal(true)
                         }}
                         disabled={processingId === item.id}
-                        className="bg-[var(--primary)] hover:bg-[#3b71e6] text-white px-2 py-1 rounded transition-colors disabled:opacity-50 text-xs"
+                        className="text-xs font-medium text-[var(--primary)] hover:text-[#3b71e6] transition-colors duration-200 disabled:opacity-50"
                         title="Publizieren"
                       >
                         Publizieren
@@ -1033,51 +1021,6 @@ const ModerationQueue: React.FC = () => {
           }}
           isProcessing={processingId !== null}
         />
-
-        {/* Reject Modal */}
-        {showRejectModal && itemToReject && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                {itemToReject.content_type === 'post' ? 'Beitrag' : 'Kommentar'} ablehnen
-              </h3>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Grund für Ablehnung (optional)
-                </label>
-                <textarea
-                  value={rejectReason}
-                  onChange={(e) => setRejectReason(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                  rows={3}
-                  placeholder="Erklären Sie, warum dieser Inhalt nicht geeignet ist..."
-                />
-              </div>
-              
-              <div className="flex items-center justify-end space-x-3">
-                <button
-                  onClick={() => {
-                    setShowRejectModal(false)
-                    setItemToReject(null)
-                    setRejectReason('')
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-                >
-                  Abbrechen
-                </button>
-                
-                <button
-                  onClick={() => handleRejectLegacy(rejectReason)}
-                  disabled={processingId === itemToReject.id}
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors disabled:opacity-50"
-                >
-                  {processingId === itemToReject.id ? 'Verarbeitung...' : 'Ablehnen'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Message Modal */}
         <ModerationMessageModal
