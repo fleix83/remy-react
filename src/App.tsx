@@ -825,10 +825,10 @@ function AuthForm() {
     </div>
 
     {/* Footer */}
-    <footer className="flex h-[350px] flex-shrink-0 items-center bg-[#f1f1f1] px-6 md:px-10">
-      <div className="flex w-full flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:text-left">
-        {/* Left: logo + credits on one line, to the right of the logo */}
-        <div className="flex flex-col items-center gap-6 md:flex-row md:gap-14">
+    <footer className="flex h-[350px] flex-shrink-0 items-center bg-[#f1f1f1] px-6 md:px-0">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
+        {/* Left: logo + credits on one line, aligned to the REMY baseline */}
+        <div className="flex flex-col items-center gap-6 md:flex-row md:items-end md:gap-12">
           <img
             src="/images/logo_claim.png"
             alt="Remy"
@@ -836,23 +836,24 @@ function AuthForm() {
             height={169}
             loading="lazy"
             decoding="async"
-            className="h-[65px] w-auto"
+            className="h-[65px] w-auto md:shrink-0"
             style={{ filter: 'grayscale(100%)' }}
           />
           <div
-            className="flex flex-wrap items-center justify-center gap-x-10 gap-y-2 text-[17px] text-[#828282]"
+            className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[17px] text-[#828282] md:pb-[5px] md:whitespace-nowrap"
             style={{ fontFamily: '"Nunito Sans", sans-serif' }}
           >
             <a href={footer.impressumHref} className="transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
             <a href={footer.datenschutzHref} className="transition-opacity hover:opacity-70">{footer.datenschutzLabel}</a>
+            <span className="hidden h-[18px] w-px self-center bg-[#828282] opacity-40 md:block" aria-hidden="true"></span>
             <span>{footer.madeByPrefix} {footer.madeByName}</span>
           </div>
         </div>
 
         {/* Right: lead text (desktop only) */}
         <div
-          className="hidden text-[42px] uppercase leading-[1.15] text-[#828282] md:block md:text-right"
-          style={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, letterSpacing: '0.06em', wordSpacing: '0.2em' }}
+          className="hidden shrink-0 uppercase leading-[1.18] text-[#828282] md:block md:text-right md:text-[30px] lg:text-[36px] xl:text-[42px]"
+          style={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, letterSpacing: '0.06em', wordSpacing: '0.1em' }}
         >
           REMY, DAS FORUM<br />FÜR MENSCHEN IN<br />PSYCHOTHERAPIE
         </div>

@@ -539,6 +539,15 @@
     --sidebar-filter-width: 210px;
   }
 
+  /* Fixed sidebars get pushed up by the footer instead of overlapping it
+     (--footer-push is set on <html> by Layout while scrolling) */
+  .category-filters,
+  .date-filters,
+  .designation-filters,
+  .canton-filters {
+    transform: translateY(calc(-1 * var(--footer-push, 0px)));
+  }
+
   /* Category filter tabs: vertical sidebar on the left */
   .category-filters {
     position: fixed;
