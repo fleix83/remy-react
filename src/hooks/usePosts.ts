@@ -1,4 +1,5 @@
-import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQueryClient, useQuery, keepPreviousData } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { PostsService } from '../services/posts.service'
 
 const postsService = new PostsService()
@@ -34,6 +35,39 @@ export function usePosts(filters?: PostFilters, includeUserBanned = false) {
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   })
+}
+
+// Page-based query for posts (numbered pagination). Keeps the previous page
+// on screen while the next one loads and prefetches the following page.
+export const POSTS_PER_PAGE = 10
+
+export function usePaginatedPosts(filters: Omit<PostFilters, 'page' | 'limit'>, page: number, includeUserBanned = false) {
+  const queryClient = useQueryClient()
+
+  const query = useQuery({
+    queryKey: [...postsKeys.list(filters), 'page', page],
+    queryFn: () => postsService.getPostsPage({ ...filters, page, limit: POSTS_PER_PAGE }, includeUserBanned),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    placeholderData: keepPreviousData,
+  })
+
+  const total = query.data?.total ?? 0
+  const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE))
+
+  // Prefetch the next page so flipping forward feels instant
+  useEffect(() => {
+    if (query.data && page < totalPages) {
+      queryClient.prefetchQuery({
+        queryKey: [...postsKeys.list(filters), 'page', page + 1],
+        queryFn: () => postsService.getPostsPage({ ...filters, page: page + 1, limit: POSTS_PER_PAGE }, includeUserBanned),
+        staleTime: 2 * 60 * 1000,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.data, page, totalPages])
+
+  return { ...query, total, totalPages }
 }
 
 // Infinite query for posts with pagination

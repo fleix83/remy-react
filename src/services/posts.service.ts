@@ -33,6 +33,13 @@ export class PostsService {
   // Get all published posts with user and category information
   getPosts = withPerformanceTracking(
     async (filters?: PostFilters | number, includeUserBanned = false): Promise<PostWithRelations[]> => {
+      const { posts } = await this.getPostsPage(filters, includeUserBanned)
+      return posts
+    }, 'posts.getPosts')
+
+  // Same query, but also returns the total count of matching posts (for pagination)
+  getPostsPage = withPerformanceTracking(
+    async (filters?: PostFilters | number, includeUserBanned = false): Promise<{ posts: PostWithRelations[]; total: number }> => {
     // Handle legacy API (backward compatibility)
     let postFilters: PostFilters = {}
     if (typeof filters === 'number') {
@@ -49,7 +56,7 @@ export class PostsService {
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
         therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
-      `)
+      `, { count: 'exact' })
       .eq('is_active', true)
       .order('created_at', { ascending: false })
 
@@ -116,7 +123,7 @@ export class PostsService {
 
     query = query.range(from, to)
 
-    const { data, error } = await query
+    const { data, error, count } = await query
 
     if (error) {
       console.error('Error fetching posts:', error)
@@ -125,8 +132,8 @@ export class PostsService {
 
     // Fetch comment counts separately for better performance
     const postsWithComments = await this.addCommentCounts(data || [])
-    return postsWithComments
-  }, 'posts.getPosts')
+    return { posts: postsWithComments, total: count ?? postsWithComments.length }
+  }, 'posts.getPostsPage')
 
   // Get a single post with full details
   getPost = withPerformanceTracking(

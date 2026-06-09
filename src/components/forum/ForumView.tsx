@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
-import { useInfinitePosts, useCategories, useCreatePost, useSearchPosts } from '../../hooks/usePosts'
+import { usePaginatedPosts, useCategories, useCreatePost, useSearchPosts } from '../../hooks/usePosts'
 import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
@@ -7,6 +7,7 @@ import 'react-day-picker/style.css'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
+import Pagination from '../ui/Pagination'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { DesignationsService } from '../../services/designations.service'
 import type { Designation } from '../../types/database.types'
@@ -45,24 +46,33 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 
   // React Query hooks - use searchTerm when it exists, otherwise use filters
   const isSearchMode = Boolean(searchTerm.trim())
-  
-  const { 
-    data: postsData, 
-    isLoading: postsLoading, 
-    fetchNextPage, 
-    hasNextPage, 
-    isFetchingNextPage 
-  } = useInfinitePosts(isSearchMode ? {} : filters) // Don't apply filters when searching
-  
+
+  // Numbered pagination state; jump back to page 1 whenever filters change
+  // (state-during-render pattern so the new filters never fetch a stale page)
+  const [page, setPage] = useState(1)
+  const [prevFilters, setPrevFilters] = useState(filters)
+  if (filters !== prevFilters) {
+    setPrevFilters(filters)
+    setPage(1)
+  }
+
+  const {
+    data: pageData,
+    isLoading: postsLoading,
+    isFetching: postsFetching,
+    totalPages
+  } = usePaginatedPosts(isSearchMode ? {} : filters, page) // Don't apply filters when searching
+
   const { data: searchResults = [], isLoading: searchLoading } = useSearchPosts(searchTerm)
   const { data: categories = [] } = useCategories()
   const createPostMutation = useCreatePost()
 
-  // Flatten infinite query pages
-  const posts = useMemo(() => 
-    postsData?.pages.flatMap(page => page) || [], 
-    [postsData]
-  )
+  const posts = useMemo(() => pageData?.posts || [], [pageData])
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage)
+    window.scrollTo({ top: 0 })
+  }, [])
 
   // Determine which posts to show and loading state
   const displayPosts = isSearchMode ? searchResults : posts
@@ -175,25 +185,6 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     if (filters.dateFrom || filters.dateTo) count++
     return count
   }, [filters])
-
-  // Infinite scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >= 
-        document.documentElement.offsetHeight - 1000 && // Load more when 1000px from bottom
-        hasNextPage && 
-        !isFetchingNextPage &&
-        !loading
-      ) {
-        fetchNextPage()
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [hasNextPage, isFetchingNextPage, loading, fetchNextPage])
-
 
   return (
     <div className="min-h-screen">
@@ -526,7 +517,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               </p>
             </div>
           ) : (
-            <div className="space-y-4 px-4 md:px-0">
+            <div className={`space-y-4 px-4 md:px-0 transition-opacity duration-150 ${postsFetching && !postsLoading ? 'opacity-60' : ''}`}>
               {displayPosts.map((post, index) => (
                 <PostCard
                   key={post.id}
@@ -537,24 +528,10 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             </div>
           )}
 
-          {/* Load More Button / Infinite Scroll Loading */}
-          {displayPosts.length > 0 && !isSearchMode && (
-            <div className="text-center mt-8">
-              {isFetchingNextPage ? (
-                <div className="flex items-center justify-center py-4">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2ebe7a]"></div>
-                  <span className="ml-2 text-gray-600">Lade weitere Beiträge...</span>
-                </div>
-              ) : hasNextPage ? (
-                <button 
-                  onClick={() => fetchNextPage()}
-                  className="bg-[var(--bg-element)] hover:bg-[var(--bg-element-hover)] text-white px-6 py-3 rounded-md font-medium transition-colors"
-                >
-                  Weitere Beiträge laden
-                </button>
-              ) : (
-                <p className="text-gray-500 text-sm">Keine weiteren Beiträge verfügbar</p>
-              )}
+          {/* Pagination */}
+          {!isSearchMode && !postsLoading && totalPages > 1 && (
+            <div className="mt-10 mb-4 flex justify-center">
+              <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
             </div>
           )}
         </div>
