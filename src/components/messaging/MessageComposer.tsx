@@ -21,7 +21,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
     if (contextData) {
       try {
         const { postTitle } = JSON.parse(contextData)
-        const contextMessage = `Regarding your post: "${postTitle}"\n\n`
+        const contextMessage = `Zu deinem Beitrag: "${postTitle}"\n\n`
         setMessage(contextMessage)
         
         // Clear context after using it
@@ -85,8 +85,8 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={`Send a message to ${recipientUsername}...`}
-            className="w-full p-3 bg-white text-[var(--type)] rounded-xl border border-gray-300 focus:border-[var(--primary)] focus:outline-none resize-none min-h-[44px] max-h-32 scrollbar-hide"
+            placeholder={`Nachricht an ${recipientUsername}...`}
+            className="w-full p-3 bg-white text-[var(--type)] rounded-xl border border-[#e3ddcc] focus:border-[var(--primary)] focus:outline-none resize-none min-h-[44px] max-h-32 scrollbar-hide"
             style={{ WebkitAppearance: 'none', appearance: 'none' }}
             rows={1}
             disabled={sending}
@@ -97,8 +97,8 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
         <button
           type="submit"
           disabled={!message.trim() || sending || message.length > 1000}
-          className="p-3 bg-[var(--primary)] hover:bg-[var(--primary)] disabled:bg-[#c8c8c8b3] disabled:cursor-not-allowed text-[var(--type)] rounded-xl transition-colors flex items-center justify-center min-w-[48px] min-h-[48px] flex-shrink-0"
-          title="Send message"
+          className="p-3 bg-[var(--primary)] hover:bg-[#3b71e6] disabled:bg-[#c8c8c8b3] disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center min-w-[48px] min-h-[48px] flex-shrink-0"
+          title="Nachricht senden"
         >
           {sending ? (
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -113,7 +113,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
       {/* Helper text */}
       <div className="flex items-center justify-between mt-2">
         <span className="text-xs text-gray-400">
-          Press Enter to send, Shift+Enter for new line
+          Enter zum Senden, Shift+Enter für neue Zeile
         </span>
         <span className="text-xs text-gray-400">
           {message.length}/1000

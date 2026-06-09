@@ -37,26 +37,25 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
     try {
       const result = await userBlocksService.toggleBlockUser(conversation.id)
       setIsBlocked(result.action === 'blocked')
-      
-      const actionText = result.action === 'blocked' ? 'blocked' : 'unblocked'
-      alert(`User has been ${actionText}`)
-      
+
+      alert(result.action === 'blocked' ? 'Benutzer wurde blockiert' : 'Benutzer wurde entsperrt')
+
     } catch (error) {
       console.error('Error toggling block:', error)
-      alert('Error updating block status: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      alert('Fehler beim Aktualisieren: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="bg-[var(--bg-element)] p-4">
+    <div className="bg-[var(--bg-element)] px-5 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           {/* Back button (mobile only) */}
-          <button 
+          <button
             onClick={onClose}
-            className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
+            className="md:hidden p-2 text-gray-500 hover:text-gray-700 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -64,18 +63,18 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
           </button>
 
           {/* User Avatar */}
-          <UserAvatar 
-            user={conversation.participant} 
+          <UserAvatar
+            user={conversation.participant}
             size="small"
           />
 
           {/* User Info */}
-          <div>
-            <h2 className="font-semibold text-black">
+          <div className="text-left">
+            <h2 className="font-semibold text-[var(--post-title)] leading-tight">
               {conversation.participant.username}
             </h2>
             {isBlocked && (
-              <span className="text-xs text-red-400">Blocked</span>
+              <span className="text-xs text-[#fa8072]">Blockiert</span>
             )}
           </div>
         </div>
@@ -86,22 +85,22 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
           <button
             onClick={handleToggleBlock}
             disabled={loading}
-            className={`px-3 py-1 text-xs rounded-md transition-colors ${
+            className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-colors text-white ${
               isBlocked
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-red-600 hover:bg-red-700 text-white'
+                ? 'bg-[#37a653] hover:bg-[#2c8743]'
+                : 'bg-[var(--salmon)] hover:bg-[var(--salmon-hover)]'
             } disabled:opacity-50`}
           >
             {loading ? (
               <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
             ) : (
-              isBlocked ? 'Unblock' : 'Block'
+              isBlocked ? 'Entsperren' : 'Blockieren'
             )}
           </button>
 
           {/* More Options */}
           <div className="relative">
-            <button className="p-2 text-gray-400 hover:text-white transition-colors">
+            <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
               </svg>

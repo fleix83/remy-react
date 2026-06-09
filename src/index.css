@@ -45,6 +45,15 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
+/* Hide scrollbars while keeping scroll (e.g. message composer textarea) */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Citation block styling */
 .citation-block {
   border-left: 4px solid var(--primary);

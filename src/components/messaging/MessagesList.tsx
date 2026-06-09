@@ -3,11 +3,11 @@ import { useMessagesStore } from '../../stores/messages.store'
 import UserAvatar from '../user/UserAvatar'
 
 const MessagesList: React.FC = () => {
-  const { 
-    conversations, 
-    currentConversation, 
+  const {
+    conversations,
+    currentConversation,
     loading,
-    setCurrentConversation 
+    setCurrentConversation
   } = useMessagesStore()
 
   const formatTimestamp = (dateString: string) => {
@@ -36,13 +36,13 @@ const MessagesList: React.FC = () => {
     return (
       <div className="p-4">
         <div className="animate-pulse">
-          <div className="h-4 bg-gray-600 rounded w-24 mb-4"></div>
+          <div className="h-4 bg-black/10 rounded w-24 mb-4"></div>
           {[...Array(3)].map((_, i) => (
             <div key={i} className="flex items-center space-x-3 p-3 mb-2">
-              <div className="w-10 h-10 bg-gray-600 rounded-full"></div>
+              <div className="w-10 h-10 bg-black/10 rounded-full"></div>
               <div className="flex-1">
-                <div className="h-4 bg-gray-600 rounded w-20 mb-2"></div>
-                <div className="h-3 bg-gray-700 rounded w-32"></div>
+                <div className="h-4 bg-black/10 rounded w-20 mb-2"></div>
+                <div className="h-3 bg-black/5 rounded w-32"></div>
               </div>
             </div>
           ))}
@@ -54,27 +54,27 @@ const MessagesList: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 bg-[var(--bg-element)]">
-        <h2 className="text-lg font-semibold text-[var(--primary)]">Messages</h2>
+      <div className="px-5 pt-5 pb-4 bg-[var(--bg-element)]">
+        <h2 className="text-lg font-semibold text-[var(--primary)] text-left">Nachrichten</h2>
         {conversations.length > 0 && (
-          <p className="text-xs mt-1" style={{color: '#535353'}}>
-            {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
+          <p className="text-xs mt-1 text-left" style={{color: '#535353'}}>
+            {conversations.length} {conversations.length === 1 ? 'Konversation' : 'Konversationen'}
           </p>
         )}
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsla(129, 41%, 93%, 1) 0%, hsla(36, 26%, 96%, 1) 81%, hsla(36, 26%, 96%, 1) 100%)' }}>
+      <div className="flex-1 overflow-y-auto px-2 pb-3" style={{ background: 'linear-gradient(180deg, hsla(129, 41%, 93%, 1) 0%, hsla(36, 26%, 96%, 1) 81%, hsla(36, 26%, 96%, 1) 100%)' }}>
         {conversations.length === 0 ? (
           <div className="p-6 text-center">
-            <div className="text-gray-400 mb-4">
+            <div className="text-[var(--primary)] opacity-50 mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <h3 className="text-sm font-medium text-white mb-2">No conversations yet</h3>
-            <p className="text-xs text-gray-400">
-              Start a conversation by messaging someone from their profile or a post.
+            <h3 className="text-sm font-medium text-[var(--post-title)] mb-2">Noch keine Konversationen</h3>
+            <p className="text-xs text-gray-500">
+              Starte eine Konversation über ein Benutzerprofil oder einen Beitrag.
             </p>
           </div>
         ) : (
@@ -82,16 +82,16 @@ const MessagesList: React.FC = () => {
             <button
               key={conversation.id}
               onClick={() => setCurrentConversation(conversation)}
-              className={`w-full p-4 text-left hover:bg-opacity-80 transition-colors ${
+              className={`w-full px-3 py-3 mt-2 text-left rounded-2xl transition-colors ${
                 currentConversation?.id === conversation.id
-                  ? 'bg-white bg-opacity-50 border-l-2 border-l-[var(--primary)]'
-                  : 'hover:bg-white hover:bg-opacity-30'
+                  ? 'bg-white shadow-sm'
+                  : 'hover:bg-white/50'
               }`}
             >
               <div className="flex items-start space-x-3">
                 {/* Avatar */}
-                <UserAvatar 
-                  user={conversation.participant} 
+                <UserAvatar
+                  user={conversation.participant}
                   size="message"
                   className="flex-shrink-0"
                 />
@@ -115,7 +115,7 @@ const MessagesList: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Last message preview */}
                   <p className="text-xs truncate text-[var(--primary)]">
                     {truncateMessage(conversation.lastMessage.content)}
