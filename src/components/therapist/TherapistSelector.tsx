@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { TherapistsService } from '../../services/therapists.service'
 import TherapistCreateModal from './TherapistCreateModal'
-import type { Therapist } from '../../types/database.types'
+import type { Therapist, TherapistWithDesignation } from '../../types/database.types'
 import { useAuthStore } from '../../stores/auth.store'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { therapistDesignationLabel } from '../../utils/designationHelpers'
@@ -20,8 +20,8 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
   disabled = false
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [therapists, setTherapists] = useState<Therapist[]>([])
-  const [filteredTherapists, setFilteredTherapists] = useState<Therapist[]>([])
+  const [therapists, setTherapists] = useState<TherapistWithDesignation[]>([])
+  const [filteredTherapists, setFilteredTherapists] = useState<TherapistWithDesignation[]>([])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
