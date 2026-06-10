@@ -9,7 +9,6 @@ export interface TherapistCSVRow {
   first_name: string
   last_name: string
   designation: string
-  short_designation: string
   institution: string
   description: string
   languages: string
@@ -27,7 +26,6 @@ export function generateTherapistCSVTemplate(): string {
     'first_name',
     'last_name',
     'designation',
-    'short_designation',
     'institution',
     'description',
     'languages',
@@ -41,7 +39,6 @@ export function generateTherapistCSVTemplate(): string {
     'Dr.',
     'Maria',
     'Müller',
-    'Psychotherapeut',
     'Psychotherapeut',
     'Klinik am See',
     'Spezialisiert auf Traumatherapie und kognitive Verhaltenstherapie',
@@ -92,7 +89,6 @@ export function validateCSVHeaders(headers: string[]): { valid: boolean; missing
     'canton',
     'city',
     'form_of_address',
-    'short_designation',
     'institution',
     'description',
     'languages',

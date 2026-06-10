@@ -359,7 +359,6 @@ export type Database = {
           category_id: number
           content: string
           created_at: string | null
-          designation: string | null
           id: number
           is_active: boolean | null
           is_banned: boolean | null
@@ -386,7 +385,6 @@ export type Database = {
           category_id: number
           content: string
           created_at?: string | null
-          designation?: string | null
           id?: number
           is_active?: boolean | null
           is_banned?: boolean | null
@@ -413,7 +411,6 @@ export type Database = {
           category_id?: number
           content?: string
           created_at?: string | null
-          designation?: string | null
           id?: number
           is_active?: boolean | null
           is_banned?: boolean | null
@@ -494,7 +491,6 @@ export type Database = {
           city: string | null
           created_at: string | null
           created_by: string | null
-          designation?: string | null
           designation_id: number | null
           first_name: string
           form_of_address: string
@@ -508,7 +504,6 @@ export type Database = {
           reviewed_at: string | null
           reviewed_by: string | null
           services: string | null
-          short_designation?: string | null
           specialty: string | null
           updated_at: string | null
         }
@@ -517,7 +512,6 @@ export type Database = {
           city?: string | null
           created_at?: string | null
           created_by?: string | null
-          designation?: string | null
           designation_id?: number | null
           first_name: string
           form_of_address: string
@@ -531,7 +525,6 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           services?: string | null
-          short_designation?: string | null
           specialty?: string | null
           updated_at?: string | null
         }
@@ -540,7 +533,6 @@ export type Database = {
           city?: string | null
           created_at?: string | null
           created_by?: string | null
-          designation?: string | null
           designation_id?: number | null
           first_name?: string
           form_of_address?: string
@@ -554,7 +546,6 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           services?: string | null
-          short_designation?: string | null
           specialty?: string | null
           updated_at?: string | null
         }
