@@ -1,11 +1,14 @@
 import type { ParseResult, ParseError } from 'papaparse'
 import { validateCSVHeaders, type TherapistCSVRow } from '../utils/therapist-csv-template'
 import type { Therapist } from '../types/database.types'
-import { DesignationMatchingService } from './designation-matching.service'
+import { DesignationsService } from './designations.service'
+import { matchDesignation } from '../utils/designationHelpers'
+import type { Designation } from '../types/database.types'
 
 export interface ImportResult {
   success: boolean
   imported: number
+  needsReview: number
   skipped: number
   errors: ImportError[]
   importedTherapists: Therapist[]
@@ -23,9 +26,9 @@ interface ParsedTherapist {
   form_of_address: string
   first_name: string
   last_name: string
-  designation: string
+  full_title: string
   designation_id: number | null
-  short_designation: string | null
+  needs_review: boolean
   institution: string | null
   description: string | null
   languages: string | null
@@ -36,8 +39,6 @@ interface ParsedTherapist {
  * Service for importing therapists from CSV files
  */
 export class TherapistImportService {
-  private designationMatchingService = new DesignationMatchingService()
-
   /**
    * Parse CSV file. papaparse is dynamically imported so it stays out of the
    * main bundle until a user actually triggers a CSV import.
@@ -121,9 +122,9 @@ export class TherapistImportService {
       return { valid: false, error: 'form_of_address exceeds 50 characters' }
     }
 
-    // Validate designation length
-    if (String(row.designation).trim().length > 50) {
-      return { valid: false, error: 'designation exceeds 50 characters' }
+    // Validate designation length (scraped full titles are long)
+    if (String(row.designation).trim().length > 255) {
+      return { valid: false, error: 'designation exceeds 255 characters' }
     }
 
     // Validate canton format (2 characters)
@@ -191,8 +192,7 @@ export class TherapistImportService {
     if (therapist.form_of_address) count++
     if (therapist.first_name) count++
     if (therapist.last_name) count++
-    if (therapist.designation) count++
-    if (therapist.short_designation) count++
+    if (therapist.full_title) count++
     if (therapist.gender) count++
     if (therapist.institution) count++
     if (therapist.description) count++
@@ -213,26 +213,14 @@ export class TherapistImportService {
   }
 
   /**
-   * Parse and normalize therapist data from CSV row
-   * Now async to support designation matching
+   * Parse and normalize therapist data from a CSV row.
+   * The scraped title is stored verbatim in full_title; the curated designation
+   * is assigned by keyword matching. Unmatched rows are flagged for review.
    */
-  async parseTherapist(row: any): Promise<ParsedTherapist> {
-    const designationText = row.designation?.trim() || ''
-
-    // Detect gender from designation text
-    const detectedGender = designationText ? this.detectGender(designationText) : null
-
-    // Match designation to existing or create new one
-    let designationMatch: { designation_id: number; display_text: string } | null = null
-
-    if (designationText) {
-      try {
-        designationMatch = await this.designationMatchingService.findOrCreateDesignation(designationText)
-      } catch (error) {
-        console.error('Error matching designation:', error)
-        // Continue without designation_id if matching fails
-      }
-    }
+  parseTherapist(row: any, designations: Designation[]): ParsedTherapist {
+    const fullTitle = row.designation?.trim() || ''
+    const detectedGender = fullTitle ? this.detectGender(fullTitle) : null
+    const designationId = fullTitle ? matchDesignation(fullTitle, designations) : null
 
     return {
       canton: row.canton?.trim() || null,
@@ -240,21 +228,20 @@ export class TherapistImportService {
       form_of_address: row.form_of_address?.trim() || '',
       first_name: row.first_name?.trim() || '',
       last_name: row.last_name?.trim() || '',
-      designation: designationMatch?.display_text || designationText,
-      designation_id: designationMatch?.designation_id || null,
-      short_designation: row.short_designation?.trim() || null,
+      full_title: fullTitle,
+      designation_id: designationId,
+      needs_review: designationId === null,
       institution: row.institution?.trim() || null,
       description: row.description?.trim() || null,
       languages: row.languages?.trim() || null,
-      gender: detectedGender
+      gender: row.gender?.trim() || detectedGender
     }
   }
 
   /**
    * Process CSV data and handle duplicates
-   * Now async to support designation matching
    */
-  async processTherapists(data: any[]): Promise<{ therapists: ParsedTherapist[]; errors: ImportError[] }> {
+  async processTherapists(data: any[], designations: Designation[]): Promise<{ therapists: ParsedTherapist[]; errors: ImportError[] }> {
     const therapistMap = new Map<string, { therapist: ParsedTherapist; rowIndex: number }>()
     const errors: ImportError[] = []
 
@@ -273,8 +260,8 @@ export class TherapistImportService {
         continue
       }
 
-      // Parse therapist data (now async)
-      const therapist = await this.parseTherapist(row)
+      // Parse therapist data
+      const therapist = this.parseTherapist(row, designations)
 
       // Check for duplicates
       const duplicateKey = this.getDuplicateKey(therapist)
@@ -336,6 +323,7 @@ export class TherapistImportService {
         return {
           success: false,
           imported: 0,
+          needsReview: 0,
           skipped: 0,
           errors: validation.errors.map((error) => ({
             row: 0,
@@ -346,20 +334,15 @@ export class TherapistImportService {
         }
       }
 
-      // Load designations into cache before processing to avoid repeated API calls
-      console.log('🔧 TherapistImport: Pre-loading designations cache...')
-      await this.designationMatchingService.loadDesignations()
-
-      // Process therapists and handle duplicates (now async)
-      const { therapists, errors } = await this.processTherapists(parseResult.data)
-
-      // Clear cache after processing
-      this.designationMatchingService.clearCache()
+      // Load the curated designations once for keyword classification
+      const designations = await new DesignationsService().getActiveDesignations()
+      const { therapists, errors } = await this.processTherapists(parseResult.data, designations)
 
       if (therapists.length === 0) {
         return {
           success: false,
           imported: 0,
+          needsReview: 0,
           skipped: 0,
           errors: errors.length > 0 ? errors : [{
             row: 0,
@@ -386,6 +369,7 @@ export class TherapistImportService {
       return {
         success: true,
         imported: importedTherapists.length,
+        needsReview: importedTherapists.filter(t => t.needs_review === true).length,
         skipped: skippedDuplicates,
         errors,
         importedTherapists
@@ -395,6 +379,7 @@ export class TherapistImportService {
       return {
         success: false,
         imported: 0,
+        needsReview: 0,
         skipped: 0,
         errors: [{
           row: 0,

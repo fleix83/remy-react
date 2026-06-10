@@ -294,9 +294,9 @@ export class TherapistsService {
     form_of_address: string
     first_name: string
     last_name: string
-    designation: string
+    full_title: string
     designation_id: number | null
-    short_designation: string | null
+    needs_review: boolean
     institution: string | null
     description?: string | null
     languages?: string | null
@@ -325,15 +325,14 @@ export class TherapistsService {
       first_name: t.first_name.trim(),
       last_name: t.last_name.trim(),
       institution: t.institution?.trim() || null,
-      designation: t.designation,
+      full_title: t.full_title || null,
       designation_id: t.designation_id,
-      short_designation: t.short_designation?.trim() || null,
       description: t.description?.trim() || null,
       languages: t.languages?.trim() || null,
       city: t.city?.trim() || null,
       canton: t.canton || null,
       gender: t.gender || null,
-      needs_review: false, // CSV imports are auto-approved
+      needs_review: t.needs_review, // unmatched rows go to the review queue
       created_by: user.id
     }))
 

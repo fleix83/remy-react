@@ -416,6 +416,9 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                       <div className="text-sm space-y-1">
                         <div>Importiert: {importResult.imported}</div>
                         <div>Duplikate übersprungen: {importResult.skipped}</div>
+                        {importResult.needsReview > 0 && (
+                          <div>Zur Prüfung (keine Bezeichnung zugeordnet): {importResult.needsReview}</div>
+                        )}
                         {importResult.errors.length > 0 && (
                           <div>
                             <div className="font-semibold mt-2">Fehler ({importResult.errors.length}):</div>
