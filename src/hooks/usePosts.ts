@@ -8,7 +8,8 @@ interface PostFilters {
   category?: number
   cantons?: string[]
   therapist?: string
-  designation?: string
+  designations?: number[]
+  gender?: 'm' | 'f'
   dateFrom?: string
   dateTo?: string
   search?: string

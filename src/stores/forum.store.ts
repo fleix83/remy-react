@@ -6,7 +6,8 @@ interface PostFilters {
   category?: number
   cantons?: string[]
   therapist?: string
-  designation?: string
+  designations?: number[]
+  gender?: 'm' | 'f'
   dateFrom?: string
   dateTo?: string
   search?: string
@@ -89,7 +90,8 @@ export const useForumStore = create<ForumState>((set, get) => ({
         category: currentFilters.category,
         cantons: currentFilters.cantons,
         therapist: currentFilters.therapist,
-        designation: currentFilters.designation,
+        designations: currentFilters.designations,
+        gender: currentFilters.gender,
         dateFrom: currentFilters.dateFrom,
         dateTo: currentFilters.dateTo,
         search: currentFilters.search
@@ -126,7 +128,8 @@ export const useForumStore = create<ForumState>((set, get) => ({
         category: filters.category,
         cantons: filters.cantons,
         therapist: filters.therapist,
-        designation: filters.designation,
+        designations: filters.designations,
+        gender: filters.gender,
         dateFrom: filters.dateFrom,
         dateTo: filters.dateTo,
         search: filters.search

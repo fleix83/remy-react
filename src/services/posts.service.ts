@@ -21,7 +21,8 @@ interface PostFilters {
   category?: number
   cantons?: string[]
   therapist?: string
-  designation?: string
+  designations?: number[]
+  gender?: 'm' | 'f'
   dateFrom?: string
   dateTo?: string
   search?: string
@@ -30,6 +31,10 @@ interface PostFilters {
 }
 
 export class PostsService {
+  private static therapistEmbed(inner: boolean): string {
+    return `therapists${inner ? '!inner' : ''}(id, form_of_address, first_name, last_name, full_title, designation_id, gender, institution, canton, designations(id, slug, label_de, label_fr, label_it))`
+  }
+
   // Get all published posts with user and category information
   getPosts = withPerformanceTracking(
     async (filters?: PostFilters | number, includeUserBanned = false): Promise<PostWithRelations[]> => {
@@ -49,13 +54,16 @@ export class PostsService {
     }
 
     // Use optimized query with selective fields and better JOIN strategy
+    const needsTherapistJoin = Boolean(
+      (postFilters.designations && postFilters.designations.length > 0) || postFilters.gender
+    )
     let query = supabase
       .from('posts')
       .select(`
-        id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
+        id, title, content, created_at, user_id, category_id, therapist_id, canton,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
+        ${PostsService.therapistEmbed(needsTherapistJoin)}
       `, { count: 'exact' })
       .eq('is_active', true)
       .order('created_at', { ascending: false })
@@ -94,8 +102,11 @@ export class PostsService {
       query = query.eq('therapist_id', parseInt(postFilters.therapist))
     }
 
-    if (postFilters.designation) {
-      query = query.eq('designation', postFilters.designation)
+    if (postFilters.designations && postFilters.designations.length > 0) {
+      query = query.in('therapists.designation_id', postFilters.designations)
+    }
+    if (postFilters.gender) {
+      query = query.eq('therapists.gender', postFilters.gender)
     }
 
     if (postFilters.dateFrom) {
@@ -141,10 +152,10 @@ export class PostsService {
     let query = supabase
       .from('posts')
       .select(`
-        id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, designation, is_published, is_banned, moderation_status,
+        id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, is_published, is_banned, moderation_status,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
+        ${PostsService.therapistEmbed(false)}
       `)
       .eq('id', id)
       .eq('is_active', true)
@@ -221,7 +232,6 @@ export class PostsService {
       is_published: false, // Always start as unpublished - requires moderation approval for non-drafts
       is_draft: is_draft ?? false, // Default to false (submitted for moderation)
       moderation_status: draftStatus as ModerationStatus | null, // Drafts don't need moderation status yet
-      designation: 'Allgemein' // Provide default designation since it's required by DB
     }
 
     console.log('📤 PostsService: Inserting data:', insertData)
@@ -278,22 +288,22 @@ export class PostsService {
     async (searchTerm: string): Promise<PostWithRelations[]> => {
     const term = `%${searchTerm}%`
     const baseSelect = `
-        id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
+        id, title, content, created_at, user_id, category_id, therapist_id, canton,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
+        ${PostsService.therapistEmbed(false)}
       `
     const userInnerSelect = `
-        id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
+        id, title, content, created_at, user_id, category_id, therapist_id, canton,
         users!posts_user_id_fkey!inner(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
+        ${PostsService.therapistEmbed(false)}
       `
     const therapistInnerSelect = `
-        id, title, content, created_at, user_id, category_id, therapist_id, canton, designation,
+        id, title, content, created_at, user_id, category_id, therapist_id, canton,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists!inner(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
+        ${PostsService.therapistEmbed(true)}
       `
     const publishedFilter = (q: any) => q
       .eq('is_published', true)
@@ -427,10 +437,10 @@ export class PostsService {
       .update(updateData)
       .eq('id', id)
       .select(`
-        id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, designation, is_published, is_banned, moderation_status,
+        id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, is_published, is_banned, moderation_status,
         users!posts_user_id_fkey(id, username, avatar_url, role),
         categories!inner(id, name_de, name_fr, name_it),
-        therapists(id, form_of_address, first_name, last_name, designation, short_designation, institution, canton)
+        ${PostsService.therapistEmbed(false)}
       `)
       .single()
 
