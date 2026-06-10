@@ -291,15 +291,15 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           <div className="w-screen h-screen overflow-hidden flex flex-col relative" style={{backgroundColor: '#ecffef'}}>
             <button
               onClick={onCreatePostDialogClose}
-              className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1 z-10"
-              style={{ top: '25px', right: '25px' }}
+              className="absolute text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1 z-10"
+              style={{ top: '44px', right: '28px' }}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <div className="overflow-y-auto flex-1 px-4 pt-[35px] pb-20">
-              <h2 className="font-headline font-bold text-left mb-10" style={{ color: '#4785ff', fontSize: '20px' }}>
+            <div className="overflow-y-auto flex-1 px-4 pt-[120px] pb-20">
+              <h2 className="font-headline font-bold text-left mb-12" style={{ color: '#4785ff', fontSize: '20px' }}>
                 Neuen Beitrag erstellen
               </h2>
               <PostEditor
