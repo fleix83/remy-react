@@ -36,6 +36,10 @@ describe('matchDesignation', () => {
     matchDesignation('Klinik am See', input)
     expect(input[0].id).toBe(6)
   })
+
+  it('returns null for an empty title string', () => {
+    expect(matchDesignation('', matchSet)).toBeNull()
+  })
 })
 
 const labels = { id: 1, slug: 'psychiater', label_de: 'Psychiater:in', label_fr: 'Psychiatre', label_it: 'Psichiatra' }
@@ -60,6 +64,9 @@ describe('getDesignationLabel', () => {
 describe('therapistDesignationLabel', () => {
   it('uses the curated label when the relation is embedded', () => {
     expect(therapistDesignationLabel({ full_title: 'Facharzt FMH', designations: labels })).toBe('Psychiater:in')
+  })
+  it('forwards the language to the label lookup', () => {
+    expect(therapistDesignationLabel({ full_title: 'Facharzt FMH', designations: labels }, 'fr')).toBe('Psychiatre')
   })
   it('falls back to full_title for unclassified therapists', () => {
     expect(therapistDesignationLabel({ full_title: 'Facharzt FMH', designations: null })).toBe('Facharzt FMH')
