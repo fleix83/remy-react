@@ -235,7 +235,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           languages: formData.languages || null,
           city: formData.city || null,
           gender: formData.gender || null
-        }) as Therapist
+        })
       } else {
         // Create new therapist
         resultTherapist = await therapistsService.createTherapist({
@@ -249,7 +249,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           languages: formData.languages || undefined,
           city: formData.city || undefined,
           gender: formData.gender || undefined
-        }) as Therapist
+        })
       }
 
       console.log(`✅ TherapistCreateModal: Therapist ${isEditMode ? 'updated' : 'created'} successfully:`, resultTherapist)
