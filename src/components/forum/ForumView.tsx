@@ -36,6 +36,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 }) => {
   const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [searchExpanded, setSearchExpanded] = useState(false)
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [filters, setFiltersState] = useState<PostFilters>({})
@@ -199,6 +200,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 placeholder="Suche..."
                 value={searchInput}
                 onChange={handleSearchChange}
+                onFocus={() => setSearchExpanded(true)}
+                onBlur={() => setSearchExpanded(false)}
                 className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-[oklch(0.32_0_0)] focus:outline-none focus:ring-2 focus:ring-[#d9f7de] text-lg"
                 style={{borderRadius: '20px'}}
               />
@@ -209,10 +212,10 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               </div>
             </div>
 
-            {/* Filter Button — icon only on desktop */}
+            {/* Filter Button — icon only on desktop; hidden while the mobile search is expanded */}
             <button
               onClick={() => setShowFilterModal(true)}
-              className="forum-filter-btn bg-white hover:bg-gray-50 transition-colors relative flex md:hidden items-center justify-center"
+              className={`forum-filter-btn bg-white hover:bg-gray-50 transition-colors relative ${searchExpanded ? 'hidden' : 'flex'} md:hidden items-center justify-center`}
               style={{borderRadius: '20px', color: 'var(--color-gray-400)', padding: '8px 12px'}}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,10 +229,10 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               )}
             </button>
 
-            {/* Neu Button */}
+            {/* Neu Button — hidden while the mobile search is expanded */}
             <button
               onClick={onCreatePost}
-              className="forum-neu-btn bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 font-medium transition-colors text-sm flex items-center gap-2"
+              className={`forum-neu-btn bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 font-medium transition-colors text-sm ${searchExpanded ? 'hidden md:flex' : 'flex'} items-center gap-2`}
               style={{borderRadius: '20px'}}
             >
               <svg className="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
