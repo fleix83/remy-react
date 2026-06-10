@@ -1,9 +1,8 @@
 import type { ParseResult, ParseError } from 'papaparse'
 import { validateCSVHeaders, type TherapistCSVRow } from '../utils/therapist-csv-template'
-import type { Therapist } from '../types/database.types'
+import type { Therapist, Designation } from '../types/database.types'
 import { DesignationsService } from './designations.service'
 import { matchDesignation } from '../utils/designationHelpers'
-import type { Designation } from '../types/database.types'
 
 export interface ImportResult {
   success: boolean
