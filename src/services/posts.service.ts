@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase'
 import { withPerformanceTracking } from '../utils/performance-monitor'
-import type { Post, PostWithRelations, Category, Designation, ModerationStatus } from '../types/database.types'
+import type { Post, PostWithRelations, Category, ModerationStatus } from '../types/database.types'
 import { TagsService } from './tags.service'
 
 // Thrown when the post row was written but a follow-up side-effect (tags)
@@ -467,22 +467,6 @@ export class PostsService {
     }
 
     return enrichedData
-  }
-
-  // Get all designations
-  async getDesignations(): Promise<Designation[]> {
-    const { data, error } = await supabase
-      .from('designations')
-      .select('*')
-      .order('name_de', { ascending: true })
-
-    if (error) {
-      console.error('Error fetching designations:', error)
-      // If designations table doesn't exist, return empty array
-      return []
-    }
-
-    return data || []
   }
 
   // Helper method to add comment counts efficiently
