@@ -294,7 +294,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           <div className="w-full h-full overflow-hidden flex flex-col relative" style={{backgroundColor: '#ecffef'}}>
             <button
               onClick={onCreatePostDialogClose}
-              className="absolute text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1 z-10"
+              className="absolute text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1.5 z-10 rounded-full bg-[#ecffef]/85 backdrop-blur-sm"
               style={{ top: '44px', right: '28px' }}
             >
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">

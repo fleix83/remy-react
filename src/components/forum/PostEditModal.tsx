@@ -33,7 +33,7 @@ const PostEditModal: React.FC<PostEditModalProps> = ({
         <div className="px-4 md:px-6 pb-0 pt-[120px] md:pt-[35px]">
           <button
             onClick={onClose}
-            className="absolute text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1 top-[44px] right-[28px] md:top-[50px] md:right-[50px]"
+            className="fixed md:absolute z-10 text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1.5 md:p-1 rounded-full bg-[#ecffef]/85 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none top-[44px] right-[28px] md:top-[50px] md:right-[50px]"
           >
             <svg className="w-8 h-8 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18L18 6M6 6l12 12" />
