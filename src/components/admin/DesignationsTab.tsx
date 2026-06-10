@@ -40,19 +40,12 @@ const DesignationsTab: React.FC = () => {
     try {
       // Create a new designation with default values
       await designationsService.createDesignation({
-        name_de_short_m: 'Neue Bezeichnung',
-        name_de_short_w: null,
-        name_de_long_m: null,
-        name_de_long_w: null,
-        name_fr_short_m: null,
-        name_fr_short_w: null,
-        name_fr_long_m: null,
-        name_fr_long_w: null,
-        name_it_short_m: null,
-        name_it_short_w: null,
-        name_it_long_m: null,
-        name_it_long_w: null,
-        parent_id: null,
+        slug: `neu-${Date.now()}`,
+        label_de: 'Neue Bezeichnung',
+        label_fr: '',
+        label_it: '',
+        keywords: null,
+        sort_order: 100,
         is_active: true
       })
 
@@ -117,35 +110,21 @@ const DesignationsTab: React.FC = () => {
       {/* Scrollable Table Container */}
       <div className="overflow-x-auto rounded-xl border border-[#efe9df]">
         {/* Table Header */}
-        <div className="border-b border-[#efe9df] bg-[#faf8f4] min-w-[1200px]">
+        <div className="border-b border-[#efe9df] bg-[#faf8f4] min-w-[900px]">
           <div className="flex items-center gap-2 px-2 py-3">
-            <div className="w-8"></div>
-            <div className="w-10 text-xs font-semibold text-slate-500 uppercase">
-              Spr.
-            </div>
-            <div className="w-44 text-xs font-semibold text-slate-500 uppercase text-left">
-              Kurzb. (m)
-            </div>
-            <div className="w-44 text-xs font-semibold text-slate-500 uppercase text-left">
-              Kurzb. (w)
-            </div>
-            <div className="flex-1 text-xs font-semibold text-slate-500 uppercase text-left">
-              Lang (m)
-            </div>
-            <div className="flex-1 text-xs font-semibold text-slate-500 uppercase text-left">
-              Lang (w)
-            </div>
-            <div className="w-16 text-xs font-semibold text-slate-500 uppercase flex justify-center">
-              Aktiv
-            </div>
-            <div className="w-20 text-xs font-semibold text-slate-500 uppercase flex justify-end">
-              Aktionen
-            </div>
+            <div className="w-32 text-xs font-semibold text-slate-500 uppercase text-left">Slug</div>
+            <div className="w-40 text-xs font-semibold text-slate-500 uppercase text-left">DE</div>
+            <div className="w-40 text-xs font-semibold text-slate-500 uppercase text-left">FR</div>
+            <div className="w-40 text-xs font-semibold text-slate-500 uppercase text-left">IT</div>
+            <div className="flex-1 text-xs font-semibold text-slate-500 uppercase text-left">Keywords (Import-Zuordnung)</div>
+            <div className="w-16 text-xs font-semibold text-slate-500 uppercase text-center">Sort</div>
+            <div className="w-16 text-xs font-semibold text-slate-500 uppercase flex justify-center">Aktiv</div>
+            <div className="w-20 text-xs font-semibold text-slate-500 uppercase flex justify-end">Aktionen</div>
           </div>
         </div>
 
         {/* Designations List */}
-        <div className="bg-white overflow-hidden min-w-[1200px]">
+        <div className="bg-white overflow-hidden min-w-[900px]">
           {designations.length === 0 ? (
             <div className="text-center py-12 text-slate-500">
               Keine Bezeichnungen vorhanden.

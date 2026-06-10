@@ -10,134 +10,97 @@ interface DesignationRowProps {
 }
 
 /**
- * Collapsible designation row component
- * Shows German by default, expands to show French and Italian
- * Inline editing for all fields with auto-save
+ * One curated designation: slug, pair-form labels (DE/FR/IT), import keywords,
+ * sort order (also the keyword-match priority — most specific first), active flag.
  */
-const DesignationRow: React.FC<DesignationRowProps> = ({
-  designation,
-  onUpdate,
-  onDelete
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, onDelete }) => {
   const [isDeleting, setIsDeleting] = useState(false)
   const designationsService = new DesignationsService()
 
-  const handleUpdate = async (field: keyof Designation, newValue: string) => {
+  const handleUpdate = async (field: keyof Designation, newValue: string | number | boolean): Promise<void> => {
     try {
-      await designationsService.updateDesignation(designation.id, {
-        [field]: newValue
-      })
-      onUpdate() // Refresh the list
+      await designationsService.updateDesignation(designation.id, { [field]: newValue })
+      onUpdate()
     } catch (error) {
       console.error('Error updating designation:', error)
-      throw error // Let InlineEditCell handle the error display
+      throw error
     }
   }
 
   const handleDelete = async () => {
-    const displayName = designationsService.getDisplayName(designation)
-    if (!confirm(`Möchten Sie die Bezeichnung "${displayName}" wirklich löschen?`)) {
-      return
-    }
-
+    if (!confirm(`Möchten Sie die Bezeichnung "${designation.label_de}" wirklich löschen?`)) return
     setIsDeleting(true)
     try {
       await designationsService.deleteDesignation(designation.id)
       onDelete(designation.id)
     } catch (error) {
       console.error('Error deleting designation:', error)
-      alert('Fehler beim Löschen der Bezeichnung')
+      alert('Fehler beim Löschen der Bezeichnung (wird sie noch von Therapeuten verwendet?)')
     } finally {
       setIsDeleting(false)
     }
   }
 
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded)
-  }
-
   return (
     <div className="border-b border-[#f1ece3] last:border-b-0">
-      {/* German Row (Always Visible) */}
       <div className="flex items-center gap-2 hover:bg-[#faf8f4] transition-colors px-2">
-        {/* Expand/Collapse Icon */}
-        <div className="w-8">
-          <button
-            onClick={toggleExpanded}
-            className="p-1 hover:bg-[#ece7dd] rounded transition-colors text-slate-500"
-            title={isExpanded ? 'Sprachen ausblenden' : 'Sprachen anzeigen'}
-          >
-            <svg
-              className={`w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Language Label */}
-        <div className="w-10 text-sm font-medium text-slate-500">
-          DE
-        </div>
-
-        {/* Kurzb. (m) - Short Masculine */}
-        <div className="w-44">
+        <div className="w-32">
           <InlineEditCell
-            value={designation.name_de_short_m || ''}
-            onSave={(newValue) => handleUpdate('name_de_short_m', newValue)}
-            placeholder="Kurzb. (m)"
+            value={designation.slug}
+            onSave={(v) => handleUpdate('slug', v)}
+            placeholder="slug"
             displayClassName="text-left"
           />
         </div>
-
-        {/* Kurzb. (w) - Short Feminine */}
-        <div className="w-44">
+        <div className="w-40">
           <InlineEditCell
-            value={designation.name_de_short_w || ''}
-            onSave={(newValue) => handleUpdate('name_de_short_w', newValue)}
-            placeholder="Kurzb. (w)"
+            value={designation.label_de}
+            onSave={(v) => handleUpdate('label_de', v)}
+            placeholder="Label DE"
             displayClassName="text-left"
           />
         </div>
-
-        {/* Lang (m) - Long Masculine */}
+        <div className="w-40">
+          <InlineEditCell
+            value={designation.label_fr}
+            onSave={(v) => handleUpdate('label_fr', v)}
+            placeholder="Label FR"
+            displayClassName="text-left"
+          />
+        </div>
+        <div className="w-40">
+          <InlineEditCell
+            value={designation.label_it}
+            onSave={(v) => handleUpdate('label_it', v)}
+            placeholder="Label IT"
+            displayClassName="text-left"
+          />
+        </div>
         <div className="flex-1">
           <InlineEditCell
-            value={designation.name_de_long_m || ''}
-            onSave={(newValue) => handleUpdate('name_de_long_m', newValue)}
-            placeholder="Lang (m)"
+            value={designation.keywords || ''}
+            onSave={(v) => handleUpdate('keywords', v)}
+            placeholder="Keywords (kommagetrennt, z.B. FMH, Psychiat)"
             displayClassName="text-left"
           />
         </div>
-
-        {/* Lang (w) - Long Feminine */}
-        <div className="flex-1">
+        <div className="w-16">
           <InlineEditCell
-            value={designation.name_de_long_w || ''}
-            onSave={(newValue) => handleUpdate('name_de_long_w', newValue)}
-            placeholder="Lang (w)"
-            displayClassName="text-left"
+            value={String(designation.sort_order)}
+            onSave={(v) => handleUpdate('sort_order', parseInt(v) || 100)}
+            placeholder="Sort"
+            displayClassName="text-center"
           />
         </div>
-
-        {/* Active Status */}
         <div className="w-16 flex justify-center">
           <input
             type="checkbox"
-            checked={designation.is_active ?? true}
-            onChange={async (e) => {
-              await handleUpdate('is_active', e.target.checked as any)
-            }}
+            checked={designation.is_active}
+            onChange={(e) => handleUpdate('is_active', e.target.checked)}
             className="h-5 w-5 cursor-pointer rounded border-gray-300 accent-[var(--primary)] focus:ring-[var(--primary)]"
             title={designation.is_active ? 'Aktiv' : 'Inaktiv'}
           />
         </div>
-
-        {/* Delete Button */}
         <div className="w-20 flex justify-end">
           <button
             onClick={handleDelete}
@@ -148,94 +111,6 @@ const DesignationRow: React.FC<DesignationRowProps> = ({
           </button>
         </div>
       </div>
-
-      {/* French Row (Collapsible) */}
-      {isExpanded && (
-        <div className="flex items-center gap-2 bg-[#faf8f4] px-2">
-          <div className="w-8"></div>
-          <div className="w-10 text-sm font-medium text-slate-500">
-            FR
-          </div>
-          <div className="w-44">
-            <InlineEditCell
-              value={designation.name_fr_short_m || ''}
-              onSave={(newValue) => handleUpdate('name_fr_short_m', newValue)}
-              placeholder="Kurzb. (m)"
-              displayClassName="text-left"
-            />
-          </div>
-          <div className="w-44">
-            <InlineEditCell
-              value={designation.name_fr_short_w || ''}
-              onSave={(newValue) => handleUpdate('name_fr_short_w', newValue)}
-              placeholder="Kurzb. (w)"
-              displayClassName="text-left"
-            />
-          </div>
-          <div className="flex-1">
-            <InlineEditCell
-              value={designation.name_fr_long_m || ''}
-              onSave={(newValue) => handleUpdate('name_fr_long_m', newValue)}
-              placeholder="Lang (m)"
-              displayClassName="text-left"
-            />
-          </div>
-          <div className="flex-1">
-            <InlineEditCell
-              value={designation.name_fr_long_w || ''}
-              onSave={(newValue) => handleUpdate('name_fr_long_w', newValue)}
-              placeholder="Lang (w)"
-              displayClassName="text-left"
-            />
-          </div>
-          <div className="w-16"></div>
-          <div className="w-20"></div>
-        </div>
-      )}
-
-      {/* Italian Row (Collapsible) */}
-      {isExpanded && (
-        <div className="flex items-center gap-2 bg-[#faf8f4] px-2">
-          <div className="w-8"></div>
-          <div className="w-10 text-sm font-medium text-slate-500">
-            IT
-          </div>
-          <div className="w-44">
-            <InlineEditCell
-              value={designation.name_it_short_m || ''}
-              onSave={(newValue) => handleUpdate('name_it_short_m', newValue)}
-              placeholder="Kurzb. (m)"
-              displayClassName="text-left"
-            />
-          </div>
-          <div className="w-44">
-            <InlineEditCell
-              value={designation.name_it_short_w || ''}
-              onSave={(newValue) => handleUpdate('name_it_short_w', newValue)}
-              placeholder="Kurzb. (w)"
-              displayClassName="text-left"
-            />
-          </div>
-          <div className="flex-1">
-            <InlineEditCell
-              value={designation.name_it_long_m || ''}
-              onSave={(newValue) => handleUpdate('name_it_long_m', newValue)}
-              placeholder="Lang (m)"
-              displayClassName="text-left"
-            />
-          </div>
-          <div className="flex-1">
-            <InlineEditCell
-              value={designation.name_it_long_w || ''}
-              onSave={(newValue) => handleUpdate('name_it_long_w', newValue)}
-              placeholder="Lang (w)"
-              displayClassName="text-left"
-            />
-          </div>
-          <div className="w-16"></div>
-          <div className="w-20"></div>
-        </div>
-      )}
     </div>
   )
 }
