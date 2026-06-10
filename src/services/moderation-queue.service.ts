@@ -11,7 +11,8 @@ export class ModerationQueueService {
       .select(`
         *,
         users!posts_user_id_fkey(id, username, role, avatar_url),
-        categories!inner(id, name_de, name_fr, name_it)
+        categories!inner(id, name_de, name_fr, name_it),
+        post_tags(tags(name))
       `)
       .eq('moderation_status', 'pending')
       .eq('is_active', true) // Only show active posts
@@ -83,7 +84,10 @@ export class ModerationQueueService {
       moderated_at: post.moderated_at,
       rejection_reason: post.rejection_reason,
       users: post.users,
-      category_id: post.category_id
+      category_id: post.category_id,
+      tags: ((post.post_tags || []) as { tags: { name: string } | null }[])
+        .map(pt => pt.tags?.name)
+        .filter((name): name is string => Boolean(name))
     }))
 
     // Transform comments to ModerationQueueItem format

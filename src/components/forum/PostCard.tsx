@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { PostWithRelations } from '../../types/database.types'
 import UserAvatar from '../user/UserAvatar'
+import PostTags from '../ui/PostTags'
 import { getPostDisplayTitle } from '../../utils/text.utils'
 
 interface PostCardProps {
@@ -199,23 +200,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
         </div>
       )}
 
-      {/* Content Tags */}
-      {post.tags && typeof post.tags === 'string' && post.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {post.tags.split(',').map((tag: string, index: number) => (
-            <span
-              key={index}
-              className="inline-flex items-center px-3 py-1 rounded-lg text-xs md:text-sm"
-              style={{
-                color: 'grey',
-                background: '#fbfffc'
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+      {/* Content Tags - thin row above the Antworten/comments footer */}
+      <PostTags tags={post.tags} className="mb-1" />
 
       {/* Footer: right-aligned Antworten link + comment indicator */}
       <div className="flex items-center justify-end space-x-3 mt-1">

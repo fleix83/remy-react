@@ -252,13 +252,10 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <RichTextEditor
                 content={content}
                 onChange={setContent}
-                placeholder="Teile deine Erfahrungen oder Fragen mit der Community..."
+                placeholder="Teile Deine Erfahrungen mit der Community, stelle eine Frage oder lasse uns einfach wissen was Du denkst oder wie Du Dich fühlst."
                 minHeight="200px"
                 mobileOptimized={mobileOptimized}
               />
-              <p className="text-sm text-gray-500 mt-1">
-                {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
-              </p>
             </div>
 
             {/* 5. Tags - Fifth */}
@@ -266,7 +263,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <TagInput
                 tags={tags}
                 onChange={setTags}
-                placeholder="Tag hinzufügen..."
+                placeholder="Keywords hinzufügen..."
               />
             </div>
           </>
@@ -368,13 +365,10 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <RichTextEditor
                 content={content}
                 onChange={setContent}
-                placeholder="Teile deine Erfahrungen oder Fragen mit der Community..."
+                placeholder="Teile Deine Erfahrungen mit der Community, stelle eine Frage oder lasse uns einfach wissen was Du denkst oder wie Du Dich fühlst."
                 minHeight="200px"
                 mobileOptimized={mobileOptimized}
               />
-              <p className="text-sm text-gray-500 mt-1">
-                {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
-              </p>
             </div>
 
             {/* Tags */}
@@ -382,7 +376,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <TagInput
                 tags={tags}
                 onChange={setTags}
-                placeholder="Tag hinzufügen..."
+                placeholder="Keywords hinzufügen..."
               />
             </div>
           </>

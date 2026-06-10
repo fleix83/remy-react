@@ -12,7 +12,7 @@ interface TagInputProps {
 const TagInput: React.FC<TagInputProps> = ({
   tags,
   onChange,
-  placeholder = 'Tag hinzufügen...',
+  placeholder = 'Keywords hinzufügen...',
   className = ''
 }) => {
   const [inputValue, setInputValue] = useState('')
@@ -93,11 +93,12 @@ const TagInput: React.FC<TagInputProps> = ({
 
   return (
     <div className={`relative ${className}`}>
-      <label className="block mb-2 text-left" style={{ fontSize: '0.75rem', color: '#4785ff' }}>
-        Tags (optional)
+      <label className="block mb-1 text-left" style={{ fontSize: '0.75rem', color: '#4785ff' }}>
+        Keywords hinzufügen
       </label>
 
       {/* Tags display */}
+      {tags.length > 0 && (
       <div className="flex flex-wrap gap-2 mb-2">
         {tags.map((tag, index) => (
           <span
@@ -121,6 +122,7 @@ const TagInput: React.FC<TagInputProps> = ({
           </span>
         ))}
       </div>
+      )}
 
       {/* Input field */}
       <div className="relative">
@@ -160,7 +162,7 @@ const TagInput: React.FC<TagInputProps> = ({
       </div>
 
       <p className="text-xs text-gray-500 mt-1">
-        Drücke Enter, Komma oder Leertaste um einen Tag hinzuzufügen
+        Drücke Enter, Komma oder Leertaste um ein Keyword hinzuzufügen
       </p>
     </div>
   )

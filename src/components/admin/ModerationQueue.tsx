@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase'
 import ModerationPreviewModal from './ModerationPreviewModal'
 import ModerationMessageModal from './ModerationMessageModal'
 import UserAvatar from '../user/UserAvatar'
+import PostTags from '../ui/PostTags'
 import type { ModerationQueueItem } from '../../types/database.types'
 import { getPostDisplayTitle } from '../../utils/text.utils'
 
@@ -875,7 +876,12 @@ const ModerationQueue: React.FC = () => {
                     </div>
                   )}
                 </div>
-                
+
+                {/* Content Tags - thin row above the action buttons (posts only) */}
+                {item.content_type === 'post' && (
+                  <PostTags tags={item.tags} className="mb-1" />
+                )}
+
                 {/* Action Buttons - profile-post style text/icon buttons */}
                 <div className="flex items-center justify-end gap-4 mt-2">
                   {item.content_type === 'therapist' ? (

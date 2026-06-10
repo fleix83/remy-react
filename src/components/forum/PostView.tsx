@@ -8,6 +8,7 @@ import PostEditModal from './PostEditModal'
 import { SelectableText } from '../ui/RichTextEditor'
 import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
+import PostTags from '../ui/PostTags'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { getPostDisplayTitle } from '../../utils/text.utils'
 
@@ -310,27 +311,12 @@ const PostView: React.FC = () => {
             />
           </SelectableText>
 
-          {/* Content Tags */}
-          {post.tags && typeof post.tags === 'string' && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-6">
-              {post.tags.split(',').map((tag: string, index: number) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center px-3 py-1 rounded-lg text-xs md:text-sm"
-                  style={{
-                    color: 'grey',
-                    background: '#fbfffc',
-                    border: '1px solid #e5e5e5'
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+          {/* Tags left-aligned, one row above the right-aligned Antworten row */}
+          <div className="mt-6">
+            <PostTags tags={post.tags} className="mb-2" />
 
-          {/* Reply and Message Links */}
-          <div className="flex items-center space-x-4 mt-6">
+            {/* Reply and Message Links - right-aligned */}
+            <div className="flex items-center justify-end space-x-4">
             {/* Reply Link */}
             <button
               onClick={() => {
@@ -358,6 +344,7 @@ const PostView: React.FC = () => {
                 variant="text-link"
               />
             )}
+            </div>
           </div>
         </div>
 

@@ -886,7 +886,7 @@ export type User = Tables<'users'>
 export type UserBlock = Tables<'user_blocks'>
 
 // Extended types with relations
-export interface PostWithRelations extends Omit<Post, 'therapist'> {
+export interface PostWithRelations extends Omit<Post, 'therapist' | 'tags'> {
   user?: User
   users?: User
   category?: Category
@@ -895,6 +895,8 @@ export interface PostWithRelations extends Omit<Post, 'therapist'> {
   therapists?: Therapist | null
   comments?: Comment[]
   comment_count?: number
+  // Tag names resolved from the post_tags junction (legacy posts.tags column is unused)
+  tags?: string[] | null
 }
 
 export interface CommentWithRelations extends Comment {
@@ -927,6 +929,7 @@ export interface ModerationQueueItem {
   // Post-specific fields
   canton?: string
   category_id?: number
+  tags?: string[]
   // Comment-specific fields
   post_id?: number
   // Therapist-specific fields
