@@ -6,6 +6,7 @@ import { useAuthStore } from '../../stores/auth.store'
 import PostEditModal from '../forum/PostEditModal'
 import { supabase } from '../../lib/supabase'
 import type { PostWithRelations, CommentWithUser, Post } from '../../types/database.types'
+import { therapistDesignationLabel } from '../../utils/designationHelpers'
 
 interface UserContentProps {
   userId: string
@@ -365,7 +366,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
+                            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists)}
                           </div>
                         )}
 
@@ -559,7 +560,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            Erfahrung mit {draft.therapists.form_of_address} {draft.therapists.first_name} {draft.therapists.last_name}, {draft.therapists.short_designation || draft.therapists.designation}
+                            Erfahrung mit {draft.therapists.form_of_address} {draft.therapists.first_name} {draft.therapists.last_name}, {therapistDesignationLabel(draft.therapists)}
                           </div>
                         )}
 

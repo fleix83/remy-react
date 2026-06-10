@@ -4,6 +4,7 @@ import TherapistCreateModal from './TherapistCreateModal'
 import type { Therapist } from '../../types/database.types'
 import { useAuthStore } from '../../stores/auth.store'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
+import { therapistDesignationLabel } from '../../utils/designationHelpers'
 
 interface TherapistSelectorProps {
   selectedTherapist: Therapist | null
@@ -56,8 +57,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
           therapist.first_name.toLowerCase().includes(term) ||
           therapist.last_name.toLowerCase().includes(term) ||
           (therapist.institution && therapist.institution.toLowerCase().includes(term)) ||
-          therapist.designation.toLowerCase().includes(term) ||
-          (therapist.short_designation && therapist.short_designation.toLowerCase().includes(term))
+          (therapist.full_title && therapist.full_title.toLowerCase().includes(term))
 
         // Search in canton code and name
         const matchesCanton = therapist.canton && (
@@ -289,7 +289,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
                   )}
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
-                  {therapist.short_designation || therapist.designation}
+                  {therapistDesignationLabel(therapist)}
                   {therapist.institution && ` • ${therapist.institution}`}
                   {therapist.canton && ` • ${therapist.canton}`}
                 </div>

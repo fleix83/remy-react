@@ -4,6 +4,7 @@ import type { PostWithRelations } from '../../types/database.types'
 import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
 import { getPostDisplayTitle } from '../../utils/text.utils'
+import { therapistDesignationLabel } from '../../utils/designationHelpers'
 
 interface PostCardProps {
   post: PostWithRelations
@@ -163,7 +164,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
             className="post-card-therapist text-left hover:underline active:opacity-60 cursor-pointer bg-transparent border-none p-0 m-0 block w-full transition-opacity duration-100"
             style={{color: '#4785ff', fontSize: '12px', lineHeight: '1.2'}}
           >
-            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
+            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists)}
           </button>
         )}
 

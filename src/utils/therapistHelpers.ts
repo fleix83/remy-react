@@ -1,10 +1,11 @@
-import type { Therapist } from '../types/database.types'
+import type { Therapist, TherapistWithDesignation } from '../types/database.types'
+import { therapistDesignationLabel } from './designationHelpers'
 
 /**
  * Format therapist information for post titles in "Erfahrung" posts
  * Format: "Title firstname lastname designation, institution (if) and canton"
  */
-export function formatTherapistForTitle(therapist: Therapist): string {
+export function formatTherapistForTitle(therapist: TherapistWithDesignation): string {
   const nameParts = []
   
   // Add form of address if available
@@ -21,8 +22,8 @@ export function formatTherapistForTitle(therapist: Therapist): string {
   // Build the description parts
   const descriptionParts = []
 
-  // Add designation (use short version if available, otherwise full)
-  const designation = therapist.short_designation || therapist.designation
+  // Add designation (curated label when classified, else verbatim full_title)
+  const designation = therapistDesignationLabel(therapist)
   if (designation) {
     descriptionParts.push(designation)
   }
@@ -50,7 +51,7 @@ export function formatTherapistForTitle(therapist: Therapist): string {
 /**
  * Generate the complete title for "Erfahrung" posts
  */
-export function getExperiencePostTitle(therapist: Therapist): string {
+export function getExperiencePostTitle(therapist: TherapistWithDesignation): string {
   return `Erfahrung mit ${formatTherapistForTitle(therapist)}`
 }
 

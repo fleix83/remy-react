@@ -11,6 +11,7 @@ import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { getPostDisplayTitle } from '../../utils/text.utils'
+import { therapistDesignationLabel } from '../../utils/designationHelpers'
 
 const PostView: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -298,7 +299,7 @@ const PostView: React.FC = () => {
               className="post-view-therapist text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
               style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2'}}
             >
-              Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {post.therapists.short_designation || post.therapists.designation}
+              Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists)}
             </button>
           )}
 

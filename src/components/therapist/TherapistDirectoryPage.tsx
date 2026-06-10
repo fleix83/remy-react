@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import TherapistSelector from './TherapistSelector'
 import TherapistCreateModal from './TherapistCreateModal'
-import type { Therapist, PostWithRelations } from '../../types/database.types'
+import type { TherapistWithDesignation, PostWithRelations } from '../../types/database.types'
+import { getDesignationLabel } from '../../utils/designationHelpers'
 import { PostsService } from '../../services/posts.service'
 import { TherapistsService } from '../../services/therapists.service'
 import { useAuthStore } from '../../stores/auth.store'
@@ -12,7 +13,7 @@ import MobileSlideMenu from '../layout/MobileSlideMenu'
 const TherapistDirectoryPage: React.FC = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
+  const [selectedTherapist, setSelectedTherapist] = useState<TherapistWithDesignation | null>(null)
   const [therapistPosts, setTherapistPosts] = useState<PostWithRelations[]>([])
   const [isLoadingPosts, setIsLoadingPosts] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -67,11 +68,11 @@ const TherapistDirectoryPage: React.FC = () => {
     }
   }
 
-  const handleTherapistSelect = (therapist: Therapist | null) => {
+  const handleTherapistSelect = (therapist: TherapistWithDesignation | null) => {
     setSelectedTherapist(therapist)
   }
 
-  const handleTherapistUpdated = (updatedTherapist: Therapist) => {
+  const handleTherapistUpdated = (updatedTherapist: TherapistWithDesignation) => {
     setSelectedTherapist(updatedTherapist)
     setShowEditModal(false)
   }
@@ -201,10 +202,17 @@ const TherapistDirectoryPage: React.FC = () => {
               </div>
 
               <div className="space-y-2 text-left mb-6">
-                {/* Designation without label */}
-                <p className="text-gray-700">
-                  {selectedTherapist.designation}
-                </p>
+                {/* Curated designation (UI language) + verbatim professional title */}
+                {selectedTherapist.designations && (
+                  <p className="text-gray-700 font-medium">
+                    {getDesignationLabel(selectedTherapist.designations, userProfile?.language_preference)}
+                  </p>
+                )}
+                {selectedTherapist.full_title && (
+                  <p className="text-gray-600 text-sm">
+                    {selectedTherapist.full_title}
+                  </p>
+                )}
 
                 {/* Institution - without label */}
                 {selectedTherapist.institution && (

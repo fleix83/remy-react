@@ -116,7 +116,8 @@ export class ModerationQueueService {
       title: `${therapist.first_name} ${therapist.last_name}`,
       first_name: therapist.first_name,
       last_name: therapist.last_name,
-      designation: therapist.designation,
+      designation: therapist.full_title ?? undefined, // verbatim scraped title — useful when classifying
+      designation_id: therapist.designation_id,
       canton: therapist.canton,
       created_at: therapist.created_at,
       moderation_status: null, // Therapists don't have moderation_status
