@@ -127,66 +127,37 @@ export type Database = {
         Row: {
           created_at: string | null
           id: number
-          is_active: boolean | null
-          name_de_long_m: string | null
-          name_de_long_w: string | null
-          name_de_short_m: string | null
-          name_de_short_w: string | null
-          name_fr_long_m: string | null
-          name_fr_long_w: string | null
-          name_fr_short_m: string | null
-          name_fr_short_w: string | null
-          name_it_long_m: string | null
-          name_it_long_w: string | null
-          name_it_short_m: string | null
-          name_it_short_w: string | null
-          parent_id: number | null
+          is_active: boolean
+          keywords: string | null
+          label_de: string
+          label_fr: string
+          label_it: string
+          slug: string
+          sort_order: number
         }
         Insert: {
           created_at?: string | null
           id?: number
-          is_active?: boolean | null
-          name_de_long_m?: string | null
-          name_de_long_w?: string | null
-          name_de_short_m?: string | null
-          name_de_short_w?: string | null
-          name_fr_long_m?: string | null
-          name_fr_long_w?: string | null
-          name_fr_short_m?: string | null
-          name_fr_short_w?: string | null
-          name_it_long_m?: string | null
-          name_it_long_w?: string | null
-          name_it_short_m?: string | null
-          name_it_short_w?: string | null
-          parent_id?: number | null
+          is_active?: boolean
+          keywords?: string | null
+          label_de: string
+          label_fr?: string
+          label_it?: string
+          slug: string
+          sort_order?: number
         }
         Update: {
           created_at?: string | null
           id?: number
-          is_active?: boolean | null
-          name_de_long_m?: string | null
-          name_de_long_w?: string | null
-          name_de_short_m?: string | null
-          name_de_short_w?: string | null
-          name_fr_long_m?: string | null
-          name_fr_long_w?: string | null
-          name_fr_short_m?: string | null
-          name_fr_short_w?: string | null
-          name_it_long_m?: string | null
-          name_it_long_w?: string | null
-          name_it_short_m?: string | null
-          name_it_short_w?: string | null
-          parent_id?: number | null
+          is_active?: boolean
+          keywords?: string | null
+          label_de?: string
+          label_fr?: string
+          label_it?: string
+          slug?: string
+          sort_order?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "designations_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "designations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       documents: {
         Row: {
@@ -523,10 +494,11 @@ export type Database = {
           city: string | null
           created_at: string | null
           created_by: string | null
-          designation: string
+          designation?: string | null
           designation_id: number | null
           first_name: string
           form_of_address: string
+          full_title: string | null
           gender: string | null
           id: number
           institution: string | null
@@ -536,7 +508,7 @@ export type Database = {
           reviewed_at: string | null
           reviewed_by: string | null
           services: string | null
-          short_designation: string | null
+          short_designation?: string | null
           specialty: string | null
           updated_at: string | null
         }
@@ -545,10 +517,11 @@ export type Database = {
           city?: string | null
           created_at?: string | null
           created_by?: string | null
-          designation: string
+          designation?: string | null
           designation_id?: number | null
           first_name: string
           form_of_address: string
+          full_title?: string | null
           gender?: string | null
           id?: number
           institution?: string | null
@@ -567,10 +540,11 @@ export type Database = {
           city?: string | null
           created_at?: string | null
           created_by?: string | null
-          designation?: string
+          designation?: string | null
           designation_id?: number | null
           first_name?: string
           form_of_address?: string
+          full_title?: string | null
           gender?: string | null
           id?: number
           institution?: string | null
@@ -882,6 +856,8 @@ export type Message = Tables<'messages'>
 export type Post = Tables<'posts'>
 export type Tag = Tables<'tags'>
 export type Therapist = Tables<'therapists'>
+export type DesignationLabels = Pick<Designation, 'id' | 'slug' | 'label_de' | 'label_fr' | 'label_it'>
+export type TherapistWithDesignation = Therapist & { designations?: DesignationLabels | null }
 export type User = Tables<'users'>
 export type UserBlock = Tables<'user_blocks'>
 
@@ -892,7 +868,7 @@ export interface PostWithRelations extends Omit<Post, 'therapist' | 'tags'> {
   category?: Category
   categories?: Category
   therapist?: Therapist | string | null
-  therapists?: Therapist | null
+  therapists?: TherapistWithDesignation | null
   comments?: Comment[]
   comment_count?: number
   // Tag names resolved from the post_tags junction (legacy posts.tags column is unused)
@@ -936,6 +912,7 @@ export interface ModerationQueueItem {
   first_name?: string
   last_name?: string
   designation?: string
+  designation_id?: number | null
   needs_review?: boolean
   // Relations
   users?: User
