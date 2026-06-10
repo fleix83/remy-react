@@ -474,7 +474,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             ))}
 
             {/* Gender filter — independent of designations */}
-            <span className="mx-1 text-gray-400" style={{ fontSize: '0.65rem' }}>|</span>
+            <span aria-hidden="true" className="mx-1 text-gray-400" style={{ fontSize: '0.65rem' }}>|</span>
             {([
               { value: null, label: 'Alle' },
               { value: 'f' as const, label: 'Frauen' },
