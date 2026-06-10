@@ -359,7 +359,7 @@ export type Database = {
           category_id: number
           content: string
           created_at: string | null
-          designation: string
+          designation: string | null
           id: number
           is_active: boolean | null
           is_banned: boolean | null
@@ -413,7 +413,7 @@ export type Database = {
           category_id?: number
           content?: string
           created_at?: string | null
-          designation?: string
+          designation?: string | null
           id?: number
           is_active?: boolean | null
           is_banned?: boolean | null
