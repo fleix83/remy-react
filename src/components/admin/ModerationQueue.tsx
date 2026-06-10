@@ -7,8 +7,11 @@ import ModerationPreviewModal from './ModerationPreviewModal'
 import ModerationMessageModal from './ModerationMessageModal'
 import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
-import type { ModerationQueueItem } from '../../types/database.types'
+import type { ModerationQueueItem, Designation } from '../../types/database.types'
 import { getPostDisplayTitle } from '../../utils/text.utils'
+import { DesignationsService } from '../../services/designations.service'
+import { TherapistsService } from '../../services/therapists.service'
+import { getDesignationLabel } from '../../utils/designationHelpers'
 
 const ModerationQueue: React.FC = () => {
   const permissions = usePermissions()
@@ -27,6 +30,7 @@ const ModerationQueue: React.FC = () => {
   const [messageAction, setMessageAction] = useState<'approve' | 'reject' | 'message' | null>(null)
   const [messageItem, setMessageItem] = useState<ModerationQueueItem | null>(null)
   const [contentFilter, setContentFilter] = useState<'alle' | 'beiträge' | 'kommentare' | 'therapeuten'>('alle')
+  const [designations, setDesignations] = useState<Designation[]>([])
 
   const moderationService = new ModerationQueueService()
 
@@ -39,6 +43,12 @@ const ModerationQueue: React.FC = () => {
     return () => {
       // Clean up subscriptions when component unmounts
       supabase.removeAllChannels()
+    }
+  }, [permissions.canModerate])
+
+  useEffect(() => {
+    if (permissions.canModerate) {
+      new DesignationsService().getActiveDesignations().then(setDesignations).catch(console.error)
     }
   }, [permissions.canModerate])
 
@@ -852,6 +862,30 @@ const ModerationQueue: React.FC = () => {
                           {item.designation}
                         </div>
                       )}
+                      <select
+                        value={item.designation_id ?? ''}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={async (e) => {
+                          e.stopPropagation()
+                          const newId = e.target.value ? parseInt(e.target.value) : null
+                          try {
+                            await new TherapistsService().updateTherapist(item.id, { designation_id: newId })
+                            setQueueItems(prev => prev.map(q =>
+                              q.content_type === 'therapist' && q.id === item.id ? { ...q, designation_id: newId } : q
+                            ))
+                          } catch (error) {
+                            console.error('Error assigning designation:', error)
+                            alert('Fehler beim Zuweisen der Bezeichnung')
+                          }
+                        }}
+                        className="mt-2 text-sm border rounded px-2 py-1 bg-white text-gray-700"
+                        style={{ borderColor: '#ebebeb' }}
+                      >
+                        <option value="">Bezeichnung zuweisen…</option>
+                        {designations.map(d => (
+                          <option key={d.id} value={d.id}>{getDesignationLabel(d)}</option>
+                        ))}
+                      </select>
                     </div>
                   ) : (
                     // For Comments: Show comment text + post reference
