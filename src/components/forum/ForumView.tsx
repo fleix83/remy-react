@@ -10,6 +10,8 @@ import FilterModal from './FilterModal'
 import Pagination from '../ui/Pagination'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { DesignationsService } from '../../services/designations.service'
+import { getDesignationLabel } from '../../utils/designationHelpers'
+import { useAuthStore } from '../../stores/auth.store'
 import type { Designation } from '../../types/database.types'
 import type { DateRange } from 'react-day-picker'
 
@@ -23,7 +25,8 @@ interface PostFilters {
   category?: number
   cantons?: string[]
   therapist?: string
-  designation?: string
+  designations?: number[]
+  gender?: 'm' | 'f'
   dateFrom?: string
   dateTo?: string
   search?: string
@@ -34,6 +37,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   onCreatePostDialogClose = () => {},
   onCreatePost = () => {}
 }) => {
+  const { userProfile } = useAuthStore()
+  const lang = userProfile?.language_preference
   const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [searchExpanded, setSearchExpanded] = useState(false)
@@ -41,7 +46,6 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [filters, setFiltersState] = useState<PostFilters>({})
   const [designations, setDesignations] = useState<Designation[]>([])
-  const [showAllDesignations, setShowAllDesignations] = useState(false)
   const [showDatePicker, setShowDatePicker] = useState(false)
   const datePickerRef = useRef<HTMLDivElement>(null)
 
@@ -159,10 +163,20 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     }))
   }, [])
 
-  const handleDesignationFilter = useCallback((displayName: string | null) => {
+  const handleDesignationToggle = useCallback((id: number) => {
     setSearchInput('')
     setSearchTerm('')
-    setFiltersState(prev => ({ ...prev, designation: displayName || undefined }))
+    setFiltersState(prev => {
+      const current = prev.designations || []
+      const updated = current.includes(id) ? current.filter(d => d !== id) : [...current, id]
+      return { ...prev, designations: updated.length > 0 ? updated : undefined }
+    })
+  }, [])
+
+  const handleGenderFilter = useCallback((gender: 'm' | 'f' | null) => {
+    setSearchInput('')
+    setSearchTerm('')
+    setFiltersState(prev => ({ ...prev, gender: gender || undefined }))
   }, [])
 
   const handleCantonToggle = useCallback((cantonCode: string) => {
@@ -182,7 +196,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     if (filters.category) count++
     if (filters.cantons && filters.cantons.length > 0) count++
     if (filters.therapist) count++
-    if (filters.designation) count++
+    if (filters.designations && filters.designations.length > 0) count++
+    if (filters.gender) count++
     if (filters.dateFrom || filters.dateTo) count++
     return count
   }, [filters])
@@ -428,77 +443,56 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             })}
           </div>
 
-          {/* Designation Filter - sidebar on desktop, below categories */}
+          {/* Designation Filter - sidebar on desktop */}
           <div className="hidden md:flex designation-filters">
-            {(() => {
-              const primaryNames = ['Psychologe', 'Psychiater', 'Tagesklinik']
-              const allDesignationItems = designations.map(d => ({
-                id: d.id,
-                name: designationsService.getDisplayName(d)
-              })).filter(d => d.name)
-              const primaryItems = allDesignationItems.filter(d => primaryNames.some(p => d.name.startsWith(p)))
-              const restItems = allDesignationItems.filter(d => !primaryNames.some(p => d.name.startsWith(p)))
+            {/* "Alle Bezeichnungen" reset */}
+            <button
+              onClick={() => setFiltersState(prev => ({ ...prev, designations: undefined }))}
+              className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                !filters.designations || filters.designations.length === 0
+                  ? 'bg-[var(--primary)] text-white'
+                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+              }`}
+              style={{ fontSize: '0.65rem' }}
+            >
+              Alle Bezeichnungen
+            </button>
 
-              return (
-                <>
-                  {/* "Alle Bezeichnungen" reset button - first position */}
-                  <button
-                    onClick={() => { handleDesignationFilter(null); setShowAllDesignations(false) }}
-                    className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                      !filters.designation
-                        ? 'bg-[var(--primary)] text-white'
-                        : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-                    }`}
-                    style={{ fontSize: '0.65rem' }}
-                  >
-                    Alle Bezeichnungen
-                  </button>
+            {designations.map(d => (
+              <button
+                key={d.id}
+                onClick={() => handleDesignationToggle(d.id)}
+                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                  filters.designations?.includes(d.id)
+                    ? 'bg-[var(--primary)] text-white'
+                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                }`}
+                style={{ fontSize: '0.65rem' }}
+              >
+                {getDesignationLabel(d, lang)}
+              </button>
+            ))}
 
-                  {/* Primary designations - always visible */}
-                  {primaryItems.map(d => (
-                    <button
-                      key={d.id}
-                      onClick={() => handleDesignationFilter(filters.designation === d.name ? null : d.name)}
-                      className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                        filters.designation === d.name
-                          ? 'bg-[var(--primary)] text-white'
-                          : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-                      }`}
-                      style={{ fontSize: '0.65rem' }}
-                    >
-                      {d.name}
-                    </button>
-                  ))}
-
-                  {/* "Mehr" toggle - hidden when expanded */}
-                  {!showAllDesignations && restItems.length > 0 && (
-                    <button
-                      onClick={() => setShowAllDesignations(true)}
-                      className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors text-gray-700"
-                      style={{ fontSize: '0.65rem', backgroundColor: '#c6dcc9' }}
-                    >
-                      Mehr
-                    </button>
-                  )}
-
-                  {/* Expanded rest */}
-                  {showAllDesignations && restItems.map(d => (
-                    <button
-                      key={d.id}
-                      onClick={() => handleDesignationFilter(filters.designation === d.name ? null : d.name)}
-                      className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                        filters.designation === d.name
-                          ? 'bg-[var(--primary)] text-white'
-                          : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-                      }`}
-                      style={{ fontSize: '0.65rem' }}
-                    >
-                      {d.name}
-                    </button>
-                  ))}
-                </>
-              )
-            })()}
+            {/* Gender filter — independent of designations */}
+            <span className="mx-1 text-gray-400" style={{ fontSize: '0.65rem' }}>|</span>
+            {([
+              { value: null, label: 'Alle' },
+              { value: 'f' as const, label: 'Frauen' },
+              { value: 'm' as const, label: 'Männer' }
+            ]).map(g => (
+              <button
+                key={g.label}
+                onClick={() => handleGenderFilter(g.value)}
+                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                  (filters.gender ?? null) === g.value
+                    ? 'bg-[var(--primary)] text-white'
+                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                }`}
+                style={{ fontSize: '0.65rem' }}
+              >
+                {g.label}
+              </button>
+            ))}
           </div>
 
           {loading ? (

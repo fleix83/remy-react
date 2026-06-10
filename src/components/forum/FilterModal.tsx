@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { TherapistsService } from '../../services/therapists.service'
 import { DesignationsService } from '../../services/designations.service'
 import { useCategories } from '../../hooks/usePosts'
+import { getDesignationLabel, therapistDesignationLabel } from '../../utils/designationHelpers'
+import { useAuthStore } from '../../stores/auth.store'
 import type { Designation, Therapist } from '../../types/database.types'
 
 interface PostFilters {
   category?: number
   cantons?: string[]
   therapist?: string
-  designation?: string
+  designations?: number[]
+  gender?: 'm' | 'f'
   dateFrom?: string
   dateTo?: string
 }
@@ -24,7 +27,8 @@ interface FilterState {
   category?: number
   cantons?: string[]
   therapist?: string
-  designation?: string
+  designations?: number[]
+  gender?: 'm' | 'f'
   dateFrom?: string
   dateTo?: string
 }
@@ -59,6 +63,8 @@ const CANTONS = [
 ]
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onFiltersChange }) => {
+  const { userProfile } = useAuthStore()
+  const lang = userProfile?.language_preference
   const { data: categories = [] } = useCategories()
   const [designations, setDesignations] = useState<Designation[]>([])
   const [therapistSearch, setTherapistSearch] = useState('')
@@ -72,7 +78,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
     filters.category ||
     (filters.cantons && filters.cantons.length > 0) ||
     filters.therapist ||
-    filters.designation ||
+    (filters.designations && filters.designations.length > 0) || filters.gender ||
     filters.dateFrom ||
     filters.dateTo
   )
@@ -318,7 +324,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                         {therapistsService.formatTherapistName(therapist)}
                       </div>
                       <div className="text-xs text-gray-600">
-                        {therapist.short_designation || therapist.designation}
+                        {therapistDesignationLabel(therapist)}
                         {therapist.institution && ` • ${therapist.institution}`}
                       </div>
                     </div>
@@ -330,20 +336,32 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             {/* Berufsbezeichnung */}
             <div className="relative">
               <select
-                value={filters.designation || ''}
-                onChange={(e) => handleFilterChange('designation', e.target.value || undefined)}
+                value={filters.designations?.[0] || ''}
+                onChange={(e) => {
+                  const val = e.target.value
+                  onFiltersChange({ ...filters, designations: val ? [parseInt(val)] : undefined })
+                }}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >
                 <option value="">Alle Bezeichnungen</option>
-                {designations.map(designation => {
-                  const designationsService = new DesignationsService()
-                  const displayName = designationsService.getDisplayName(designation)
-                  return (
-                    <option key={designation.id} value={displayName}>
-                      {displayName}
-                    </option>
-                  )
-                })}
+                {designations.map(designation => (
+                  <option key={designation.id} value={designation.id}>
+                    {getDesignationLabel(designation, lang)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Geschlecht */}
+            <div className="relative">
+              <select
+                value={filters.gender || ''}
+                onChange={(e) => onFiltersChange({ ...filters, gender: (e.target.value || undefined) as 'm' | 'f' | undefined })}
+                className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
+              >
+                <option value="">Alle Geschlechter</option>
+                <option value="f">Frauen</option>
+                <option value="m">Männer</option>
               </select>
             </div>
 
