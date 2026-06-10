@@ -1,18 +1,20 @@
 import { supabase } from '../lib/supabase'
-import type { Therapist } from '../types/database.types'
+import { therapistDesignationLabel } from '../utils/designationHelpers'
+import type { Therapist, TherapistWithDesignation } from '../types/database.types'
 
 export class TherapistsService {
   // Soft cap so list endpoints stay bounded as the directory grows.
   // Tighten or paginate further if it ever approaches this limit.
   private static readonly LIST_LIMIT = 1000
+  private static readonly SELECT_WITH_DESIGNATION = '*, designations(id, slug, label_de, label_fr, label_it)'
 
   // Get all therapists
-  async getTherapists(): Promise<Therapist[]> {
+  async getTherapists(): Promise<TherapistWithDesignation[]> {
     console.log('🔧 TherapistsService: Getting all therapists...')
 
     const { data, error } = await supabase
       .from('therapists')
-      .select('*')
+      .select(TherapistsService.SELECT_WITH_DESIGNATION)
       .order('last_name', { ascending: true })
       .order('first_name', { ascending: true })
       .limit(TherapistsService.LIST_LIMIT)
@@ -23,19 +25,19 @@ export class TherapistsService {
     }
 
     console.log('✅ TherapistsService: Fetched therapists:', data?.length || 0, 'records')
-    return data || []
+    return (data || []) as TherapistWithDesignation[]
   }
 
-  // Search therapists by name, institution, or designation
-  async searchTherapists(searchTerm: string): Promise<Therapist[]> {
+  // Search therapists by name, institution, or full_title
+  async searchTherapists(searchTerm: string): Promise<TherapistWithDesignation[]> {
     if (!searchTerm.trim()) {
       return this.getTherapists()
     }
 
     const { data, error } = await supabase
       .from('therapists')
-      .select('*')
-      .or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,institution.ilike.%${searchTerm}%,designation.ilike.%${searchTerm}%,short_designation.ilike.%${searchTerm}%`)
+      .select(TherapistsService.SELECT_WITH_DESIGNATION)
+      .or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,institution.ilike.%${searchTerm}%,full_title.ilike.%${searchTerm}%`)
       .order('last_name', { ascending: true })
       .order('first_name', { ascending: true })
       .limit(TherapistsService.LIST_LIMIT)
@@ -45,14 +47,14 @@ export class TherapistsService {
       throw error
     }
 
-    return data || []
+    return (data || []) as TherapistWithDesignation[]
   }
 
   // Get therapists by canton
-  async getTherapistsByCanton(canton: string): Promise<Therapist[]> {
+  async getTherapistsByCanton(canton: string): Promise<TherapistWithDesignation[]> {
     const { data, error } = await supabase
       .from('therapists')
-      .select('*')
+      .select(TherapistsService.SELECT_WITH_DESIGNATION)
       .eq('canton', canton)
       .order('last_name', { ascending: true })
       .order('first_name', { ascending: true })
@@ -63,7 +65,7 @@ export class TherapistsService {
       throw error
     }
 
-    return data || []
+    return (data || []) as TherapistWithDesignation[]
   }
 
   // Create a new therapist
@@ -71,111 +73,46 @@ export class TherapistsService {
     form_of_address: string
     first_name: string
     last_name: string
+    designation_id: number
+    full_title?: string
     institution?: string
-    designation: string
-    designation_id?: number | null
-    short_designation?: string
     description?: string
     languages?: string
     city?: string
     canton?: string
     gender?: string
-  }): Promise<Therapist> {
-    console.log('🔧 TherapistsService: Creating therapist with data:', therapistData)
-
-    // Check authentication first
+  }): Promise<TherapistWithDesignation> {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError) throw new Error('Authentication failed: ' + authError.message)
+    if (!user) throw new Error('User not authenticated')
 
-    if (authError) {
-      console.error('❌ TherapistsService: Auth error:', authError)
-      throw new Error('Authentication failed: ' + authError.message)
-    }
-
-    if (!user) {
-      console.error('❌ TherapistsService: No authenticated user')
-      throw new Error('User not authenticated')
-    }
-
-    console.log('👤 TherapistsService: Authenticated user ID:', user.id)
-
-    // Base insert data (works both with and without migration)
-    const insertData: any = {
+    const insertData = {
       form_of_address: therapistData.form_of_address,
       first_name: therapistData.first_name.trim(),
       last_name: therapistData.last_name.trim(),
       institution: therapistData.institution?.trim() || null,
-      designation: therapistData.designation,
-      short_designation: therapistData.short_designation?.trim() || null,
+      designation_id: therapistData.designation_id,
+      full_title: therapistData.full_title?.trim() || null,
       description: therapistData.description?.trim() || null,
       languages: therapistData.languages?.trim() || null,
       city: therapistData.city?.trim() || null,
       canton: therapistData.canton || null,
-      gender: therapistData.gender || null
+      gender: therapistData.gender || null,
+      needs_review: true,
+      created_by: user.id
     }
-
-    // Try to add review fields if migration has been applied
-    // If migration not applied, these will be ignored and therapist created without them
-    try {
-      insertData.needs_review = true
-      insertData.created_by = user.id
-    } catch (e) {
-      console.warn('⚠️ TherapistsService: Review fields not available (migration not applied)')
-    }
-
-    console.log('📤 TherapistsService: Inserting data:', insertData)
 
     const { data, error } = await supabase
       .from('therapists')
       .insert([insertData])
-      .select()
+      .select(TherapistsService.SELECT_WITH_DESIGNATION)
       .single()
 
     if (error) {
-      // If error is about missing column, retry without review fields
-      if (error.message.includes('created_by') || error.message.includes('needs_review')) {
-        console.warn('⚠️ TherapistsService: Review system not set up yet, creating therapist without review fields')
-
-        const basicInsertData = {
-          form_of_address: therapistData.form_of_address,
-          first_name: therapistData.first_name.trim(),
-          last_name: therapistData.last_name.trim(),
-          institution: therapistData.institution?.trim() || null,
-          designation: therapistData.designation,
-          short_designation: therapistData.short_designation?.trim() || null,
-          description: therapistData.description?.trim() || null,
-          languages: therapistData.languages?.trim() || null,
-          city: therapistData.city?.trim() || null,
-          canton: therapistData.canton || null,
-          gender: therapistData.gender || null
-        }
-
-        const { data: retryData, error: retryError } = await supabase
-          .from('therapists')
-          .insert([basicInsertData])
-          .select()
-          .single()
-
-        if (retryError) {
-          console.error('❌ TherapistsService: Database error on retry:', retryError)
-          throw new Error('Database error: ' + retryError.message)
-        }
-
-        console.log('✅ TherapistsService: Therapist created successfully (without review fields):', retryData)
-        return retryData
-      }
-
       console.error('❌ TherapistsService: Database error:', error)
-      console.error('❌ TherapistsService: Error details:', {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint
-      })
       throw new Error('Database error: ' + error.message)
     }
-
-    console.log('✅ TherapistsService: Therapist created successfully:', data)
-    return data
+    return data as TherapistWithDesignation
   }
 
   // Update an existing therapist
@@ -196,10 +133,10 @@ export class TherapistsService {
   }
 
   // Get a single therapist by ID
-  async getTherapist(id: number): Promise<Therapist | null> {
+  async getTherapist(id: number): Promise<TherapistWithDesignation | null> {
     const { data, error } = await supabase
       .from('therapists')
-      .select('*')
+      .select(TherapistsService.SELECT_WITH_DESIGNATION)
       .eq('id', id)
       .single()
 
@@ -211,7 +148,7 @@ export class TherapistsService {
       throw error
     }
 
-    return data
+    return data as TherapistWithDesignation
   }
 
   // Delete a therapist
@@ -232,24 +169,23 @@ export class TherapistsService {
   }
 
   // Format therapist display name
-  formatTherapistName(therapist: Therapist): string {
+  formatTherapistName(therapist: TherapistWithDesignation): string {
     const nameparts = [
       therapist.form_of_address,
       therapist.first_name,
       therapist.last_name
     ].filter(Boolean)
-    
+
     return nameparts.join(' ')
   }
 
   // Format therapist display with institution
-  formatTherapistDisplay(therapist: Therapist): string {
+  formatTherapistDisplay(therapist: TherapistWithDesignation): string {
     const name = this.formatTherapistName(therapist)
     const details = []
 
-    if (therapist.designation) {
-      details.push(therapist.designation)
-    }
+    const label = therapistDesignationLabel(therapist)
+    if (label) { details.push(label) }
 
     if (therapist.institution) {
       details.push(therapist.institution)
