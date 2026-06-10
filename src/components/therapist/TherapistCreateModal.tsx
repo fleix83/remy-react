@@ -6,6 +6,7 @@ import { TherapistImportService, type ImportResult } from '../../services/therap
 import { downloadTherapistCSVTemplate } from '../../utils/therapist-csv-template'
 import { usePermissions } from '../../hooks/usePermissions'
 import { useAuthStore } from '../../stores/auth.store'
+import { getDesignationLabel } from '../../utils/designationHelpers'
 import type { Therapist, Designation } from '../../types/database.types'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { FORMS_OF_ADDRESS } from '../../constants/therapist.constants'
@@ -32,9 +33,8 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     form_of_address: '',
     first_name: '',
     last_name: '',
-    designation: '',
     designation_id: null as number | null,
-    short_designation: '',
+    full_title: '',
     institution: '',
     languages: '',
     city: '',
@@ -62,38 +62,11 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   const permissions = usePermissions()
   const { userProfile } = useAuthStore()
 
-  // Filter designations by user's language preference, showing only short forms
-  const filteredDesignations = useMemo(() => {
-    const lang = userProfile?.language_preference || 'de'
-
-    const options: Array<{ id: number; designation: Designation; displayText: string }> = []
-
-    designations.forEach(d => {
-      const shortForms: string[] = []
-
-      if (lang === 'de') {
-        if (d.name_de_short_m) shortForms.push(d.name_de_short_m)
-        if (d.name_de_short_w) shortForms.push(d.name_de_short_w)
-      } else if (lang === 'fr') {
-        if (d.name_fr_short_m) shortForms.push(d.name_fr_short_m)
-        if (d.name_fr_short_w) shortForms.push(d.name_fr_short_w)
-      } else if (lang === 'it') {
-        if (d.name_it_short_m) shortForms.push(d.name_it_short_m)
-        if (d.name_it_short_w) shortForms.push(d.name_it_short_w)
-      }
-
-      shortForms.forEach(text => {
-        options.push({
-          id: d.id,
-          designation: d,
-          displayText: text
-        })
-      })
-    })
-
-    // Sort alphabetically by display text
-    return options.sort((a, b) => a.displayText.localeCompare(b.displayText, lang))
-  }, [designations, userProfile?.language_preference])
+  const lang = userProfile?.language_preference
+  const designationOptions = useMemo(
+    () => designations.map(d => ({ id: d.id, label: getDesignationLabel(d, lang) })),
+    [designations, lang]
+  )
 
   // Initialize form data when therapist prop changes (edit mode)
   useEffect(() => {
@@ -103,9 +76,8 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
         form_of_address: therapist.form_of_address || '',
         first_name: therapist.first_name || '',
         last_name: therapist.last_name || '',
-        designation: therapist.designation || '',
         designation_id: therapist.designation_id || null,
-        short_designation: therapist.short_designation || '',
+        full_title: therapist.full_title || '',
         institution: therapist.institution || '',
         languages: therapist.languages || '',
         city: therapist.city || '',
@@ -229,7 +201,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
       setError('Bitte geben Sie den Nachnamen ein')
       return false
     }
-    if (!formData.designation) {
+    if (!formData.designation_id) {
       setError('Bitte wählen Sie eine Berufsbezeichnung aus')
       return false
     }
@@ -257,14 +229,13 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           form_of_address: formData.form_of_address,
           first_name: formData.first_name,
           last_name: formData.last_name,
-          designation: formData.designation,
           designation_id: formData.designation_id,
-          short_designation: formData.short_designation || null,
+          full_title: formData.full_title.trim() || null,
           institution: formData.institution || null,
           languages: formData.languages || null,
           city: formData.city || null,
           gender: formData.gender || null
-        })
+        }) as Therapist
       } else {
         // Create new therapist
         resultTherapist = await therapistsService.createTherapist({
@@ -272,14 +243,13 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           form_of_address: formData.form_of_address,
           first_name: formData.first_name,
           last_name: formData.last_name,
-          designation: formData.designation,
-          designation_id: formData.designation_id,
-          short_designation: formData.short_designation || undefined,
+          designation_id: formData.designation_id!,
+          full_title: formData.full_title || undefined,
           institution: formData.institution || undefined,
           languages: formData.languages || undefined,
           city: formData.city || undefined,
           gender: formData.gender || undefined
-        })
+        }) as Therapist
       }
 
       console.log(`✅ TherapistCreateModal: Therapist ${isEditMode ? 'updated' : 'created'} successfully:`, resultTherapist)
@@ -293,9 +263,8 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           form_of_address: '',
           first_name: '',
           last_name: '',
-          designation: '',
           designation_id: null,
-          short_designation: '',
+          full_title: '',
           institution: '',
           languages: '',
           city: '',
@@ -537,39 +506,10 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 Berufsbezeichnung
               </label>
               <select
-                value={formData.designation_id || ''}
+                value={formData.designation_id ?? ''}
                 onChange={(e) => {
                   const designationId = e.target.value ? parseInt(e.target.value) : null
-                  const selectedOption = filteredDesignations.find(opt => opt.id === designationId)
-
-                  if (selectedOption) {
-                    // Get the short form for auto-population
-                    const lang = userProfile?.language_preference || 'de'
-                    let shortForm = ''
-
-                    if (lang === 'de') {
-                      shortForm = selectedOption.designation.name_de_short_m || selectedOption.designation.name_de_short_w || ''
-                    } else if (lang === 'fr') {
-                      shortForm = selectedOption.designation.name_fr_short_m || selectedOption.designation.name_fr_short_w || ''
-                    } else if (lang === 'it') {
-                      shortForm = selectedOption.designation.name_it_short_m || selectedOption.designation.name_it_short_w || ''
-                    }
-
-                    setFormData(prev => ({
-                      ...prev,
-                      designation: selectedOption.displayText,
-                      designation_id: designationId,
-                      short_designation: shortForm
-                    }))
-                  } else {
-                    setFormData(prev => ({
-                      ...prev,
-                      designation: '',
-                      designation_id: null,
-                      short_designation: ''
-                    }))
-                  }
-
+                  setFormData(prev => ({ ...prev, designation_id: designationId }))
                   if (error) setError('')
                 }}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
@@ -580,11 +520,46 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 <option value="" className="bg-white">
                   {loadingDesignations ? 'Lade Bezeichnungen...' : 'Berufsbezeichnung auswählen'}
                 </option>
-                {filteredDesignations.map((option, index) => (
-                  <option key={`${option.id}-${index}`} value={option.id} className="bg-white">
-                    {option.displayText}
+                {designationOptions.map(option => (
+                  <option key={option.id} value={option.id} className="bg-white">
+                    {option.label}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            {/* Offizielle Berufsbezeichnung (verbatim, local language, profile-only) */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
+                Offizieller Titel (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.full_title}
+                onChange={(e) => handleInputChange('full_title', e.target.value)}
+                placeholder="z.B. Fachärztin für Psychiatrie und Psychotherapie FMH"
+                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                style={{ borderColor: '#ebebeb' }}
+                disabled={isSubmitting}
+                maxLength={255}
+              />
+            </div>
+
+            {/* Geschlecht (feeds the m/f therapist filter) */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
+                Geschlecht (optional)
+              </label>
+              <select
+                value={formData.gender}
+                onChange={(e) => handleInputChange('gender', e.target.value)}
+                className="w-full px-3 py-2 bg-white border rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                style={{ borderColor: '#ebebeb' }}
+                disabled={isSubmitting}
+              >
+                <option value="" className="bg-white">Keine Angabe</option>
+                <option value="f" className="bg-white">Weiblich</option>
+                <option value="m" className="bg-white">Männlich</option>
               </select>
             </div>
 
