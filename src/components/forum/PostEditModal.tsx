@@ -29,7 +29,7 @@ const PostEditModal: React.FC<PostEditModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 md:bg-[#edffef] flex items-center justify-center p-0 md:p-4 z-40">
-      <div className="w-screen h-screen md:rounded-lg md:max-w-4xl md:w-full md:max-h-[90vh] md:h-auto overflow-y-auto hide-scrollbar-desktop" style={{backgroundColor: '#ecffef'}}>
+      <div className="w-full h-full md:rounded-lg md:max-w-4xl md:max-h-[90vh] md:h-auto overflow-y-auto hide-scrollbar-desktop" style={{backgroundColor: '#ecffef'}}>
         <div className="px-4 md:px-6 pb-0 pt-[120px] md:pt-[35px]">
           <button
             onClick={onClose}

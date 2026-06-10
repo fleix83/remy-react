@@ -291,7 +291,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
       {/* Post Editor Dialog — Mobile only (full-screen modal) */}
       {showCreatePostDialog && (
         <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 z-[70]">
-          <div className="w-screen h-screen overflow-hidden flex flex-col relative" style={{backgroundColor: '#ecffef'}}>
+          <div className="w-full h-full overflow-hidden flex flex-col relative" style={{backgroundColor: '#ecffef'}}>
             <button
               onClick={onCreatePostDialogClose}
               className="absolute text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1 z-10"
