@@ -865,6 +865,7 @@ const ModerationQueue: React.FC = () => {
                       <select
                         value={item.designation_id ?? ''}
                         onClick={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
                         onChange={async (e) => {
                           e.stopPropagation()
                           const newId = e.target.value ? parseInt(e.target.value) : null
