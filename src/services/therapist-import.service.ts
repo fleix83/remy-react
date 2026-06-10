@@ -220,6 +220,12 @@ export class TherapistImportService {
     const fullTitle = row.designation?.trim() || ''
     const detectedGender = fullTitle ? this.detectGender(fullTitle) : null
     const designationId = fullTitle ? matchDesignation(fullTitle, designations) : null
+    // The gender filter only knows 'm'/'f' — normalize CSV input (accept German 'w')
+    // and fall back to keyword detection for anything else.
+    const csvGender = row.gender?.trim().toLowerCase()
+    const gender = csvGender === 'm' || csvGender === 'f' ? csvGender
+      : csvGender === 'w' ? 'f'
+      : detectedGender
 
     return {
       canton: row.canton?.trim() || null,
@@ -233,7 +239,7 @@ export class TherapistImportService {
       institution: row.institution?.trim() || null,
       description: row.description?.trim() || null,
       languages: row.languages?.trim() || null,
-      gender: row.gender?.trim() || detectedGender
+      gender
     }
   }
 

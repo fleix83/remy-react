@@ -116,12 +116,12 @@ export class TherapistsService {
   }
 
   // Update an existing therapist
-  async updateTherapist(id: number, updates: Partial<Therapist>): Promise<Therapist> {
+  async updateTherapist(id: number, updates: Partial<Therapist>): Promise<TherapistWithDesignation> {
     const { data, error } = await supabase
       .from('therapists')
       .update(updates)
       .eq('id', id)
-      .select()
+      .select(TherapistsService.SELECT_WITH_DESIGNATION)
       .single()
 
     if (error) {
@@ -129,7 +129,7 @@ export class TherapistsService {
       throw error
     }
 
-    return data
+    return data as TherapistWithDesignation
   }
 
   // Get a single therapist by ID
