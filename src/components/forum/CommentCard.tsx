@@ -160,7 +160,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           </div>
         ) : (
           <div 
-            className="prose prose-sm max-w-none text-[var(--type)] text-sm leading-relaxed text-left"
+            className="comment-content prose prose-sm max-w-none text-[var(--type)] text-sm leading-relaxed text-left"
             dangerouslySetInnerHTML={{ __html: comment.content }}
           />
         )}
@@ -172,7 +172,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           {/* Reply Link */}
           <button
             onClick={() => onReply(comment.id)}
-            className="inline-flex items-center space-x-1 text-sm text-gray-600 hover:text-[var(--primary)] transition-colors"
+            className="comment-reply-link inline-flex items-center space-x-1 text-sm text-gray-600 hover:text-[var(--primary)] transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />

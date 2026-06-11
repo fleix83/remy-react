@@ -746,3 +746,51 @@
     margin-top: calc(var(--spacing, 4px) * 9);
   }
 }
+
+/* ── Mobile-only post view adjustments ── */
+@media (max-width: 767px) {
+  /* Top nav header: warm pink to blend with the background.svg waves */
+  .main-nav {
+    background-color: #fff3f3;
+  }
+
+  /* Shorter top gradient, content pinned to the top */
+  .post-view-header {
+    height: 150px !important;
+    align-items: flex-start;
+  }
+  .post-view-header > div {
+    margin-top: 30px;
+  }
+
+  /* Comments container: tighter radius, near-white gray */
+  .comments-container {
+    border-radius: 10px !important;
+    background: #f9f9f9 !important;
+  }
+
+  /* Subtle white separator between top-level comments */
+  .comments-list > * + * {
+    border-top: 2px solid #fff;
+    padding-top: 20px;
+  }
+
+  /* Inline the leading @user mention paragraph into the comment text,
+     matching the text style, with a clear gap before the text starts */
+  .comment-content > p:first-child:has(> strong:only-child) {
+    display: inline;
+    margin-right: 0.6em;
+  }
+  .comment-content > p:first-child:has(> strong:only-child) > strong {
+    font-weight: inherit;
+    color: inherit;
+  }
+  .comment-content > p:first-child:has(> strong:only-child) + p {
+    display: inline;
+  }
+
+  /* Comment Antworten link in warm coral */
+  .comment-reply-link {
+    color: #ff8787 !important;
+  }
+}

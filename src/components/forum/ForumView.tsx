@@ -206,7 +206,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     <div className="min-h-screen">
       <div className="max-w-6xl forum-list-column mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className={`forum-navbar p-4 mb-4 mx-4 md:mx-0 relative ${showCreatePostDialog ? 'md:hidden' : ''}`} style={{borderRadius: '20px', backgroundColor: '#ffffff94', zIndex: 40}}>
+        <div className={`forum-navbar p-4 mb-4 mx-4 md:mx-0 relative ${showCreatePostDialog ? 'md:hidden' : ''}`} style={{borderRadius: '20px', backgroundColor: 'rgb(255 255 255 / 47%)', zIndex: 40}}>
           <div className="flex items-center gap-4">
             {/* Search Input */}
             <div className="forum-search relative flex-1">
@@ -217,7 +217,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 onChange={handleSearchChange}
                 onFocus={() => setSearchExpanded(true)}
                 onBlur={() => setSearchExpanded(false)}
-                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-[oklch(0.32_0_0)] focus:outline-none focus:ring-2 focus:ring-[#d9f7de] text-lg"
+                className="w-full pl-4 pr-10 py-2 bg-white text-gray-400 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ffd6d6] text-sm font-medium md:text-lg md:font-normal md:placeholder-[oklch(0.32_0_0)]"
                 style={{borderRadius: '20px'}}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
