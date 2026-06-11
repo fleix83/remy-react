@@ -79,8 +79,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
     <div 
       className={`p-6 mb-4 hover:opacity-80 transition-opacity cursor-pointer relative post-card-outline ${className}`}
       style={{
-        borderRadius: '20px',
-        background: '#ecffef'
+        borderRadius: '20px'
       }}
       onClick={handleClick}
     >
@@ -162,7 +161,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
               navigate(`/therapists?therapist=${post.therapists!.id}`)
             }}
             className="post-card-therapist text-left hover:underline active:opacity-60 cursor-pointer bg-transparent border-none p-0 m-0 block w-full transition-opacity duration-100"
-            style={{color: '#4785ff', fontSize: '12px', lineHeight: '1.2'}}
+            style={{color: 'rgb(255 135 135)', fontSize: '12px', lineHeight: '1.2'}}
           >
             Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists)}
           </button>
@@ -170,7 +169,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
 
         {/* Title - Auto-generated for Rant posts without title */}
         {getPostDisplayTitle(post.title, post.content, post.category_id) && (
-          <h3 className="post-card-title text-base md:text-xl font-semibold mb-1 leading-tight text-left" style={{color: 'var(--post-title)'}}>
+          <h3 className="post-card-title text-base md:text-xl font-semibold mb-1 leading-tight text-left" style={{color: '#000'}}>
             {getPostDisplayTitle(post.title, post.content, post.category_id)}
           </h3>
         )}
@@ -226,7 +225,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
             </svg>
           </div>
           {commentCount > 0 && (
-            <div className="absolute -top-1 -right-1 bg-red-400 text-white font-bold rounded-full w-4 h-4 flex items-center justify-center min-w-[1rem]" style={{fontSize: '0.6rem'}}>
+            <div className="absolute -top-1 -right-1 bg-[oklch(0.76_0.15_21.11)] text-white font-bold rounded-full w-4 h-4 flex items-center justify-center min-w-[1rem]" style={{fontSize: '0.6rem'}}>
               {commentCount > 99 ? '99+' : commentCount}
             </div>
           )}

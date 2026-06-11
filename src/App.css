@@ -51,7 +51,7 @@
   position: absolute;
   inset: 11px;
   border-radius: 10px;
-  border: 1px solid #95c7ff;
+  border: 1px solid #e7737340;
   pointer-events: none;
   mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 50%);
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 50%);
@@ -548,7 +548,7 @@
   .post-view-therapist {
     font-size: 17px !important;
     line-height: 1.6 !important;
-    color: rgb(71, 133, 255);
+    color: rgb(255 135 135);
   }
 
   /* Content preview / body text */
@@ -636,8 +636,8 @@
     padding: 8px;
   }
   .date-picker-dropdown .rdp-root {
-    --rdp-accent-color: var(--primary, #2ebe7a);
-    --rdp-range_middle-background-color: rgba(46, 190, 122, 0.15);
+    --rdp-accent-color: var(--primary, #ff8787);
+    --rdp-range_middle-background-color: rgba(255, 135, 135, 0.15);
     font-size: 0.85rem;
   }
 
@@ -725,20 +725,20 @@
 
   /* Inline canton hover */
   .canton-inline button:hover {
-    background-color: rgba(71, 133, 255, 0.08) !important;
-    color: #4785ff;
+    background-color: rgba(255, 135, 135, 0.08) !important;
+    color: #ff8787;
   }
 
   /* Forum navbar: transparent bg, more top margin */
   .forum-navbar {
-    background-color: rgb(239, 255, 241) !important;
+    background-color: #fff !important;
     margin-top: 90px;
     position: relative;
   }
 
-  /* Search input: white background */
+  /* Search input: light gray background */
   .forum-search input {
-    background-color: #fff !important;
+    background-color: #f5f5f5 !important;
   }
 
   /* First post card: reduce top margin */

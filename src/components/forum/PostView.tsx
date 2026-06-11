@@ -116,10 +116,10 @@ const PostView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#f6fff7' }}>
+      <div className="min-h-screen" style={{ backgroundColor: '#fff' }}>
         <div className="max-w-6xl mx-auto py-6 md:px-0">
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff8787]"></div>
           </div>
         </div>
       </div>
@@ -129,7 +129,7 @@ const PostView: React.FC = () => {
 
   if (!post && !loading) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#f6fff7' }}>
+      <div className="min-h-screen" style={{ backgroundColor: '#fff' }}>
         <div className="max-w-6xl mx-auto py-6 md:px-0">
           <div className="text-center py-12">
             <div className="text-red-400 mb-4">
@@ -156,13 +156,13 @@ const PostView: React.FC = () => {
   if (!post) return null
 
   return (
-    <div className="min-h-screen relative z-10" style={{ backgroundColor: 'rgb(238 250 240)' }}>
+    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#fff' }}>
       {/* Header bar */}
       <div
         className="w-full flex items-center justify-center relative"
         style={{
-          height: '65px',
-          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
+          height: '265px',
+          background: 'linear-gradient(#fae3e3 0%, rgb(255 255 255) 100%)'
         }}
       >
         <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
@@ -172,7 +172,7 @@ const PostView: React.FC = () => {
           <button
             onClick={() => navigate('/')}
             className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
-            style={{ color: 'var(--primary)' }}
+            style={{ color: 'var(--primary)', marginTop: '10px', marginRight: '30px' }}
           >
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -203,7 +203,6 @@ const PostView: React.FC = () => {
           className="p-6 mb-4 relative"
           style={{
             borderRadius: '30px',
-            backgroundColor: 'rgb(242, 251, 244)',
             zIndex: 1,
             paddingTop: '66px'
           }}
@@ -297,7 +296,7 @@ const PostView: React.FC = () => {
             <button
               onClick={() => navigate(`/therapists?therapist=${post.therapists!.id}`)}
               className="post-view-therapist text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
-              style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2'}}
+              style={{color: '#ff8787', fontSize: '13px', lineHeight: '1.2'}}
             >
               Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists, userProfile?.language_preference)}
             </button>

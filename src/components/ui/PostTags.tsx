@@ -27,7 +27,7 @@ const PostTags: React.FC<PostTagsProps> = ({ tags, className = '' }) => {
       {tags.slice(0, TAG_VISIBILITY.length).map((tag, index) => (
         <span
           key={tag}
-          className={`${TAG_VISIBILITY[index]} items-center whitespace-nowrap rounded-md bg-[#ffffff8f] px-2 py-0.5 font-medium text-black`}
+          className={`${TAG_VISIBILITY[index]} items-center whitespace-nowrap rounded-md bg-[#f5f5f5] px-2 py-0.5 font-medium text-black`}
           style={{ fontSize: '11px', lineHeight: '1.4' }}
         >
           {tag}

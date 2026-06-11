@@ -206,7 +206,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     <div className="min-h-screen">
       <div className="max-w-6xl forum-list-column mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className={`forum-navbar p-4 mb-4 mx-4 md:mx-0 relative ${showCreatePostDialog ? 'md:hidden' : ''}`} style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
+        <div className={`forum-navbar p-4 mb-4 mx-4 md:mx-0 relative ${showCreatePostDialog ? 'md:hidden' : ''}`} style={{borderRadius: '20px', backgroundColor: '#ffffff94', zIndex: 40}}>
           <div className="flex items-center gap-4">
             {/* Search Input */}
             <div className="forum-search relative flex-1">
@@ -221,7 +221,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 style={{borderRadius: '20px'}}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <svg className="h-4 w-4 text-[#2ebe7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 text-[#ff8787]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -497,7 +497,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff8787]"></div>
             </div>
           ) : displayPosts.length === 0 ? (
             <div className="text-center py-12">

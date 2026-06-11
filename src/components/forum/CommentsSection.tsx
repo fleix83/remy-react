@@ -56,7 +56,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
 
   if (loading) {
     return (
-      <div className="p-6" style={{borderRadius: '20px', background: '#ecffef'}}>
+      <div className="p-6" style={{borderRadius: '20px', background: 'rgb(242 242 242)'}}>
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary)]"></div>
         </div>
@@ -65,7 +65,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
   }
 
   return (
-    <div className="overflow-hidden" style={{borderRadius: '20px', background: '#ecffef'}}>
+    <div className="overflow-hidden" style={{borderRadius: '20px', background: 'rgb(242 242 242)'}}>
       {/* Main Comment Form */}
       {showCommentForm && (
         <div className="-mx-4 md:mx-0" id="comment-form">
