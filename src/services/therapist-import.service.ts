@@ -29,7 +29,8 @@ interface ParsedTherapist {
   designation_id: number | null
   needs_review: boolean
   institution: string | null
-  description: string | null
+  services: string | null
+  specialty: string | null
   languages: string | null
   gender: string | null
 }
@@ -194,7 +195,8 @@ export class TherapistImportService {
     if (therapist.full_title) count++
     if (therapist.gender) count++
     if (therapist.institution) count++
-    if (therapist.description) count++
+    if (therapist.services) count++
+    if (therapist.specialty) count++
     if (therapist.languages) count++
     if (therapist.city) count++
 
@@ -220,11 +222,11 @@ export class TherapistImportService {
     const fullTitle = row.designation?.trim() || ''
     const detectedGender = fullTitle ? this.detectGender(fullTitle) : null
     const designationId = fullTitle ? matchDesignation(fullTitle, designations) : null
-    // The gender filter only knows 'm'/'f' — normalize CSV input (accept German 'w')
-    // and fall back to keyword detection for anything else.
+    // The gender filter only knows 'm'/'f' — normalize CSV input (single letters
+    // or German words) and fall back to keyword detection for anything else.
     const csvGender = row.gender?.trim().toLowerCase()
-    const gender = csvGender === 'm' || csvGender === 'f' ? csvGender
-      : csvGender === 'w' ? 'f'
+    const gender = csvGender === 'm' || csvGender === 'männlich' || csvGender === 'mann' ? 'm'
+      : csvGender === 'f' || csvGender === 'w' || csvGender === 'weiblich' || csvGender === 'frau' ? 'f'
       : detectedGender
 
     return {
@@ -237,7 +239,10 @@ export class TherapistImportService {
       designation_id: designationId,
       needs_review: designationId === null,
       institution: row.institution?.trim() || null,
-      description: row.description?.trim() || null,
+      services: row.services?.trim() || null,
+      // The therapists table has no description column — the CSV's free-text
+      // description maps to the specialty column.
+      specialty: row.description?.trim() || null,
       languages: row.languages?.trim() || null,
       gender
     }

@@ -76,7 +76,6 @@ export class TherapistsService {
     designation_id: number
     full_title?: string
     institution?: string
-    description?: string
     languages?: string
     city?: string
     canton?: string
@@ -93,7 +92,6 @@ export class TherapistsService {
       institution: therapistData.institution?.trim() || null,
       designation_id: therapistData.designation_id,
       full_title: therapistData.full_title?.trim() || null,
-      description: therapistData.description?.trim() || null,
       languages: therapistData.languages?.trim() || null,
       city: therapistData.city?.trim() || null,
       canton: therapistData.canton || null,
@@ -234,7 +232,8 @@ export class TherapistsService {
     designation_id: number | null
     needs_review: boolean
     institution: string | null
-    description?: string | null
+    services?: string | null
+    specialty?: string | null
     languages?: string | null
     gender?: string | null
   }>): Promise<Therapist[]> {
@@ -263,7 +262,8 @@ export class TherapistsService {
       institution: t.institution?.trim() || null,
       full_title: t.full_title || null,
       designation_id: t.designation_id,
-      description: t.description?.trim() || null,
+      services: t.services?.trim() || null,
+      specialty: t.specialty?.trim() || null,
       languages: t.languages?.trim() || null,
       city: t.city?.trim() || null,
       canton: t.canton || null,
