@@ -17,6 +17,7 @@ export type Database = {
       categories: {
         Row: {
           access_role: Database["public"]["Enums"]["access_role"] | null
+          color: string | null
           description_de: string | null
           description_fr: string | null
           description_it: string | null
@@ -28,6 +29,7 @@ export type Database = {
         }
         Insert: {
           access_role?: Database["public"]["Enums"]["access_role"] | null
+          color?: string | null
           description_de?: string | null
           description_fr?: string | null
           description_it?: string | null
@@ -39,6 +41,7 @@ export type Database = {
         }
         Update: {
           access_role?: Database["public"]["Enums"]["access_role"] | null
+          color?: string | null
           description_de?: string | null
           description_fr?: string | null
           description_it?: string | null

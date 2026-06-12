@@ -3,6 +3,7 @@ import { TherapistsService } from '../../services/therapists.service'
 import { DesignationsService } from '../../services/designations.service'
 import { useCategories } from '../../hooks/usePosts'
 import { getDesignationLabel, therapistDesignationLabel } from '../../utils/designationHelpers'
+import { getCategoryName } from '../../utils/categoryHelpers'
 import { useAuthStore } from '../../stores/auth.store'
 import type { Designation, Therapist } from '../../types/database.types'
 
@@ -224,7 +225,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 <option value="">Alle Kategorien</option>
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
-                    {category.name_de}
+                    {getCategoryName(category, lang)}
                   </option>
                 ))}
               </select>

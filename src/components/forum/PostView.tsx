@@ -12,6 +12,8 @@ import PostTags from '../ui/PostTags'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { getPostDisplayTitle } from '../../utils/text.utils'
 import { therapistDesignationLabel } from '../../utils/designationHelpers'
+import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
+import { useCategories } from '../../hooks/usePosts'
 
 const PostView: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -63,20 +65,9 @@ const PostView: React.FC = () => {
     })
   }
 
-  const getCategoryColor = () => {
-    return 'text-black' // Always black text for category badges
-  }
-
-  const getCategoryBackground = (categoryId: number) => {
-    const backgrounds = {
-      1: 'var(--bg-erfahrung)',     // Yellow
-      2: 'var(--bg-suche)',         // Light Pink
-      3: 'var(--bg-austausch)',     // Light Blue
-      4: 'var(--bg-rant)',          // Light Purple
-      5: 'var(--bg-ressourcen)',    // Light Green
-    }
-    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
-  }
+  // Category colors/names are admin-managed (categories table)
+  const { data: allCategories } = useCategories()
+  const lang = userProfile?.language_preference
 
   const handleEditPost = async (postData: any) => {
     if (!post) return
@@ -212,14 +203,14 @@ const PostView: React.FC = () => {
             {/* Category Badge and Canton - Positioned relative to this wrapper */}
             <div className="absolute z-10 flex items-center space-x-2" style={{ top: '-53px' }}>
               <span
-                className={`inline-flex items-center px-2 py-0.5 font-medium ${getCategoryColor()}`}
+                className="inline-flex items-center px-2 py-0.5 font-medium text-black"
                 style={{
                   fontSize: '0.65rem',
-                  backgroundColor: getCategoryBackground(post.category_id),
+                  backgroundColor: getCategoryColorById(post.category_id, allCategories),
                   borderRadius: '3px'
                 }}
               >
-                {post.categories?.name_de}
+                {getCategoryName(post.categories, lang)}
               </span>
               {post.canton && (
                 <>
