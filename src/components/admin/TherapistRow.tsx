@@ -48,7 +48,8 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
   const handleTextUpdate = (field: keyof Therapist) => (v: string) => handleUpdate(field, v.trim() || null)
 
   const handleDelete = async () => {
-    if (!(await confirmDialog({ message: `Möchten Sie "${therapist.first_name} ${therapist.last_name}" wirklich löschen?`, confirmLabel: 'Löschen', danger: true }))) return
+    const entryName = `${therapist.first_name} ${therapist.last_name}`.trim() || therapist.institution || 'diesen Eintrag'
+    if (!(await confirmDialog({ message: `Möchten Sie "${entryName}" wirklich löschen?`, confirmLabel: 'Löschen', danger: true }))) return
     setIsDeleting(true)
     try {
       await therapistsService.deleteTherapist(therapist.id)

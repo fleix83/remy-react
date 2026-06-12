@@ -81,6 +81,20 @@ const TherapistDirectoryPage: React.FC = () => {
     await logout()
   }
 
+  // Derived display values: institution-only entries use the institution as the
+  // title; entries with both a name and an institution get "Titel bei Institution"
+  const therapistName = selectedTherapist
+    ? therapistsService.formatTherapistName(selectedTherapist).trim()
+    : ''
+  const designationLabel = selectedTherapist?.designations
+    ? getDesignationLabel(selectedTherapist.designations, userProfile?.language_preference)
+    : ''
+  const officialTitle = selectedTherapist?.full_title || designationLabel
+  const displayName = therapistName || selectedTherapist?.institution || ''
+  const titleLine = therapistName && selectedTherapist?.institution
+    ? (officialTitle ? `${officialTitle} bei ${selectedTherapist.institution}` : selectedTherapist.institution)
+    : officialTitle
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('de-DE', {
       day: '2-digit',
@@ -90,15 +104,9 @@ const TherapistDirectoryPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#eefaf0' }}>
+    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#fff' }}>
       {/* Header bar - matching PostView */}
-      <div
-        className="w-full flex items-center justify-center relative"
-        style={{
-          height: '65px',
-          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
-        }}
-      >
+      <div className="therapist-page-header w-full flex items-center justify-center relative">
         <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
           {/* Invisible spacer to balance the avatar and center the back button */}
           <div className="w-6 h-6"></div>
@@ -136,7 +144,7 @@ const TherapistDirectoryPage: React.FC = () => {
 
         {/* Lead text */}
         <p className="text-gray-700 leading-relaxed mb-8 text-base text-left">
-          Finde hier alle Therapeut:innen und Institutionen und dazugehörige Erfahrungsberichte.
+          Hier findest du alle Therapeut:innen und Institutionen und dazugehörige Erfahrungsberichte.
         </p>
 
         {/* White container for search and results */}
@@ -181,9 +189,9 @@ const TherapistDirectoryPage: React.FC = () => {
               )}
 
               {/* Therapist name with canton flag */}
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="text-xl font-bold text-[#37a653] text-left">
-                  {therapistsService.formatTherapistName(selectedTherapist)}
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-xl font-bold text-[#3b71e6] text-left">
+                  {displayName}
                 </h3>
                 {selectedTherapist.canton && (
                   <img
@@ -201,45 +209,49 @@ const TherapistDirectoryPage: React.FC = () => {
                 )}
               </div>
 
+              {/* Town, Kanton */}
+              {(selectedTherapist.city || selectedTherapist.canton) && (
+                <p className="text-gray-700 text-left mb-4">
+                  {[selectedTherapist.city, selectedTherapist.canton].filter(Boolean).join(', ')}
+                </p>
+              )}
+
               <div className="space-y-2 text-left mb-6">
-                {/* Curated designation (UI language) + verbatim professional title */}
-                {selectedTherapist.designations && (
-                  <p className="text-gray-700 font-medium">
-                    {getDesignationLabel(selectedTherapist.designations, userProfile?.language_preference)}
-                  </p>
-                )}
-                {selectedTherapist.full_title && (
-                  <p className="text-gray-600 text-sm">
-                    {selectedTherapist.full_title}
-                  </p>
-                )}
-
-                {/* Institution - without label */}
-                {selectedTherapist.institution && (
-                  <p className="text-gray-700">
-                    {selectedTherapist.institution}
-                  </p>
+                {/* Official title ("Titel bei Institution" when both exist) +
+                    curated designation (UI language) in parentheses directly below */}
+                {titleLine && (
+                  <div>
+                    <p className="text-gray-700 font-medium">
+                      {titleLine}
+                    </p>
+                    {selectedTherapist.full_title && designationLabel && (
+                      <p className="text-gray-600 text-sm">
+                        ({designationLabel})
+                      </p>
+                    )}
+                  </div>
                 )}
 
-                {/* City */}
-                {selectedTherapist.city && (
-                  <p className="text-gray-700 mt-2">
-                    <strong>Stadt:</strong> {selectedTherapist.city}
+                {/* Specialties */}
+                {selectedTherapist.specialty && (
+                  <p className="text-gray-700 pt-3">
+                    {selectedTherapist.specialty}
                   </p>
                 )}
 
                 {/* Languages */}
                 {selectedTherapist.languages && (
-                  <p className="text-gray-700 mt-2">
-                    <strong>Sprachen:</strong> {selectedTherapist.languages}
-                  </p>
+                  <div className="pt-6">
+                    <p className="text-gray-900 font-semibold mb-1">Sprachen</p>
+                    <p className="text-gray-700">{selectedTherapist.languages}</p>
+                  </div>
                 )}
               </div>
 
               {/* Posts Container */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <h4 className="text-lg font-bold text-gray-900 mb-4 text-left">
-                  Beiträge über {selectedTherapist.first_name} {selectedTherapist.last_name}
+                  Beiträge über {displayName}
                 </h4>
 
                 {isLoadingPosts ? (
@@ -260,11 +272,16 @@ const TherapistDirectoryPage: React.FC = () => {
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <h5 className="font-semibold text-[#37a653] hover:text-[#2d8542] mb-2">
+                              <h5 className="font-semibold text-[#ff6467] mb-2">
                                 {post.title}
                               </h5>
                               <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                                <span>{post.users?.username || 'Anonym'}</span>
+                                <span className="flex items-center gap-1.5">
+                                  {post.users && (
+                                    <UserAvatar user={post.users} size="small" />
+                                  )}
+                                  {post.users?.username || 'Anonym'}
+                                </span>
                                 <span>•</span>
                                 <span>{post.created_at ? formatDate(post.created_at) : 'Unbekannt'}</span>
                               </div>

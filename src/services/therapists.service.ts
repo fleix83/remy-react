@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase'
 import { therapistDesignationLabel } from '../utils/designationHelpers'
+import { formatTherapistPersonName } from '../utils/therapistHelpers'
 import type { Therapist, TherapistWithDesignation } from '../types/database.types'
 
 export class TherapistsService {
@@ -76,29 +77,30 @@ export class TherapistsService {
     return TherapistsService.excludeInactive((data || []) as TherapistWithDesignation[])
   }
 
-  // Create a new therapist
+  // Create a new therapist entry. Institution-only entries pass no personal
+  // name and no designation_id; the NOT NULL name columns get ''.
   async createTherapist(therapistData: {
-    form_of_address: string
-    first_name: string
-    last_name: string
-    designation_id: number
-    full_title?: string
-    institution?: string
-    languages?: string
-    city?: string
-    canton?: string
-    gender?: string
+    form_of_address?: string | null
+    first_name?: string | null
+    last_name?: string | null
+    designation_id?: number | null
+    full_title?: string | null
+    institution?: string | null
+    languages?: string | null
+    city?: string | null
+    canton?: string | null
+    gender?: string | null
   }): Promise<TherapistWithDesignation> {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError) throw new Error('Authentication failed: ' + authError.message)
     if (!user) throw new Error('User not authenticated')
 
     const insertData = {
-      form_of_address: therapistData.form_of_address,
-      first_name: therapistData.first_name.trim(),
-      last_name: therapistData.last_name.trim(),
+      form_of_address: therapistData.form_of_address?.trim() || '',
+      first_name: therapistData.first_name?.trim() || '',
+      last_name: therapistData.last_name?.trim() || '',
       institution: therapistData.institution?.trim() || null,
-      designation_id: therapistData.designation_id,
+      designation_id: therapistData.designation_id ?? null,
       full_title: therapistData.full_title?.trim() || null,
       languages: therapistData.languages?.trim() || null,
       city: therapistData.city?.trim() || null,
@@ -174,26 +176,25 @@ export class TherapistsService {
     console.log('✅ TherapistsService: Therapist deleted successfully')
   }
 
-  // Format therapist display name
+  // Personal display name; '' for institution-only entries
   formatTherapistName(therapist: TherapistWithDesignation): string {
-    const nameparts = [
-      therapist.form_of_address,
-      therapist.first_name,
-      therapist.last_name
-    ].filter(Boolean)
-
-    return nameparts.join(' ')
+    return formatTherapistPersonName(therapist)
   }
 
-  // Format therapist display with institution
+  // Full display string: "Name (Details)". Institution-only entries use the
+  // institution as the name (with the verbatim official designation), so it
+  // is not repeated in the details.
   formatTherapistDisplay(therapist: TherapistWithDesignation): string {
-    const name = this.formatTherapistName(therapist)
+    const personName = this.formatTherapistName(therapist)
+    const name = personName || therapist.institution || ''
     const details = []
 
-    const label = therapistDesignationLabel(therapist)
+    const label = personName
+      ? therapistDesignationLabel(therapist)
+      : therapist.full_title || therapistDesignationLabel(therapist)
     if (label) { details.push(label) }
 
-    if (therapist.institution) {
+    if (personName && therapist.institution) {
       details.push(therapist.institution)
     }
 

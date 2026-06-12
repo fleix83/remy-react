@@ -801,3 +801,16 @@
     font-weight: 500;
   }
 }
+
+/* ── Therapeuten page header ── */
+/* Desktop: tall blue-to-white gradient band (mirrors .post-view-header) */
+.therapist-page-header {
+  height: 265px;
+  background: linear-gradient(rgb(230, 238, 255) 0%, rgb(255 255 255) 100%, rgb(255 255 255) 100%);
+}
+@media (max-width: 767px) {
+  .therapist-page-header {
+    height: 65px;
+    background: linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, rgb(255 255 255) 100%);
+  }
+}

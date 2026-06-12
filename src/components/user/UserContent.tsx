@@ -6,7 +6,7 @@ import { useAuthStore } from '../../stores/auth.store'
 import PostEditModal from '../forum/PostEditModal'
 import { supabase } from '../../lib/supabase'
 import type { PostWithRelations, CommentWithUser, Post } from '../../types/database.types'
-import { therapistDesignationLabel } from '../../utils/designationHelpers'
+import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
 import { useCategories } from '../../hooks/usePosts'
 import { confirmDialog } from '../../stores/confirm.store'
@@ -366,7 +366,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists)}
+                            Erfahrung mit {formatTherapistPostLine(post.therapists)}
                           </div>
                         )}
 
@@ -554,7 +554,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            Erfahrung mit {draft.therapists.form_of_address} {draft.therapists.first_name} {draft.therapists.last_name}, {therapistDesignationLabel(draft.therapists)}
+                            Erfahrung mit {formatTherapistPostLine(draft.therapists)}
                           </div>
                         )}
 

@@ -10,7 +10,7 @@ export class UserContentService {
         .select(`
           *,
           categories(id, name_de),
-          therapists(id, form_of_address, first_name, last_name, full_title, designation_id, gender, institution, canton, designations(id, slug, label_de, label_fr, label_it))
+          therapists(id, form_of_address, first_name, last_name, full_title, designation_id, gender, institution, city, canton, designations(id, slug, label_de, label_fr, label_it))
         `)
         .eq('user_id', userId)
         .eq('is_active', true) // Only show active posts
@@ -63,7 +63,7 @@ export class UserContentService {
         .select(`
           *,
           categories(id, name_de),
-          therapists(id, form_of_address, first_name, last_name, full_title, designation_id, gender, institution, canton, designations(id, slug, label_de, label_fr, label_it))
+          therapists(id, form_of_address, first_name, last_name, full_title, designation_id, gender, institution, city, canton, designations(id, slug, label_de, label_fr, label_it))
         `)
         .eq('user_id', userId)
         .eq('is_active', true) // Only show active drafts

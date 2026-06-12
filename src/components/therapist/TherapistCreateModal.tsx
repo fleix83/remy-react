@@ -7,6 +7,7 @@ import { downloadTherapistCSVTemplate } from '../../utils/therapist-csv-template
 import { usePermissions } from '../../hooks/usePermissions'
 import { useAuthStore } from '../../stores/auth.store'
 import { getDesignationLabel } from '../../utils/designationHelpers'
+import { getTherapistEntryType, type TherapistEntryType } from '../../utils/therapistHelpers'
 import type { Therapist, Designation } from '../../types/database.types'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { FORMS_OF_ADDRESS } from '../../constants/therapist.constants'
@@ -28,6 +29,8 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 }) => {
   const isEditMode = !!therapist
 
+  // person (default) | person_institution (works at a clinic etc.) | institution
+  const [entryType, setEntryType] = useState<TherapistEntryType>('person')
   const [formData, setFormData] = useState({
     canton: preselectedCanton,
     form_of_address: '',
@@ -71,6 +74,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   // Initialize form data when therapist prop changes (edit mode)
   useEffect(() => {
     if (therapist) {
+      setEntryType(getTherapistEntryType(therapist))
       setFormData({
         canton: therapist.canton || '',
         form_of_address: therapist.form_of_address || '',
@@ -116,6 +120,11 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
       [field]: value
     }))
     // Clear error when user starts typing
+    if (error) setError('')
+  }
+
+  const handleEntryTypeChange = (type: TherapistEntryType) => {
+    setEntryType(type)
     if (error) setError('')
   }
 
@@ -193,6 +202,14 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
       setError('Bitte wählen Sie einen Kanton aus')
       return false
     }
+    if (entryType !== 'person' && !formData.institution.trim()) {
+      setError('Bitte geben Sie den Namen der Institution ein')
+      return false
+    }
+    if (entryType === 'institution') {
+      // Art der Institution (full_title) is optional
+      return true
+    }
     if (!formData.first_name.trim()) {
       setError('Bitte geben Sie den Vornamen ein')
       return false
@@ -222,34 +239,26 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
       let resultTherapist: Therapist
 
+      // Normalize per entry type so fields hidden in the form never carry
+      // stale values (relevant when an edit switches the type).
+      const isInstitutionOnly = entryType === 'institution'
+      const payload = {
+        canton: formData.canton || null,
+        form_of_address: isInstitutionOnly ? '' : formData.form_of_address,
+        first_name: isInstitutionOnly ? '' : formData.first_name.trim(),
+        last_name: isInstitutionOnly ? '' : formData.last_name.trim(),
+        designation_id: isInstitutionOnly ? null : formData.designation_id,
+        full_title: formData.full_title.trim() || null,
+        institution: entryType === 'person' ? null : formData.institution.trim() || null,
+        languages: formData.languages.trim() || null,
+        city: formData.city.trim() || null,
+        gender: isInstitutionOnly ? null : formData.gender || null
+      }
+
       if (isEditMode && therapist) {
-        // Update existing therapist
-        resultTherapist = await therapistsService.updateTherapist(therapist.id, {
-          canton: formData.canton || null,
-          form_of_address: formData.form_of_address,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          designation_id: formData.designation_id,
-          full_title: formData.full_title.trim() || null,
-          institution: formData.institution || null,
-          languages: formData.languages || null,
-          city: formData.city || null,
-          gender: formData.gender || null
-        })
+        resultTherapist = await therapistsService.updateTherapist(therapist.id, payload)
       } else {
-        // Create new therapist
-        resultTherapist = await therapistsService.createTherapist({
-          canton: formData.canton,
-          form_of_address: formData.form_of_address,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          designation_id: formData.designation_id!,
-          full_title: formData.full_title || undefined,
-          institution: formData.institution || undefined,
-          languages: formData.languages || undefined,
-          city: formData.city || undefined,
-          gender: formData.gender || undefined
-        })
+        resultTherapist = await therapistsService.createTherapist(payload)
       }
 
       console.log(`✅ TherapistCreateModal: Therapist ${isEditMode ? 'updated' : 'created'} successfully:`, resultTherapist)
@@ -258,6 +267,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
       // Reset form
       if (!isEditMode) {
+        setEntryType('person')
         setFormData({
           canton: preselectedCanton,
           form_of_address: '',
@@ -289,22 +299,22 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   if (!isOpen) return null
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/50 md:bg-[#edffef] flex items-center justify-center p-0 md:p-4 z-50">
-      <div className="w-full h-full md:rounded-lg md:max-w-4xl md:max-h-[90vh] md:h-auto overflow-y-auto hide-scrollbar-desktop" style={{ backgroundColor: '#ecffef' }}>
+    <div className="fixed inset-0 bg-black/50 md:bg-[#f8f5e6] flex items-center justify-center p-0 md:p-4 z-50">
+      <div className="w-full h-full md:rounded-lg md:max-w-4xl md:max-h-[90vh] md:h-auto overflow-y-auto hide-scrollbar-desktop md:shadow-[0_8px_30px_rgba(20,66,32,0.12)]" style={{ backgroundColor: '#fff9e2' }}>
         {/* Header */}
         <div className="px-4 md:px-6 pb-0 pt-[120px] md:pt-[35px]">
           <button
             onClick={handleClose}
             disabled={isSubmitting}
-            className="fixed md:absolute z-10 text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1.5 md:p-1 rounded-full bg-[#ecffef]/85 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none top-[44px] right-[28px] md:top-[50px] md:right-[50px] disabled:opacity-50"
+            className="fixed md:absolute z-10 text-[var(--primary)] hover:opacity-80 transition-opacity p-1.5 md:p-1 rounded-full bg-[#fff9e2]/85 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none top-[44px] right-[28px] md:top-[50px] md:right-[50px] disabled:opacity-50"
           >
             <svg className="w-8 h-8 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
           <div className="hidden md:block mb-10"></div>
-          <h2 className="font-headline font-bold text-left mb-12 md:mb-0" style={{ color: '#4785ff', fontSize: '20px' }}>
-            {isEditMode ? 'Therapeut bearbeiten' : 'Neuen Therapeuten hinzufügen'}
+          <h2 className="font-headline font-bold text-left mb-12 md:mb-0" style={{ color: 'var(--primary)', fontSize: '20px' }}>
+            {isEditMode ? 'Eintrag bearbeiten' : 'Therapeut:in oder Institution hinzufügen'}
           </h2>
         </div>
 
@@ -340,7 +350,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   <button
                     type="button"
                     onClick={handleDownloadTemplate}
-                    className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors flex items-center justify-center space-x-2"
+                    className="w-full px-4 py-2 bg-white hover:bg-gray-100 text-gray-700 rounded transition-colors flex items-center justify-center space-x-2"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -355,7 +365,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                       accept=".csv"
                       onChange={handleCSVImport}
                       disabled={isImporting || isSubmitting}
-                      className="w-full px-3 py-2 bg-white border rounded text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-3 py-2 bg-white border rounded text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#fdeeee] file:text-[#f55252] hover:file:bg-[#fbdddd] disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{ borderColor: '#ebebeb' }}
                     />
                   </div>
@@ -418,7 +428,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 px-4 py-3 rounded">
+              <div className="px-4 py-3 rounded" style={{ backgroundColor: '#fdeeee', border: '1px solid #f55252', color: '#d32f2f' }}>
                 {error}
               </div>
             )}
@@ -444,6 +454,51 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
               </select>
             </div>
 
+            {/* Eintragstyp: keine Auswahl = Einzelperson */}
+            <div className="space-y-2 pt-1">
+              <label className="flex items-start gap-2 text-sm cursor-pointer" style={{ color: 'var(--primary)' }}>
+                <input
+                  type="checkbox"
+                  checked={entryType === 'person_institution'}
+                  onChange={(e) => handleEntryTypeChange(e.target.checked ? 'person_institution' : 'person')}
+                  disabled={isSubmitting}
+                  className="mt-0.5 accent-[var(--primary)]"
+                />
+                <span>Therapeut:in arbeitet in einer Institution (z.&nbsp;B. Klinik)</span>
+              </label>
+              <label className="flex items-start gap-2 text-sm cursor-pointer" style={{ color: 'var(--primary)' }}>
+                <input
+                  type="checkbox"
+                  checked={entryType === 'institution'}
+                  onChange={(e) => handleEntryTypeChange(e.target.checked ? 'institution' : 'person')}
+                  disabled={isSubmitting}
+                  className="mt-0.5 accent-[var(--primary)]"
+                />
+                <span>Eintrag ist eine Institution (keine einzelne Person)</span>
+              </label>
+            </div>
+
+            {/* Name der Institution (Typen 2 und 3) */}
+            {entryType !== 'person' && (
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
+                  Name der Institution
+                </label>
+                <input
+                  type="text"
+                  value={formData.institution}
+                  onChange={(e) => handleInputChange('institution', e.target.value)}
+                  placeholder="z.B. Klinik, Tagesstruktur, Programm"
+                  className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                  style={{ borderColor: '#ebebeb' }}
+                  disabled={isSubmitting}
+                  maxLength={200}
+                />
+              </div>
+            )}
+
+            {entryType !== 'institution' && (
+            <>
             {/* Anrede */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
@@ -527,16 +582,22 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
               </select>
             </div>
 
-            {/* Offizielle Berufsbezeichnung (verbatim, local language, profile-only) */}
+            </>
+            )}
+
+            {/* Offizielle Berufsbezeichnung (verbatim, local language). Für
+                Institutionen die Art der Einrichtung — und dort Pflichtfeld. */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Offizieller Titel (optional)
+                {entryType === 'institution' ? 'Art der Institution oder Abteilung (optional)' : 'Offizieller Titel (optional)'}
               </label>
               <input
                 type="text"
                 value={formData.full_title}
                 onChange={(e) => handleInputChange('full_title', e.target.value)}
-                placeholder="z.B. Fachärztin für Psychiatrie und Psychotherapie FMH"
+                placeholder={entryType === 'institution'
+                  ? 'z.B. Psychiatrische Klinik, Tagesklinik'
+                  : 'z.B. Fachärztin für Psychiatrie und Psychotherapie FMH'}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
@@ -545,6 +606,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             </div>
 
             {/* Geschlecht (feeds the m/f therapist filter) */}
+            {entryType !== 'institution' && (
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
                 Geschlecht (optional)
@@ -561,23 +623,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 <option value="m" className="bg-white">Männlich</option>
               </select>
             </div>
-
-            {/* Institution */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Institution (Erfahrung mit Institution oder Institution in der dein Therapeut tätig war)
-              </label>
-              <input
-                type="text"
-                value={formData.institution}
-                onChange={(e) => handleInputChange('institution', e.target.value)}
-                placeholder="z.B. Klinik, Tagesstruktur, Programm"
-                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                style={{ borderColor: '#ebebeb' }}
-                disabled={isSubmitting}
-                maxLength={200}
-              />
-            </div>
+            )}
 
             {/* City */}
             <div>
@@ -633,15 +679,15 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   type="button"
                   onClick={handleClose}
                   disabled={isSubmitting || isDeleting}
-                  className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-sm bg-white hover:bg-gray-100 text-gray-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Abbrechen
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting || isDeleting}
-                  className="px-3 py-1.5 text-sm text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: '#4785ff' }}
+                  className="px-3 py-1.5 text-sm text-white font-medium rounded transition-colors hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ backgroundColor: 'var(--primary)' }}
                 >
                   {isSubmitting ? 'Speichern...' : 'Speichern'}
                 </button>
@@ -651,20 +697,20 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
           {/* Delete Confirmation Dialog */}
           {showDeleteConfirm && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
-              <div className="bg-white rounded-lg max-w-sm w-full p-6 shadow-xl">
+            <div className="fixed inset-0 bg-black/50 md:bg-[#f8f5e6]/90 md:backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
+              <div className="bg-[#fff9e2] rounded-2xl max-w-sm w-full p-6 shadow-[0_8px_30px_rgba(20,66,32,0.12)]">
                 <h3 className="text-lg font-bold mb-3" style={{ color: 'var(--primary)' }}>
-                  Therapeut löschen?
+                  {entryType === 'institution' ? 'Institution löschen?' : 'Therapeut löschen?'}
                 </h3>
                 <p className="mb-6 text-gray-700">
-                  Sind Sie sicher, dass Sie <strong>{formData.first_name} {formData.last_name}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.
+                  Sind Sie sicher, dass Sie <strong>{entryType === 'institution' ? formData.institution : `${formData.first_name} ${formData.last_name}`.trim()}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.
                 </p>
                 <div className="flex justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setShowDeleteConfirm(false)}
                     disabled={isDeleting}
-                    className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors disabled:opacity-50"
+                    className="px-3 py-1.5 text-sm bg-white hover:bg-gray-100 text-gray-700 rounded transition-colors disabled:opacity-50"
                   >
                     Abbrechen
                   </button>

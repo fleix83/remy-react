@@ -314,7 +314,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
               {/* Therapist Suggestions Dropdown */}
               {showTherapistDropdown && therapistSuggestions.length > 0 && (
                 <div className="absolute z-40 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                  {therapistSuggestions.map((therapist) => (
+                  {therapistSuggestions.map((therapist) => {
+                    // Institution-only entries use the institution as their name
+                    const personName = therapistsService.formatTherapistName(therapist)
+                    return (
                     <div
                       key={therapist.id}
                       onMouseDown={(e) => e.preventDefault()} // Prevent blur on click
@@ -322,14 +325,15 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                       className="px-3 py-2 cursor-pointer hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
                     >
                       <div className="font-medium text-gray-900 text-sm">
-                        {therapistsService.formatTherapistName(therapist)}
+                        {personName || therapist.institution}
                       </div>
                       <div className="text-xs text-gray-600">
                         {therapistDesignationLabel(therapist)}
-                        {therapist.institution && ` • ${therapist.institution}`}
+                        {personName && therapist.institution && ` • ${therapist.institution}`}
                       </div>
                     </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>

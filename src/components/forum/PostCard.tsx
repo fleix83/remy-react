@@ -4,7 +4,7 @@ import type { PostWithRelations } from '../../types/database.types'
 import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
 import { getPostDisplayTitle } from '../../utils/text.utils'
-import { therapistDesignationLabel } from '../../utils/designationHelpers'
+import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
 import { useCategories } from '../../hooks/usePosts'
 import { useAuthStore } from '../../stores/auth.store'
@@ -155,7 +155,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
             className="post-card-therapist text-left hover:underline active:opacity-60 cursor-pointer bg-transparent border-none p-0 m-0 block w-full transition-opacity duration-100"
             style={{color: 'rgb(255 135 135)', fontSize: '12px', lineHeight: '1.2'}}
           >
-            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists)}
+            Erfahrung mit {formatTherapistPostLine(post.therapists)}
           </button>
         )}
 

@@ -32,7 +32,7 @@ interface PostFilters {
 
 export class PostsService {
   private static therapistEmbed(inner: boolean): string {
-    return `therapists${inner ? '!inner' : ''}(id, form_of_address, first_name, last_name, full_title, designation_id, gender, institution, canton, designations(id, slug, label_de, label_fr, label_it))`
+    return `therapists${inner ? '!inner' : ''}(id, form_of_address, first_name, last_name, full_title, designation_id, gender, institution, city, canton, designations(id, slug, label_de, label_fr, label_it))`
   }
 
   // Get all published posts with user and category information
