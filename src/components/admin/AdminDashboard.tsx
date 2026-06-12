@@ -3,6 +3,7 @@ import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationService } from '../../services/moderation.service'
 import UserAvatar from '../user/UserAvatar'
 import DesignationsTab from './DesignationsTab'
+import TherapistsTab from './TherapistsTab'
 import CategoriesTab from './CategoriesTab'
 import CmsTab from './CmsTab'
 import type { User } from '../../types/database.types'
@@ -16,12 +17,13 @@ interface ModerationStats {
   totalComments: number
 }
 
-type TabId = 'overview' | 'users' | 'designations' | 'categories' | 'cms'
+type TabId = 'overview' | 'users' | 'therapists' | 'designations' | 'categories' | 'cms'
 
 // Outline icon paths (24x24, stroke) matching the app's icon style
 const TAB_ICONS: Record<TabId, string> = {
   overview: 'M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 8.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25A2.25 2.25 0 0113.5 8.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z',
   users: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z',
+  therapists: 'M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z',
   designations: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z',
   categories: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z',
   cms: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
@@ -107,6 +109,7 @@ const AdminDashboard: React.FC = () => {
   const tabs: { id: TabId; label: string }[] = [
     { id: 'overview', label: 'Übersicht' },
     { id: 'users', label: 'Benutzer' },
+    ...(permissions.isAdmin ? [{ id: 'therapists' as TabId, label: 'Therapeuten' }] : []),
     ...(permissions.isAdmin ? [{ id: 'designations' as TabId, label: 'Bezeichnungen' }] : []),
     ...(permissions.isAdmin ? [{ id: 'categories' as TabId, label: 'Kategorien' }] : []),
     ...(permissions.isAdmin ? [{ id: 'cms' as TabId, label: 'Cms' }] : []),
@@ -274,6 +277,11 @@ const AdminDashboard: React.FC = () => {
               </table>
             </div>
           </div>
+        )}
+
+        {/* Therapists Tab */}
+        {activeTab === 'therapists' && permissions.isAdmin && (
+          <TherapistsTab />
         )}
 
         {/* Designations Tab */}

@@ -8,8 +8,15 @@ export class TherapistsService {
   private static readonly LIST_LIMIT = 1000
   private static readonly SELECT_WITH_DESIGNATION = '*, designations(id, slug, label_de, label_fr, label_it)'
 
-  // Get all therapists
-  async getTherapists(): Promise<TherapistWithDesignation[]> {
+  // Deactivated therapists are hidden from public lists but kept for admin.
+  // Filtered client-side (lists are bounded by LIST_LIMIT) so queries keep
+  // working even before migration 021 adds the is_active column.
+  private static excludeInactive(rows: TherapistWithDesignation[]): TherapistWithDesignation[] {
+    return rows.filter((t) => t.is_active !== false)
+  }
+
+  // Get all therapists; pass includeInactive=true for admin views
+  async getTherapists(includeInactive = false): Promise<TherapistWithDesignation[]> {
     console.log('🔧 TherapistsService: Getting all therapists...')
 
     const { data, error } = await supabase
@@ -25,7 +32,8 @@ export class TherapistsService {
     }
 
     console.log('✅ TherapistsService: Fetched therapists:', data?.length || 0, 'records')
-    return (data || []) as TherapistWithDesignation[]
+    const rows = (data || []) as TherapistWithDesignation[]
+    return includeInactive ? rows : TherapistsService.excludeInactive(rows)
   }
 
   // Search therapists by name, institution, or full_title
@@ -47,7 +55,7 @@ export class TherapistsService {
       throw error
     }
 
-    return (data || []) as TherapistWithDesignation[]
+    return TherapistsService.excludeInactive((data || []) as TherapistWithDesignation[])
   }
 
   // Get therapists by canton
@@ -65,7 +73,7 @@ export class TherapistsService {
       throw error
     }
 
-    return (data || []) as TherapistWithDesignation[]
+    return TherapistsService.excludeInactive((data || []) as TherapistWithDesignation[])
   }
 
   // Create a new therapist

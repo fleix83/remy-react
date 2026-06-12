@@ -501,6 +501,7 @@ export type Database = {
           gender: string | null
           id: number
           institution: string | null
+          is_active: boolean
           languages: string | null
           last_name: string
           needs_review: boolean | null
@@ -522,6 +523,7 @@ export type Database = {
           gender?: string | null
           id?: number
           institution?: string | null
+          is_active?: boolean
           languages?: string | null
           last_name: string
           needs_review?: boolean | null
@@ -543,6 +545,7 @@ export type Database = {
           gender?: string | null
           id?: number
           institution?: string | null
+          is_active?: boolean
           languages?: string | null
           last_name?: string
           needs_review?: boolean | null

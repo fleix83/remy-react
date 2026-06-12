@@ -289,22 +289,21 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   if (!isOpen) return null
 
   return createPortal(
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="w-full h-full overflow-y-auto" style={{ backgroundColor: '#ecffef' }}>
+    <div className="fixed inset-0 bg-black/50 md:bg-[#edffef] flex items-center justify-center p-0 md:p-4 z-50">
+      <div className="w-full h-full md:rounded-lg md:max-w-4xl md:max-h-[90vh] md:h-auto overflow-y-auto hide-scrollbar-desktop" style={{ backgroundColor: '#ecffef' }}>
         {/* Header */}
-        <div className="px-4 md:px-6 pb-0" style={{ paddingTop: '35px' }}>
+        <div className="px-4 md:px-6 pb-0 pt-[120px] md:pt-[35px]">
           <button
             onClick={handleClose}
             disabled={isSubmitting}
-            className="absolute text-gray-500 hover:text-gray-700 transition-colors p-1 disabled:opacity-50"
-            style={{ top: '35px', right: '25px' }}
+            className="fixed md:absolute z-10 text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1.5 md:p-1 rounded-full bg-[#ecffef]/85 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none top-[44px] right-[28px] md:top-[50px] md:right-[50px] disabled:opacity-50"
           >
-            <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-8 h-8 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <div className="mb-10"></div>
-          <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
+          <div className="hidden md:block mb-10"></div>
+          <h2 className="font-headline font-bold text-left mb-12 md:mb-0" style={{ color: '#4785ff', fontSize: '20px' }}>
             {isEditMode ? 'Therapeut bearbeiten' : 'Neuen Therapeuten hinzufügen'}
           </h2>
         </div>
