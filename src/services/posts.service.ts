@@ -22,7 +22,7 @@ interface PostFilters {
   cantons?: string[]
   therapist?: string
   designations?: number[]
-  gender?: 'm' | 'f'
+  gender?: 'm' | 'f' | 'both'
   dateFrom?: string
   dateTo?: string
   search?: string
@@ -105,7 +105,7 @@ export class PostsService {
     if (postFilters.designations && postFilters.designations.length > 0) {
       query = query.in('therapists.designation_id', postFilters.designations)
     }
-    if (postFilters.gender) {
+    if (postFilters.gender && postFilters.gender !== 'both') {
       query = query.eq('therapists.gender', postFilters.gender)
     }
 

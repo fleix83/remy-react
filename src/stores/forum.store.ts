@@ -7,7 +7,7 @@ interface PostFilters {
   cantons?: string[]
   therapist?: string
   designations?: number[]
-  gender?: 'm' | 'f'
+  gender?: 'm' | 'f' | 'both'
   dateFrom?: string
   dateTo?: string
   search?: string

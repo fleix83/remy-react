@@ -11,7 +11,7 @@ interface PostFilters {
   cantons?: string[]
   therapist?: string
   designations?: number[]
-  gender?: 'm' | 'f'
+  gender?: 'm' | 'f' | 'both'
   dateFrom?: string
   dateTo?: string
 }
@@ -28,7 +28,7 @@ interface FilterState {
   cantons?: string[]
   therapist?: string
   designations?: number[]
-  gender?: 'm' | 'f'
+  gender?: 'm' | 'f' | 'both'
   dateFrom?: string
   dateTo?: string
 }
@@ -355,7 +355,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             {/* Geschlecht */}
             <div className="relative">
               <select
-                value={filters.gender || ''}
+                value={filters.gender === 'both' ? '' : (filters.gender || '')}
                 onChange={(e) => onFiltersChange({ ...filters, gender: (e.target.value || undefined) as 'm' | 'f' | undefined })}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >

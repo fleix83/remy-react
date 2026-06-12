@@ -26,7 +26,7 @@ interface PostFilters {
   cantons?: string[]
   therapist?: string
   designations?: number[]
-  gender?: 'm' | 'f'
+  gender?: 'm' | 'f' | 'both'
   dateFrom?: string
   dateTo?: string
   search?: string
@@ -173,10 +173,20 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     })
   }, [])
 
-  const handleGenderFilter = useCallback((gender: 'm' | 'f' | null) => {
+  // Each gender tab toggles independently: one, none, or both can be active.
+  // Both selected = posts with a therapist of any gender.
+  const handleGenderToggle = useCallback((g: 'm' | 'f') => {
     setSearchInput('')
     setSearchTerm('')
-    setFiltersState(prev => ({ ...prev, gender: gender || undefined }))
+    setFiltersState(prev => {
+      const current = prev.gender
+      let next: 'm' | 'f' | 'both' | undefined
+      if (current === g) next = undefined
+      else if (current === 'both') next = g === 'm' ? 'f' : 'm'
+      else if (current) next = 'both'
+      else next = g
+      return { ...prev, gender: next }
+    })
   }, [])
 
   const handleCantonToggle = useCallback((cantonCode: string) => {
@@ -458,6 +468,27 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               Alle Bezeichnungen
             </button>
 
+            {/* Gender tabs — one line, choose one, none, or both */}
+            <div className="flex gap-1.5">
+              {([
+                { value: 'f' as const, label: 'Frauen' },
+                { value: 'm' as const, label: 'Männer' }
+              ]).map(g => (
+                <button
+                  key={g.value}
+                  onClick={() => handleGenderToggle(g.value)}
+                  className={`inline-flex items-center justify-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                    filters.gender === g.value || filters.gender === 'both'
+                      ? 'bg-[#c0e1ff] text-gray-700'
+                      : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                  }`}
+                  style={{ fontSize: '0.65rem' }}
+                >
+                  {g.label}
+                </button>
+              ))}
+            </div>
+
             {designations.map(d => (
               <button
                 key={d.id}
@@ -470,27 +501,6 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 style={{ fontSize: '0.65rem' }}
               >
                 {getDesignationLabel(d, lang)}
-              </button>
-            ))}
-
-            {/* Gender filter — independent of designations */}
-            <span aria-hidden="true" className="mx-1 text-gray-400" style={{ fontSize: '0.65rem' }}>|</span>
-            {([
-              { value: null, label: 'Alle' },
-              { value: 'f' as const, label: 'Frauen' },
-              { value: 'm' as const, label: 'Männer' }
-            ]).map(g => (
-              <button
-                key={g.label}
-                onClick={() => handleGenderFilter(g.value)}
-                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                  (filters.gender ?? null) === g.value
-                    ? 'bg-[var(--primary)] text-white'
-                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-                }`}
-                style={{ fontSize: '0.65rem' }}
-              >
-                {g.label}
               </button>
             ))}
           </div>
