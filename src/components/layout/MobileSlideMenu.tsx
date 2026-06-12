@@ -92,10 +92,9 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
       aria-modal="true"
       aria-label="Navigation menu"
     >
-      {/* Backdrop with custom green overlay */}
-      <div 
-        className="absolute inset-0 cursor-pointer transition-opacity duration-300 ease-in-out"
-        style={{ backgroundColor: '#aed0b4f5' }}
+      {/* Backdrop: warm overlay on mobile, invisible click-catcher on desktop */}
+      <div
+        className="absolute inset-0 cursor-pointer transition-opacity duration-300 ease-in-out bg-[#ffe9e9f5] md:bg-transparent"
         onClick={handleBackdropClick}
       />
       
@@ -105,7 +104,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{
-          backgroundColor: '#d1f2d7'
+          background: '#f7f7f7'
         }}
       >
         {/* Close button */}
@@ -113,7 +112,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
           <button
             onClick={onClose}
             className="p-2 hover:opacity-70 transition-opacity"
-            style={{ color: 'rgb(241, 251, 244)' }}
+            style={{ color: 'var(--primary)' }}
             aria-label="Close menu"
           >
             <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,7 +129,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
               <button
                 key={lang}
                 className="text-sm font-medium transition-opacity hover:opacity-80"
-                style={{ color: '#4785ff' }}
+                style={{ color: 'var(--primary)' }}
               >
                 {lang}
               </button>
@@ -155,7 +154,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                         padding: '4px 8px',
                         borderRadius: '6px',
                         width: 'fit-content',
-                        backgroundColor: conv.unreadCount > 0 ? '#ffffffb3' : '#f1fbf47a'
+                        backgroundColor: '#ffffff'
                       }}
                     >
                       <div className="text-sm text-gray-700">
@@ -185,7 +184,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   style={{ 
                     fontFamily: 'Gaegu, cursive',
                     fontSize: '38px',
-                    color: '#4785ff'
+                    color: 'var(--primary)'
                   }}
                 >
                   FORUM
@@ -200,7 +199,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   style={{ 
                     fontFamily: 'Gaegu, cursive',
                     fontSize: '38px',
-                    color: '#4785ff'
+                    color: 'var(--primary)'
                   }}
                 >
                   THERAPEUTEN
@@ -215,7 +214,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   style={{ 
                     fontFamily: 'Gaegu, cursive',
                     fontSize: '38px',
-                    color: '#4785ff'
+                    color: 'var(--primary)'
                   }}
                 >
                   PROFIL
@@ -230,7 +229,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   style={{
                     fontFamily: 'Gaegu, cursive',
                     fontSize: '38px',
-                    color: '#4785ff'
+                    color: 'var(--primary)'
                   }}
                 >
                   MESSAGES
@@ -258,7 +257,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   style={{
                     fontFamily: 'Gaegu, cursive',
                     fontSize: '38px',
-                    color: '#4785ff'
+                    color: 'var(--primary)'
                   }}
                 >
                   GUIDELINES
@@ -274,7 +273,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     style={{
                       fontFamily: 'Gaegu, cursive',
                       fontSize: '38px',
-                      color: '#4785ff'
+                      color: 'var(--primary)'
                     }}
                   >
                     MODERATION
@@ -291,7 +290,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     style={{ 
                       fontFamily: 'Gaegu, cursive',
                       fontSize: '38px',
-                      color: '#4785ff'
+                      color: 'var(--primary)'
                     }}
                   >
                     ADMIN
@@ -307,7 +306,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   style={{ 
                     fontFamily: 'Gaegu, cursive',
                     fontSize: '38px',
-                    color: '#4785ff'
+                    color: 'var(--primary)'
                   }}
                 >
                   ABMELDEN
