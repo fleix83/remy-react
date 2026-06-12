@@ -86,14 +86,14 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
           <button
             onClick={handleToggleBlock}
             disabled={loading}
-            className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-colors text-white ${
+            className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-colors ${
               isBlocked
-                ? 'bg-[#37a653] hover:bg-[#2c8743]'
-                : 'bg-[var(--salmon)] hover:bg-[var(--salmon-hover)]'
+                ? 'bg-white hover:bg-gray-100 text-gray-600'
+                : 'bg-[var(--salmon)] hover:bg-[var(--salmon-hover)] text-white'
             } disabled:opacity-50`}
           >
             {loading ? (
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
             ) : (
               isBlocked ? 'Entsperren' : 'Blockieren'
             )}

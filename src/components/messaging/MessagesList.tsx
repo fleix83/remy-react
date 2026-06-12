@@ -64,7 +64,7 @@ const MessagesList: React.FC = () => {
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto px-2 pb-3" style={{ background: 'linear-gradient(180deg, hsla(129, 41%, 93%, 1) 0%, hsla(36, 26%, 96%, 1) 81%, hsla(36, 26%, 96%, 1) 100%)' }}>
+      <div className="flex-1 overflow-y-auto px-2 pb-3 messages-panel-bg">
         {conversations.length === 0 ? (
           <div className="p-6 text-center">
             <div className="text-[var(--primary)] opacity-50 mb-4">

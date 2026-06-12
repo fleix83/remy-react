@@ -64,7 +64,7 @@ const MessagesPage: React.FC = () => {
       <div className="max-w-7xl mx-auto md:rounded-[20px] md:overflow-hidden md:shadow-[0_8px_30px_rgba(20,66,32,0.06)]">
         <div className="flex h-screen md:h-[calc(100vh-280px)] md:min-h-[520px]">
           {/* Conversations Sidebar */}
-          <div className="w-full md:w-1/3 lg:w-1/4 border-r border-[#dcebe0] bg-[var(--bg-element)]">
+          <div className="w-full md:w-1/3 lg:w-1/4 border-r border-[#e3ddcc] bg-[var(--bg-element)]">
             <MessagesList />
           </div>
 
@@ -73,7 +73,7 @@ const MessagesPage: React.FC = () => {
             {currentConversation ? (
               <ConversationView />
             ) : (
-              <div className="flex-1 flex items-center justify-center" style={{ background: 'linear-gradient(180deg, hsla(129, 41%, 93%, 1) 0%, hsla(36, 26%, 96%, 1) 81%, hsla(36, 26%, 96%, 1) 100%)' }}>
+              <div className="flex-1 flex items-center justify-center messages-panel-bg">
                 <div className="text-center max-w-sm px-6">
                   <div className="text-[var(--primary)] mb-4 opacity-60">
                     <svg className="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -98,7 +98,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
         <button
           type="submit"
           disabled={!message.trim() || sending || message.length > 1000}
-          className="p-3 bg-[var(--primary)] hover:bg-[#3b71e6] disabled:bg-[#c8c8c8b3] disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center min-w-[48px] min-h-[48px] flex-shrink-0"
+          className="p-3 bg-[var(--primary)] hover:bg-[var(--salmon-hover)] disabled:bg-[#c8c8c8b3] disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center min-w-[48px] min-h-[48px] flex-shrink-0"
           title="Nachricht senden"
         >
           {sending ? (

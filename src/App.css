@@ -814,3 +814,10 @@
     background: linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, rgb(255 255 255) 100%);
   }
 }
+
+/* ── Messages page panels ── */
+/* Flat light gray (matches --bg-element) behind the conversation list,
+   chat history, and empty state */
+.messages-panel-bg {
+  background: #f5f5f5;
+}
