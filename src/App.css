@@ -762,35 +762,43 @@
   .post-view-header > div {
     margin-top: 30px;
   }
+}
 
-  /* Comments container: tighter radius, near-white gray */
-  .comments-container {
-    border-radius: 10px !important;
-    background: #f9f9f9 !important;
-  }
+/* ── Comments styling (all screen sizes) ── */
+/* Comments container: tighter radius, near-white gray */
+.comments-container {
+  border-radius: 10px;
+  background: #f9f9f9;
+}
 
-  /* Subtle white separator between top-level comments */
-  .comments-list > * + * {
-    border-top: 2px solid #fff;
-    padding-top: 20px;
-  }
+/* Subtle white separator between top-level comments */
+.comments-list > * + * {
+  border-top: 2px solid #fff;
+  padding-top: 20px;
+}
 
-  /* Inline the leading @user mention paragraph into the comment text,
-     matching the text style, with a clear gap before the text starts */
-  .comment-content > p:first-child:has(> strong:only-child) {
-    display: inline;
-    margin-right: 0.6em;
-  }
-  .comment-content > p:first-child:has(> strong:only-child) > strong {
-    font-weight: inherit;
-    color: inherit;
-  }
-  .comment-content > p:first-child:has(> strong:only-child) + p {
-    display: inline;
-  }
+/* Inline the leading @user mention paragraph into the comment text,
+   matching the text style, with a clear gap before the text starts */
+.comment-content > p:first-child:has(> strong:only-child) {
+  display: inline;
+  margin-right: 0.6em;
+}
+.comment-content > p:first-child:has(> strong:only-child) > strong {
+  font-weight: inherit;
+  color: inherit;
+}
+.comment-content > p:first-child:has(> strong:only-child) + p {
+  display: inline;
+}
 
-  /* Comment Antworten link in warm coral */
-  .comment-reply-link {
-    color: #ff8787 !important;
+/* Comment Antworten link in warm coral */
+.comment-reply-link {
+  color: #ff8787 !important;
+}
+
+/* Desktop comment text: medium weight */
+@media (min-width: 768px) {
+  .comment-content {
+    font-weight: 500;
   }
 }
