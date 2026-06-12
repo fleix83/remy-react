@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import type { Designation } from '../../types/database.types'
 import InlineEditCell from '../ui/InlineEditCell'
 import { DesignationsService } from '../../services/designations.service'
+import { toast } from '../../stores/toast.store'
+import { confirmDialog } from '../../stores/confirm.store'
 
 interface DesignationRowProps {
   designation: Designation
@@ -28,14 +30,14 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
   }
 
   const handleDelete = async () => {
-    if (!confirm(`Möchten Sie die Bezeichnung "${designation.label_de}" wirklich löschen?`)) return
+    if (!(await confirmDialog({ message: `Möchten Sie die Bezeichnung "${designation.label_de}" wirklich löschen?`, confirmLabel: 'Löschen', danger: true }))) return
     setIsDeleting(true)
     try {
       await designationsService.deleteDesignation(designation.id)
       onDelete(designation.id)
     } catch (error) {
       console.error('Error deleting designation:', error)
-      alert('Fehler beim Löschen der Bezeichnung (wird sie noch von Therapeuten verwendet?)')
+      toast.error('Fehler beim Löschen der Bezeichnung (wird sie noch von Therapeuten verwendet?)')
     } finally {
       setIsDeleting(false)
     }

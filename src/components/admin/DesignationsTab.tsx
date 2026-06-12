@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import type { Designation } from '../../types/database.types'
 import { DesignationsService } from '../../services/designations.service'
 import DesignationRow from './DesignationRow'
+import { toast } from '../../stores/toast.store'
 
 /**
  * Admin tab for managing professional designations
@@ -56,7 +57,7 @@ const DesignationsTab: React.FC = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       console.error('Error creating designation:', err)
-      alert('Fehler beim Erstellen der Bezeichnung')
+      toast.error('Fehler beim Erstellen der Bezeichnung')
     } finally {
       setIsCreating(false)
     }

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { useMessagesStore, initializeMessagingAuth } from '../../stores/messages.store'
+import { useNotificationsStore } from '../../stores/notifications.store'
 import MessagesList from './MessagesList'
 import ConversationView from './ConversationView'
 
@@ -20,6 +21,9 @@ const MessagesPage: React.FC = () => {
 
     if (user) {
       loadConversations()
+      // Opening the messages page clears message notifications so the
+      // avatar dot doesn't stick around after the messages were seen
+      useNotificationsStore.getState().markTypeAsRead('private_message')
     }
   }, [user, loadConversations])
 

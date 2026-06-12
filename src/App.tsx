@@ -1,9 +1,12 @@
 import { useState, useEffect, Suspense, lazy, useRef, Fragment } from 'react'
 import { BrowserRouter as Router, Routes, Route, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from './stores/auth.store'
+import { initializeMessagingAuth } from './stores/messages.store'
 import { useNotificationsRealtime } from './hooks/useNotificationsRealtime'
 import { usePostsRealtime } from './hooks/usePostsRealtime'
 import { testSupabaseConnection } from './utils/test-connection'
+import ToastContainer from './components/ui/ToastContainer'
+import ConfirmDialog from './components/ui/ConfirmDialog'
 import Layout from './components/layout/Layout'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
@@ -37,6 +40,12 @@ function App() {
     testSupabaseConnection()
   }, [])
 
+  // Messaging subscriptions app-wide so unread badges update in realtime
+  // outside the Messages page too
+  useEffect(() => {
+    initializeMessagingAuth()
+  }, [])
+
   const handleCreatePost = () => {
     setShowCreatePostDialog(true)
   }
@@ -54,6 +63,8 @@ function App() {
 
   return (
     <Router basename="/">
+          <ToastContainer />
+          <ConfirmDialog />
           <Suspense fallback={
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
               <div className="text-center">

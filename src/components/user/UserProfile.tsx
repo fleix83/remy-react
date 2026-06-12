@@ -7,6 +7,7 @@ import BlockedUsers from './BlockedUsers'
 import UserContent from './UserContent'
 import AvatarService from '../../services/avatar.service'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
+import { toast } from '../../stores/toast.store'
 
 const UserProfile: React.FC = () => {
   const navigate = useNavigate()
@@ -50,7 +51,7 @@ const UserProfile: React.FC = () => {
       await loadUserProfile()
     } catch (error) {
       console.error('Error uploading background:', error)
-      alert(error instanceof Error ? error.message : 'Failed to upload background image')
+      toast.error(error instanceof Error ? error.message : 'Fehler beim Hochladen des Hintergrundbilds')
     } finally {
       setUploadingBackground(false)
       if (backgroundInputRef.current) {

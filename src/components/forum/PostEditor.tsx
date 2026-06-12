@@ -8,6 +8,7 @@ import TagInput from '../ui/TagInput'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
 import { useAuthStore } from '../../stores/auth.store'
+import { toast } from '../../stores/toast.store'
 
 interface PostEditorProps {
   onSubmit?: (postData: any) => Promise<void>
@@ -99,24 +100,24 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
     // Title required EXCEPT for Rant (4)
     if (categoryId !== 4 && !title.trim()) {
-      alert('Bitte Titel ausfüllen')
+      toast.info('Bitte Titel ausfüllen')
       return
     }
 
     if (!content.trim()) {
-      alert('Bitte Inhalt ausfüllen')
+      toast.info('Bitte Inhalt ausfüllen')
       return
     }
 
     // Validate therapist selection for "Erfahrung" category
     if (categoryId === 1 && !selectedTherapist) {
-      alert('Bitte wählen Sie einen Therapeut* für Ihre Erfahrung aus')
+      toast.info('Bitte wählen Sie einen Therapeut* für Ihre Erfahrung aus')
       return
     }
 
     // Canton required EXCEPT for Erfahrung (1), Rant (4), and Austausch (3)
     if (categoryId !== 1 && categoryId !== 3 && categoryId !== 4 && !canton) {
-      alert('Bitte Kanton auswählen')
+      toast.info('Bitte Kanton auswählen')
       return
     }
 
@@ -146,7 +147,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
       setTags([])
     } catch (error) {
       console.error('Error submitting post:', error)
-      alert('Fehler beim Speichern des Beitrags')
+      toast.error('Fehler beim Speichern des Beitrags')
     } finally {
       setPublishing(false)
     }

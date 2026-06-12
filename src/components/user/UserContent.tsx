@@ -9,6 +9,7 @@ import type { PostWithRelations, CommentWithUser, Post } from '../../types/datab
 import { therapistDesignationLabel } from '../../utils/designationHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
 import { useCategories } from '../../hooks/usePosts'
+import { confirmDialog } from '../../stores/confirm.store'
 
 interface UserContentProps {
   userId: string
@@ -68,7 +69,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   }
 
   const handleDeleteDraft = async (draftId: number) => {
-    if (!confirm('Are you sure you want to delete this draft?')) return
+    if (!(await confirmDialog({ message: 'Diesen Entwurf wirklich löschen?', confirmLabel: 'Löschen', danger: true }))) return
 
     try {
       await UserContentService.deleteDraft(draftId, userId)
@@ -174,7 +175,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   }
 
   const handleDeletePost = async (postId: number) => {
-    if (!confirm('Are you sure you want to delete this post? This will hide it from public view but preserve any comments.')) {
+    if (!(await confirmDialog({ message: 'Diesen Beitrag wirklich löschen? Er wird ausgeblendet, vorhandene Kommentare bleiben erhalten.', confirmLabel: 'Löschen', danger: true }))) {
       return
     }
 

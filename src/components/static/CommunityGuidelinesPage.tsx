@@ -7,6 +7,7 @@ import UserAvatar from '../user/UserAvatar'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import GuidelineSection from '../ui/GuidelineSection'
 import type { Document, DocumentSection } from '../../types/database.types'
+import { toast } from '../../stores/toast.store'
 
 const CommunityGuidelinesPage: React.FC = () => {
   const navigate = useNavigate()
@@ -75,13 +76,13 @@ const CommunityGuidelinesPage: React.FC = () => {
       if (result) {
         setDocument(result)
         setIsEditMode(false)
-        alert('Community Guidelines updated successfully!')
+        toast.success('Guidelines erfolgreich gespeichert!')
       } else {
-        alert('Failed to save changes. Please try again.')
+        toast.error('Speichern fehlgeschlagen. Bitte versuche es erneut.')
       }
     } catch (error) {
       console.error('Error saving document:', error)
-      alert('Error saving changes.')
+      toast.error('Fehler beim Speichern.')
     } finally {
       setIsSaving(false)
     }

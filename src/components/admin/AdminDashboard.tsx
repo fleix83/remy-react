@@ -7,6 +7,7 @@ import TherapistsTab from './TherapistsTab'
 import CategoriesTab from './CategoriesTab'
 import CmsTab from './CmsTab'
 import type { User } from '../../types/database.types'
+import { toast } from '../../stores/toast.store'
 
 interface ModerationStats {
   totalUsers: number
@@ -64,10 +65,10 @@ const AdminDashboard: React.FC = () => {
     try {
       await moderationService.updateUserRole(userId, newRole)
       await loadDashboardData() // Reload data
-      alert('Benutzerrolle erfolgreich geändert')
+      toast.success('Benutzerrolle erfolgreich geändert')
     } catch (error) {
       console.error('Error changing user role:', error)
-      alert('Fehler beim Ändern der Benutzerrolle')
+      toast.error('Fehler beim Ändern der Benutzerrolle')
     }
   }
 
@@ -79,10 +80,10 @@ const AdminDashboard: React.FC = () => {
         await moderationService.unbanUser(userId)
       }
       await loadDashboardData() // Reload data
-      alert(`Benutzer ${shouldBan ? 'gesperrt' : 'entsperrt'}`)
+      toast.success(`Benutzer ${shouldBan ? 'gesperrt' : 'entsperrt'}`)
     } catch (error) {
       console.error('Error banning/unbanning user:', error)
-      alert('Fehler beim Sperren/Entsperren des Benutzers')
+      toast.error('Fehler beim Sperren/Entsperren des Benutzers')
     }
   }
 

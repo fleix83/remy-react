@@ -3,6 +3,7 @@ import type { Category } from '../../types/database.types'
 import InlineEditCell from '../ui/InlineEditCell'
 import { CategoriesService } from '../../services/categories.service'
 import { getCategoryColor } from '../../utils/categoryHelpers'
+import { toast } from '../../stores/toast.store'
 
 interface CategoryRowProps {
   category: Category
@@ -37,7 +38,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
     if (saveTimeout.current) clearTimeout(saveTimeout.current)
     saveTimeout.current = setTimeout(() => {
       handleUpdate('color', value).catch(() => {
-        alert('Fehler beim Speichern der Farbe (Migration 022 schon eingespielt?)')
+        toast.error('Fehler beim Speichern der Farbe (Migration 022 schon eingespielt?)')
         setColor(getCategoryColor(category))
       })
     }, 400)

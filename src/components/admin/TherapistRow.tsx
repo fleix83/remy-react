@@ -5,6 +5,8 @@ import { TherapistsService } from '../../services/therapists.service'
 import { getDesignationLabel } from '../../utils/designationHelpers'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { FORMS_OF_ADDRESS } from '../../constants/therapist.constants'
+import { toast } from '../../stores/toast.store'
+import { confirmDialog } from '../../stores/confirm.store'
 
 interface TherapistRowProps {
   therapist: TherapistWithDesignation
@@ -46,14 +48,14 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
   const handleTextUpdate = (field: keyof Therapist) => (v: string) => handleUpdate(field, v.trim() || null)
 
   const handleDelete = async () => {
-    if (!confirm(`Möchten Sie "${therapist.first_name} ${therapist.last_name}" wirklich löschen?`)) return
+    if (!(await confirmDialog({ message: `Möchten Sie "${therapist.first_name} ${therapist.last_name}" wirklich löschen?`, confirmLabel: 'Löschen', danger: true }))) return
     setIsDeleting(true)
     try {
       await therapistsService.deleteTherapist(therapist.id)
       onDeleted(therapist.id)
     } catch (error) {
       console.error('Error deleting therapist:', error)
-      alert('Fehler beim Löschen des Therapeuten')
+      toast.error('Fehler beim Löschen des Therapeuten')
     } finally {
       setIsDeleting(false)
     }
@@ -64,7 +66,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
     try {
       await handleUpdate('is_active', !isActive)
     } catch {
-      alert('Fehler beim Ändern des Status (Migration 021 angewendet?)')
+      toast.error('Fehler beim Ändern des Status (Migration 021 angewendet?)')
     } finally {
       setIsToggling(false)
     }
@@ -78,7 +80,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
       onUpdated({ ...therapist, needs_review: false, reviewed_by: adminId, reviewed_at: new Date().toISOString() })
     } catch (error) {
       console.error('Error dismissing review:', error)
-      alert('Fehler beim Bestätigen der Prüfung')
+      toast.error('Fehler beim Bestätigen der Prüfung')
     } finally {
       setIsDismissing(false)
     }

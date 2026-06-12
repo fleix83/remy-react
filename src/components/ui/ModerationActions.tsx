@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationService } from '../../services/moderation.service'
+import { toast } from '../../stores/toast.store'
+import { confirmDialog } from '../../stores/confirm.store'
 
 interface ModerationActionsProps {
   contentType: 'post' | 'comment'
@@ -30,7 +32,7 @@ const ModerationActions: React.FC<ModerationActionsProps> = ({
   const handleDelete = async () => {
     const confirmMessage = `Sind Sie sicher, dass Sie ${contentType === 'post' ? 'diesen Beitrag' : 'diesen Kommentar'} löschen möchten?`
     
-    if (!confirm(confirmMessage)) return
+    if (!(await confirmDialog({ message: confirmMessage, confirmLabel: 'Löschen', danger: true }))) return
 
     setIsDeleting(true)
     try {
@@ -44,7 +46,7 @@ const ModerationActions: React.FC<ModerationActionsProps> = ({
       setShowMenu(false)
     } catch (error) {
       console.error(`Error deleting ${contentType}:`, error)
-      alert(`Fehler beim Löschen ${contentType === 'post' ? 'des Beitrags' : 'des Kommentars'}`)
+      toast.error(`Fehler beim Löschen ${contentType === 'post' ? 'des Beitrags' : 'des Kommentars'}`)
     } finally {
       setIsDeleting(false)
     }

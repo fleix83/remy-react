@@ -11,6 +11,8 @@ interface NotificationsState {
   loadNotifications: () => Promise<void>
   markAsRead: (id: number) => Promise<void>
   markAllAsRead: () => Promise<void>
+  markPostNotificationsAsRead: (postId: number) => Promise<void>
+  markTypeAsRead: (type: NotificationType) => Promise<void>
   addNotification: (notification: Notification) => void
   deleteNotification: (id: number) => Promise<void>
   subscribeToRealtime: (userId: string) => () => void
@@ -114,6 +116,68 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
     }
   },
 
+  // Clear notifications tied to a post (e.g. "post answered") once the user
+  // views that post. RLS limits the update to the user's own rows.
+  markPostNotificationsAsRead: async (postId: number) => {
+    try {
+      const { error } = await supabase
+        .from('notifications' as any)
+        .update({ is_read: true })
+        .eq('related_post_id', postId)
+        .eq('is_read', false)
+
+      if (error) {
+        if (error.code === 'PGRST116' || error.message.includes('relation "public.notifications" does not exist')) {
+          return
+        }
+        throw error
+      }
+
+      set(state => {
+        const notifications = state.notifications.map(n =>
+          n.related_post_id === postId ? { ...n, is_read: true } : n
+        )
+        return {
+          notifications,
+          unreadCount: notifications.filter(n => !n.is_read).length
+        }
+      })
+    } catch (error) {
+      console.error('Error marking post notifications as read:', error)
+    }
+  },
+
+  // Clear all notifications of one type (e.g. private_message when the user
+  // opens the messages page)
+  markTypeAsRead: async (type: NotificationType) => {
+    try {
+      const { error } = await supabase
+        .from('notifications' as any)
+        .update({ is_read: true })
+        .eq('type', type)
+        .eq('is_read', false)
+
+      if (error) {
+        if (error.code === 'PGRST116' || error.message.includes('relation "public.notifications" does not exist')) {
+          return
+        }
+        throw error
+      }
+
+      set(state => {
+        const notifications = state.notifications.map(n =>
+          n.type === type ? { ...n, is_read: true } : n
+        )
+        return {
+          notifications,
+          unreadCount: notifications.filter(n => !n.is_read).length
+        }
+      })
+    } catch (error) {
+      console.error('Error marking notifications as read by type:', error)
+    }
+  },
+
   addNotification: (notification: Notification) => {
     set(state => ({
       notifications: [notification, ...state.notifications],
@@ -165,8 +229,8 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
           const notification = payload.new as Notification
           get().addNotification(notification)
           
-          // Show browser notification if permission granted
-          if (Notification.permission === 'granted') {
+          // Show browser notification if supported (not on iOS Safari) and permitted
+          if ('Notification' in window && Notification.permission === 'granted') {
             new Notification(notification.title, {
               body: notification.message,
               icon: '/favicon.ico'
@@ -228,7 +292,8 @@ export const createNotification = async (notificationData: {
 
 // Helper function to request notification permission
 export const requestNotificationPermission = async () => {
-  if ('Notification' in window && Notification.permission === 'default') {
+  if (!('Notification' in window)) return false
+  if (Notification.permission === 'default') {
     const permission = await Notification.requestPermission()
     return permission === 'granted'
   }

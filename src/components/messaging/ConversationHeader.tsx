@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { UserBlocksService } from '../../services/user-blocks.service'
 import UserAvatar from '../user/UserAvatar'
 import type { Conversation } from '../../services/messages.service'
+import { toast } from '../../stores/toast.store'
 
 interface ConversationHeaderProps {
   conversation: Conversation
@@ -38,11 +39,11 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
       const result = await userBlocksService.toggleBlockUser(conversation.id)
       setIsBlocked(result.action === 'blocked')
 
-      alert(result.action === 'blocked' ? 'Benutzer wurde blockiert' : 'Benutzer wurde entsperrt')
+      toast.success(result.action === 'blocked' ? 'Benutzer wurde blockiert' : 'Benutzer wurde entsperrt')
 
     } catch (error) {
       console.error('Error toggling block:', error)
-      alert('Fehler beim Aktualisieren: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error('Fehler beim Aktualisieren: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
     } finally {
       setLoading(false)
     }

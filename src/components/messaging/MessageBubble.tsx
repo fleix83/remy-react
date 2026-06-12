@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
 import UserAvatar from '../user/UserAvatar'
 import type { MessageWithUser } from '../../services/messages.service'
+import { toast } from '../../stores/toast.store'
+import { confirmDialog } from '../../stores/confirm.store'
 
 interface MessageBubbleProps {
   message: MessageWithUser
@@ -30,12 +32,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   }
 
   const handleDeleteMessage = async () => {
-    if (window.confirm('Möchtest du diese Nachricht wirklich löschen?')) {
+    if (await confirmDialog({ message: 'Möchtest du diese Nachricht wirklich löschen?', confirmLabel: 'Löschen', danger: true })) {
       try {
         await deleteMessage(message.id)
       } catch (error) {
         console.error('Error deleting message:', error)
-        alert('Fehler beim Löschen der Nachricht')
+        toast.error('Fehler beim Löschen der Nachricht')
       }
     }
   }

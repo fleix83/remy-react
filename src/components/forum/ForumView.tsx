@@ -13,6 +13,7 @@ import { DesignationsService } from '../../services/designations.service'
 import { getDesignationLabel } from '../../utils/designationHelpers'
 import { getCategoryColor, getCategoryName } from '../../utils/categoryHelpers'
 import { useAuthStore } from '../../stores/auth.store'
+import { toast } from '../../stores/toast.store'
 import type { Designation } from '../../types/database.types'
 import type { DateRange } from 'react-day-picker'
 
@@ -119,7 +120,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
       onCreatePostDialogClose() // Close dialog using prop
     } catch (error) {
       console.error('❌ ForumView: Error creating post:', error)
-      alert('Fehler beim Erstellen des Beitrags: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error('Fehler beim Erstellen des Beitrags: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
       throw error
     }
   }, [createPostMutation, onCreatePostDialogClose])

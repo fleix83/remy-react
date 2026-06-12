@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
+import { useNotificationsStore } from '../../stores/notifications.store'
+import { toast } from '../../stores/toast.store'
 import { useCommentsRealtime } from '../../hooks/useCommentsRealtime'
 import CommentsSection from './CommentsSection'
 import PostEditModal from './PostEditModal'
@@ -36,6 +38,15 @@ const PostView: React.FC = () => {
       loadPost(postId)
     }
   }, [postId, loadPost])
+
+  // Viewing a post clears its "post answered" notifications (RLS limits the
+  // update to the current user's own notification rows)
+  const markPostNotificationsAsRead = useNotificationsStore(state => state.markPostNotificationsAsRead)
+  useEffect(() => {
+    if (postId && user) {
+      markPostNotificationsAsRead(postId)
+    }
+  }, [postId, user, markPostNotificationsAsRead])
 
   // Honor navigation state from PostCard's "Antworten" link: once the post
   // is loaded, open the reply form and scroll to the comments section, then
@@ -92,7 +103,7 @@ const PostView: React.FC = () => {
       // If the post body saved but tags failed, the store still holds the
       // fresh post — show the specific error without rolling back UI.
       const msg = error instanceof Error ? error.message : 'Unbekannter Fehler'
-      alert('Fehler beim Aktualisieren des Beitrags: ' + msg)
+      toast.error('Fehler beim Aktualisieren des Beitrags: ' + msg)
       throw error
     }
   }
