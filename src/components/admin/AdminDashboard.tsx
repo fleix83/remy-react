@@ -126,7 +126,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Navigation Tabs — segmented control */}
-        <div className="mb-8">
+        <div className="mb-[80px] text-left">
           <nav className="inline-flex flex-wrap gap-1 rounded-2xl border border-[#ece7dd] bg-white p-1.5 shadow-[0_2px_10px_rgba(20,66,32,0.05)]">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id
