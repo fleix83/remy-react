@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
+import { toast } from '../../stores/toast.store'
 
 interface MessageComposerProps {
   recipientId: string
@@ -62,7 +63,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
       setMessage('')
     } catch (error) {
       console.error('Error sending message:', error)
-      alert('Fehler beim Senden der Nachricht: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error('Fehler beim Senden der Nachricht: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
     } finally {
       setSending(false)
     }

@@ -97,15 +97,21 @@ export class TherapistImportService {
    * Validate individual row data
    */
   validateRow(row: any): { valid: boolean; error?: string } {
-    const requiredFields = ['first_name', 'last_name', 'designation']
+    // A row is either a person (first + last name) or an institution-only
+    // entry (institution, no name). Designation is required for both — for
+    // institutions it is the kind of institution.
+    const hasFirst = row.first_name && String(row.first_name).trim() !== ''
+    const hasLast = row.last_name && String(row.last_name).trim() !== ''
+    const hasInstitution = row.institution && String(row.institution).trim() !== ''
 
-    for (const field of requiredFields) {
-      if (!row[field] || String(row[field]).trim() === '') {
-        return {
-          valid: false,
-          error: `Missing required field: ${field}`
-        }
-      }
+    if (!hasFirst && !hasLast && !hasInstitution) {
+      return { valid: false, error: 'Missing required fields: first_name/last_name or institution' }
+    }
+    if ((hasFirst || hasLast) && !(hasFirst && hasLast)) {
+      return { valid: false, error: `Missing required field: ${hasFirst ? 'last_name' : 'first_name'}` }
+    }
+    if (!row.designation || String(row.designation).trim() === '') {
+      return { valid: false, error: 'Missing required field: designation' }
     }
 
     // Validate first_name and last_name length
@@ -210,6 +216,10 @@ export class TherapistImportService {
     const firstName = therapist.first_name.trim().toLowerCase()
     const lastName = therapist.last_name.trim().toLowerCase()
     const canton = (therapist.canton || '').trim().toLowerCase()
+    if (!firstName && !lastName) {
+      // Institution-only entries dedupe on institution name + canton
+      return `inst:${(therapist.institution || '').trim().toLowerCase()}|${canton}`
+    }
     return `${firstName}|${lastName}|${canton}`
   }
 
@@ -220,24 +230,28 @@ export class TherapistImportService {
    */
   parseTherapist(row: any, designations: Designation[]): ParsedTherapist {
     const fullTitle = row.designation?.trim() || ''
-    const detectedGender = fullTitle ? this.detectGender(fullTitle) : null
-    const designationId = fullTitle ? matchDesignation(fullTitle, designations) : null
+    const isInstitutionOnly = !row.first_name?.trim() && !row.last_name?.trim()
+    // Gender keyword detection only makes sense for persons
+    const detectedGender = fullTitle && !isInstitutionOnly ? this.detectGender(fullTitle) : null
+    const designationId = fullTitle && !isInstitutionOnly ? matchDesignation(fullTitle, designations) : null
     // The gender filter only knows 'm'/'f' — normalize CSV input (single letters
     // or German words) and fall back to keyword detection for anything else.
     const csvGender = row.gender?.trim().toLowerCase()
-    const gender = csvGender === 'm' || csvGender === 'männlich' || csvGender === 'mann' ? 'm'
+    const gender = isInstitutionOnly ? null
+      : csvGender === 'm' || csvGender === 'männlich' || csvGender === 'mann' ? 'm'
       : csvGender === 'f' || csvGender === 'w' || csvGender === 'weiblich' || csvGender === 'frau' ? 'f'
       : detectedGender
 
     return {
       canton: row.canton?.trim() || null,
       city: row.city?.trim() || null,
-      form_of_address: row.form_of_address?.trim() || '',
+      form_of_address: isInstitutionOnly ? '' : row.form_of_address?.trim() || '',
       first_name: row.first_name?.trim() || '',
       last_name: row.last_name?.trim() || '',
       full_title: fullTitle,
       designation_id: designationId,
-      needs_review: designationId === null,
+      // Institutions keep their verbatim designation; no curated match expected
+      needs_review: isInstitutionOnly ? false : designationId === null,
       institution: row.institution?.trim() || null,
       services: row.services?.trim() || null,
       // The therapists table has no description column — the CSV's free-text

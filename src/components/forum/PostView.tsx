@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
+import { useNotificationsStore } from '../../stores/notifications.store'
+import { toast } from '../../stores/toast.store'
 import { useCommentsRealtime } from '../../hooks/useCommentsRealtime'
 import CommentsSection from './CommentsSection'
 import PostEditModal from './PostEditModal'
@@ -11,7 +13,9 @@ import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { getPostDisplayTitle } from '../../utils/text.utils'
-import { therapistDesignationLabel } from '../../utils/designationHelpers'
+import { formatTherapistPostLine } from '../../utils/therapistHelpers'
+import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
+import { useCategories } from '../../hooks/usePosts'
 
 const PostView: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -34,6 +38,15 @@ const PostView: React.FC = () => {
       loadPost(postId)
     }
   }, [postId, loadPost])
+
+  // Viewing a post clears its "post answered" notifications (RLS limits the
+  // update to the current user's own notification rows)
+  const markPostNotificationsAsRead = useNotificationsStore(state => state.markPostNotificationsAsRead)
+  useEffect(() => {
+    if (postId && user) {
+      markPostNotificationsAsRead(postId)
+    }
+  }, [postId, user, markPostNotificationsAsRead])
 
   // Honor navigation state from PostCard's "Antworten" link: once the post
   // is loaded, open the reply form and scroll to the comments section, then
@@ -63,20 +76,9 @@ const PostView: React.FC = () => {
     })
   }
 
-  const getCategoryColor = () => {
-    return 'text-black' // Always black text for category badges
-  }
-
-  const getCategoryBackground = (categoryId: number) => {
-    const backgrounds = {
-      1: 'var(--bg-erfahrung)',     // Yellow
-      2: 'var(--bg-suche)',         // Light Pink
-      3: 'var(--bg-austausch)',     // Light Blue
-      4: 'var(--bg-rant)',          // Light Purple
-      5: 'var(--bg-ressourcen)',    // Light Green
-    }
-    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
-  }
+  // Category colors/names are admin-managed (categories table)
+  const { data: allCategories } = useCategories()
+  const lang = userProfile?.language_preference
 
   const handleEditPost = async (postData: any) => {
     if (!post) return
@@ -101,7 +103,7 @@ const PostView: React.FC = () => {
       // If the post body saved but tags failed, the store still holds the
       // fresh post — show the specific error without rolling back UI.
       const msg = error instanceof Error ? error.message : 'Unbekannter Fehler'
-      alert('Fehler beim Aktualisieren des Beitrags: ' + msg)
+      toast.error('Fehler beim Aktualisieren des Beitrags: ' + msg)
       throw error
     }
   }
@@ -213,14 +215,14 @@ const PostView: React.FC = () => {
             {/* Category Badge and Canton - Positioned relative to this wrapper */}
             <div className="absolute z-10 flex items-center space-x-2" style={{ top: '-53px' }}>
               <span
-                className={`inline-flex items-center px-2 py-0.5 font-medium ${getCategoryColor()}`}
+                className="inline-flex items-center px-2 py-0.5 font-medium text-black"
                 style={{
                   fontSize: '0.65rem',
-                  backgroundColor: getCategoryBackground(post.category_id),
+                  backgroundColor: getCategoryColorById(post.category_id, allCategories),
                   borderRadius: '3px'
                 }}
               >
-                {post.categories?.name_de}
+                {getCategoryName(post.categories, lang)}
               </span>
               {post.canton && (
                 <>
@@ -299,7 +301,7 @@ const PostView: React.FC = () => {
               className="post-view-therapist text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
               style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2'}}
             >
-              Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists, userProfile?.language_preference)}
+              Erfahrung mit {formatTherapistPostLine(post.therapists, userProfile?.language_preference)}
             </button>
           )}
 

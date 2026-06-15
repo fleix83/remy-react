@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
+import { toast } from '../../stores/toast.store'
 
 interface ModerationMessageModalProps {
   isOpen: boolean
@@ -73,12 +74,12 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
 
   const handleSubmit = () => {
     if (actionType === 'message' && !message.trim()) {
-      alert('Bitte geben Sie eine Nachricht ein.')
+      toast.info('Bitte geben Sie eine Nachricht ein.')
       return
     }
 
     if (actionType === 'reject' && sendMessage && !message.trim()) {
-      alert('Bitte geben Sie eine Nachricht ein oder deaktivieren Sie die Nachrichtenoption.')
+      toast.info('Bitte geben Sie eine Nachricht ein oder deaktivieren Sie die Nachrichtenoption.')
       return
     }
 

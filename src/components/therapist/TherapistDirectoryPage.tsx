@@ -81,6 +81,12 @@ const TherapistDirectoryPage: React.FC = () => {
     await logout()
   }
 
+  // Institution-only entries have no personal name; fall back to the institution
+  const therapistName = selectedTherapist
+    ? therapistsService.formatTherapistName(selectedTherapist).trim()
+    : ''
+  const displayName = therapistName || selectedTherapist?.institution || ''
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('de-DE', {
       day: '2-digit',
@@ -183,7 +189,7 @@ const TherapistDirectoryPage: React.FC = () => {
               {/* Therapist name with canton flag */}
               <div className="flex items-center gap-2 mb-4">
                 <h3 className="text-xl font-bold text-[#37a653] text-left">
-                  {therapistsService.formatTherapistName(selectedTherapist)}
+                  {displayName}
                 </h3>
                 {selectedTherapist.canton && (
                   <img
@@ -214,8 +220,9 @@ const TherapistDirectoryPage: React.FC = () => {
                   </p>
                 )}
 
-                {/* Institution - without label */}
-                {selectedTherapist.institution && (
+                {/* Institution shown as a line only for a named person;
+                    institution-only entries already use it as the title */}
+                {therapistName && selectedTherapist.institution && (
                   <p className="text-gray-700">
                     {selectedTherapist.institution}
                   </p>
@@ -239,7 +246,7 @@ const TherapistDirectoryPage: React.FC = () => {
               {/* Posts Container */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <h4 className="text-lg font-bold text-gray-900 mb-4 text-left">
-                  Beiträge über {selectedTherapist.first_name} {selectedTherapist.last_name}
+                  Beiträge über {displayName}
                 </h4>
 
                 {isLoadingPosts ? (

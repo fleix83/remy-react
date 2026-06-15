@@ -158,7 +158,13 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                         backgroundColor: conv.unreadCount > 0 ? '#ffffffb3' : '#f1fbf47a'
                       }}
                     >
-                      <div className="text-sm text-gray-700">
+                      <div className="text-sm text-gray-700 flex items-center">
+                        {conv.unreadCount > 0 && (
+                          <span
+                            className="mr-1.5 inline-block h-2 w-2 flex-shrink-0 rounded-full"
+                            style={{ backgroundColor: '#ff6b35' }}
+                          />
+                        )}
                         <span className="font-medium">{conv.participant.username}</span>
                         <span className="text-gray-400 mx-1">·</span>
                         <span className="text-gray-400" style={{ fontSize: '0.75rem' }}>

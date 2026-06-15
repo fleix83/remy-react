@@ -11,7 +11,9 @@ import Pagination from '../ui/Pagination'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { DesignationsService } from '../../services/designations.service'
 import { getDesignationLabel } from '../../utils/designationHelpers'
+import { getCategoryColor, getCategoryName } from '../../utils/categoryHelpers'
 import { useAuthStore } from '../../stores/auth.store'
+import { toast } from '../../stores/toast.store'
 import type { Designation } from '../../types/database.types'
 import type { DateRange } from 'react-day-picker'
 
@@ -118,7 +120,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
       onCreatePostDialogClose() // Close dialog using prop
     } catch (error) {
       console.error('❌ ForumView: Error creating post:', error)
-      alert('Fehler beim Erstellen des Beitrags: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error('Fehler beim Erstellen des Beitrags: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
       throw error
     }
   }, [createPostMutation, onCreatePostDialogClose])
@@ -425,32 +427,23 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             >
               Alle Kategorien
             </button>
-            {categories.map((category) => {
-              const categoryBgs: Record<number, string> = {
-                1: 'var(--bg-erfahrung)',
-                2: 'var(--bg-suche)',
-                3: 'var(--bg-austausch)',
-                4: 'var(--bg-rant)',
-                5: 'var(--bg-ressourcen)',
-              }
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategoryFilter(category.id)}
-                  className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                    filters.category === category.id
-                      ? 'text-gray-700'
-                      : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-                  }`}
-                  style={{
-                    fontSize: '0.65rem',
-                    backgroundColor: filters.category === category.id ? categoryBgs[category.id] : undefined
-                  }}
-                >
-                  {category.name_de}
-                </button>
-              )
-            })}
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => handleCategoryFilter(category.id)}
+                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                  filters.category === category.id
+                    ? 'text-gray-700'
+                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                }`}
+                style={{
+                  fontSize: '0.65rem',
+                  backgroundColor: filters.category === category.id ? getCategoryColor(category) : undefined
+                }}
+              >
+                {getCategoryName(category, lang)}
+              </button>
+            ))}
           </div>
 
           {/* Designation Filter - sidebar on desktop */}

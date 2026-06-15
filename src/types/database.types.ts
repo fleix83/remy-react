@@ -17,6 +17,7 @@ export type Database = {
       categories: {
         Row: {
           access_role: Database["public"]["Enums"]["access_role"] | null
+          color: string | null
           description_de: string | null
           description_fr: string | null
           description_it: string | null
@@ -28,6 +29,7 @@ export type Database = {
         }
         Insert: {
           access_role?: Database["public"]["Enums"]["access_role"] | null
+          color?: string | null
           description_de?: string | null
           description_fr?: string | null
           description_it?: string | null
@@ -39,6 +41,7 @@ export type Database = {
         }
         Update: {
           access_role?: Database["public"]["Enums"]["access_role"] | null
+          color?: string | null
           description_de?: string | null
           description_fr?: string | null
           description_it?: string | null
@@ -498,6 +501,7 @@ export type Database = {
           gender: string | null
           id: number
           institution: string | null
+          is_active: boolean
           languages: string | null
           last_name: string
           needs_review: boolean | null
@@ -519,6 +523,7 @@ export type Database = {
           gender?: string | null
           id?: number
           institution?: string | null
+          is_active?: boolean
           languages?: string | null
           last_name: string
           needs_review?: boolean | null
@@ -540,6 +545,7 @@ export type Database = {
           gender?: string | null
           id?: number
           institution?: string | null
+          is_active?: boolean
           languages?: string | null
           last_name?: string
           needs_review?: boolean | null
@@ -823,7 +829,7 @@ export const Constants = {
 // Enum types
 export type ModerationStatus = Database['public']['Enums']['moderation_status']
 export type UserRole = Database['public']['Enums']['user_role']
-export type NotificationType = 'private_message' | 'comment_reply' | 'post_mention' | 'system' | 'therapist_pending'
+export type NotificationType = 'private_message' | 'comment_reply' | 'post_comment' | 'post_mention' | 'system' | 'therapist_pending'
 
 // Stub types for incomplete features
 export interface Notification {

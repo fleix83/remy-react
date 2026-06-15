@@ -4,7 +4,10 @@ import type { PostWithRelations } from '../../types/database.types'
 import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
 import { getPostDisplayTitle } from '../../utils/text.utils'
-import { therapistDesignationLabel } from '../../utils/designationHelpers'
+import { formatTherapistPostLine } from '../../utils/therapistHelpers'
+import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
+import { useCategories } from '../../hooks/usePosts'
+import { useAuthStore } from '../../stores/auth.store'
 
 interface PostCardProps {
   post: PostWithRelations
@@ -59,20 +62,9 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
     })
   }
 
-  const getCategoryColor = () => {
-    return 'text-black' // Always black text for category badges
-  }
-
-  const getCategoryBackground = (categoryId: number) => {
-    const backgrounds = {
-      1: 'var(--bg-erfahrung)',     // Yellow
-      2: 'var(--bg-suche)',         // Light Pink
-      3: 'var(--bg-austausch)',     // Light Blue
-      4: 'var(--bg-rant)',          // Light Purple
-      5: 'var(--bg-ressourcen)',    // Light Green
-    }
-    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
-  }
+  // Category colors/names are admin-managed (categories table)
+  const { data: allCategories } = useCategories()
+  const lang = useAuthStore(s => s.userProfile?.language_preference)
 
 
   return (
@@ -98,14 +90,14 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
         >
           {/* Category Badge */}
           <span
-            className={`inline-flex items-center px-2 py-0.5 font-medium transition-opacity ${getCategoryColor()}`}
+            className="inline-flex items-center px-2 py-0.5 font-medium transition-opacity text-black"
             style={{
               fontSize: '0.65rem',
-              backgroundColor: getCategoryBackground(post.category_id),
+              backgroundColor: getCategoryColorById(post.category_id, allCategories),
               borderRadius: '3px'
             }}
           >
-            {post.categories?.name_de}
+            {getCategoryName(post.categories, lang)}
           </span>
           {/* Canton Flag (pure, no background) */}
           {post.canton && (
@@ -164,7 +156,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
             className="post-card-therapist text-left hover:underline active:opacity-60 cursor-pointer bg-transparent border-none p-0 m-0 block w-full transition-opacity duration-100"
             style={{color: '#4785ff', fontSize: '12px', lineHeight: '1.2'}}
           >
-            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists)}
+            Erfahrung mit {formatTherapistPostLine(post.therapists)}
           </button>
         )}
 

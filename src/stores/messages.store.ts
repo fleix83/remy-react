@@ -344,7 +344,8 @@ export const initializeMessagingAuth = () => {
   
   // Listen for auth changes
   supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session?.user) {
+    // INITIAL_SESSION covers page reloads with a restored session
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
       // Avoid awaiting Supabase calls inside onAuthStateChange (deadlock risk)
       queueMicrotask(() => {
         const store = useMessagesStore.getState()

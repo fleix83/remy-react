@@ -12,6 +12,8 @@ import { getPostDisplayTitle } from '../../utils/text.utils'
 import { DesignationsService } from '../../services/designations.service'
 import { TherapistsService } from '../../services/therapists.service'
 import { getDesignationLabel } from '../../utils/designationHelpers'
+import { toast } from '../../stores/toast.store'
+import { confirmDialog } from '../../stores/confirm.store'
 
 const ModerationQueue: React.FC = () => {
   const permissions = usePermissions()
@@ -184,7 +186,7 @@ const ModerationQueue: React.FC = () => {
       ])
     } catch (error) {
       console.error('Error loading moderation queue:', error)
-      alert('Fehler beim Laden der Moderationsqueue')
+      toast.error('Fehler beim Laden der Moderationsqueue')
     } finally {
       setLoading(false)
     }
@@ -212,10 +214,10 @@ const ModerationQueue: React.FC = () => {
       
       // Remove item from queue
       setQueueItems(prev => prev.filter(i => i.id !== item.id))
-      alert(`${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} genehmigt!`)
+      toast.success(`${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} genehmigt!`)
     } catch (error) {
       console.error('Error approving content:', error)
-      alert('Fehler beim Genehmigen: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error('Fehler beim Genehmigen: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
       throw error // Re-throw so the modal doesn't close
     } finally {
       setProcessingId(null)
@@ -244,10 +246,10 @@ const ModerationQueue: React.FC = () => {
       
       // Remove item from queue
       setQueueItems(prev => prev.filter(i => i.id !== item.id))
-      alert(`${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} abgelehnt!`)
+      toast.success(`${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} abgelehnt!`)
     } catch (error) {
       console.error('Error rejecting content:', error)
-      alert('Fehler beim Ablehnen: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error('Fehler beim Ablehnen: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
       throw error // Re-throw so the modal doesn't close
     } finally {
       setProcessingId(null)
@@ -268,10 +270,10 @@ const ModerationQueue: React.FC = () => {
       // Remove items from queue
       setQueueItems(prev => prev.filter(i => !selectedItems.has(i.id)))
       setSelectedItems(new Set())
-      alert(`${items.length} Elemente genehmigt!`)
+      toast.success(`${items.length} Elemente genehmigt!`)
     } catch (error) {
       console.error('Error bulk approving:', error)
-      alert('Fehler bei der Massengenehmigung')
+      toast.error('Fehler bei der Massengenehmigung')
     }
   }
 
@@ -298,10 +300,10 @@ const ModerationQueue: React.FC = () => {
       // Remove items from queue
       setQueueItems(prev => prev.filter(i => !selectedItems.has(i.id)))
       setSelectedItems(new Set())
-      alert(`${items.length} Elemente abgelehnt!`)
+      toast.success(`${items.length} Elemente abgelehnt!`)
     } catch (error) {
       console.error('Error bulk rejecting:', error)
-      alert('Fehler bei der Massenablehnung')
+      toast.error('Fehler bei der Massenablehnung')
     }
   }
 
@@ -309,7 +311,7 @@ const ModerationQueue: React.FC = () => {
     if (!permissions.canModerate || selectedItems.size === 0) return
 
     const confirmMessage = `Sind Sie sicher, dass Sie ${selectedItems.size} Elemente endgültig löschen möchten?`
-    if (!confirm(confirmMessage)) return
+    if (!(await confirmDialog({ message: confirmMessage, confirmLabel: 'Löschen', danger: true }))) return
 
     const items = Array.from(selectedItems).map(id => {
       const item = queueItems.find(i => i.id === id)
@@ -322,10 +324,10 @@ const ModerationQueue: React.FC = () => {
       // Remove items from queue
       setQueueItems(prev => prev.filter(i => !selectedItems.has(i.id)))
       setSelectedItems(new Set())
-      alert(`${items.length} Elemente gelöscht!`)
+      toast.success(`${items.length} Elemente gelöscht!`)
     } catch (error) {
       console.error('Error bulk deleting:', error)
-      alert('Fehler bei der Massenlöschung')
+      toast.error('Fehler bei der Massenlöschung')
     }
   }
 
@@ -375,7 +377,7 @@ const ModerationQueue: React.FC = () => {
     const contentTypeLabel = item.content_type === 'post' ? 'diesen Beitrag' : item.content_type === 'therapist' ? 'diesen Therapeuten' : 'diesen Kommentar'
     const confirmMessage = `Sind Sie sicher, dass Sie ${contentTypeLabel} endgültig löschen möchten?`
 
-    if (!confirm(confirmMessage)) return
+    if (!(await confirmDialog({ message: confirmMessage, confirmLabel: 'Löschen', danger: true }))) return
 
     setProcessingId(item.id)
     try {
@@ -390,10 +392,10 @@ const ModerationQueue: React.FC = () => {
       // Remove item from queue
       setQueueItems(prev => prev.filter(i => i.id !== item.id))
       const deletedLabel = item.content_type === 'post' ? 'Beitrag' : item.content_type === 'therapist' ? 'Therapeut' : 'Kommentar'
-      alert(`${deletedLabel} gelöscht!`)
+      toast.success(`${deletedLabel} gelöscht!`)
     } catch (error) {
       console.error('Error deleting content:', error)
-      alert('Fehler beim Löschen')
+      toast.error('Fehler beim Löschen')
     } finally {
       setProcessingId(null)
     }
@@ -416,7 +418,7 @@ const ModerationQueue: React.FC = () => {
       } else if (messageAction === 'message') {
         // TODO: Implement direct messaging
         console.log(`Direct message to user: ${message}`)
-        alert('Nachricht gesendet!')
+        toast.success('Nachricht gesendet!')
       }
       
       // Only close modal if operations succeeded
@@ -454,10 +456,10 @@ const ModerationQueue: React.FC = () => {
           : item
       ))
       
-      alert('Kategorie erfolgreich geändert!')
+      toast.success('Kategorie erfolgreich geändert!')
     } catch (error) {
       console.error('Error updating category:', error)
-      alert('Fehler beim Ändern der Kategorie')
+      toast.error('Fehler beim Ändern der Kategorie')
     }
   }
 
@@ -876,7 +878,7 @@ const ModerationQueue: React.FC = () => {
                             ))
                           } catch (error) {
                             console.error('Error assigning designation:', error)
-                            alert('Fehler beim Zuweisen der Bezeichnung')
+                            toast.error('Fehler beim Zuweisen der Bezeichnung')
                           }
                         }}
                         className="mt-2 text-sm border rounded px-2 py-1 bg-white text-gray-700"
@@ -945,10 +947,10 @@ const ModerationQueue: React.FC = () => {
                           try {
                             await moderationService.dismissTherapist(item.id, permissions.userProfile.id)
                             setQueueItems(prev => prev.filter(i => i.id !== item.id))
-                            alert('Therapeut freigegeben!')
+                            toast.success('Therapeut freigegeben!')
                           } catch (error) {
                             console.error('Error dismissing therapist:', error)
-                            alert('Fehler beim Freigeben')
+                            toast.error('Fehler beim Freigeben')
                           } finally {
                             setProcessingId(null)
                           }

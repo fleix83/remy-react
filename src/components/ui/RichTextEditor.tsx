@@ -6,6 +6,7 @@ import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
+import { toast } from '../../stores/toast.store'
 
 interface RichTextEditorProps {
   content: string
@@ -153,7 +154,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     const hasSelection = from !== to
 
     if (!hasSelection) {
-      alert('Please select some text first to add a link')
+      toast.info('Bitte zuerst Text markieren, um einen Link hinzuzufügen')
       return
     }
 

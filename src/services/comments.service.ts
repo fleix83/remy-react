@@ -65,7 +65,41 @@ export class CommentsService {
       throw error
     }
 
+    // Fire-and-forget: a failed notification must never block the comment
+    this.notifyPostAuthor(data).catch(err =>
+      console.warn('Could not create post-answered notification:', err)
+    )
+
     return data
+  }
+
+  // "Post answered" notification for the post author (skipped when the
+  // author comments on their own post)
+  private async notifyPostAuthor(comment: Comment): Promise<void> {
+    if (!comment.user_id || !comment.post_id) return
+
+    const [{ data: post }, { data: commenter }] = await Promise.all([
+      supabase.from('posts').select('user_id, title').eq('id', comment.post_id).single(),
+      supabase.from('users').select('username').eq('id', comment.user_id).single()
+    ])
+
+    if (!post || post.user_id === comment.user_id) return
+
+    const postRef = post.title?.trim() ? `deinen Beitrag «${post.title}»` : 'deinen Beitrag'
+    const { error } = await (supabase.from('notifications' as any) as any).insert([{
+      user_id: post.user_id,
+      type: 'post_comment',
+      title: 'Neue Antwort',
+      message: `${commenter?.username ?? 'Jemand'} hat auf ${postRef} geantwortet`,
+      related_post_id: comment.post_id,
+      related_comment_id: comment.id,
+      is_read: false
+    }])
+
+    // Silently skip while the notifications table doesn't exist yet
+    if (error && !error.message?.includes('relation "public.notifications" does not exist')) {
+      throw error
+    }
   }
 
   // Update a comment

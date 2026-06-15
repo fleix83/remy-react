@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { useMessagesStore } from '../../stores/messages.store'
 import { MessagesService } from '../../services/messages.service'
+import { toast } from '../../stores/toast.store'
 
 interface SendMessageButtonProps {
   recipientId: string
@@ -77,7 +78,7 @@ const SendMessageButton: React.FC<SendMessageButtonProps> = ({
       
     } catch (error) {
       console.error('Error starting conversation:', error)
-      alert('Fehler beim Öffnen der Unterhaltung')
+      toast.error('Fehler beim Öffnen der Unterhaltung')
     }
   }
 

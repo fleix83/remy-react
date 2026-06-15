@@ -236,7 +236,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span>Neuen Therapeuten hinzufügen</span>
+            <span>Therapeut:in oder Institution hinzufügen</span>
           </div>
 
           {/* Therapist options */}
@@ -263,7 +263,10 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
               )}
             </div>
           ) : (
-            filteredTherapists.map((therapist, index) => (
+            filteredTherapists.map((therapist, index) => {
+              // Institution-only entries use the institution as their name
+              const personName = therapistsService.formatTherapistName(therapist)
+              return (
               <div
                 key={therapist.id}
                 onClick={() => handleTherapistSelect(therapist)}
@@ -273,7 +276,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <div className="font-semibold text-[#37a653]">
-                    {therapistsService.formatTherapistName(therapist)}
+                    {personName || therapist.institution}
                   </div>
                   {isModeratorOrAdmin && therapist.needs_review && (
                     <svg
@@ -290,11 +293,12 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
                   {therapistDesignationLabel(therapist)}
-                  {therapist.institution && ` • ${therapist.institution}`}
+                  {personName && therapist.institution && ` • ${therapist.institution}`}
                   {therapist.canton && ` • ${therapist.canton}`}
                 </div>
               </div>
-            ))
+              )
+            })
           )}
         </div>
       )}

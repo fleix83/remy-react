@@ -2,75 +2,60 @@ import type { Therapist, TherapistWithDesignation } from '../types/database.type
 import { therapistDesignationLabel } from './designationHelpers'
 
 /**
- * Format therapist information for post titles in "Erfahrung" posts
- * Format: "Title firstname lastname designation, institution (if) and canton"
+ * Three kinds of therapist entries:
+ * - person:             an individual therapist (no institution)
+ * - person_institution: an individual working at an institution (e.g. clinic)
+ * - institution:        an institution only, no personal name
+ *
+ * The type is derived from field presence — an entry with a personal name and
+ * an institution IS a person-at-institution, one with only an institution IS
+ * an institution. No extra DB column needed; institution-only rows store ''
+ * in the NOT NULL name columns.
  */
-export function formatTherapistForTitle(therapist: TherapistWithDesignation): string {
-  const nameParts = []
-  
-  // Add form of address if available
-  if (therapist.form_of_address) {
-    nameParts.push(therapist.form_of_address)
-  }
-  
-  // Add first and last name
-  nameParts.push(therapist.first_name)
-  nameParts.push(therapist.last_name)
-  
-  const fullName = nameParts.join(' ')
-  
-  // Build the description parts
-  const descriptionParts = []
+export type TherapistEntryType = 'person' | 'person_institution' | 'institution'
 
-  // Add designation (curated label when classified, else verbatim full_title)
-  const designation = therapistDesignationLabel(therapist)
-  if (designation) {
-    descriptionParts.push(designation)
-  }
+export function getTherapistEntryType(
+  t: Pick<Therapist, 'first_name' | 'last_name' | 'institution'>
+): TherapistEntryType {
+  const hasName = !!(t.first_name?.trim() || t.last_name?.trim())
+  const hasInstitution = !!t.institution?.trim()
+  if (hasInstitution) return hasName ? 'person_institution' : 'institution'
+  return 'person'
+}
 
-  // Add institution if available
-  if (therapist.institution) {
-    descriptionParts.push(therapist.institution)
-  }
-  
-  // Combine name with description and canton
-  let result = fullName
-  
-  if (descriptionParts.length > 0) {
-    result += ` ${descriptionParts.join(', ')}`
-  }
-  
-  // Add canton at the end
-  if (therapist.canton) {
-    result += ` und ${therapist.canton}`
-  }
-  
-  return result
+/** Personal name ("Anrede Vorname Nachname"); '' for institution-only entries. */
+export function formatTherapistPersonName(
+  t: Pick<Therapist, 'form_of_address' | 'first_name' | 'last_name'>
+): string {
+  return [t.form_of_address, t.first_name, t.last_name]
+    .map((part) => part?.trim())
+    .filter(Boolean)
+    .join(' ')
 }
 
 /**
- * Generate the complete title for "Erfahrung" posts
+ * One-line therapist reference shown on posts ("Erfahrung mit …"):
+ * - person:             "Frau Dr. Anna Muster, Psychiaterin"
+ * - person_institution: "Frau Dr. Anna Muster bei Klinik X, Psychiaterin"
+ * - institution:        "Klinik X, Psychiatrische Klinik, Rheinfelden AG"
  */
-export function getExperiencePostTitle(therapist: TherapistWithDesignation): string {
-  return `Erfahrung mit ${formatTherapistForTitle(therapist)}`
-}
+export function formatTherapistPostLine(
+  t: TherapistWithDesignation,
+  lang?: string | null
+): string {
+  const entryType = getTherapistEntryType(t)
 
-/**
- * Check if a post should use the therapist-based title
- * @deprecated No longer auto-generating titles. All posts now have regular titles.
- */
-export function shouldUseTherapistTitle(_therapist?: Therapist | null): boolean {
-  return false // Always return false - no longer auto-generating titles
-}
+  if (entryType === 'institution') {
+    // Institutions show their verbatim official designation, not the curated
+    // (person-oriented) designation labels.
+    const official = t.full_title || therapistDesignationLabel(t, lang)
+    const location = [t.city, t.canton].filter(Boolean).join(' ')
+    return [t.institution, official, location].filter(Boolean).join(', ')
+  }
 
-/**
- * Get the display title for a post
- * @deprecated Use post.title directly instead
- */
-export function getPostDisplayTitle(post: {
-  title: string
-  category_id: number
-  therapists?: Therapist | null
-}): string {
-  return post.title
+  const personName = formatTherapistPersonName(t)
+  const name = entryType === 'person_institution'
+    ? `${personName} bei ${t.institution!.trim()}`
+    : personName
+  return [name, therapistDesignationLabel(t, lang)].filter(Boolean).join(', ')
 }

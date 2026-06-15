@@ -6,7 +6,10 @@ import { useAuthStore } from '../../stores/auth.store'
 import PostEditModal from '../forum/PostEditModal'
 import { supabase } from '../../lib/supabase'
 import type { PostWithRelations, CommentWithUser, Post } from '../../types/database.types'
-import { therapistDesignationLabel } from '../../utils/designationHelpers'
+import { formatTherapistPostLine } from '../../utils/therapistHelpers'
+import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
+import { useCategories } from '../../hooks/usePosts'
+import { confirmDialog } from '../../stores/confirm.store'
 
 interface UserContentProps {
   userId: string
@@ -26,7 +29,10 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   
   const navigate = useNavigate()
   const { updatePost } = useForumStore()
-  const { user } = useAuthStore()
+  const { user, userProfile } = useAuthStore()
+  // Category colors/names are admin-managed (categories table)
+  const { data: allCategories } = useCategories()
+  const lang = userProfile?.language_preference
 
   useEffect(() => {
     loadContent()
@@ -63,7 +69,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   }
 
   const handleDeleteDraft = async (draftId: number) => {
-    if (!confirm('Are you sure you want to delete this draft?')) return
+    if (!(await confirmDialog({ message: 'Diesen Entwurf wirklich löschen?', confirmLabel: 'Löschen', danger: true }))) return
 
     try {
       await UserContentService.deleteDraft(draftId, userId)
@@ -169,7 +175,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   }
 
   const handleDeletePost = async (postId: number) => {
-    if (!confirm('Are you sure you want to delete this post? This will hide it from public view but preserve any comments.')) {
+    if (!(await confirmDialog({ message: 'Diesen Beitrag wirklich löschen? Er wird ausgeblendet, vorhandene Kommentare bleiben erhalten.', confirmLabel: 'Löschen', danger: true }))) {
       return
     }
 
@@ -310,16 +316,10 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 className="px-2 py-1 text-xs text-black font-medium"
                                 style={{
                                   borderRadius: '3px',
-                                  backgroundColor:
-                                    post.categories.id === 1 ? 'var(--bg-erfahrung)' :
-                                    post.categories.id === 2 ? 'var(--bg-suche)' :
-                                    post.categories.id === 3 ? 'var(--bg-austausch)' :
-                                    post.categories.id === 4 ? 'var(--bg-rant)' :
-                                    post.categories.id === 5 ? 'var(--bg-ressourcen)' :
-                                    '#f3f4f6'
+                                  backgroundColor: getCategoryColorById(post.categories.id, allCategories)
                                 }}
                               >
-                                {post.categories.name_de}
+                                {getCategoryName(post.categories, lang)}
                               </span>
                             )}
 
@@ -366,7 +366,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            Erfahrung mit {post.therapists.form_of_address} {post.therapists.first_name} {post.therapists.last_name}, {therapistDesignationLabel(post.therapists)}
+                            Erfahrung mit {formatTherapistPostLine(post.therapists)}
                           </div>
                         )}
 
@@ -504,16 +504,10 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 className="px-2 py-1 text-xs text-black font-medium"
                                 style={{
                                   borderRadius: '3px',
-                                  backgroundColor:
-                                    draft.categories.id === 1 ? 'var(--bg-erfahrung)' :
-                                    draft.categories.id === 2 ? 'var(--bg-suche)' :
-                                    draft.categories.id === 3 ? 'var(--bg-austausch)' :
-                                    draft.categories.id === 4 ? 'var(--bg-rant)' :
-                                    draft.categories.id === 5 ? 'var(--bg-ressourcen)' :
-                                    '#f3f4f6'
+                                  backgroundColor: getCategoryColorById(draft.categories.id, allCategories)
                                 }}
                               >
-                                {draft.categories.name_de}
+                                {getCategoryName(draft.categories, lang)}
                               </span>
                             )}
 
@@ -560,7 +554,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            Erfahrung mit {draft.therapists.form_of_address} {draft.therapists.first_name} {draft.therapists.last_name}, {therapistDesignationLabel(draft.therapists)}
+                            Erfahrung mit {formatTherapistPostLine(draft.therapists)}
                           </div>
                         )}
 

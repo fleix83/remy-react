@@ -3,6 +3,8 @@ import type { CommentWithRelations } from '../../types/database.types'
 import { CommentsService } from '../../services/comments.service'
 import UserAvatar from '../user/UserAvatar'
 import SendMessageButton from '../messaging/SendMessageButton'
+import { toast } from '../../stores/toast.store'
+import { confirmDialog } from '../../stores/confirm.store'
 
 interface CommentCardProps {
   comment: CommentWithRelations
@@ -51,21 +53,21 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
       onUpdate()
     } catch (error) {
       console.error('Error updating comment:', error)
-      alert('Fehler beim Speichern des Kommentars')
+      toast.error('Fehler beim Speichern des Kommentars')
     } finally {
       setSaving(false)
     }
   }
 
   const handleDelete = async () => {
-    if (!confirm('Kommentar wirklich löschen?')) return
+    if (!(await confirmDialog({ message: 'Kommentar wirklich löschen?', confirmLabel: 'Löschen', danger: true }))) return
 
     try {
       await commentsService.deleteComment(comment.id)
       onUpdate()
     } catch (error) {
       console.error('Error deleting comment:', error)
-      alert('Fehler beim Löschen des Kommentars')
+      toast.error('Fehler beim Löschen des Kommentars')
     }
   }
 

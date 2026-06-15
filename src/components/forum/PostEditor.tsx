@@ -6,6 +6,9 @@ import TherapistSelector from '../therapist/TherapistSelector'
 import BadgeDropdown from '../ui/BadgeDropdown'
 import TagInput from '../ui/TagInput'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
+import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
+import { useAuthStore } from '../../stores/auth.store'
+import { toast } from '../../stores/toast.store'
 
 interface PostEditorProps {
   onSubmit?: (postData: any) => Promise<void>
@@ -42,17 +45,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
   const postsService = new PostsService()
 
-  // Category color functions (matching PostCard and PostView)
-  const getCategoryBackground = (categoryId: number) => {
-    const backgrounds = {
-      1: 'var(--bg-erfahrung)',     // Yellow
-      2: 'var(--bg-suche)',         // Light Pink
-      3: 'var(--bg-austausch)',     // Light Blue
-      4: 'var(--bg-rant)',          // Light Purple
-      5: 'var(--bg-ressourcen)',    // Light Green
-    }
-    return backgrounds[categoryId as keyof typeof backgrounds] || 'var(--bg-erfahrung)'
-  }
+  // Category colors/names are admin-managed (categories table)
+  const lang = useAuthStore(s => s.userProfile?.language_preference)
 
 
 
@@ -106,24 +100,24 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
     // Title required EXCEPT for Rant (4)
     if (categoryId !== 4 && !title.trim()) {
-      alert('Bitte Titel ausfüllen')
+      toast.info('Bitte Titel ausfüllen')
       return
     }
 
     if (!content.trim()) {
-      alert('Bitte Inhalt ausfüllen')
+      toast.info('Bitte Inhalt ausfüllen')
       return
     }
 
     // Validate therapist selection for "Erfahrung" category
     if (categoryId === 1 && !selectedTherapist) {
-      alert('Bitte wählen Sie einen Therapeut* für Ihre Erfahrung aus')
+      toast.info('Bitte wählen Sie einen Therapeut* für Ihre Erfahrung aus')
       return
     }
 
     // Canton required EXCEPT for Erfahrung (1), Rant (4), and Austausch (3)
     if (categoryId !== 1 && categoryId !== 3 && categoryId !== 4 && !canton) {
-      alert('Bitte Kanton auswählen')
+      toast.info('Bitte Kanton auswählen')
       return
     }
 
@@ -153,7 +147,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
       setTags([])
     } catch (error) {
       console.error('Error submitting post:', error)
-      alert('Fehler beim Speichern des Beitrags')
+      toast.error('Fehler beim Speichern des Beitrags')
     } finally {
       setPublishing(false)
     }
@@ -169,12 +163,12 @@ const PostEditor: React.FC<PostEditorProps> = ({
             <div className="mb-4" style={{ marginTop: '12px' }}>
               <BadgeDropdown
                 value={categoryId}
-                options={categories.map(cat => ({ value: cat.id, label: cat.name_de }))}
+                options={categories.map(cat => ({ value: cat.id, label: getCategoryName(cat, lang) }))}
                 onChange={(value) => setCategoryId(Number(value))}
                 placeholder="Kategorie"
                 badgeClassName="text-black hover:opacity-80"
                 className="category-badge-dropdown w-full"
-                style={{ backgroundColor: getCategoryBackground(categoryId) }}
+                style={{ backgroundColor: getCategoryColorById(categoryId, categories) }}
                 required
               />
             </div>
@@ -307,7 +301,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 >
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
-                      {category.name_de}
+                      {getCategoryName(category, lang)}
                     </option>
                   ))}
                 </select>

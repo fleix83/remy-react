@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useCommentsStore } from '../../stores/comments.store'
 import RichTextEditor from '../ui/RichTextEditor'
+import { toast } from '../../stores/toast.store'
 
 interface CommentFormProps {
   postId: number
@@ -43,7 +44,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     // Check text content without HTML tags
     const textContent = content.replace(/<[^>]*>/g, '').trim()
     if (!textContent) {
-      alert('Bitte gib einen Kommentar ein')
+      toast.info('Bitte gib einen Kommentar ein')
       return
     }
 
@@ -73,7 +74,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
       }
     } catch (error) {
       console.error('Error creating comment:', error)
-      alert('Fehler beim Erstellen des Kommentars')
+      toast.error('Fehler beim Erstellen des Kommentars')
     } finally {
       setSubmitting(false)
     }
