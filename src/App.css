@@ -763,6 +763,21 @@
   }
 }
 
+/* ── Forum top nav header (desktop) ── */
+/* Pink-to-transparent header band; logo nudged left, logo+avatar group lowered */
+@media (min-width: 768px) {
+  .main-nav {
+    background: linear-gradient(180deg, #ffe0e0, transparent);
+    height: 200px;
+  }
+  .main-nav .nav-row {
+    margin-top: 20px;
+  }
+  .main-nav .nav-logo {
+    margin-left: -36px;
+  }
+}
+
 /* ── Comments styling (all screen sizes) ── */
 /* Comments container: tighter radius, near-white gray */
 .comments-container {

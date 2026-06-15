@@ -164,7 +164,7 @@ const PostView: React.FC = () => {
         className="post-view-header w-full flex items-center justify-center relative"
         style={{
           height: '265px',
-          background: 'linear-gradient(#fae3e3 0%, rgb(255 255 255) 100%)'
+          background: `linear-gradient(color-mix(in srgb, ${getCategoryColorById(post.category_id, allCategories)} 30%, white) 0%, rgb(255 255 255) 100%)`
         }}
       >
         <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
