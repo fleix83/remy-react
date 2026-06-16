@@ -320,14 +320,13 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         {/* Default-canton banner — replaces the canton filter while active
             (hidden during search, which ignores filters anyway) */}
         {defaultCantonActive && !isSearchMode ? (
-          <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} flex-col items-start canton-inline`} style={{ padding: '0 40px', marginBottom: '80px', fontFamily: 'Nunito' }}>
+          <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} flex-col items-start canton-inline mt-[100px] mb-[-88px] md:mt-0 md:mb-20`} style={{ padding: '0 40px', fontFamily: 'Nunito' }}>
             <p className="text-gray-600 text-left" style={{ fontSize: 'medium' }}>
-              Es werden nur Beiträge aus dem Kanton «{defaultCantonName}» angezeigt.
+              Es werden Beiträge aus deiner Region «{defaultCantonName}» angezeigt
             </p>
-            <p className="text-xs text-gray-400 text-left">Nachbarkantone werden auch angezeigt.</p>
             <button
               onClick={handleShowAllCantons}
-              className="text-sm underline text-[var(--primary)] hover:opacity-80 mt-0.5"
+              className="text-sm underline text-[var(--primary)] hover:opacity-80 mt-1"
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               Alle Beiträge anzeigen
