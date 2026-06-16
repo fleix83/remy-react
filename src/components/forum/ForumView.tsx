@@ -8,7 +8,7 @@ import PostCard from './PostCard'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
 import Pagination from '../ui/Pagination'
-import { SWISS_CANTONS } from '../../constants/switzerland.constants'
+import { SWISS_CANTONS, CANTON_NEIGHBORS } from '../../constants/switzerland.constants'
 import { DesignationsService } from '../../services/designations.service'
 import { getDesignationLabel } from '../../utils/designationHelpers'
 import { getCategoryColor, getCategoryName } from '../../utils/categoryHelpers'
@@ -51,15 +51,35 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   const [showDatePicker, setShowDatePicker] = useState(false)
   const datePickerRef = useRef<HTMLDivElement>(null)
 
+  // Default-canton filtering: when the user has a default canton, the forum
+  // shows only posts from that canton + its neighbours until they opt out.
+  const [showAllCantons, setShowAllCantons] = useState(false)
+  const defaultCanton = userProfile?.default_canton || null
+  const defaultCantonName = defaultCanton
+    ? (SWISS_CANTONS.find(c => c.code === defaultCanton)?.name || defaultCanton)
+    : ''
+  const defaultCantons = useMemo(
+    () => (defaultCanton ? [defaultCanton, ...(CANTON_NEIGHBORS[defaultCanton] || [])] : null),
+    [defaultCanton]
+  )
+  const defaultCantonActive = !!defaultCantons && !showAllCantons
+
   // React Query hooks - use searchTerm when it exists, otherwise use filters
   const isSearchMode = Boolean(searchTerm.trim())
 
-  // Numbered pagination state; jump back to page 1 whenever filters change
-  // (state-during-render pattern so the new filters never fetch a stale page)
+  // Effective filters fed to the query: while the default-canton restriction is
+  // active, force the canton set to the default + neighbours.
+  const effectiveFilters = useMemo<PostFilters>(
+    () => (defaultCantonActive ? { ...filters, cantons: defaultCantons! } : filters),
+    [filters, defaultCantonActive, defaultCantons]
+  )
+
+  // Numbered pagination state; jump back to page 1 whenever the effective
+  // filters change (state-during-render pattern so we never fetch a stale page)
   const [page, setPage] = useState(1)
-  const [prevFilters, setPrevFilters] = useState(filters)
-  if (filters !== prevFilters) {
-    setPrevFilters(filters)
+  const [prevFilters, setPrevFilters] = useState(effectiveFilters)
+  if (effectiveFilters !== prevFilters) {
+    setPrevFilters(effectiveFilters)
     setPage(1)
   }
 
@@ -68,7 +88,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     isLoading: postsLoading,
     isFetching: postsFetching,
     totalPages
-  } = usePaginatedPosts(isSearchMode ? {} : filters, page) // Don't apply filters when searching
+  } = usePaginatedPosts(isSearchMode ? {} : effectiveFilters, page) // Don't apply filters when searching
 
   const { data: searchResults = [], isLoading: searchLoading } = useSearchPosts(searchTerm)
   const { data: categories = [] } = useCategories()
@@ -203,6 +223,22 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     })
   }, [])
 
+  // Opt out of the default-canton restriction: show all posts and bring the
+  // normal canton filter back. Re-applies on the next visit (in-memory flag).
+  const handleShowAllCantons = useCallback(() => {
+    setShowAllCantons(true)
+    setFiltersState(prev => ({ ...prev, cantons: undefined }))
+  }, [])
+
+  // FilterModal changes flow through here so that touching the canton picker
+  // while the default restriction is active counts as opting out of it.
+  const handleFiltersChange = useCallback((next: PostFilters) => {
+    if (defaultCantonActive && next.cantons !== filters.cantons) {
+      setShowAllCantons(true)
+    }
+    setFiltersState(next)
+  }, [defaultCantonActive, filters.cantons])
+
   const getActiveFilterCount = useMemo(() => {
     let count = 0
     if (filters.category) count++
@@ -275,10 +311,30 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           isOpen={showFilterModal}
           onClose={() => setShowFilterModal(false)}
           filters={filters}
-          onFiltersChange={setFiltersState}
+          onFiltersChange={handleFiltersChange}
+          defaultCantonActive={defaultCantonActive && !isSearchMode}
+          defaultCantonLabel={defaultCantonName}
+          onShowAllCantons={handleShowAllCantons}
         />
 
-        {/* Canton Filter - inline below navbar on desktop */}
+        {/* Default-canton banner — replaces the canton filter while active
+            (hidden during search, which ignores filters anyway) */}
+        {defaultCantonActive && !isSearchMode ? (
+          <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} flex-col items-start canton-inline`} style={{ padding: '0 40px', marginBottom: '80px', fontFamily: 'Nunito' }}>
+            <p className="text-gray-600 text-left" style={{ fontSize: 'medium' }}>
+              Es werden nur Beiträge aus dem Kanton «{defaultCantonName}» angezeigt.
+            </p>
+            <p className="text-xs text-gray-400 text-left">Nachbarkantone werden auch angezeigt.</p>
+            <button
+              onClick={handleShowAllCantons}
+              className="text-sm underline text-[var(--primary)] hover:opacity-80 mt-0.5"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              Alle Beiträge anzeigen
+            </button>
+          </div>
+        ) : (
+        /* Canton Filter - inline below navbar on desktop */
         <div className={`${showCreatePostDialog ? 'hidden' : 'hidden md:flex'} items-center flex-wrap gap-1 canton-inline`} style={{ padding: '0 20px', marginBottom: '80px' }}>
           {SWISS_CANTONS.filter(c => c.code !== '').map(canton => (
             <button
@@ -314,6 +370,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             </button>
           )}
         </div>
+        )}
 
       {/* Post Editor Dialog — Mobile only (full-screen modal) */}
       {showCreatePostDialog && (

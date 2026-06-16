@@ -22,6 +22,9 @@ interface FilterModalProps {
   onClose: () => void
   filters: PostFilters
   onFiltersChange: (filters: PostFilters) => void
+  defaultCantonActive?: boolean
+  defaultCantonLabel?: string
+  onShowAllCantons?: () => void
 }
 
 interface FilterState {
@@ -63,7 +66,7 @@ const CANTONS = [
   { name: 'Zürich', code: 'ZH' }
 ]
 
-const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onFiltersChange }) => {
+const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onFiltersChange, defaultCantonActive, defaultCantonLabel, onShowAllCantons }) => {
   const { userProfile } = useAuthStore()
   const lang = userProfile?.language_preference
   const { data: categories = [] } = useCategories()
@@ -233,22 +236,36 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
 
             {/* Kantone */}
             <div className="relative">
-              <select
-                value={filters.cantons?.[0] || ''}
-                onChange={(e) => {
-                  const val = e.target.value
-                  const newFilters = { ...filters, cantons: val ? [val] : undefined }
-                  onFiltersChange(newFilters)
-                }}
-                className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
-              >
-                <option value="">Alle Kantone</option>
-                {CANTONS.map(canton => (
-                  <option key={canton.code} value={canton.code}>
-                    {canton.name}
-                  </option>
-                ))}
-              </select>
+              {defaultCantonActive ? (
+                <div className="w-full px-3 py-2 rounded-lg text-sm text-left bg-[#fff3f3]">
+                  <p className="text-gray-600">Nur Kanton «{defaultCantonLabel}» (inkl. Nachbarkantone)</p>
+                  <button
+                    type="button"
+                    onClick={onShowAllCantons}
+                    className="underline text-[var(--primary)] hover:opacity-80 mt-0.5"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  >
+                    Alle Beiträge anzeigen
+                  </button>
+                </div>
+              ) : (
+                <select
+                  value={filters.cantons?.[0] || ''}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    const newFilters = { ...filters, cantons: val ? [val] : undefined }
+                    onFiltersChange(newFilters)
+                  }}
+                  className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
+                >
+                  <option value="">Alle Kantone</option>
+                  {CANTONS.map(canton => (
+                    <option key={canton.code} value={canton.code}>
+                      {canton.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
             {/* Therapeuten */}
