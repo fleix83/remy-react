@@ -57,6 +57,15 @@
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 50%);
 }
 
+/* Compact list card for profile content (posts/comments/drafts).
+   No outline/border — visual separation comes from a subtle full-width
+   status band at the top of each item (tinted to match the status colour). */
+.profile-list-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
 /* Slide menu panel width */
 .slide-menu-panel {
   width: 100vw;

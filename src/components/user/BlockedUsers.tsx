@@ -53,7 +53,7 @@ const BlockedUsers: React.FC = () => {
       setBlockedUsers(blocked as any)
     } catch (error) {
       console.error('Error loading blocked users:', error)
-      setMessage({ type: 'error', text: 'Failed to load blocked users' })
+      setMessage({ type: 'error', text: 'Geblockte User konnten nicht geladen werden' })
     } finally {
       setIsLoading(false)
     }
@@ -71,7 +71,7 @@ const BlockedUsers: React.FC = () => {
       setSearchResults(filteredResults)
     } catch (error) {
       console.error('Error searching users:', error)
-      setMessage({ type: 'error', text: 'Failed to search users' })
+      setMessage({ type: 'error', text: 'Suche fehlgeschlagen' })
     } finally {
       setIsSearching(false)
     }
@@ -85,7 +85,7 @@ const BlockedUsers: React.FC = () => {
 
     try {
       await UserSearchService.blockUser(userProfile.id, userToBlock.id!)
-      setMessage({ type: 'success', text: `Successfully blocked ${userToBlock.username}` })
+      setMessage({ type: 'success', text: `${userToBlock.username} blockiert` })
       
       // Refresh blocked users list
       await loadBlockedUsers()
@@ -96,9 +96,9 @@ const BlockedUsers: React.FC = () => {
       
     } catch (error) {
       console.error('Error blocking user:', error)
-      setMessage({ 
-        type: 'error', 
-        text: error instanceof Error ? error.message : 'Failed to block user'
+      setMessage({
+        type: 'error',
+        text: 'User konnte nicht blockiert werden'
       })
     } finally {
       setIsSearching(false)
@@ -113,9 +113,9 @@ const BlockedUsers: React.FC = () => {
 
     try {
       await UserSearchService.unblockUser(userProfile.id, userToUnblock.blocked_id)
-      setMessage({ 
-        type: 'success', 
-        text: `Successfully unblocked ${userToUnblock.blocked_user?.username || 'user'}` 
+      setMessage({
+        type: 'success',
+        text: `${userToUnblock.blocked_user?.username || 'User'} freigegeben`
       })
       
       // Refresh blocked users list
@@ -123,9 +123,9 @@ const BlockedUsers: React.FC = () => {
       
     } catch (error) {
       console.error('Error unblocking user:', error)
-      setMessage({ 
-        type: 'error', 
-        text: error instanceof Error ? error.message : 'Failed to unblock user'
+      setMessage({
+        type: 'error',
+        text: 'User konnte nicht freigegeben werden'
       })
     } finally {
       setIsLoading(false)
@@ -146,8 +146,8 @@ const BlockedUsers: React.FC = () => {
 
   return (
     <div className="bg-white shadow-sm" style={{ borderRadius: '28px' }}>
-      <div className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Blocked Users</h2>
+      <div className="p-6 text-left">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6 text-left">Geblockte User</h2>
 
         {message && (
           <div className={`mb-6 p-4 rounded-lg flex items-center justify-between ${
@@ -167,15 +167,15 @@ const BlockedUsers: React.FC = () => {
 
         {/* Search Section */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Search users to block
+          <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
+            User zum Blockieren suchen
           </label>
           <div className="relative">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Type username to search..."
+              placeholder="Benutzername eingeben..."
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2ebe7a] focus:border-transparent"
             />
             {isSearching && (
@@ -200,9 +200,9 @@ const BlockedUsers: React.FC = () => {
                       width={32}
                       height={32}
                     />
-                    <div>
+                    <div className="text-left">
                       <p className="font-medium text-gray-900">{user.username}</p>
-                      <p className="text-xs text-gray-500">Member since {formatDate(user.created_at!)}</p>
+                      <p className="text-xs text-gray-500">Mitglied seit {formatDate(user.created_at!)}</p>
                     </div>
                   </div>
                   <button
@@ -210,7 +210,7 @@ const BlockedUsers: React.FC = () => {
                     disabled={isSearching}
                     className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Block
+                    Blockieren
                   </button>
                 </div>
               ))}
@@ -218,28 +218,24 @@ const BlockedUsers: React.FC = () => {
           )}
 
           {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
-            <p className="mt-2 text-sm text-gray-500">No users found matching "{searchQuery}"</p>
+            <p className="mt-2 text-sm text-gray-500 text-left">Keine User gefunden für "{searchQuery}"</p>
           )}
         </div>
 
         {/* Blocked Users List */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Currently Blocked ({blockedUsers.length})
+        <div className="text-left">
+          <h3 className="text-lg font-medium text-gray-900 mb-4 text-left">
+            {blockedUsers.length === 0
+              ? 'Keine User geblockt'
+              : `${blockedUsers.length} User geblockt`}
           </h3>
 
           {isLoading ? (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2ebe7a]"></div>
             </div>
           ) : blockedUsers.length === 0 ? (
-            <div className="text-center py-8">
-              <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636" />
-              </svg>
-              <p className="text-gray-500">No blocked users</p>
-              <p className="text-sm text-gray-400 mt-1">Users you block will appear here</p>
-            </div>
+            <p className="text-sm text-gray-400 text-left">Hier erscheinen User, die du blockierst.</p>
           ) : (
             <div className="space-y-3">
               {blockedUsers.map((blockedUser) => (
@@ -257,12 +253,12 @@ const BlockedUsers: React.FC = () => {
                       width={40}
                       height={40}
                     />
-                    <div>
+                    <div className="text-left">
                       <p className="font-medium text-gray-900">
-                        {blockedUser.blocked_user?.username || 'Unknown User'}
+                        {blockedUser.blocked_user?.username || 'Unbekannter User'}
                       </p>
                       <p className="text-sm text-gray-500">
-                        Blocked on {blockedUser.blocked_at ? formatDate(blockedUser.blocked_at) : 'Unbekannt'}
+                        Blockiert am {blockedUser.blocked_at ? formatDate(blockedUser.blocked_at) : 'Unbekannt'}
                       </p>
                     </div>
                   </div>
@@ -271,7 +267,7 @@ const BlockedUsers: React.FC = () => {
                     disabled={isLoading}
                     className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Unblock
+                    Freigeben
                   </button>
                 </div>
               ))}

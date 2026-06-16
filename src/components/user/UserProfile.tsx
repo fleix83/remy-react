@@ -23,7 +23,7 @@ const UserProfile: React.FC = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading profile...</p>
+          <p className="mt-4 text-gray-600">Profil wird geladen...</p>
         </div>
       </div>
     )
@@ -144,14 +144,14 @@ const UserProfile: React.FC = () => {
                 {uploadingBackground ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-[var(--primary)]"></div>
-                    Uploading...
+                    Wird hochgeladen...
                   </>
                 ) : (
                   <>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    Edit Banner
+                    Banner ändern
                   </>
                 )}
               </div>
@@ -194,16 +194,13 @@ const UserProfile: React.FC = () => {
             borderBottomRightRadius: '28px'
           }}
         >
-          {/* Edit Profile Button - positioned in top right corner of profile div */}
+          {/* Edit Profile link - positioned in top right corner of profile div */}
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="absolute hover:opacity-70 text-gray-600 px-3 py-1.5 rounded-md font-medium text-sm transition-opacity duration-200 flex items-center"
+            className="absolute border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium text-sm rounded-md px-3 py-1 transition-colors duration-200"
             style={{ top: '16px', right: '16px' }}
           >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Edit Profile
+            Bearbeiten
           </button>
           <div className="text-left">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">

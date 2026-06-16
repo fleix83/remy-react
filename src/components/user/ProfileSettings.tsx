@@ -165,7 +165,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                 <div className="flex items-center">
                   <div className="w-40 text-left">
                     <span className="text-sm font-medium text-gray-700">
-                      Standard Kanton:
+                      Standard Region:
                     </span>
                   </div>
                   <div className="flex-1 text-left">

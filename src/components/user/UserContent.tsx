@@ -4,6 +4,7 @@ import UserContentService from '../../services/user-content.service'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
 import PostEditModal from '../forum/PostEditModal'
+import { CommentsService } from '../../services/comments.service'
 import { supabase } from '../../lib/supabase'
 import type { PostWithRelations, CommentWithUser, Post } from '../../types/database.types'
 import { formatTherapistPostLine } from '../../utils/therapistHelpers'
@@ -59,9 +60,9 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
       }
     } catch (error) {
       console.error(`Error loading ${activeTab}:`, error)
-      setMessage({ 
-        type: 'error', 
-        text: `Failed to load ${activeTab}` 
+      setMessage({
+        type: 'error',
+        text: 'Inhalte konnten nicht geladen werden'
       })
     } finally {
       setLoading(false)
@@ -73,17 +74,33 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
 
     try {
       await UserContentService.deleteDraft(draftId, userId)
-      setMessage({ type: 'success', text: 'Draft deleted successfully' })
+      setMessage({ type: 'success', text: 'Entwurf gelöscht' })
       // Reload drafts
       if (activeTab === 'drafts') {
         await loadContent()
       }
     } catch (error) {
       console.error('Error deleting draft:', error)
-      setMessage({ 
-        type: 'error', 
-        text: error instanceof Error ? error.message : 'Failed to delete draft'
+      setMessage({
+        type: 'error',
+        text: 'Entwurf konnte nicht gelöscht werden'
       })
+    }
+  }
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (!(await confirmDialog({ message: 'Diesen Kommentar wirklich löschen?', confirmLabel: 'Löschen', danger: true }))) return
+
+    // Optimistic removal for instant feedback
+    const previous = comments
+    setComments((prev) => prev.filter((c) => c.id !== commentId))
+
+    try {
+      await new CommentsService().deleteComment(commentId)
+    } catch (error) {
+      console.error('Error deleting comment:', error)
+      setComments(previous)
+      setMessage({ type: 'error', text: 'Kommentar konnte nicht gelöscht werden' })
     }
   }
 
@@ -118,21 +135,65 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
     return truncated + (truncated.endsWith('.') ? '..' : '...')
   }
 
-  const getStatusBadge = (post: PostWithRelations | Post) => {
+  // Status label + a very subtle band tint matching the label colour
+  const getStatusInfo = (post: PostWithRelations | Post) => {
     const badge = UserContentService.getPostStatusBadge(post as any)
-    // Extract text color from badge className
     let textColor = '#666' // default gray
-    if (badge.className.includes('yellow')) textColor = '#b8860b' // yellow text for pending
-    else if (badge.className.includes('green')) textColor = '#16a34a' // green text for published
-    else if (badge.className.includes('red')) textColor = '#dc2626' // red text for banned
-    else if (badge.className.includes('gray')) textColor = '#666' // gray text for inactive
-
-    return (
-      <span className="text-xs font-medium" style={{ color: textColor, padding: '0 8px', backgroundColor: 'white', borderRadius: '4px' }}>
-        {badge.text}
-      </span>
-    )
+    let bgColor = 'rgba(107,114,128,0.10)'
+    if (badge.className.includes('yellow')) { textColor = '#b8860b'; bgColor = 'rgba(184,134,11,0.12)' }
+    else if (badge.className.includes('green')) { textColor = '#16a34a'; bgColor = 'rgba(22,163,74,0.08)' }
+    else if (badge.className.includes('red')) { textColor = '#dc2626'; bgColor = 'rgba(220,38,38,0.08)' }
+    else if (badge.className.includes('gray')) { textColor = '#666'; bgColor = 'rgba(107,114,128,0.10)' }
+    return { text: badge.text, textColor, bgColor }
   }
+
+  // Full-width header band: category/canton on the left, status + date tightly
+  // grouped on the right. Tint fades out toward the left so it sits behind the
+  // status label and dissolves across the category group.
+  const renderItemHeader = (
+    item: PostWithRelations,
+    status: { text: string; textColor: string; bgColor: string }
+  ) => (
+    <div
+      className="-mx-4 -mt-4 mb-3 px-4 py-2 flex items-center justify-between gap-2"
+      style={{ background: `linear-gradient(to left, ${status.bgColor} 0%, ${status.bgColor} 35%, transparent 100%)` }}
+    >
+      {/* Left: category + canton */}
+      <div className="flex items-center gap-2 flex-wrap min-w-0">
+        {item.categories && (
+          <span
+            className="px-2 py-1 text-xs text-black font-medium"
+            style={{ borderRadius: '3px', backgroundColor: getCategoryColorById(item.categories.id, allCategories) }}
+          >
+            {getCategoryName(item.categories, lang)}
+          </span>
+        )}
+        {item.canton && (
+          <img
+            src={`/kantone/${item.canton.toLowerCase()}.png`}
+            alt={`${item.canton} flag`}
+            className="w-4 h-auto object-cover"
+            loading="lazy"
+            decoding="async"
+            width={16}
+            height={11}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          />
+        )}
+        {item.canton && (
+          <span className="text-gray-500 text-xs font-medium">{item.canton}</span>
+        )}
+      </div>
+
+      {/* Right: status label + date, tight and vertically centered */}
+      <div className="flex flex-col items-end leading-tight flex-shrink-0">
+        <span className="text-xs font-medium" style={{ color: status.textColor }}>{status.text}</span>
+        <span className="text-gray-500" style={{ fontSize: '0.65rem' }}>
+          {item.created_at ? formatDate(item.created_at) : 'Unbekannt'}
+        </span>
+      </div>
+    </div>
+  )
 
   const clearMessage = () => setMessage(null)
 
@@ -157,7 +218,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
         therapist_id: postData.therapist_id
       })
       
-      setMessage({ type: 'success', text: 'Post updated successfully!' })
+      setMessage({ type: 'success', text: 'Beitrag aktualisiert' })
       setShowEditModal(false)
       setEditingPost(null)
       
@@ -167,9 +228,9 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
       }
     } catch (error) {
       console.error('Error updating post:', error)
-      setMessage({ 
-        type: 'error', 
-        text: error instanceof Error ? error.message : 'Failed to update post' 
+      setMessage({
+        type: 'error',
+        text: 'Beitrag konnte nicht aktualisiert werden'
       })
     }
   }
@@ -205,7 +266,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
         throw new Error('Could not delete post - you may not have permission')
       }
 
-      setMessage({ type: 'success', text: 'Post deleted successfully!' })
+      setMessage({ type: 'success', text: 'Beitrag gelöscht' })
 
       // Reload posts to remove deleted post from view
       if (activeTab === 'posts') {
@@ -215,7 +276,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
       console.error('Error deleting post:', error)
       setMessage({
         type: 'error',
-        text: error instanceof Error ? error.message : 'Failed to delete post'
+        text: 'Beitrag konnte nicht gelöscht werden'
       })
     }
   }
@@ -224,27 +285,27 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
     <div className="bg-white shadow-sm" style={{ borderRadius: '28px' }}>
       <div className="border-b border-gray-200">
         <div className="p-6 pb-0">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">My Content</h2>
-          
-          {/* Tabs */}
-          <div className="flex space-x-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4 text-left">Meine Beiträge</h2>
+
+          {/* Tabs — evenly distributed on mobile to avoid overflow, left-aligned on desktop */}
+          <div className="flex md:space-x-8">
             {[
-              { id: 'posts' as ContentTab, label: 'Posts', count: posts.length },
-              { id: 'comments' as ContentTab, label: 'Comments', count: comments.length },
-              { id: 'drafts' as ContentTab, label: 'Drafts', count: drafts.length }
+              { id: 'posts' as ContentTab, label: 'Beiträge', count: posts.length },
+              { id: 'comments' as ContentTab, label: 'Kommentare', count: comments.length },
+              { id: 'drafts' as ContentTab, label: 'Entwürfe', count: drafts.length }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                className={`flex-1 md:flex-none flex items-center justify-center md:justify-start gap-1 md:gap-1.5 pb-3 md:pb-4 px-1 border-b-2 font-medium text-xs md:text-sm whitespace-nowrap transition-colors duration-200 ${
                   activeTab === tab.id
                     ? 'border-[var(--primary)] text-[var(--primary)]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
-                {tab.label}
+                <span>{tab.label}</span>
                 {(activeTab === tab.id || tab.count > 0) && (
-                  <span className={`ml-2 px-2 py-1 rounded-full text-xs ${
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] md:text-xs leading-none ${
                     activeTab === tab.id
                       ? 'bg-[var(--primary)]/10 text-[var(--primary)]'
                       : 'bg-gray-100 text-gray-600'
@@ -289,74 +350,31 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                     <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <p className="text-gray-500">No posts yet</p>
-                    <p className="text-sm text-gray-400 mt-1">Your published and pending posts will appear here</p>
+                    <p className="text-gray-500">Noch keine Beiträge</p>
+                    <p className="text-sm text-gray-400 mt-1">Deine veröffentlichten und ausstehenden Beiträge erscheinen hier</p>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {posts.map((post) => (
                       <div
                         key={post.id}
-                        className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors duration-200 cursor-pointer relative"
-                        style={{ marginTop: '20px' }}
+                        className="profile-list-card p-4 hover:opacity-90 transition-opacity duration-200 cursor-pointer"
                         onClick={() => handlePostClick(post.id)}
                       >
-                        {/* Status Badge - Positioned absolutely to overlap top border */}
-                        <div style={{ position: 'absolute', top: '-14px', left: '16px' }}>
-                          {getStatusBadge(post)}
-                        </div>
+                        {/* Header band - category/canton (left) + status + date (right) */}
+                        {renderItemHeader(post, getStatusInfo(post))}
 
-                        {/* Top Section - Category, Canton, and Date on one line */}
-                        <div className="flex items-center justify-between mb-6" style={{ marginTop: '8px' }}>
-                          {/* Left: Category and Canton */}
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {/* Category with app colors */}
-                            {post.categories && (
-                              <span
-                                className="px-2 py-1 text-xs text-black font-medium"
-                                style={{
-                                  borderRadius: '3px',
-                                  backgroundColor: getCategoryColorById(post.categories.id, allCategories)
-                                }}
-                              >
-                                {getCategoryName(post.categories, lang)}
-                              </span>
-                            )}
+                        {/* Title - Hidden for Rant posts */}
+                        {post.category_id !== 4 && (
+                          <h3 className="text-lg font-medium mb-1 text-left leading-tight" style={{color: 'var(--post-title)'}}>
+                            {post.title || 'Ohne Titel'}
+                          </h3>
+                        )}
 
-                            {/* Canton Flag */}
-                            {post.canton && (
-                              <img
-                                src={`/kantone/${post.canton.toLowerCase()}.png`}
-                                alt={`${post.canton} flag`}
-                                className="w-4 h-auto object-cover"
-                                loading="lazy"
-                                decoding="async"
-                                width={16}
-                                height={11}
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none'
-                                }}
-                              />
-                            )}
-
-                            {/* Canton Abbreviation */}
-                            {post.canton && (
-                              <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
-                                {post.canton}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Right: Date */}
-                          <div className="text-xs text-gray-500" style={{fontSize: '0.65rem'}}>
-                            {post.created_at ? formatDate(post.created_at) : 'Unbekannt'}
-                          </div>
-                        </div>
-
-                        {/* Therapist line above title - full format like forum post, blue color, closer to title */}
+                        {/* Therapist line below title - blue, matches forum list item */}
                         {post.therapists && (
                           <div
-                            className="text-left mb-[-4px] truncate"
+                            className="text-left mb-2 truncate"
                             style={{
                               color: '#4785ff',
                               fontSize: '12px',
@@ -368,13 +386,6 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                           >
                             Erfahrung mit {formatTherapistPostLine(post.therapists)}
                           </div>
-                        )}
-
-                        {/* Title - Hidden for Rant posts */}
-                        {post.category_id !== 4 && (
-                          <h3 className="text-lg font-medium mb-2 text-left leading-tight" style={{color: 'var(--post-title)'}}>
-                            {post.title || 'Untitled Post'}
-                          </h3>
                         )}
 
                         {/* Content Preview */}
@@ -392,9 +403,9 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 handleEditPost(post)
                               }}
                               className="text-[var(--primary)] hover:text-[#2d8544] text-xs font-medium transition-colors duration-200"
-                              title="Edit post"
+                              title="Beitrag bearbeiten"
                             >
-                              Edit
+                              Bearbeiten
                             </button>
                           )}
 
@@ -406,7 +417,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 handleDeletePost(post.id)
                               }}
                               className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
-                              title="Delete post"
+                              title="Beitrag löschen"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -429,24 +440,27 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                     <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    <p className="text-gray-500">No comments yet</p>
-                    <p className="text-sm text-gray-400 mt-1">Your comments on posts will appear here</p>
+                    <p className="text-gray-500">Noch keine Kommentare</p>
+                    <p className="text-sm text-gray-400 mt-1">Deine Kommentare zu Beiträgen erscheinen hier</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {comments.map((comment) => (
-                      <div key={comment.id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="mb-3 text-left">
-                          {comment.posts && (
-                            <span className="text-sm font-medium text-gray-700">
+                      <div key={comment.id} className="profile-list-card p-4">
+                        {/* Status band - neutral tint, holds the post reference */}
+                        <div className="-mx-4 -mt-4 mb-3 px-4 py-1.5 text-left" style={{ backgroundColor: 'rgba(107,114,128,0.07)' }}>
+                          {comment.posts ? (
+                            <span className="text-xs font-medium text-gray-600">
                               Kommentar zu:{' '}
                               <Link
                                 to={`/post/${comment.posts.id}`}
                                 className="text-[var(--primary)] hover:text-[#2d8544] underline transition-colors duration-200"
                               >
-                                {comment.posts.title || 'Untitled Post'}
+                                {comment.posts.title || 'Ohne Titel'}
                               </Link>
                             </span>
+                          ) : (
+                            <span className="text-xs font-medium text-gray-600">Kommentar</span>
                           )}
                         </div>
 
@@ -454,11 +468,22 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                           {truncateText(comment.content.replace(/<[^>]*>/g, ''), 200)}
                         </div>
 
-                        <div className="flex items-center justify-between text-sm text-gray-500">
-                          <span className="text-left">Kommentiert am: {comment.created_at ? formatDate(comment.created_at) : 'Unbekannt'}</span>
-                          {comment.is_edited && (
-                            <span className="text-xs text-gray-400">Bearbeitet</span>
-                          )}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 text-sm text-gray-500">
+                            <span className="text-left">Kommentiert am: {comment.created_at ? formatDate(comment.created_at) : 'Unbekannt'}</span>
+                            {comment.is_edited && (
+                              <span className="text-xs text-gray-400">Bearbeitet</span>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
+                            title="Kommentar löschen"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -475,76 +500,29 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                     <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <p className="text-gray-500">No drafts saved</p>
-                    <p className="text-sm text-gray-400 mt-1">Your unsaved post drafts will appear here</p>
+                    <p className="text-gray-500">Keine Entwürfe</p>
+                    <p className="text-sm text-gray-400 mt-1">Deine gespeicherten Entwürfe erscheinen hier</p>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {drafts.map((draft) => (
                       <div
                         key={draft.id}
-                        className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors duration-200 cursor-pointer relative"
-                        style={{ marginTop: '20px' }}
+                        className="profile-list-card p-4 hover:opacity-90 transition-opacity duration-200 cursor-pointer"
                         onClick={() => handlePostClick(draft.id)}
                       >
-                        {/* Draft Badge - Positioned absolutely to overlap top border */}
-                        <div style={{ position: 'absolute', top: '-14px', left: '16px' }}>
-                          <span className="text-xs font-medium" style={{ color: '#2563eb', padding: '0 8px', backgroundColor: 'white', borderRadius: '4px' }}>
-                            Entwurf
-                          </span>
-                        </div>
+                        {/* Header band - category/canton (left) + status + date (right) */}
+                        {renderItemHeader(draft, { text: 'Entwurf', textColor: '#2563eb', bgColor: 'rgba(37,99,235,0.08)' })}
 
-                        {/* Top Section - Category, Canton, and Date on one line */}
-                        <div className="flex items-center justify-between mb-6" style={{ marginTop: '8px' }}>
-                          {/* Left: Category and Canton */}
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {/* Category with app colors */}
-                            {draft.categories && (
-                              <span
-                                className="px-2 py-1 text-xs text-black font-medium"
-                                style={{
-                                  borderRadius: '3px',
-                                  backgroundColor: getCategoryColorById(draft.categories.id, allCategories)
-                                }}
-                              >
-                                {getCategoryName(draft.categories, lang)}
-                              </span>
-                            )}
+                        {/* Post Title */}
+                        <h3 className="text-lg font-semibold mb-1 text-left leading-tight">
+                          {draft.title || 'Ohne Titel'}
+                        </h3>
 
-                            {/* Canton Flag */}
-                            {draft.canton && (
-                              <img
-                                src={`/kantone/${draft.canton.toLowerCase()}.png`}
-                                alt={`${draft.canton} flag`}
-                                className="w-4 h-auto object-cover"
-                                loading="lazy"
-                                decoding="async"
-                                width={16}
-                                height={11}
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none'
-                                }}
-                              />
-                            )}
-
-                            {/* Canton Abbreviation */}
-                            {draft.canton && (
-                              <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
-                                {draft.canton}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Right: Date */}
-                          <div className="text-xs text-gray-500" style={{fontSize: '0.65rem'}}>
-                            {draft.created_at ? formatDate(draft.created_at) : 'Unbekannt'}
-                          </div>
-                        </div>
-
-                        {/* Therapist line above title - full format like forum post, blue color, closer to title */}
+                        {/* Therapist line below title - blue, matches forum list item */}
                         {draft.therapists && (
                           <div
-                            className="text-left mb-[-4px] truncate"
+                            className="text-left mb-2 truncate"
                             style={{
                               color: '#4785ff',
                               fontSize: '12px',
@@ -557,11 +535,6 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                             Erfahrung mit {formatTherapistPostLine(draft.therapists)}
                           </div>
                         )}
-
-                        {/* Post Title */}
-                        <h3 className="text-lg font-semibold mb-2 text-left leading-tight">
-                          {draft.title || 'Untitled Draft'}
-                        </h3>
 
                         {/* Content Preview */}
                         <p className="text-gray-600 text-sm mb-3 text-left">
@@ -578,9 +551,9 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 handleEditPost(draft)
                               }}
                               className="text-[var(--primary)] hover:text-[#2d8544] text-xs font-medium transition-colors duration-200"
-                              title="Edit draft"
+                              title="Entwurf bearbeiten"
                             >
-                              Edit
+                              Bearbeiten
                             </button>
                           )}
 
@@ -592,7 +565,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 handleDeleteDraft(draft.id)
                               }}
                               className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
-                              title="Delete draft"
+                              title="Entwurf löschen"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
