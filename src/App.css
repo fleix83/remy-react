@@ -740,18 +740,54 @@
 
   /* Forum navbar: transparent bg, more top margin */
   .forum-navbar {
-    background-color: rgb(239, 255, 241) !important;
+    background-color: transparent !important;
     margin-top: 90px;
     position: relative;
   }
 
-  /* Search input: white background */
+  /* Search input: white background + blue border */
   .forum-search input {
     background-color: #fff !important;
+    border: 1px solid #4784ff !important;
   }
 
   /* First post card: reduce top margin */
   .post-card-outline.mt-32 {
     margin-top: calc(var(--spacing, 4px) * 9);
+  }
+
+  /* ── Forum page (desktop): blue header + white page ── */
+  .page-forum.layout-root {
+    background: #fff !important;
+  }
+
+  /* Filter/tab option backgrounds → light blue */
+  .page-forum {
+    --bg-element: #e6efff;
+  }
+
+  /* Top header: taller, blue gradient fading into the white page */
+  .page-forum nav {
+    height: 200px;
+    background: linear-gradient(180deg, #e2ecff, transparent);
+  }
+
+  /* Logo + avatar nudged down 20px; logo pulled left 36px */
+  .page-forum nav .h-20 {
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  .page-forum nav .h-20 > div:first-child {
+    margin-left: -36px;
+  }
+
+  /* List objects (post cards): white background */
+  .page-forum .post-card-outline {
+    background: #fff !important;
+  }
+
+  /* Tags: light grey chips for contrast on the white cards */
+  .page-forum .post-tag {
+    background: #f1f1f18f !important;
   }
 }

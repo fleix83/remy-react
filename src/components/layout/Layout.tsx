@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import Navigation from './Navigation'
 
 interface LayoutProps {
@@ -17,6 +18,9 @@ const Layout: React.FC<LayoutProps> = ({
   background
 }) => {
   const footerRef = useRef<HTMLElement>(null)
+  const location = useLocation()
+  // Forum landing gets the desktop blue-header / white-page treatment
+  const pageClass = location.pathname === '/' ? 'page-forum' : ''
 
   // Push the fixed filter sidebars up as the footer scrolls into view,
   // so they never overlap it (consumed via --footer-push in App.css)
@@ -43,7 +47,7 @@ const Layout: React.FC<LayoutProps> = ({
 
   return (
     <div
-      className="min-h-screen relative layout-root flex flex-col"
+      className={`min-h-screen relative layout-root flex flex-col ${pageClass}`}
       style={{
         background: background ?? 'rgb(239, 255, 241) url(/background.svg) no-repeat 0 0',
         zIndex: 1

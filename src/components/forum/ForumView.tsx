@@ -230,6 +230,12 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     setFiltersState(prev => ({ ...prev, cantons: undefined }))
   }, [])
 
+  // Snap back to the default-region restriction after opting out
+  const handleShowMyRegion = useCallback(() => {
+    setShowAllCantons(false)
+    setFiltersState(prev => ({ ...prev, cantons: undefined }))
+  }, [])
+
   // FilterModal changes flow through here so that touching the canton picker
   // while the default restriction is active counts as opting out of it.
   const handleFiltersChange = useCallback((next: PostFilters) => {
@@ -333,7 +339,21 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             </button>
           </div>
         ) : (
-        /* Canton Filter - inline below navbar on desktop */
+        <>
+        {/* "Meine Region anzeigen" — opt back into the default-region restriction.
+            Shown only when a default region is set but the user is viewing all posts. */}
+        {defaultCantons && showAllCantons && !isSearchMode && (
+          <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} justify-end mt-[100px] mb-4 md:mt-0 md:mb-4`} style={{ padding: '0 40px', fontFamily: 'Nunito' }}>
+            <button
+              onClick={handleShowMyRegion}
+              className="text-sm underline hover:opacity-80"
+              style={{ color: '#4785ff', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              Meine Region anzeigen
+            </button>
+          </div>
+        )}
+        {/* Canton Filter - inline below navbar on desktop */}
         <div className={`${showCreatePostDialog ? 'hidden' : 'hidden md:flex'} items-center flex-wrap gap-1 canton-inline`} style={{ padding: '0 20px', marginBottom: '80px' }}>
           {SWISS_CANTONS.filter(c => c.code !== '').map(canton => (
             <button
@@ -369,6 +389,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             </button>
           )}
         </div>
+        </>
         )}
 
       {/* Post Editor Dialog — Mobile only (full-screen modal) */}
