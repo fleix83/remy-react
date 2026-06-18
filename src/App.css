@@ -783,7 +783,7 @@
     width: 100%;
     max-width: var(--curve-max-width, 1600px);
     height: auto;
-    opacity: var(--curve-opacity, 1);
+    opacity: var(--curve-opacity, 0.4);
     pointer-events: none;
     user-select: none;
   }
