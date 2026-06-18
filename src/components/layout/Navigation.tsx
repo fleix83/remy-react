@@ -6,6 +6,8 @@ import { useNotificationsStore } from '../../stores/notifications.store'
 import { useMessagesStore } from '../../stores/messages.store'
 import UserAvatar from '../user/UserAvatar'
 import MobileSlideMenu from './MobileSlideMenu'
+import LanguageMenu from '../ui/LanguageMenu'
+import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 
 interface NavigationProps {
   onCreatePost: () => void
@@ -24,6 +26,12 @@ const Navigation: React.FC<NavigationProps> = ({
 
   // Total unread count (notifications + messages)
   const totalUnreadCount = notificationCount + messageCount
+
+  // User's default region (canton), localized — shown next to the username
+  const defaultCanton = userProfile?.default_canton || null
+  const regionLabel = defaultCanton
+    ? (SWISS_CANTONS.find(c => c.code === defaultCanton) ? t(`common:cantons.${defaultCanton}`) : defaultCanton)
+    : null
 
   // Load notifications and unread message count when user is available
   useEffect(() => {
@@ -46,6 +54,50 @@ const Navigation: React.FC<NavigationProps> = ({
         aria-hidden="true"
         className="forum-curve"
       />
+
+      {/* Desktop avatar group — pinned to the screen's right edge (with a
+          margin) and vertically aligned with the REMY logo. Lives outside the
+          centered container so it can reach the viewport edge; z-20 keeps it
+          above the curve, while the slide menu below stays above it. */}
+      <div className="hidden md:flex items-center gap-2 absolute top-[20px] right-8 z-20">
+        {user ? (
+          <>
+            {/* Avatar + username → slide menu */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="flex items-center gap-2 text-gray-700 hover:opacity-80 transition-opacity relative"
+            >
+              {userProfile && (
+                <UserAvatar user={userProfile} size="small" />
+              )}
+              <span className="rounded-full bg-white/60 px-3 py-1 text-sm font-medium">
+                {userProfile?.username || t('menu')}
+              </span>
+              {totalUnreadCount > 0 && (
+                <div className="absolute -top-0.5 -right-2 rounded-full w-3 h-3" style={{ backgroundColor: '#ff6b35' }} />
+              )}
+            </button>
+
+            {/* Default region (only when the user has one set) */}
+            {regionLabel && (
+              <span className="rounded-full bg-white/60 px-3 py-1 text-sm font-medium text-gray-700">
+                {regionLabel}
+              </span>
+            )}
+
+            {/* Current language — opens a dropdown to switch */}
+            <LanguageMenu />
+          </>
+        ) : (
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-gray-700 hover:opacity-80 px-3 py-2 rounded-md text-sm font-medium transition-opacity"
+          >
+            {t('menu')}
+          </button>
+        )}
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-between items-center h-20">
           
@@ -67,31 +119,6 @@ const Navigation: React.FC<NavigationProps> = ({
                 {t('brandClaim')}
               </div>
             </Link>
-          </div>
-
-          {/* Desktop Navigation — avatar + username triggers slide menu */}
-          <div className="hidden md:flex items-center">
-            {user ? (
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="flex items-center space-x-2 text-gray-700 hover:opacity-80 transition-opacity relative"
-              >
-                {userProfile && (
-                  <UserAvatar user={userProfile} size="small" />
-                )}
-                <span className="text-sm font-medium">{userProfile?.username || t('menu')}</span>
-                {totalUnreadCount > 0 && (
-                  <div className="absolute -top-0.5 -right-2 rounded-full w-3 h-3" style={{ backgroundColor: '#ff6b35' }} />
-                )}
-              </button>
-            ) : (
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-gray-700 hover:opacity-80 px-3 py-2 rounded-md text-sm font-medium transition-opacity"
-              >
-                {t('menu')}
-              </button>
-            )}
           </div>
 
           {/* Mobile menu button - User Avatar with Notification Badge */}
@@ -131,15 +158,16 @@ const Navigation: React.FC<NavigationProps> = ({
             )}
           </div>
         </div>
-
-        {/* Mobile Slide-in Menu */}
-        <MobileSlideMenu
-          isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
-          userRole={userProfile?.role || undefined}
-          onLogout={handleSignOut}
-        />
       </div>
+
+      {/* Slide-in menu — top-level inside <nav> so it overlays the absolutely
+          positioned avatar group (z-20) too */}
+      <MobileSlideMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        userRole={userProfile?.role || undefined}
+        onLogout={handleSignOut}
+      />
     </nav>
   )
 }

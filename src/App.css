@@ -788,10 +788,9 @@
     user-select: none;
   }
 
-  /* Logo + avatar nudged down 20px; logo pulled left 36px */
+  /* Logo top-aligned and pulled left 36px */
   .page-forum nav .h-20 {
     align-items: flex-start;
-    padding-top: 20px;
   }
   .page-forum nav .h-20 > div:first-child {
     margin-left: -36px;
