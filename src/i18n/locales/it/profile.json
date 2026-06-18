@@ -1,4 +1,11 @@
 {
+  "status": {
+    "banned": "Bloccato",
+    "inactive": "Inattivo",
+    "inModeration": "In moderazione",
+    "published": "Pubblicato",
+    "unknown": "Sconosciuto"
+  },
   "header": {
     "loading": "Caricamento del profilo...",
     "backToForum": "Torna al forum",

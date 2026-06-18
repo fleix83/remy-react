@@ -148,7 +148,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
     else if (badge.className.includes('green')) { textColor = '#16a34a'; bgColor = 'rgba(22,163,74,0.08)' }
     else if (badge.className.includes('red')) { textColor = '#dc2626'; bgColor = 'rgba(220,38,38,0.08)' }
     else if (badge.className.includes('gray')) { textColor = '#666'; bgColor = 'rgba(107,114,128,0.10)' }
-    return { text: badge.text, textColor, bgColor }
+    return { text: t(`status.${badge.status}`), textColor, bgColor }
   }
 
   // Full-width header band: category/canton on the left, status + date tightly

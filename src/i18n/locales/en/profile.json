@@ -1,4 +1,11 @@
 {
+  "status": {
+    "banned": "Blocked",
+    "inactive": "Inactive",
+    "inModeration": "In moderation",
+    "published": "Published",
+    "unknown": "Unknown"
+  },
   "header": {
     "loading": "Loading profile...",
     "backToForum": "Back to the forum",
