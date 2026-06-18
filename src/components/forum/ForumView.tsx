@@ -501,29 +501,32 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
                 !filters.category
                   ? 'bg-[var(--primary)] text-white'
-                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--primary)] hover:text-white'
               }`}
               style={{fontSize: '0.65rem'}}
             >
               {t('allCategories')}
             </button>
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryFilter(category.id)}
-                className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                  filters.category === category.id
-                    ? 'text-gray-700'
-                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
-                }`}
-                style={{
-                  fontSize: '0.65rem',
-                  backgroundColor: filters.category === category.id ? getCategoryColor(category) : undefined
-                }}
-              >
-                {getCategoryName(category, lang)}
-              </button>
-            ))}
+            {categories.map((category) => {
+              const catColor = getCategoryColor(category)
+              const isActive = filters.category === category.id
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategoryFilter(category.id)}
+                  className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors category-tab ${
+                    isActive ? 'text-gray-700' : 'bg-[var(--bg-element)] text-gray-700'
+                  }`}
+                  style={{
+                    fontSize: '0.65rem',
+                    backgroundColor: isActive ? catColor : undefined,
+                    '--cat-color': catColor,
+                  } as React.CSSProperties}
+                >
+                  {getCategoryName(category, lang)}
+                </button>
+              )
+            })}
           </div>
 
           {/* Designation Filter - sidebar on desktop */}
@@ -534,7 +537,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
                 !filters.designations || filters.designations.length === 0
                   ? 'bg-[var(--primary)] text-white'
-                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                  : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--primary)] hover:text-white'
               }`}
               style={{ fontSize: '0.65rem' }}
             >
@@ -552,8 +555,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                   onClick={() => handleGenderToggle(g.value)}
                   className={`inline-flex items-center justify-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
                     filters.gender === g.value || filters.gender === 'both'
-                      ? 'bg-[#c0e1ff] text-gray-700'
-                      : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                      ? 'bg-[#f4edd8] text-gray-700'
+                      : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[#f4edd8]'
                   }`}
                   style={{ fontSize: '0.65rem' }}
                 >
@@ -568,8 +571,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 onClick={() => handleDesignationToggle(d.id)}
                 className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
                   filters.designations?.includes(d.id)
-                    ? 'bg-[var(--primary)] text-white'
-                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[var(--bg-element-hover)]'
+                    ? 'bg-[#f4edd8] text-gray-700'
+                    : 'bg-[var(--bg-element)] text-gray-700 hover:bg-[#f4edd8]'
                 }`}
                 style={{ fontSize: '0.65rem' }}
               >

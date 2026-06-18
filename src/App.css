@@ -812,3 +812,9 @@
 .forum-curve {
   display: none;
 }
+
+/* Forum category filter tabs: hovering an inactive tab previews its active
+   colour (set per-tab via the --cat-color custom property). */
+.category-filters .category-tab:hover {
+  background-color: var(--cat-color);
+}
