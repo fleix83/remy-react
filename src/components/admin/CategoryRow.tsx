@@ -5,6 +5,7 @@ import InlineEditCell from '../ui/InlineEditCell'
 import { CategoriesService } from '../../services/categories.service'
 import { getCategoryColor } from '../../utils/categoryHelpers'
 import { toast } from '../../stores/toast.store'
+import CategoryExplainerModal from './CategoryExplainerModal'
 
 interface CategoryRowProps {
   category: Category
@@ -24,6 +25,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
   // native picker fires change events continuously while dragging.
   const [color, setColor] = useState(getCategoryColor(category))
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [explainerOpen, setExplainerOpen] = useState(false)
 
   const handleUpdate = async (field: keyof Category, newValue: string | boolean): Promise<void> => {
     try {
@@ -47,6 +49,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
   }
 
   return (
+    <>
     <div className="border-b border-[#f1ece3] last:border-b-0">
       <div className="flex items-center gap-2 hover:bg-[#faf8f4] transition-colors px-2 py-1">
         <div className="w-10 text-sm text-slate-400 text-center tabular-nums">{category.id}</div>
@@ -85,6 +88,14 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
             displayClassName="text-left"
           />
         </div>
+        <div className="w-44">
+          <InlineEditCell
+            value={category.name_en || ''}
+            onSave={(v) => handleUpdate('name_en', v)}
+            placeholder={t('categoryRow.namePlaceholderEn')}
+            displayClassName="text-left"
+          />
+        </div>
         {/* Live badge preview, same styling as the forum badges */}
         <div className="flex-1 text-left">
           <span
@@ -93,6 +104,20 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
           >
             {category.name_de}
           </span>
+        </div>
+        {/* Explainer-panel editor (all 4 languages) */}
+        <div className="w-24 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setExplainerOpen(true)}
+            className="rounded-lg p-1.5 text-[var(--primary)] transition-colors hover:bg-[#eef2ff]"
+            title={t('categoryRow.explainerButton')}
+            aria-label={t('categoryRow.explainerButton')}
+          >
+            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+          </button>
         </div>
         <div className="w-16 flex justify-center">
           <input
@@ -105,6 +130,14 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
         </div>
       </div>
     </div>
+
+    <CategoryExplainerModal
+      isOpen={explainerOpen}
+      category={category}
+      onClose={() => setExplainerOpen(false)}
+      onSaved={onUpdate}
+    />
+    </>
   )
 }
 

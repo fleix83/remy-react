@@ -57,7 +57,9 @@
     "empty": "No categories available.",
     "summary_one": "{{count}} category in total",
     "summary_other": "{{count}} categories in total",
-    "activeCount": "{{count}} active"
+    "activeCount": "{{count}} active",
+    "colExplainer": "Explainer",
+    "colEn": "EN"
   },
   "categoryRow": {
     "colorTitle": "Category color",
@@ -66,7 +68,9 @@
     "namePlaceholderIt": "Name IT",
     "activeTitle": "Active",
     "inactiveTitle": "Inactive",
-    "colorSaveError": "Error saving the color (migration 022 already applied?)"
+    "colorSaveError": "Error saving the color (migration 022 already applied?)",
+    "explainerButton": "Edit explainer",
+    "namePlaceholderEn": "Name EN"
   },
   "designations": {
     "title": "Professional designation",
@@ -164,5 +168,17 @@
     "railLabel": "CMS sections",
     "sectionLanding": "Landing Page",
     "sectionFooter": "Footer"
+  },
+  "explainerModal": {
+    "title": "Edit explainer",
+    "subtitle": "Description for the «{{name}}» category panel in all languages.",
+    "placeholder": "Description …",
+    "langDe": "German",
+    "langFr": "French",
+    "langIt": "Italian",
+    "langEn": "English",
+    "saving": "Saving …",
+    "saved": "Descriptions saved.",
+    "saveError": "Saving failed."
   }
 }

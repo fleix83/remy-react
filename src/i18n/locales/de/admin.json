@@ -57,7 +57,9 @@
     "empty": "Keine Kategorien vorhanden.",
     "summary_one": "{{count}} Kategorie insgesamt",
     "summary_other": "{{count}} Kategorien insgesamt",
-    "activeCount": "{{count}} aktiv"
+    "activeCount": "{{count}} aktiv",
+    "colExplainer": "Erklärung",
+    "colEn": "EN"
   },
   "categoryRow": {
     "colorTitle": "Kategoriefarbe",
@@ -66,7 +68,9 @@
     "namePlaceholderIt": "Name IT",
     "activeTitle": "Aktiv",
     "inactiveTitle": "Inaktiv",
-    "colorSaveError": "Fehler beim Speichern der Farbe (Migration 022 schon eingespielt?)"
+    "colorSaveError": "Fehler beim Speichern der Farbe (Migration 022 schon eingespielt?)",
+    "explainerButton": "Erklärung bearbeiten",
+    "namePlaceholderEn": "Name EN"
   },
   "designations": {
     "title": "Berufsbezeichnung",
@@ -164,5 +168,17 @@
     "railLabel": "CMS-Bereiche",
     "sectionLanding": "Landing Page",
     "sectionFooter": "Footer"
+  },
+  "explainerModal": {
+    "title": "Erklärung bearbeiten",
+    "subtitle": "Beschreibung für das Kategorie-Panel «{{name}}» in allen Sprachen.",
+    "placeholder": "Beschreibung …",
+    "langDe": "Deutsch",
+    "langFr": "Französisch",
+    "langIt": "Italienisch",
+    "langEn": "Englisch",
+    "saving": "Speichern …",
+    "saved": "Beschreibungen gespeichert.",
+    "saveError": "Speichern fehlgeschlagen."
   }
 }

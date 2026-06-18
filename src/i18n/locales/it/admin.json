@@ -57,7 +57,9 @@
     "empty": "Nessuna categoria disponibile.",
     "summary_one": "{{count}} categoria in totale",
     "summary_other": "{{count}} categorie in totale",
-    "activeCount": "{{count}} attive"
+    "activeCount": "{{count}} attive",
+    "colExplainer": "Spiegazione",
+    "colEn": "EN"
   },
   "categoryRow": {
     "colorTitle": "Colore della categoria",
@@ -66,7 +68,9 @@
     "namePlaceholderIt": "Nome IT",
     "activeTitle": "Attivo",
     "inactiveTitle": "Inattivo",
-    "colorSaveError": "Errore durante il salvataggio del colore (migrazione 022 già applicata?)"
+    "colorSaveError": "Errore durante il salvataggio del colore (migrazione 022 già applicata?)",
+    "explainerButton": "Modifica spiegazione",
+    "namePlaceholderEn": "Nome EN"
   },
   "designations": {
     "title": "Designazione professionale",
@@ -164,5 +168,17 @@
     "railLabel": "Sezioni CMS",
     "sectionLanding": "Landing Page",
     "sectionFooter": "Footer"
+  },
+  "explainerModal": {
+    "title": "Modifica spiegazione",
+    "subtitle": "Descrizione del pannello categoria «{{name}}» in tutte le lingue.",
+    "placeholder": "Descrizione …",
+    "langDe": "Tedesco",
+    "langFr": "Francese",
+    "langIt": "Italiano",
+    "langEn": "Inglese",
+    "saving": "Salvataggio …",
+    "saved": "Descrizioni salvate.",
+    "saveError": "Salvataggio non riuscito."
   }
 }

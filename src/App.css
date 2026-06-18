@@ -615,6 +615,24 @@
     width: 100%;
   }
 
+  /* Category description panel: floats over the main forum column, anchored to
+     its left edge, opened via a tab's info icon and closed with the X. */
+  .category-hint-panel {
+    display: block;
+    position: fixed;
+    left: calc(50% - 25rem);
+    top: 250px;
+    width: 25vw;
+    max-width: calc(100vw - 4rem);
+    min-height: 360px;
+    padding: 2rem 2.25rem;
+    border-radius: 18px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.14);
+    z-index: 55;
+    pointer-events: auto;
+    animation: category-hint-in 140ms ease-out;
+  }
+
   /* Date filter: sidebar above categories */
   .date-filters {
     position: fixed;
@@ -817,4 +835,24 @@
    colour (set per-tab via the --cat-color custom property). */
 .category-filters .category-tab:hover {
   background-color: var(--cat-color);
+}
+
+/* Category description panel is desktop-only (positioned via the rule in the
+   min-width:768px block); hidden on mobile. Scoped to mobile so it doesn't
+   override the desktop rule by source order. */
+@media (max-width: 767px) {
+  .category-hint-panel {
+    display: none;
+  }
+}
+
+@keyframes category-hint-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

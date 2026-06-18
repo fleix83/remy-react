@@ -91,5 +91,6 @@
     "therapists": "Therapists",
     "onlyCanton": "Only canton «{{canton}}» (incl. neighbouring cantons)",
     "datePlaceholder": "dd.mm.yyyy"
-  }
+  },
+  "categoryPanelEmpty": "No description has been added for this category yet."
 }

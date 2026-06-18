@@ -69,20 +69,22 @@ const CategoriesTab: React.FC = () => {
 
       <div className="overflow-x-auto rounded-xl border border-[#efe9df]">
         {/* Table Header */}
-        <div className="border-b border-[#efe9df] bg-[#faf8f4] min-w-[900px]">
+        <div className="border-b border-[#efe9df] bg-[#faf8f4] min-w-[1200px]">
           <div className="flex items-center gap-2 px-2 py-3">
             <div className="w-10 text-xs font-semibold text-slate-500 uppercase text-center">{t('categories.colId')}</div>
             <div className="w-28 text-xs font-semibold text-slate-500 uppercase text-left">{t('categories.colColor')}</div>
             <div className="w-44 text-xs font-semibold text-slate-500 uppercase text-left">{t('categories.colDe')}</div>
             <div className="w-44 text-xs font-semibold text-slate-500 uppercase text-left">{t('categories.colFr')}</div>
             <div className="w-44 text-xs font-semibold text-slate-500 uppercase text-left">{t('categories.colIt')}</div>
+            <div className="w-44 text-xs font-semibold text-slate-500 uppercase text-left">{t('categories.colEn')}</div>
             <div className="flex-1 text-xs font-semibold text-slate-500 uppercase text-left">{t('categories.colPreview')}</div>
+            <div className="w-24 text-xs font-semibold text-slate-500 uppercase text-center">{t('categories.colExplainer')}</div>
             <div className="w-16 text-xs font-semibold text-slate-500 uppercase flex justify-center">{t('categories.colActive')}</div>
           </div>
         </div>
 
         {/* Categories List */}
-        <div className="bg-white overflow-hidden min-w-[900px]">
+        <div className="bg-white overflow-hidden min-w-[1200px]">
           {categories.length === 0 ? (
             <div className="text-center py-12 text-slate-500">{t('categories.empty')}</div>
           ) : (

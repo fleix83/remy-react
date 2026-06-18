@@ -57,7 +57,9 @@
     "empty": "Aucune catégorie disponible.",
     "summary_one": "{{count}} catégorie au total",
     "summary_other": "{{count}} catégories au total",
-    "activeCount": "{{count}} actives"
+    "activeCount": "{{count}} actives",
+    "colExplainer": "Explication",
+    "colEn": "EN"
   },
   "categoryRow": {
     "colorTitle": "Couleur de la catégorie",
@@ -66,7 +68,9 @@
     "namePlaceholderIt": "Nom IT",
     "activeTitle": "Actif",
     "inactiveTitle": "Inactif",
-    "colorSaveError": "Erreur lors de l'enregistrement de la couleur (migration 022 déjà appliquée ?)"
+    "colorSaveError": "Erreur lors de l'enregistrement de la couleur (migration 022 déjà appliquée ?)",
+    "explainerButton": "Modifier l'explication",
+    "namePlaceholderEn": "Nom EN"
   },
   "designations": {
     "title": "Désignation professionnelle",
@@ -164,5 +168,17 @@
     "railLabel": "Sections CMS",
     "sectionLanding": "Landing Page",
     "sectionFooter": "Footer"
+  },
+  "explainerModal": {
+    "title": "Modifier l'explication",
+    "subtitle": "Description du panneau de catégorie « {{name}} » dans toutes les langues.",
+    "placeholder": "Description …",
+    "langDe": "Allemand",
+    "langFr": "Français",
+    "langIt": "Italien",
+    "langEn": "Anglais",
+    "saving": "Enregistrement …",
+    "saved": "Descriptions enregistrées.",
+    "saveError": "Échec de l'enregistrement."
   }
 }

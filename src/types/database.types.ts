@@ -19,11 +19,13 @@ export type Database = {
           access_role: Database["public"]["Enums"]["access_role"] | null
           color: string | null
           description_de: string | null
+          description_en: string | null
           description_fr: string | null
           description_it: string | null
           id: number
           is_active: boolean | null
           name_de: string
+          name_en: string | null
           name_fr: string | null
           name_it: string | null
         }
@@ -31,11 +33,13 @@ export type Database = {
           access_role?: Database["public"]["Enums"]["access_role"] | null
           color?: string | null
           description_de?: string | null
+          description_en?: string | null
           description_fr?: string | null
           description_it?: string | null
           id?: number
           is_active?: boolean | null
           name_de: string
+          name_en?: string | null
           name_fr?: string | null
           name_it?: string | null
         }
@@ -43,11 +47,13 @@ export type Database = {
           access_role?: Database["public"]["Enums"]["access_role"] | null
           color?: string | null
           description_de?: string | null
+          description_en?: string | null
           description_fr?: string | null
           description_it?: string | null
           id?: number
           is_active?: boolean | null
           name_de?: string
+          name_en?: string | null
           name_fr?: string | null
           name_it?: string | null
         }

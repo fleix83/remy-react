@@ -10,7 +10,7 @@ import Pagination from '../ui/Pagination'
 import { SWISS_CANTONS, CANTON_NEIGHBORS } from '../../constants/switzerland.constants'
 import { DesignationsService } from '../../services/designations.service'
 import { getDesignationLabel } from '../../utils/designationHelpers'
-import { getCategoryColor, getCategoryName } from '../../utils/categoryHelpers'
+import { getCategoryColor, getCategoryName, getCategoryDescription, mixWithWhite } from '../../utils/categoryHelpers'
 import { useAuthStore } from '../../stores/auth.store'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { dateFnsLocale } from '../../utils/dateFormat'
@@ -96,6 +96,18 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   const { data: searchResults = [], isLoading: searchLoading } = useSearchPosts(searchTerm)
   const { data: categories = [] } = useCategories()
   const createPostMutation = useCreatePost()
+
+  // Category whose description panel is open (toggled via the tab's info icon,
+  // desktop only).
+  const [openCategory, setOpenCategory] = useState<(typeof categories)[number] | null>(null)
+
+  // Close the category panel on Escape.
+  useEffect(() => {
+    if (!openCategory) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpenCategory(null) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [openCategory])
 
   const posts = useMemo(() => pageData?.posts || [], [pageData])
 
@@ -514,7 +526,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 <button
                   key={category.id}
                   onClick={() => handleCategoryFilter(category.id)}
-                  className={`inline-flex items-center px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors category-tab ${
+                  className={`flex w-full items-center justify-between gap-2 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors category-tab ${
                     isActive ? 'text-gray-700' : 'bg-[var(--bg-element)] text-gray-700'
                   }`}
                   style={{
@@ -523,11 +535,51 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                     '--cat-color': catColor,
                   } as React.CSSProperties}
                 >
-                  {getCategoryName(category, lang)}
+                  <span>{getCategoryName(category, lang)}</span>
+                  <span
+                    aria-label={`Info: ${getCategoryName(category, lang)}`}
+                    title={getCategoryName(category, lang)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setOpenCategory(prev => (prev?.id === category.id ? null : category))
+                    }}
+                    className="category-info-icon shrink-0 cursor-pointer text-[var(--primary)] opacity-60 transition-opacity hover:opacity-100"
+                  >
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </span>
                 </button>
               )
             })}
           </div>
+
+          {/* Category description panel — floats over the main forum column
+              while a category tab is hovered (desktop only). Placeholder copy
+              for now; replace with real per-category descriptions. */}
+          {openCategory && (
+            <div
+              className="category-hint-panel text-left"
+              style={{ backgroundColor: mixWithWhite(getCategoryColor(openCategory), 0.75) }}
+            >
+              <button
+                type="button"
+                onClick={() => setOpenCategory(null)}
+                aria-label="Schließen"
+                className="absolute right-4 top-4 text-[var(--primary)] transition-opacity hover:opacity-70"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="h-5 w-5" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <h3 className="mb-3 pr-8 text-[22px] font-semibold text-gray-800">
+                {getCategoryName(openCategory, lang)}
+              </h3>
+              <p className="whitespace-pre-line text-[18px] leading-relaxed text-gray-700">
+                {getCategoryDescription(openCategory, lang) || t('categoryPanelEmpty')}
+              </p>
+            </div>
+          )}
 
           {/* Designation Filter - sidebar on desktop */}
           <div className="hidden md:flex designation-filters">
