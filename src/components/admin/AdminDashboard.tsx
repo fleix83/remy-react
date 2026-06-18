@@ -138,9 +138,9 @@ const AdminDashboard: React.FC = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50 focus-visible:ring-offset-1 focus-visible:ring-offset-white active:scale-[0.98] ${
+                  className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4785ff]/50 focus-visible:ring-offset-1 focus-visible:ring-offset-white active:scale-[0.98] ${
                     isActive
-                      ? 'bg-[var(--primary)] text-white shadow-[0_4px_12px_rgba(255,135,135,0.35)]'
+                      ? 'bg-[var(--primary)] text-white shadow-[0_4px_12px_rgba(71,133,255,0.35)]'
                       : 'text-slate-600 hover:bg-[#eef3ff] hover:text-[var(--primary)]'
                   }`}
                 >
@@ -265,7 +265,7 @@ const AdminDashboard: React.FC = () => {
                             <select
                               value={user.role || 'user'}
                               onChange={(e) => handleUserRoleChange(user.id, e.target.value as 'user' | 'moderator' | 'admin')}
-                              className="rounded-lg border border-[#e2ddd3] bg-white px-2 py-1 text-sm text-gray-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50"
+                              className="rounded-lg border border-[#e2ddd3] bg-white px-2 py-1 text-sm text-gray-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4785ff]/50"
                             >
                               <option value="user">{t('users.roleUser')}</option>
                               <option value="moderator">{t('users.roleModerator')}</option>

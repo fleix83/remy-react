@@ -126,7 +126,7 @@ const TherapistsTab: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('therapists.searchPlaceholder')}
-            className="w-64 rounded-lg border border-[#e2ddd3] bg-white px-3 py-1.5 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50"
+            className="w-64 rounded-lg border border-[#e2ddd3] bg-white px-3 py-1.5 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4785ff]/50"
           />
           <button
             onClick={() => setShowCreateModal(true)}

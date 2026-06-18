@@ -18,7 +18,7 @@ interface TherapistRowProps {
 }
 
 const selectClass =
-  'w-full rounded-lg border border-[#e2ddd3] bg-white px-2 py-1.5 text-sm text-gray-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50'
+  'w-full rounded-lg border border-[#e2ddd3] bg-white px-2 py-1.5 text-sm text-gray-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4785ff]/50'
 
 /**
  * One therapist with every field editable inline.
