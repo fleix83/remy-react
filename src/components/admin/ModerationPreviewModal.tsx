@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
 import { getPostDisplayTitle } from '../../utils/text.utils'
@@ -44,12 +46,13 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
   categories
 }) => {
   const { t } = useTranslation('moderation')
+  const lang = useActiveLanguage()
 
   if (!isOpen || !item) return null
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return ''
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    return new Date(dateString).toLocaleDateString(intlLocale(lang), {
       year: 'numeric',
       month: 'long',
       day: 'numeric',

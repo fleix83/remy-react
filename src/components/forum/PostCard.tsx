@@ -8,6 +8,7 @@ import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
 import { useCategories } from '../../hooks/usePosts'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 import { useTranslation } from 'react-i18next'
 
 interface PostCardProps {
@@ -53,8 +54,12 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       navigate(`/post/${post.id}`)
     }
   }
+  // Category colors/names are admin-managed (categories table)
+  const { data: allCategories } = useCategories()
+  const lang = useActiveLanguage()
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    return new Date(dateString).toLocaleDateString(intlLocale(lang), {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -63,9 +68,6 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
     })
   }
 
-  // Category colors/names are admin-managed (categories table)
-  const { data: allCategories } = useCategories()
-  const lang = useActiveLanguage()
   const { t } = useTranslation('forum')
 
 

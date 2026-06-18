@@ -2,9 +2,12 @@ import React from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
 import UserAvatar from '../user/UserAvatar'
 import { useTranslation } from 'react-i18next'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 
 const MessagesList: React.FC = () => {
   const { t } = useTranslation('messaging')
+  const lang = useActiveLanguage()
   const {
     conversations,
     currentConversation,
@@ -19,13 +22,13 @@ const MessagesList: React.FC = () => {
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
     if (diffDays === 0) {
-      return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+      return date.toLocaleTimeString(intlLocale(lang), { hour: '2-digit', minute: '2-digit' })
     } else if (diffDays === 1) {
       return t('yesterday')
     } else if (diffDays < 7) {
-      return date.toLocaleDateString('de-DE', { weekday: 'short' })
+      return date.toLocaleDateString(intlLocale(lang), { weekday: 'short' })
     } else {
-      return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })
+      return date.toLocaleDateString(intlLocale(lang), { day: '2-digit', month: '2-digit' })
     }
   }
 

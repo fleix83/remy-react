@@ -3,7 +3,7 @@
     "titleAdmin": "Admin Dashboard",
     "titleModerator": "Moderator Dashboard",
     "accessDeniedTitle": "Zugriff verweigert",
-    "accessDeniedBody": "Sie haben keine Berechtigung für diese Seite."
+    "accessDeniedBody": "Du hast keine Berechtigung für diese Seite."
   },
   "tabs": {
     "overview": "Übersicht",
@@ -100,7 +100,7 @@
     "sortPlaceholder": "Sort",
     "activeTitle": "Aktiv",
     "inactiveTitle": "Inaktiv",
-    "deleteConfirm": "Möchten Sie die Bezeichnung \"{{label}}\" wirklich löschen?",
+    "deleteConfirm": "Möchtest du die Bezeichnung \"{{label}}\" wirklich löschen?",
     "deleteError": "Fehler beim Löschen der Bezeichnung (wird sie noch von Therapeuten verwendet?)"
   },
   "therapists": {
@@ -155,7 +155,7 @@
     "deactivateTitle": "Im Verzeichnis ausblenden (bleibt erhalten)",
     "activateTitle": "Wieder im Verzeichnis anzeigen",
     "deleteFallbackName": "diesen Eintrag",
-    "deleteConfirm": "Möchten Sie \"{{name}}\" wirklich löschen?",
+    "deleteConfirm": "Möchtest du \"{{name}}\" wirklich löschen?",
     "deleteError": "Fehler beim Löschen des Therapeuten",
     "toggleError": "Fehler beim Ändern des Status (Migration 021 angewendet?)",
     "dismissReviewError": "Fehler beim Bestätigen der Prüfung"

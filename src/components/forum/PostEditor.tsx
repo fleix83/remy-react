@@ -196,7 +196,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   value={canton}
                   options={SWISS_CANTONS.filter(c => c.code).map(c => ({
                     value: c.code,
-                    label: c.name,
+                    label: t(`common:cantons.${c.code}`),
                     icon: c.code ? (
                       <img
                         src={`/kantone/${c.code.toLowerCase()}.png`}
@@ -324,7 +324,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   >
                     {SWISS_CANTONS.map((c) => (
                       <option key={c.code} value={c.code}>
-                        {c.name}
+                        {c.code ? t(`common:cantons.${c.code}`) : c.name}
                       </option>
                     ))}
                   </select>

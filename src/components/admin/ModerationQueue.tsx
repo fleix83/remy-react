@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationQueueService } from '../../services/moderation-queue.service'
 import { supabase } from '../../lib/supabase'
@@ -18,6 +20,7 @@ import { confirmDialog } from '../../stores/confirm.store'
 
 const ModerationQueue: React.FC = () => {
   const { t } = useTranslation('moderation')
+  const lang = useActiveLanguage()
   const permissions = usePermissions()
   const [queueItems, setQueueItems] = useState<ModerationQueueItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -474,7 +477,7 @@ const ModerationQueue: React.FC = () => {
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return ''
-    return new Date(dateString).toLocaleString('de-DE', {
+    return new Date(dateString).toLocaleString(intlLocale(lang), {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',

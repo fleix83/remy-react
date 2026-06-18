@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { usePaginatedPosts, useCategories, useCreatePost, useSearchPosts } from '../../hooks/usePosts'
 import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
-import { de } from 'date-fns/locale'
 import 'react-day-picker/style.css'
 import PostCard from './PostCard'
 import PostEditor from './PostEditor'
@@ -14,6 +13,7 @@ import { getDesignationLabel } from '../../utils/designationHelpers'
 import { getCategoryColor, getCategoryName } from '../../utils/categoryHelpers'
 import { useAuthStore } from '../../stores/auth.store'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { dateFnsLocale } from '../../utils/dateFormat'
 import { toast } from '../../stores/toast.store'
 import { useTranslation } from 'react-i18next'
 import type { Designation } from '../../types/database.types'
@@ -59,7 +59,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   const [showAllCantons, setShowAllCantons] = useState(false)
   const defaultCanton = userProfile?.default_canton || null
   const defaultCantonName = defaultCanton
-    ? (SWISS_CANTONS.find(c => c.code === defaultCanton)?.name || defaultCanton)
+    ? (SWISS_CANTONS.find(c => c.code === defaultCanton) ? t(`common:cantons.${defaultCanton}`) : defaultCanton)
     : ''
   const defaultCantons = useMemo(
     () => (defaultCanton ? [defaultCanton, ...(CANTON_NEIGHBORS[defaultCanton] || [])] : null),
@@ -368,11 +368,11 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                   : 'text-gray-500 hover:bg-[var(--bg-element-hover)]'
               }`}
               style={{ fontSize: '0.75rem', border: 'none', cursor: 'pointer', background: filters.cantons?.includes(canton.code) ? undefined : 'transparent' }}
-              title={canton.name}
+              title={t(`common:cantons.${canton.code}`)}
             >
               <img
                 src={`/kantone/${canton.code.toLowerCase()}.png`}
-                alt={canton.name}
+                alt={t(`common:cantons.${canton.code}`)}
                 className="w-4 h-4 object-contain"
                 loading="lazy"
                 decoding="async"
@@ -487,7 +487,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                   mode="range"
                   selected={dateRange}
                   onSelect={handleDateRangeSelect}
-                  locale={de}
+                  locale={dateFnsLocale(lang)}
                   numberOfMonths={1}
                 />
               </div>

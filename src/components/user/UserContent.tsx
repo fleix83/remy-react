@@ -11,6 +11,7 @@ import { supabase } from '../../lib/supabase'
 import type { PostWithRelations, CommentWithUser, Post } from '../../types/database.types'
 import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
+import { intlLocale } from '../../utils/dateFormat'
 import { useCategories } from '../../hooks/usePosts'
 import { confirmDialog } from '../../stores/confirm.store'
 
@@ -108,7 +109,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    return new Date(dateString).toLocaleDateString(intlLocale(lang), {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',

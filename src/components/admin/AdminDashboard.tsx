@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationService } from '../../services/moderation.service'
 import UserAvatar from '../user/UserAvatar'
@@ -33,6 +35,7 @@ const TAB_ICONS: Record<TabId, string> = {
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation('admin')
+  const lang = useActiveLanguage()
   const permissions = usePermissions()
   const [stats, setStats] = useState<ModerationStats | null>(null)
   const [users, setUsers] = useState<User[]>([])
@@ -242,7 +245,7 @@ const AdminDashboard: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {user.created_at ? new Date(user.created_at).toLocaleDateString('de-DE') : t('users.registeredUnknown')}
+                        {user.created_at ? new Date(user.created_at).toLocaleDateString(intlLocale(lang)) : t('users.registeredUnknown')}
                       </td>
                       {permissions.isAdmin && (
                         <td className="px-4 py-4 whitespace-nowrap text-sm">

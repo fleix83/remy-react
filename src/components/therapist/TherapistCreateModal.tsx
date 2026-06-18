@@ -449,7 +449,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
               >
                 {SWISS_CANTONS.map((canton) => (
                   <option key={canton.code} value={canton.code} className="bg-white">
-                    {canton.code ? `${canton.code} - ${canton.name}` : canton.name}
+                    {canton.code ? `${canton.code} - ${t(`common:cantons.${canton.code}`)}` : canton.name}
                   </option>
                 ))}
               </select>

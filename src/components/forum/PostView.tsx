@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 import { useTranslation } from 'react-i18next'
 import { useNotificationsStore } from '../../stores/notifications.store'
 import { toast } from '../../stores/toast.store'
@@ -68,8 +69,13 @@ const PostView: React.FC = () => {
     return () => clearTimeout(timer)
   }, [location.state, location.pathname, post, navigate])
 
+  // Category colors/names are admin-managed (categories table)
+  const { data: allCategories } = useCategories()
+  const lang = useActiveLanguage()
+  const { t } = useTranslation('forum')
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    return new Date(dateString).toLocaleDateString(intlLocale(lang), {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -77,11 +83,6 @@ const PostView: React.FC = () => {
       minute: '2-digit'
     })
   }
-
-  // Category colors/names are admin-managed (categories table)
-  const { data: allCategories } = useCategories()
-  const lang = useActiveLanguage()
-  const { t } = useTranslation('forum')
 
   const handleEditPost = async (postData: any) => {
     if (!post) return

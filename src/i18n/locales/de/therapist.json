@@ -74,15 +74,15 @@
     "deleteConfirm": {
       "titleInstitution": "Institution löschen?",
       "titlePerson": "Therapeut löschen?",
-      "body": "Sind Sie sicher, dass Sie <strong>{{name}}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "body": "Bist du sicher, dass du <strong>{{name}}</strong> löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
       "deleting": "Löschen …"
     },
     "errors": {
-      "cantonRequired": "Bitte wählen Sie einen Kanton aus",
-      "institutionRequired": "Bitte geben Sie den Namen der Institution ein",
-      "firstNameRequired": "Bitte geben Sie den Vornamen ein",
-      "lastNameRequired": "Bitte geben Sie den Nachnamen ein",
-      "designationRequired": "Bitte wählen Sie eine Berufsbezeichnung aus",
+      "cantonRequired": "Bitte wähle einen Kanton aus",
+      "institutionRequired": "Bitte gib den Namen der Institution ein",
+      "firstNameRequired": "Bitte gib den Vornamen ein",
+      "lastNameRequired": "Bitte gib den Nachnamen ein",
+      "designationRequired": "Bitte wähle eine Berufsbezeichnung aus",
       "deleteFailed": "Fehler beim Löschen",
       "saveFailed": "Fehler beim Speichern"
     }

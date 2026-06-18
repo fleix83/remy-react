@@ -5,6 +5,8 @@ import UserAvatar from '../user/UserAvatar'
 import SendMessageButton from '../messaging/SendMessageButton'
 import { toast } from '../../stores/toast.store'
 import { confirmDialog } from '../../stores/confirm.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 import { useTranslation } from 'react-i18next'
 
 interface CommentCardProps {
@@ -33,10 +35,11 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
 
   const commentsService = new CommentsService()
   const { t } = useTranslation('forum')
+  const lang = useActiveLanguage()
 
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    return new Date(dateString).toLocaleDateString(intlLocale(lang), {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',

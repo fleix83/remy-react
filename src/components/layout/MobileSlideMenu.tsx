@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { useMessagesStore } from '../../stores/messages.store'
 import { useAuthStore } from '../../stores/auth.store'
 import { format } from 'date-fns'
-import { de } from 'date-fns/locale'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { dateFnsLocale } from '../../utils/dateFormat'
 import type { Conversation } from '../../services/messages.service'
 
 interface MobileSlideMenuProps {
@@ -23,6 +24,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   const navigate = useNavigate()
   const { user, updateProfile } = useAuthStore()
   const { t, i18n } = useTranslation()
+  const lang = useActiveLanguage()
   const { unreadCount: messageCount, loadConversations, setCurrentConversation } = useMessagesStore()
   const [recentConversations, setRecentConversations] = useState<Conversation[]>([])
 
@@ -189,7 +191,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                         <span className="text-gray-400 mx-1">·</span>
                         <span className="text-gray-400" style={{ fontSize: '0.75rem' }}>
                           {conv.lastMessage?.created_at
-                            ? format(new Date(conv.lastMessage.created_at), 'dd. MMM', { locale: de })
+                            ? format(new Date(conv.lastMessage.created_at), 'dd. MMM', { locale: dateFnsLocale(lang) })
                             : ''}
                         </span>
                       </div>

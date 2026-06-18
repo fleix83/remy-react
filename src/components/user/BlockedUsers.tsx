@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import UserSearchService from '../../services/user-search.service'
 import AvatarService from '../../services/avatar.service'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 import type { User, UserBlock } from '../../types/database.types'
 
 interface BlockedUserInfo {
@@ -20,6 +22,7 @@ interface UserBlockWithUser extends UserBlock {
 
 const BlockedUsers: React.FC = () => {
   const { t } = useTranslation('profile')
+  const lang = useActiveLanguage()
   const { userProfile } = useAuthStore()
   const [blockedUsers, setBlockedUsers] = useState<UserBlockWithUser[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -135,7 +138,7 @@ const BlockedUsers: React.FC = () => {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    return new Date(dateString).toLocaleDateString(intlLocale(lang), {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

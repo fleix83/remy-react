@@ -27,10 +27,12 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
-  // Map SWISS_CANTONS to the format expected by BadgeDropdown
+  // Map SWISS_CANTONS to the format expected by BadgeDropdown.
+  // Real canton codes get a translated name; the empty placeholder keeps its
+  // original label (no cantons.'' key exists).
   const cantons = SWISS_CANTONS.map(canton => ({
     value: canton.code,
-    label: canton.name
+    label: canton.code ? t(`common:cantons.${canton.code}`) : canton.name
   }))
 
   const languages = [

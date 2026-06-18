@@ -9,11 +9,14 @@ import UserContent from './UserContent'
 import AvatarService from '../../services/avatar.service'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { toast } from '../../stores/toast.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 
 const UserProfile: React.FC = () => {
   const { t } = useTranslation('profile')
   const navigate = useNavigate()
   const { user, userProfile, loadUserProfile, logout } = useAuthStore()
+  const lang = useActiveLanguage()
   const [showSettings, setShowSettings] = useState(false)
   const [uploadingBackground, setUploadingBackground] = useState(false)
   const [backgroundHover, setBackgroundHover] = useState(false)
@@ -32,7 +35,7 @@ const UserProfile: React.FC = () => {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    return new Date(dateString).toLocaleDateString(intlLocale(lang), {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

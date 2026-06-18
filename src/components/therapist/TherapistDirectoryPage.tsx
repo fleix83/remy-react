@@ -5,6 +5,7 @@ import TherapistSelector from './TherapistSelector'
 import TherapistCreateModal from './TherapistCreateModal'
 import type { TherapistWithDesignation, PostWithRelations } from '../../types/database.types'
 import { getDesignationLabel } from '../../utils/designationHelpers'
+import { intlLocale } from '../../utils/dateFormat'
 import { PostsService } from '../../services/posts.service'
 import { TherapistsService } from '../../services/therapists.service'
 import { useAuthStore } from '../../stores/auth.store'
@@ -92,7 +93,7 @@ const TherapistDirectoryPage: React.FC = () => {
   const displayName = therapistName || selectedTherapist?.institution || ''
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    return new Date(dateString).toLocaleDateString(intlLocale(lang), {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'

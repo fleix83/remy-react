@@ -5,6 +5,8 @@ import type { MessageWithUser } from '../../services/messages.service'
 import { toast } from '../../stores/toast.store'
 import { confirmDialog } from '../../stores/confirm.store'
 import { useTranslation } from 'react-i18next'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { intlLocale } from '../../utils/dateFormat'
 
 interface MessageBubbleProps {
   message: MessageWithUser
@@ -22,9 +24,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   const { deleteMessage } = useMessagesStore()
   const [showActions, setShowActions] = useState(false)
   const { t } = useTranslation('messaging')
+  const lang = useActiveLanguage()
 
   const formatTimestamp = (dateString: string) => {
-    return new Date(dateString).toLocaleString('de-DE', {
+    return new Date(dateString).toLocaleString(intlLocale(lang), {
       day: '2-digit',
       month: '2-digit',
       year: '2-digit',

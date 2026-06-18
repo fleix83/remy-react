@@ -262,7 +262,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                   <option value="">{t('filterModal.allCantons')}</option>
                   {CANTONS.map(canton => (
                     <option key={canton.code} value={canton.code}>
-                      {canton.name}
+                      {t(`common:cantons.${canton.code}`)}
                     </option>
                   ))}
                 </select>
