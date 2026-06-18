@@ -772,6 +772,22 @@
     background: linear-gradient(180deg, #e2ecff, transparent);
   }
 
+  /* Lebenskurve line art layered on top of the gradient (gradient stays
+     visible through the transparent SVG). Sits behind the logo/avatar. */
+  .page-forum nav .forum-curve {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: var(--curve-bottom, 24px);
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: var(--curve-max-width, 1600px);
+    height: auto;
+    opacity: var(--curve-opacity, 1);
+    pointer-events: none;
+    user-select: none;
+  }
+
   /* Logo + avatar nudged down 20px; logo pulled left 36px */
   .page-forum nav .h-20 {
     align-items: flex-start;
@@ -790,4 +806,10 @@
   .page-forum .post-tag {
     background: #f1f1f18f !important;
   }
+}
+
+/* Lebenskurve curve is shown only on the desktop forum header (rule above);
+   hidden everywhere else (mobile + non-forum pages). */
+.forum-curve {
+  display: none;
 }

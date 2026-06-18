@@ -39,7 +39,14 @@ const Navigation: React.FC<NavigationProps> = ({
 
   return (
     <nav className="relative" style={headerBg ? { backgroundColor: headerBg } : undefined}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Lebenskurve line art layered over the gradient header (forum landing, desktop) */}
+      <img
+        src="/images/lebenskurve.svg"
+        alt=""
+        aria-hidden="true"
+        className="forum-curve"
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-between items-center h-20">
           
           {/* Logo and Brand */}
