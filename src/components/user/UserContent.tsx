@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import UserContentService from '../../services/user-content.service'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import PostEditModal from '../forum/PostEditModal'
 import { CommentsService } from '../../services/comments.service'
 import { supabase } from '../../lib/supabase'
@@ -30,10 +31,10 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   
   const navigate = useNavigate()
   const { updatePost } = useForumStore()
-  const { user, userProfile } = useAuthStore()
+  const { user } = useAuthStore()
   // Category colors/names are admin-managed (categories table)
   const { data: allCategories } = useCategories()
-  const lang = userProfile?.language_preference
+  const lang = useActiveLanguage()
 
   useEffect(() => {
     loadContent()

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { useTranslation } from 'react-i18next'
 
 const ConfirmEmail: React.FC = () => {
+  const { t } = useTranslation('auth')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [loading, setLoading] = useState(true)
@@ -36,15 +38,15 @@ const ConfirmEmail: React.FC = () => {
         const urlErrorDescription = hashParams.get('error_description')
 
         if (urlError) {
-          // Translate common Supabase error codes to German
-          let errorMessage = 'Ein Fehler ist aufgetreten'
+          // Set i18n keys (or raw text); translated at render time via t()
+          let errorMessage = 'errorGeneric'
           let errorDetails = urlErrorDescription?.replace(/\+/g, ' ') || ''
 
           if (urlErrorCode === 'otp_expired') {
-            errorMessage = 'Der Bestätigungslink ist abgelaufen'
-            errorDetails = 'Der Link wurde möglicherweise bereits verwendet oder ist abgelaufen. Bitte registriere dich erneut.'
+            errorMessage = 'confirm.expiredTitle'
+            errorDetails = 'confirm.expiredDetails'
           } else if (urlErrorCode === 'access_denied') {
-            errorMessage = 'Zugriff verweigert'
+            errorMessage = 'confirm.accessDenied'
           }
 
           setError(errorMessage)
@@ -71,14 +73,14 @@ const ConfirmEmail: React.FC = () => {
           if (retrySession) {
             setTimeout(() => navigate('/'), 2000)
           } else {
-            setError('Bestätigung fehlgeschlagen')
-            setErrorDescription('Die Sitzung konnte nicht erstellt werden. Bitte versuche es erneut oder melde dich direkt an.')
+            setError('confirm.failedTitle')
+            setErrorDescription('confirm.failedDetails')
             setLoading(false)
           }
         }
       } catch (err) {
-        setError('Ein Fehler ist aufgetreten')
-        setErrorDescription(err instanceof Error ? err.message : 'Unbekannter Fehler')
+        setError('errorGeneric')
+        setErrorDescription(err instanceof Error ? err.message : 'unknownError')
         setLoading(false)
       }
     }
@@ -100,7 +102,7 @@ const ConfirmEmail: React.FC = () => {
       })
 
       if (error) {
-        setError('Bestätigung fehlgeschlagen')
+        setError('confirm.failedTitle')
         setErrorDescription(error.message)
         setLoading(false)
         return
@@ -125,35 +127,35 @@ const ConfirmEmail: React.FC = () => {
           <>
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
             <p className="text-lg" style={{ color: '#144220' }}>
-              E-Mail wird bestätigt...
+              {t('confirm.verifying')}
             </p>
           </>
         ) : showConfirmButton ? (
           <>
             <div className="text-blue-600 mb-4 text-5xl">✉️</div>
             <p className="text-lg mb-2 font-semibold" style={{ color: '#144220' }}>
-              E-Mail-Bestätigung
+              {t('confirm.confirmTitle')}
             </p>
             <p className="text-sm mb-6" style={{ color: '#144220', opacity: 0.8 }}>
-              Klicke auf den Button unten, um deine E-Mail-Adresse zu bestätigen.
+              {t('confirm.confirmBody')}
             </p>
             <button
               onClick={handleConfirmClick}
               className="w-full px-6 py-3 rounded-lg font-semibold"
               style={{ backgroundColor: 'var(--primary)', color: 'white' }}
             >
-              E-Mail bestätigen
+              {t('confirm.confirmButton')}
             </button>
           </>
         ) : error ? (
           <>
             <div className="text-red-600 mb-4 text-5xl">✗</div>
             <p className="text-lg mb-2 font-semibold" style={{ color: '#144220' }}>
-              {error}
+              {t(error)}
             </p>
             {errorDescription && (
               <p className="text-sm mb-6" style={{ color: '#144220', opacity: 0.8 }}>
-                {errorDescription}
+                {t(errorDescription)}
               </p>
             )}
             <div className="space-y-3">
@@ -162,14 +164,14 @@ const ConfirmEmail: React.FC = () => {
                 className="block w-full px-6 py-2 rounded-lg"
                 style={{ backgroundColor: 'var(--primary)', color: 'white' }}
               >
-                Erneut registrieren
+                {t('confirm.registerAgain')}
               </button>
               <button
                 onClick={() => navigate('/?login=true')}
                 className="block w-full px-6 py-2 rounded-lg border"
                 style={{ borderColor: 'var(--primary)', color: 'var(--primary)', backgroundColor: 'transparent' }}
               >
-                Zum Login
+                {t('confirm.toLogin')}
               </button>
             </div>
           </>
@@ -177,10 +179,10 @@ const ConfirmEmail: React.FC = () => {
           <>
             <div className="text-green-600 mb-4 text-5xl">✓</div>
             <p className="text-lg mb-4" style={{ color: '#144220' }}>
-              E-Mail erfolgreich bestätigt!
+              {t('confirm.successTitle')}
             </p>
             <p className="text-sm" style={{ color: '#144220' }}>
-              Du wirst automatisch weitergeleitet...
+              {t('confirm.redirecting')}
             </p>
           </>
         )}

@@ -1,11 +1,26 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useFooterContent, useContentEditor } from '../../hooks/useSiteContent'
 import { DEFAULT_FOOTER_CONTENT, type FooterContent } from '../../types/landing-content.types'
-import { CmsField, CmsSection, CmsSaveBar } from './CmsField'
+import { CmsField, CmsSection, CmsSaveBar, CmsLanguageTabs } from './CmsField'
 
-/** Admin editor for the landing page footer (links + credit). */
+/** Admin editor for the landing page footer (links + credit, per language). */
 const FooterEditor: React.FC = () => {
-  const doc = useFooterContent()
+  const [lng, setLng] = useState('de')
+  return (
+    <div className="space-y-4">
+      <CmsLanguageTabs value={lng} onChange={setLng} />
+      {lng !== 'de' && (
+        <p className="text-xs text-slate-500">
+          Nicht übersetzte Felder zeigen auf der Seite automatisch den deutschen Text.
+        </p>
+      )}
+      <FooterEditorBody key={lng} lng={lng} />
+    </div>
+  )
+}
+
+const FooterEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
+  const doc = useFooterContent(lng)
   const editor = useContentEditor<FooterContent>(doc, DEFAULT_FOOTER_CONTENT)
   const { draft, setDraft } = editor
 

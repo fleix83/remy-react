@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMessagesStore } from '../../stores/messages.store'
+import { useTranslation } from 'react-i18next'
 
 interface MessagesButtonProps {
   className?: string
@@ -13,6 +14,7 @@ const MessagesButton: React.FC<MessagesButtonProps> = ({
 }) => {
   const navigate = useNavigate()
   const { unreadCount } = useMessagesStore()
+  const { t } = useTranslation('messaging')
 
   const handleClick = () => {
     navigate('/messages')
@@ -22,7 +24,7 @@ const MessagesButton: React.FC<MessagesButtonProps> = ({
     <button
       onClick={handleClick}
       className={`relative inline-flex items-center text-gray-300 hover:text-white transition-colors ${className}`}
-      title="Messages"
+      title={t('title')}
     >
       {/* Message Icon */}
       <svg 
@@ -41,7 +43,7 @@ const MessagesButton: React.FC<MessagesButtonProps> = ({
       
       {/* Show label if requested */}
       {showLabel && (
-        <span className="ml-2 text-sm">Messages</span>
+        <span className="ml-2 text-sm">{t('title')}</span>
       )}
       
       {/* Unread count badge */}

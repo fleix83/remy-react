@@ -1,0 +1,30 @@
+{
+  "appName": "Remy",
+  "loading": "Chargement …",
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "back": "Retour"
+  },
+  "language": {
+    "label": "Langue",
+    "de": "Deutsch",
+    "fr": "Français",
+    "it": "Italiano",
+    "en": "English"
+  },
+  "nav": {
+    "forum": "Forum",
+    "therapists": "Thérapeutes",
+    "profile": "Profil",
+    "messages": "Messages",
+    "guidelines": "Règles",
+    "moderation": "Modération",
+    "admin": "Admin",
+    "logout": "Déconnexion"
+  },
+  "menu": "Menu",
+  "brandClaim": "FORUM POUR LES\nPERSONNES EN\nPSYCHOTHÉRAPIE"
+}

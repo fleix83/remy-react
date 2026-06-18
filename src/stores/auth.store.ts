@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '../lib/supabase'
+import i18n, { SUPPORTED_LNGS } from '../i18n'
 import type { User, Session } from '@supabase/supabase-js'
 import type { User as UserProfile } from '../types/database.types'
 
@@ -152,6 +153,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
       
       set({ userProfile: data })
+
+      // Apply the user's saved language the instant their profile loads, so the
+      // UI matches their cross-device preference (overrides browser/localStorage
+      // detection). Guarded to skip a redundant bundle reload.
+      const pref = data?.language_preference
+      const current = (i18n.language || '').split('-')[0]
+      if (pref && (SUPPORTED_LNGS as readonly string[]).includes(pref) && current !== pref) {
+        void i18n.changeLanguage(pref)
+      }
     } catch (error) {
       console.error('Error loading user profile:', error)
     }

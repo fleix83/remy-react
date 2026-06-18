@@ -5,7 +5,7 @@ import { DesignationsService } from '../../services/designations.service'
 import { TherapistImportService, type ImportResult } from '../../services/therapist-import.service'
 import { downloadTherapistCSVTemplate } from '../../utils/therapist-csv-template'
 import { usePermissions } from '../../hooks/usePermissions'
-import { useAuthStore } from '../../stores/auth.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { getDesignationLabel } from '../../utils/designationHelpers'
 import { getTherapistEntryType, type TherapistEntryType } from '../../utils/therapistHelpers'
 import type { Therapist, Designation } from '../../types/database.types'
@@ -63,9 +63,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   const designationsService = new DesignationsService()
   const importService = new TherapistImportService()
   const permissions = usePermissions()
-  const { userProfile } = useAuthStore()
-
-  const lang = userProfile?.language_preference
+  const lang = useActiveLanguage()
   const designationOptions = useMemo(
     () => designations.map(d => ({ id: d.id, label: getDesignationLabel(d, lang) })),
     [designations, lang]

@@ -1,0 +1,50 @@
+{
+  "title": "Messages",
+  "yesterday": "Hier",
+  "unknownDate": "Inconnu",
+  "unknownError": "Erreur inconnue",
+  "conversationCount_one": "{{count}} conversation",
+  "conversationCount_other": "{{count}} conversations",
+  "loginRequired": {
+    "title": "Connexion requise",
+    "body": "Connecte-toi pour voir tes messages."
+  },
+  "welcome": {
+    "title": "Bienvenue dans tes messages",
+    "body": "Sélectionne une conversation à gauche ou démarres-en une nouvelle depuis un profil ou un post."
+  },
+  "empty": {
+    "title": "Pas encore de conversations",
+    "body": "Démarre une conversation depuis un profil ou un post."
+  },
+  "selectConversation": {
+    "title": "Sélectionne une conversation",
+    "body": "Sélectionne une conversation à gauche pour écrire."
+  },
+  "startWith": "Démarre une conversation avec {{username}}",
+  "blocked": "Bloqué",
+  "block": "Bloquer",
+  "unblock": "Débloquer",
+  "userBlocked": "Utilisateur·rice bloqué·e",
+  "userUnblocked": "Utilisateur·rice débloqué·e",
+  "blockError": "Erreur lors de la mise à jour : {{message}}",
+  "composer": {
+    "placeholder": "Message à {{username}}...",
+    "sendTitle": "Envoyer le message",
+    "hint": "Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne",
+    "postContext": "À propos de ton post : \"{{title}}\"\n\n",
+    "sendError": "Erreur lors de l'envoi du message : {{message}}"
+  },
+  "bubble": {
+    "deleteConfirm": "Veux-tu vraiment supprimer ce message ?",
+    "deleteError": "Erreur lors de la suppression du message",
+    "deleteTitle": "Supprimer le message"
+  },
+  "send": {
+    "title": "Envoyer un message à {{username}}",
+    "privateMessage": "Message privé",
+    "message": "Message",
+    "sendMessage": "Envoyer un message",
+    "openError": "Erreur lors de l'ouverture de la conversation"
+  }
+}

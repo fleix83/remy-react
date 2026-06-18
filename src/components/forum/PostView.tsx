@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { useTranslation } from 'react-i18next'
 import { useNotificationsStore } from '../../stores/notifications.store'
 import { toast } from '../../stores/toast.store'
 import { useCommentsRealtime } from '../../hooks/useCommentsRealtime'
@@ -57,13 +59,13 @@ const PostView: React.FC = () => {
 
     setOpenCommentForm(true)
     setReplyToPostAuthor(true)
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })
     }, 100)
 
     // Clear the state so the effect doesn't re-fire on re-render.
     navigate(location.pathname, { replace: true, state: null })
-    return () => clearTimeout(t)
+    return () => clearTimeout(timer)
   }, [location.state, location.pathname, post, navigate])
 
   const formatDate = (dateString: string) => {
@@ -78,7 +80,8 @@ const PostView: React.FC = () => {
 
   // Category colors/names are admin-managed (categories table)
   const { data: allCategories } = useCategories()
-  const lang = userProfile?.language_preference
+  const lang = useActiveLanguage()
+  const { t } = useTranslation('forum')
 
   const handleEditPost = async (postData: any) => {
     if (!post) return
@@ -102,8 +105,8 @@ const PostView: React.FC = () => {
       console.error('Error updating post:', error)
       // If the post body saved but tags failed, the store still holds the
       // fresh post — show the specific error without rolling back UI.
-      const msg = error instanceof Error ? error.message : 'Unbekannter Fehler'
-      toast.error('Fehler beim Aktualisieren des Beitrags: ' + msg)
+      const msg = error instanceof Error ? error.message : t('unknownError')
+      toast.error(t('updateError', { message: msg }))
       throw error
     }
   }
@@ -139,15 +142,15 @@ const PostView: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.982 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-white">Beitrag nicht gefunden</h3>
+            <h3 className="text-lg font-medium text-white">{t('postNotFound.title')}</h3>
             <p className="text-gray-500 mt-1">
-              Der angeforderte Beitrag existiert nicht oder wurde entfernt.
+              {t('postNotFound.body')}
             </p>
             <button
               onClick={() => navigate('/')}
               className="mt-4 bg-[var(--primary)] hover:bg-[var(--primary)] text-white px-4 py-2 rounded-md transition-colors"
             >
-              Zurück zum Forum
+              {t('backToForumNav')}
             </button>
           </div>
         </div>
@@ -179,7 +182,7 @@ const PostView: React.FC = () => {
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Zurück zum Forum
+            {t('backToForumNav')}
           </button>
 
           {user && (
@@ -269,10 +272,10 @@ const PostView: React.FC = () => {
             )}
             <div className="ml-3 flex-1 min-w-0">
               <p className="font-semibold text-[var(--type)] text-left leading-tight" style={{ fontSize: '11px' }}>
-                {post.users?.username || 'Unknown User'}
+                {post.users?.username || t('unknownUser')}
               </p>
               <p className="text-gray-500 text-left leading-tight" style={{ fontSize: '10px' }}>
-                {post.created_at ? formatDate(post.created_at) : 'Unbekannt'}
+                {post.created_at ? formatDate(post.created_at) : t('card.unknownDate')}
               </p>
             </div>
 
@@ -283,12 +286,12 @@ const PostView: React.FC = () => {
                 <button
                   onClick={() => setShowEditModal(true)}
                   className="flex items-center space-x-1 text-gray-600 hover:text-gray-800 transition-colors"
-                  title="Beitrag bearbeiten"
+                  title={t('editPost')}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  <span className="text-sm">Bearbeiten</span>
+                  <span className="text-sm">{t('edit')}</span>
                 </button>
               </div>
             )}
@@ -301,7 +304,7 @@ const PostView: React.FC = () => {
               className="post-view-therapist text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0 block w-full"
               style={{color: '#4785ff', fontSize: '13px', lineHeight: '1.2'}}
             >
-              Erfahrung mit {formatTherapistPostLine(post.therapists, userProfile?.language_preference)}
+              {t('card.experienceWith', { therapist: formatTherapistPostLine(post.therapists, lang) })}
             </button>
           )}
 
@@ -334,7 +337,7 @@ const PostView: React.FC = () => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
               </svg>
-              <span>Antworten</span>
+              <span>{t('card.reply')}</span>
             </button>
 
             {/* Private Message Link */}

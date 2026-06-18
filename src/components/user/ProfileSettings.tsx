@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuthStore } from '../../stores/auth.store'
 import BadgeDropdown from '../ui/BadgeDropdown'
+import i18n from '../../i18n'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 
 interface ProfileSettingsProps {
@@ -33,7 +34,8 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   const languages = [
     { value: 'de', label: 'Deutsch' },
     { value: 'fr', label: 'Français' },
-    { value: 'it', label: 'Italiano' }
+    { value: 'it', label: 'Italiano' },
+    { value: 'en', label: 'English' }
   ]
 
   useEffect(() => {
@@ -197,7 +199,10 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                       <BadgeDropdown
                         value={formData.language_preference}
                         options={languages}
-                        onChange={(value) => setFormData({ ...formData, language_preference: value as string })}
+                        onChange={(value) => {
+                          setFormData({ ...formData, language_preference: value as string })
+                          void i18n.changeLanguage(value as string)
+                        }}
                         badgeClassName="bg-gray-100 text-gray-800 hover:bg-gray-200"
                       />
                     ) : (

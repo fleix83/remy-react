@@ -5,8 +5,10 @@ import { useMessagesStore, initializeMessagingAuth } from '../../stores/messages
 import { useNotificationsStore } from '../../stores/notifications.store'
 import MessagesList from './MessagesList'
 import ConversationView from './ConversationView'
+import { useTranslation } from 'react-i18next'
 
 const MessagesPage: React.FC = () => {
+  const { t } = useTranslation('messaging')
   const { user } = useAuthStore()
   const {
     currentConversation,
@@ -50,9 +52,9 @@ const MessagesPage: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-[var(--type)] mb-2">Anmeldung erforderlich</h3>
+          <h3 className="text-lg font-medium text-[var(--type)] mb-2">{t('loginRequired.title')}</h3>
           <p className="text-gray-500">
-            Bitte melde dich an, um deine Nachrichten zu sehen.
+            {t('loginRequired.body')}
           </p>
         </div>
       </div>
@@ -80,9 +82,9 @@ const MessagesPage: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-medium text-[var(--post-title)] mb-2">Willkommen bei deinen Nachrichten</h3>
+                  <h3 className="text-xl font-medium text-[var(--post-title)] mb-2">{t('welcome.title')}</h3>
                   <p className="text-gray-500">
-                    Wähle links eine Konversation aus oder starte eine neue über ein Benutzerprofil oder einen Beitrag.
+                    {t('welcome.body')}
                   </p>
                 </div>
               </div>

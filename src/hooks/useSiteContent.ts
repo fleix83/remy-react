@@ -7,11 +7,12 @@ import {
   type LandingContent,
   type FooterContent,
 } from '../types/landing-content.types'
+import { useActiveLanguage } from './useActiveLanguage'
 
 const service = new SiteContentService()
 
 export const siteContentKeys = {
-  doc: (key: string) => ['site-content', key] as const,
+  doc: (key: string, lng: string) => ['site-content', key, lng] as const,
 }
 
 /** Content rarely changes, so cache aggressively once fetched. */
@@ -44,12 +45,16 @@ export function contentReady(query: { dataUpdatedAt: number; isFetchedAfterMount
   return query.dataUpdatedAt > 0 || query.isFetchedAfterMount
 }
 
-function useContentDocument<T>(key: string, defaults: T): ContentDocument<T> {
+function useContentDocument<T>(key: string, defaults: T, lng?: string): ContentDocument<T> {
   const queryClient = useQueryClient()
+  // Public callers omit `lng` and follow the active UI language (so the landing
+  // tracks the switcher); the admin editors pass an explicit language to edit.
+  const activeLng = useActiveLanguage()
+  const language = lng ?? activeLng
 
   const query = useQuery({
-    queryKey: siteContentKeys.doc(key),
-    queryFn: () => service.getContent<T>(key, defaults),
+    queryKey: siteContentKeys.doc(key, language),
+    queryFn: () => service.getContent<T>(key, defaults, language),
     // Render defaults instantly for the public landing page, but mark them as
     // fetched at epoch 0 so they count as stale and the DB overrides are still
     // fetched on mount. A long staleTime then avoids refetching afterwards.
@@ -60,11 +65,11 @@ function useContentDocument<T>(key: string, defaults: T): ContentDocument<T> {
   })
 
   const mutation = useMutation({
-    mutationFn: (value: T) => service.saveContent<T>(key, value),
+    mutationFn: (value: T) => service.saveContent<T>(key, language, value),
     onSuccess: (_result, value) => {
       // Reflect the saved value immediately, then revalidate.
-      queryClient.setQueryData(siteContentKeys.doc(key), value)
-      queryClient.invalidateQueries({ queryKey: siteContentKeys.doc(key) })
+      queryClient.setQueryData(siteContentKeys.doc(key, language), value)
+      queryClient.invalidateQueries({ queryKey: siteContentKeys.doc(key, language) })
     },
   })
 
@@ -80,12 +85,12 @@ function useContentDocument<T>(key: string, defaults: T): ContentDocument<T> {
   }
 }
 
-export function useLandingContent(): ContentDocument<LandingContent> {
-  return useContentDocument<LandingContent>('landing', DEFAULT_LANDING_CONTENT)
+export function useLandingContent(lng?: string): ContentDocument<LandingContent> {
+  return useContentDocument<LandingContent>('landing', DEFAULT_LANDING_CONTENT, lng)
 }
 
-export function useFooterContent(): ContentDocument<FooterContent> {
-  return useContentDocument<FooterContent>('footer', DEFAULT_FOOTER_CONTENT)
+export function useFooterContent(lng?: string): ContentDocument<FooterContent> {
+  return useContentDocument<FooterContent>('footer', DEFAULT_FOOTER_CONTENT, lng)
 }
 
 export interface ContentEditor<T> {

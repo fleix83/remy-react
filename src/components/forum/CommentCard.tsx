@@ -5,6 +5,7 @@ import UserAvatar from '../user/UserAvatar'
 import SendMessageButton from '../messaging/SendMessageButton'
 import { toast } from '../../stores/toast.store'
 import { confirmDialog } from '../../stores/confirm.store'
+import { useTranslation } from 'react-i18next'
 
 interface CommentCardProps {
   comment: CommentWithRelations
@@ -31,6 +32,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
   const [saving, setSaving] = useState(false)
 
   const commentsService = new CommentsService()
+  const { t } = useTranslation('forum')
 
 
   const formatDate = (dateString: string) => {
@@ -53,21 +55,21 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
       onUpdate()
     } catch (error) {
       console.error('Error updating comment:', error)
-      toast.error('Fehler beim Speichern des Kommentars')
+      toast.error(t('comments.saveError'))
     } finally {
       setSaving(false)
     }
   }
 
   const handleDelete = async () => {
-    if (!(await confirmDialog({ message: 'Kommentar wirklich löschen?', confirmLabel: 'Löschen', danger: true }))) return
+    if (!(await confirmDialog({ message: t('comments.deleteConfirm'), confirmLabel: t('common:actions.delete'), danger: true }))) return
 
     try {
       await commentsService.deleteComment(comment.id)
       onUpdate()
     } catch (error) {
       console.error('Error deleting comment:', error)
-      toast.error('Fehler beim Löschen des Kommentars')
+      toast.error(t('comments.deleteError'))
     }
   }
 
@@ -88,18 +90,18 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
       {/* User Info */}
       <div className="flex items-start space-x-3 mb-4">
         <UserAvatar 
-          user={comment.users || { id: comment.user_id || 'unknown', username: 'Unbekannt', avatar_url: null }} 
+          user={comment.users || { id: comment.user_id || 'unknown', username: t('unknownUser'), avatar_url: null }}
           size="small" 
           className="flex-shrink-0"
         />
         <div className="flex-1 min-w-0">
           <p className="font-medium text-[var(--type)] text-xs text-left leading-none">
-            {comment.users?.username || 'Unbekannt'}
+            {comment.users?.username || t('unknownUser')}
           </p>
           <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>
-            {comment.created_at ? formatDate(comment.created_at) : 'Unbekannt'}
+            {comment.created_at ? formatDate(comment.created_at) : t('card.unknownDate')}
             {comment.updated_at && comment.updated_at !== comment.created_at && (
-              <span className="text-gray-500 ml-1">(bearbeitet)</span>
+              <span className="text-gray-500 ml-1">{t('comments.edited')}</span>
             )}
           </p>
         </div>
@@ -111,7 +113,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
               setIsEditing(true)
             }}
             className="text-gray-500 hover:text-[var(--primary)] transition-colors p-1"
-            title="Bearbeiten"
+            title={t('edit')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -121,7 +123,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           <button
             onClick={handleDelete}
             className="text-gray-500 hover:text-red-500 transition-colors p-1"
-            title="Löschen"
+            title={t('common:actions.delete')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -149,14 +151,14 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
                 className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700"
                 disabled={saving}
               >
-                Abbrechen
+                {t('common:actions.cancel')}
               </button>
               <button
                 onClick={handleSaveEdit}
                 className="px-3 py-1 text-sm bg-[var(--primary)] text-white rounded hover:bg-[var(--primary)] disabled:opacity-50"
                 disabled={saving || !editContent.trim()}
               >
-                {saving ? 'Speichern...' : 'Speichern'}
+                {saving ? t('comments.saving') : t('common:actions.save')}
               </button>
             </div>
           </div>
@@ -179,7 +181,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
-            <span>Antworten</span>
+            <span>{t('card.reply')}</span>
           </button>
 
           {/* Private Message Link */}
@@ -198,7 +200,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
             onClick={() => setShowReplies(!showReplies)}
             className="text-xs text-gray-500 hover:text-[var(--primary)] transition-colors"
           >
-            {showReplies ? 'Antworten ausblenden' : `${comment.replies.length} Antworten anzeigen`}
+            {showReplies ? t('comments.hideReplies') : t('comments.showReplies', { count: comment.replies.length })}
           </button>
         )}
       </div>

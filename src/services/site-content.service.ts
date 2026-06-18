@@ -34,6 +34,28 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+export const CONTENT_LANGS = ['de', 'fr', 'it', 'en'] as const
+
+/**
+ * A stored value is "localized" when it's keyed by language (de/fr/it/en) rather
+ * than holding content fields directly. Legacy rows written before i18n hold the
+ * content object directly and are NOT localized — they are treated as German.
+ */
+export function isLocalized(value: unknown): value is Record<string, unknown> {
+  return isPlainObject(value) && CONTENT_LANGS.some((l) => l in value)
+}
+
+/**
+ * Pick the content branch for a language, with fallback:
+ *   requested language → German → (legacy) the raw value itself.
+ * Returns `undefined` when there is nothing usable (so defaults take over).
+ */
+export function localizedBranch(value: unknown, lng: string): unknown {
+  if (!isPlainObject(value)) return undefined
+  if (!isLocalized(value)) return value // legacy un-wrapped row = the German content
+  return value[lng] ?? value.de
+}
+
 /**
  * Access layer for the `site_content` table — named CMS content documents.
  * Each document (e.g. 'landing', 'footer') is one row whose `value` JSONB holds
@@ -46,7 +68,7 @@ export class SiteContentService {
    * Returns `defaults` unchanged if the row is missing or the fetch fails, so a
    * read error never breaks the page.
    */
-  async getContent<T>(key: string, defaults: T): Promise<T> {
+  async getContent<T>(key: string, defaults: T, lng: string = 'de'): Promise<T> {
     const { data, error } = await supabase
       .from('site_content')
       .select('value')
@@ -59,22 +81,42 @@ export class SiteContentService {
     }
     if (!data) return defaults
 
-    return deepMerge(defaults, data.value)
+    // Merge the requested language's branch (with German/legacy fallback) over
+    // the code defaults, so an untranslated language renders German.
+    return deepMerge(defaults, localizedBranch(data.value, lng))
   }
 
   /**
-   * Upsert a content document (admin only — enforced by RLS).
-   * Stores the full object; records who/when via `updated_by` / `updated_at`.
+   * Upsert one language's branch of a content document (admin only — RLS).
+   *
+   * Reads the current raw row first and updates only `value[lng]`, so other
+   * languages are never clobbered. A legacy un-wrapped (German) row is migrated
+   * into the `de` branch on first save — lazy, non-destructive, no migration
+   * step. Records who/when via `updated_by` / `updated_at`.
    */
-  async saveContent<T>(key: string, value: T): Promise<void> {
+  async saveContent<T>(key: string, lng: string, value: T): Promise<void> {
     const { data: userData } = await supabase.auth.getUser()
+
+    const { data: existing } = await supabase
+      .from('site_content')
+      .select('value')
+      .eq('key', key)
+      .maybeSingle()
+
+    const raw = existing?.value
+    const wrapped: Record<string, unknown> = isLocalized(raw)
+      ? { ...raw }
+      : isPlainObject(raw)
+        ? { de: raw } // migrate legacy German content into the de branch
+        : {}
+    wrapped[lng] = value as unknown
 
     const { error } = await supabase
       .from('site_content')
       .upsert(
         {
           key,
-          value: value as unknown as Json,
+          value: wrapped as unknown as Json,
           updated_at: new Date().toISOString(),
           updated_by: userData.user?.id ?? null,
         },

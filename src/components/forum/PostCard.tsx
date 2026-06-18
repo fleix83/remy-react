@@ -7,7 +7,8 @@ import { getPostDisplayTitle } from '../../utils/text.utils'
 import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
 import { useCategories } from '../../hooks/usePosts'
-import { useAuthStore } from '../../stores/auth.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { useTranslation } from 'react-i18next'
 
 interface PostCardProps {
   post: PostWithRelations
@@ -64,7 +65,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
 
   // Category colors/names are admin-managed (categories table)
   const { data: allCategories } = useCategories()
-  const lang = useAuthStore(s => s.userProfile?.language_preference)
+  const lang = useActiveLanguage()
+  const { t } = useTranslation('forum')
 
 
   return (
@@ -123,7 +125,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
           {/* Banned Status Badge */}
           {(post as any).is_banned && (
             <span className="inline-flex items-center px-2 py-0.5 rounded-lg font-medium bg-red-600 text-white text-xs">
-              ABGELEHNT
+              {t('card.rejected')}
             </span>
           )}
         </div>
@@ -140,7 +142,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
         )}
         <div className="flex-1 min-w-0">
           <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{post.users?.username}</p>
-          <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{post.created_at ? formatDate(post.created_at) : 'Unbekannt'}</p>
+          <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{post.created_at ? formatDate(post.created_at) : t('card.unknownDate')}</p>
         </div>
       </div>
 
@@ -156,7 +158,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
             className="post-card-therapist text-left hover:underline active:opacity-60 cursor-pointer bg-transparent border-none p-0 m-0 block w-full transition-opacity duration-100"
             style={{color: '#4785ff', fontSize: '12px', lineHeight: '1.2'}}
           >
-            Erfahrung mit {formatTherapistPostLine(post.therapists)}
+            {t('card.experienceWith', { therapist: formatTherapistPostLine(post.therapists, lang) })}
           </button>
         )}
 
@@ -188,7 +190,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       {(post as any).is_banned && (post as any).rejection_reason && (
         <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg">
           <div className="text-red-800 text-sm">
-            <strong>Grund der Ablehnung:</strong> {(post as any).rejection_reason}
+            <strong>{t('card.rejectionReason')}</strong> {(post as any).rejection_reason}
           </div>
         </div>
       )}
@@ -209,7 +211,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
           </svg>
-          <span>Antworten</span>
+          <span>{t('card.reply')}</span>
         </button>
         <div className="relative flex items-center">
           <div className="relative bg-white rounded-full p-1.5">

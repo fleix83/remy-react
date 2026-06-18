@@ -1,0 +1,50 @@
+{
+  "title": "Messages",
+  "yesterday": "Yesterday",
+  "unknownDate": "Unknown",
+  "unknownError": "Unknown error",
+  "conversationCount_one": "{{count}} conversation",
+  "conversationCount_other": "{{count}} conversations",
+  "loginRequired": {
+    "title": "Login required",
+    "body": "Please log in to see your messages."
+  },
+  "welcome": {
+    "title": "Welcome to your messages",
+    "body": "Select a conversation on the left, or start a new one from a user profile or a post."
+  },
+  "empty": {
+    "title": "No conversations yet",
+    "body": "Start a conversation from a user profile or a post."
+  },
+  "selectConversation": {
+    "title": "Select a conversation",
+    "body": "Select a conversation on the left to start writing."
+  },
+  "startWith": "Start a conversation with {{username}}",
+  "blocked": "Blocked",
+  "block": "Block",
+  "unblock": "Unblock",
+  "userBlocked": "User blocked",
+  "userUnblocked": "User unblocked",
+  "blockError": "Error updating: {{message}}",
+  "composer": {
+    "placeholder": "Message to {{username}}...",
+    "sendTitle": "Send message",
+    "hint": "Enter to send, Shift+Enter for a new line",
+    "postContext": "About your post: \"{{title}}\"\n\n",
+    "sendError": "Error sending message: {{message}}"
+  },
+  "bubble": {
+    "deleteConfirm": "Do you really want to delete this message?",
+    "deleteError": "Error deleting message",
+    "deleteTitle": "Delete message"
+  },
+  "send": {
+    "title": "Send a message to {{username}}",
+    "privateMessage": "Private message",
+    "message": "Message",
+    "sendMessage": "Send message",
+    "openError": "Error opening the conversation"
+  }
+}

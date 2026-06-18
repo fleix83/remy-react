@@ -4,6 +4,7 @@ import UserAvatar from '../user/UserAvatar'
 import type { MessageWithUser } from '../../services/messages.service'
 import { toast } from '../../stores/toast.store'
 import { confirmDialog } from '../../stores/confirm.store'
+import { useTranslation } from 'react-i18next'
 
 interface MessageBubbleProps {
   message: MessageWithUser
@@ -20,6 +21,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 }) => {
   const { deleteMessage } = useMessagesStore()
   const [showActions, setShowActions] = useState(false)
+  const { t } = useTranslation('messaging')
 
   const formatTimestamp = (dateString: string) => {
     return new Date(dateString).toLocaleString('de-DE', {
@@ -32,12 +34,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   }
 
   const handleDeleteMessage = async () => {
-    if (await confirmDialog({ message: 'Möchtest du diese Nachricht wirklich löschen?', confirmLabel: 'Löschen', danger: true })) {
+    if (await confirmDialog({ message: t('bubble.deleteConfirm'), confirmLabel: t('common:actions.delete'), danger: true })) {
       try {
         await deleteMessage(message.id)
       } catch (error) {
         console.error('Error deleting message:', error)
-        toast.error('Fehler beim Löschen der Nachricht')
+        toast.error(t('bubble.deleteError'))
       }
     }
   }
@@ -81,7 +83,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
             <button
               onClick={handleDeleteMessage}
               className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-              title="Nachricht löschen"
+              title={t('bubble.deleteTitle')}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -93,7 +95,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         {/* Timestamp */}
         {showTimestamp && (
           <div className={`text-xs text-gray-400 mt-1 ${isOwn ? 'text-right' : 'text-left'}`}>
-            {message.created_at ? formatTimestamp(message.created_at) : 'Unbekannt'}
+            {message.created_at ? formatTimestamp(message.created_at) : t('unknownDate')}
             {isOwn && (
               <span className="ml-1">
                 {message.is_read ? '✓✓' : '✓'}

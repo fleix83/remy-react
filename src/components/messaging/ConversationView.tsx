@@ -4,8 +4,10 @@ import { useAuthStore } from '../../stores/auth.store'
 import MessageBubble from './MessageBubble'
 import MessageComposer from './MessageComposer'
 import ConversationHeader from './ConversationHeader'
+import { useTranslation } from 'react-i18next'
 
 const ConversationView: React.FC = () => {
+  const { t } = useTranslation('messaging')
   const { user } = useAuthStore()
   const { 
     currentConversation, 
@@ -32,8 +34,8 @@ const ConversationView: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <h3 className="text-xl font-medium text-[var(--post-title)] mb-2">Konversation auswählen</h3>
-          <p className="text-gray-500">Wähle links eine Konversation aus, um zu schreiben.</p>
+          <h3 className="text-xl font-medium text-[var(--post-title)] mb-2">{t('selectConversation.title')}</h3>
+          <p className="text-gray-500">{t('selectConversation.body')}</p>
         </div>
       </div>
     )
@@ -62,7 +64,7 @@ const ConversationView: React.FC = () => {
                 </svg>
               </div>
               <p className="text-sm text-gray-500">
-                Beginne eine Konversation mit {currentConversation.participant.username}
+                {t('startWith', { username: currentConversation.participant.username })}
               </p>
             </div>
           </div>

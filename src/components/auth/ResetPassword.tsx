@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
+import { useTranslation } from 'react-i18next'
 
 const ResetPassword: React.FC = () => {
   const navigate = useNavigate()
@@ -10,6 +11,7 @@ const ResetPassword: React.FC = () => {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const { updatePassword } = useAuthStore()
+  const { t } = useTranslation('auth')
 
   useEffect(() => {
     // Check if we have a valid session/token from the email link
@@ -24,33 +26,33 @@ const ResetPassword: React.FC = () => {
 
     // Validation
     if (newPassword.length < 6) {
-      setError('Das Passwort muss mindestens 6 Zeichen lang sein.')
+      setError(t('reset.tooShort'))
       setLoading(false)
       return
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Die Passwörter stimmen nicht überein.')
+      setError(t('reset.mismatch'))
       setLoading(false)
       return
     }
 
     try {
       await updatePassword(newPassword)
-      setMessage('Dein Passwort wurde erfolgreich geändert. Du wirst in 3 Sekunden weitergeleitet...')
+      setMessage(t('reset.success'))
 
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/?login=true')
       }, 3000)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten'
+      const errorMessage = err instanceof Error ? err.message : t('errorGeneric')
 
       // Translate common Supabase errors to German
       if (errorMessage.includes('New password should be different')) {
-        setError('Das neue Passwort muss sich vom alten unterscheiden.')
+        setError(t('reset.sameAsOld'))
       } else if (errorMessage.includes('Invalid token')) {
-        setError('Der Link ist ungültig oder abgelaufen. Bitte fordere einen neuen Link an.')
+        setError(t('reset.invalidToken'))
       } else {
         setError(errorMessage)
       }
@@ -64,14 +66,14 @@ const ResetPassword: React.FC = () => {
       <div className="max-w-md w-full" style={{ padding: '9px' }}>
         <div className="text-center mb-8">
           <p className="font-body text-[18px]" style={{ color: '#144220', marginBottom: '24px' }}>
-            Neues Passwort festlegen
+            {t('reset.title')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="new-password" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
-              Neues Passwort
+              {t('reset.newPassword')}
             </label>
             <input
               id="new-password"
@@ -88,7 +90,7 @@ const ResetPassword: React.FC = () => {
 
           <div>
             <label htmlFor="confirm-password" className="block text-sm font-medium mb-1 text-left" style={{ color: '#144220' }}>
-              Passwort bestätigen
+              {t('reset.confirmPassword')}
             </label>
             <input
               id="confirm-password"
@@ -123,7 +125,7 @@ const ResetPassword: React.FC = () => {
             onMouseEnter={(e) => !loading && (e.currentTarget.style.opacity = '0.9')}
             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >
-            {loading ? 'Loading...' : 'Passwort ändern'}
+            {loading ? t('common:loading') : t('reset.submit')}
           </button>
 
           <div className="text-center mt-4">
@@ -133,7 +135,7 @@ const ResetPassword: React.FC = () => {
               className="font-body text-[16px] underline"
               style={{ color: 'var(--primary)' }}
             >
-              Zurück zum Login
+              {t('backToLogin')}
             </button>
           </div>
         </form>

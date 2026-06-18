@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useMessagesStore } from '../../stores/messages.store'
 import { useAuthStore } from '../../stores/auth.store'
 import { format } from 'date-fns'
@@ -20,7 +21,8 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate()
-  const { user } = useAuthStore()
+  const { user, updateProfile } = useAuthStore()
+  const { t, i18n } = useTranslation()
   const { unreadCount: messageCount, loadConversations, setCurrentConversation } = useMessagesStore()
   const [recentConversations, setRecentConversations] = useState<Conversation[]>([])
 
@@ -82,6 +84,13 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
     onClose()
   }, [onLogout, onClose])
 
+  // Switch UI language: flip i18next instantly (chrome + content), then persist
+  // to the user's profile so it follows them across devices. Menu stays open.
+  const handleLanguageChange = useCallback((lng: string) => {
+    void i18n.changeLanguage(lng)
+    if (user) updateProfile({ language_preference: lng }).catch(() => {})
+  }, [i18n, user, updateProfile])
+
   // Don't render if not open
   if (!isOpen) return null
 
@@ -124,17 +133,28 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
 
         {/* Menu content */}
         <div className="flex flex-col h-full pt-16">
-          {/* Language selector - mobile only */}
-          <div className="flex md:hidden items-center justify-center space-x-4 mb-6">
-            {['DE', 'FR', 'IT'].map((lang) => (
-              <button
-                key={lang}
-                className="text-sm font-medium transition-opacity hover:opacity-80"
-                style={{ color: '#4785ff' }}
-              >
-                {lang}
-              </button>
-            ))}
+          {/* Language selector — matches the nav items; active one underlined */}
+          <div className="flex items-center justify-center space-x-6 mb-6">
+            {([['de', 'DE'], ['fr', 'FR'], ['it', 'IT'], ['en', 'EN']] as const).map(([lng, label]) => {
+              const active = (i18n.language || 'de').split('-')[0] === lng
+              return (
+                <button
+                  key={lng}
+                  onClick={() => handleLanguageChange(lng)}
+                  aria-current={active ? 'true' : undefined}
+                  className="font-bold uppercase transition-opacity hover:opacity-80 focus:outline-none focus:opacity-80"
+                  style={{
+                    fontFamily: 'Gaegu, cursive',
+                    fontSize: '38px',
+                    color: '#4785ff',
+                    textDecoration: active ? 'underline' : 'none',
+                    textUnderlineOffset: '6px',
+                  }}
+                >
+                  {label}
+                </button>
+              )
+            })}
           </div>
 
           <nav className="flex-1 flex items-center justify-center">
@@ -194,7 +214,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     color: '#4785ff'
                   }}
                 >
-                  FORUM
+                  {t('nav.forum')}
                 </button>
               </li>
 
@@ -209,7 +229,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     color: '#4785ff'
                   }}
                 >
-                  THERAPEUTEN
+                  {t('nav.therapists')}
                 </button>
               </li>
 
@@ -224,7 +244,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     color: '#4785ff'
                   }}
                 >
-                  PROFIL
+                  {t('nav.profile')}
                 </button>
               </li>
 
@@ -239,7 +259,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     color: '#4785ff'
                   }}
                 >
-                  MESSAGES
+                  {t('nav.messages')}
                   {messageCount > 0 && (
                     <div
                       className="ml-3 flex items-center justify-center text-white font-bold rounded-full"
@@ -267,7 +287,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     color: '#4785ff'
                   }}
                 >
-                  GUIDELINES
+                  {t('nav.guidelines')}
                 </button>
               </li>
 
@@ -283,7 +303,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                       color: '#4785ff'
                     }}
                   >
-                    MODERATION
+                    {t('nav.moderation')}
                   </button>
                 </li>
               )}
@@ -300,7 +320,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                       color: '#4785ff'
                     }}
                   >
-                    ADMIN
+                    {t('nav.admin')}
                   </button>
                 </li>
               )}
@@ -316,7 +336,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     color: '#4785ff'
                   }}
                 >
-                  ABMELDEN
+                  {t('nav.logout')}
                 </button>
               </li>
             </ul>

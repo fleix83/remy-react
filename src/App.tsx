@@ -7,6 +7,7 @@ import { usePostsRealtime } from './hooks/usePostsRealtime'
 import { testSupabaseConnection } from './utils/test-connection'
 import ToastContainer from './components/ui/ToastContainer'
 import ConfirmDialog from './components/ui/ConfirmDialog'
+import LanguageSwitcher from './components/ui/LanguageSwitcher'
 import Layout from './components/layout/Layout'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
@@ -244,6 +245,8 @@ function AuthForm() {
       overflowY: 'auto',
       overflowX: 'hidden'
     }}>
+      {/* Language switcher — lets anonymous visitors override browser detection */}
+      <LanguageSwitcher style={{ position: 'fixed', top: '44px', left: '16px', zIndex: 50, background: '#ffffffcc', backdropFilter: 'blur(4px)', borderRadius: '9999px', padding: '4px 12px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }} />
       {/* Info bar - mobile only (hidden on desktop via CSS) */}
       <div className="landing-info-bar" style={{
         width: '100%',

@@ -1,0 +1,50 @@
+{
+  "title": "Nachrichten",
+  "yesterday": "Gestern",
+  "unknownDate": "Unbekannt",
+  "unknownError": "Unbekannter Fehler",
+  "conversationCount_one": "{{count}} Konversation",
+  "conversationCount_other": "{{count}} Konversationen",
+  "loginRequired": {
+    "title": "Anmeldung erforderlich",
+    "body": "Bitte melde dich an, um deine Nachrichten zu sehen."
+  },
+  "welcome": {
+    "title": "Willkommen bei deinen Nachrichten",
+    "body": "Wähle links eine Konversation aus oder starte eine neue über ein Benutzerprofil oder einen Beitrag."
+  },
+  "empty": {
+    "title": "Noch keine Konversationen",
+    "body": "Starte eine Konversation über ein Benutzerprofil oder einen Beitrag."
+  },
+  "selectConversation": {
+    "title": "Konversation auswählen",
+    "body": "Wähle links eine Konversation aus, um zu schreiben."
+  },
+  "startWith": "Beginne eine Konversation mit {{username}}",
+  "blocked": "Blockiert",
+  "block": "Blockieren",
+  "unblock": "Entsperren",
+  "userBlocked": "Benutzer wurde blockiert",
+  "userUnblocked": "Benutzer wurde entsperrt",
+  "blockError": "Fehler beim Aktualisieren: {{message}}",
+  "composer": {
+    "placeholder": "Nachricht an {{username}}...",
+    "sendTitle": "Nachricht senden",
+    "hint": "Enter zum Senden, Shift+Enter für neue Zeile",
+    "postContext": "Zu deinem Beitrag: \"{{title}}\"\n\n",
+    "sendError": "Fehler beim Senden der Nachricht: {{message}}"
+  },
+  "bubble": {
+    "deleteConfirm": "Möchtest du diese Nachricht wirklich löschen?",
+    "deleteError": "Fehler beim Löschen der Nachricht",
+    "deleteTitle": "Nachricht löschen"
+  },
+  "send": {
+    "title": "Nachricht an {{username}} senden",
+    "privateMessage": "Private Nachricht",
+    "message": "Nachricht",
+    "sendMessage": "Nachricht senden",
+    "openError": "Fehler beim Öffnen der Unterhaltung"
+  }
+}

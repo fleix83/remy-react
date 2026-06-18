@@ -1,5 +1,11 @@
 import type { DesignationLabels } from '../types/database.types'
 
+/**
+ * Content languages backed by DB columns (de/fr/it). The UI also supports 'en'
+ * (i18next chrome), but there are no English designation/category columns, so
+ * 'en' — like any unrecognized value — intentionally falls back to German here
+ * until label_en/name_en exist.
+ */
 export type AppLanguage = 'de' | 'fr' | 'it'
 
 export function normalizeLanguage(lang?: string | null): AppLanguage {

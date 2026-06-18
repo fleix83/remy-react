@@ -7,8 +7,9 @@ import BadgeDropdown from '../ui/BadgeDropdown'
 import TagInput from '../ui/TagInput'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
-import { useAuthStore } from '../../stores/auth.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { toast } from '../../stores/toast.store'
+import { useTranslation } from 'react-i18next'
 
 interface PostEditorProps {
   onSubmit?: (postData: any) => Promise<void>
@@ -46,7 +47,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
   const postsService = new PostsService()
 
   // Category colors/names are admin-managed (categories table)
-  const lang = useAuthStore(s => s.userProfile?.language_preference)
+  const lang = useActiveLanguage()
+  const { t } = useTranslation('forum')
 
 
 
@@ -100,24 +102,24 @@ const PostEditor: React.FC<PostEditorProps> = ({
 
     // Title required EXCEPT for Rant (4)
     if (categoryId !== 4 && !title.trim()) {
-      toast.info('Bitte Titel ausfüllen')
+      toast.info(t('editor.titleRequired'))
       return
     }
 
     if (!content.trim()) {
-      toast.info('Bitte Inhalt ausfüllen')
+      toast.info(t('editor.contentRequired'))
       return
     }
 
     // Validate therapist selection for "Erfahrung" category
     if (categoryId === 1 && !selectedTherapist) {
-      toast.info('Bitte wählen Sie einen Therapeut* für Ihre Erfahrung aus')
+      toast.info(t('editor.therapistRequired'))
       return
     }
 
     // Canton required EXCEPT for Erfahrung (1), Rant (4), and Austausch (3)
     if (categoryId !== 1 && categoryId !== 3 && categoryId !== 4 && !canton) {
-      toast.info('Bitte Kanton auswählen')
+      toast.info(t('editor.cantonRequired'))
       return
     }
 
@@ -147,7 +149,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
       setTags([])
     } catch (error) {
       console.error('Error submitting post:', error)
-      toast.error('Fehler beim Speichern des Beitrags')
+      toast.error(t('editor.saveError'))
     } finally {
       setPublishing(false)
     }
@@ -165,7 +167,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 value={categoryId}
                 options={categories.map(cat => ({ value: cat.id, label: getCategoryName(cat, lang) }))}
                 onChange={(value) => setCategoryId(Number(value))}
-                placeholder="Kategorie"
+                placeholder={t('editor.category')}
                 badgeClassName="text-black hover:opacity-80"
                 className="category-badge-dropdown w-full"
                 style={{ backgroundColor: getCategoryColorById(categoryId, categories) }}
@@ -177,7 +179,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {categoryId === 1 && (
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                  Therapeut:innen/Institution für Erfahrung wählen
+                  {t('editor.therapistLabel')}
                 </label>
                 <TherapistSelector
                   selectedTherapist={selectedTherapist}
@@ -211,7 +213,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                     ) : undefined
                   }))}
                   onChange={(value) => setCanton(String(value))}
-                  placeholder="Kanton"
+                  placeholder={t('editor.canton')}
                   badgeClassName="bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                   dropdownClassName="max-h-[66vh] overflow-y-auto"
                   className="w-full"
@@ -224,7 +226,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {categoryId !== 4 && (
               <div className="mb-4">
                 <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                  Titel
+                  {t('editor.title')}
                 </label>
                 <input
                   type="text"
@@ -232,7 +234,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-[var(--primary)] text-base"
-                  placeholder="Titel eingeben..."
+                  placeholder={t('editor.titlePlaceholderMobile')}
                   maxLength={255}
                 />
               </div>
@@ -241,12 +243,12 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {/* 4. Content - Fourth */}
             <div className="mb-6">
               <label htmlFor="content" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                Inhalt
+                {t('editor.content')}
               </label>
               <RichTextEditor
                 content={content}
                 onChange={setContent}
-                placeholder="Teile Deine Erfahrungen mit der Community, stelle eine Frage oder lasse uns einfach wissen was Du denkst oder wie Du Dich fühlst."
+                placeholder={t('editor.contentPlaceholder')}
                 minHeight="200px"
                 mobileOptimized={mobileOptimized}
               />
@@ -257,7 +259,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <TagInput
                 tags={tags}
                 onChange={setTags}
-                placeholder="Keywords hinzufügen..."
+                placeholder={t('editor.keywordsPlaceholder')}
               />
             </div>
           </>
@@ -272,7 +274,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {categoryId !== 4 && (
               <div className="mb-4">
                 <label htmlFor="title" className="block text-sm font-medium mb-1 text-left" style={{ color: '#4785ff' }}>
-                  Titel
+                  {t('editor.title')}
                 </label>
                 <input
                   type="text"
@@ -280,7 +282,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full px-3 py-2 rounded-md bg-white border border-gray-300 focus:outline-none focus:border-[var(--primary)]"
-                  placeholder="Gib deinem Beitrag einen aussagekräftigen Titel..."
+                  placeholder={t('editor.titlePlaceholderDesktop')}
                   maxLength={255}
                 />
               </div>
@@ -290,7 +292,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-                  Kategorie
+                  {t('editor.category')}
                 </label>
                 <select
                   id="category"
@@ -311,7 +313,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               {categoryId !== 1 && categoryId !== 4 && (
                 <div>
                   <label htmlFor="canton" className="block text-sm font-medium text-gray-700 mb-1">
-                    Kanton {categoryId !== 3 && '*'}
+                    {t('editor.canton')} {categoryId !== 3 && '*'}
                   </label>
                   <select
                     id="canton"
@@ -334,7 +336,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
             {categoryId === 1 && (
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Therapeut:innen/Institution für Erfahrung wählen
+                  {t('editor.therapistLabel')}
                 </label>
                 <TherapistSelector
                   selectedTherapist={selectedTherapist}
@@ -342,7 +344,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   canton={canton}
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Wählen Sie den Therapeut* aus, mit dem Sie eine Erfahrung gemacht haben.
+                  {t('editor.therapistHelp')}
                 </p>
               </div>
             )}
@@ -354,12 +356,12 @@ const PostEditor: React.FC<PostEditorProps> = ({
           <>
             <div className="mb-6">
               <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-                Inhalt
+                {t('editor.content')}
               </label>
               <RichTextEditor
                 content={content}
                 onChange={setContent}
-                placeholder="Teile Deine Erfahrungen mit der Community, stelle eine Frage oder lasse uns einfach wissen was Du denkst oder wie Du Dich fühlst."
+                placeholder={t('editor.contentPlaceholder')}
                 minHeight="200px"
                 mobileOptimized={mobileOptimized}
               />
@@ -370,7 +372,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               <TagInput
                 tags={tags}
                 onChange={setTags}
-                placeholder="Keywords hinzufügen..."
+                placeholder={t('editor.keywordsPlaceholder')}
               />
             </div>
           </>
@@ -389,7 +391,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   className="bg-white hover:bg-gray-50 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm border border-gray-200"
                   disabled={publishing}
                 >
-                  Abbrechen
+                  {t('common:actions.cancel')}
                 </button>
               )}
 
@@ -399,7 +401,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 className="bg-white hover:bg-gray-50 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm border border-gray-200"
                 disabled={publishing}
               >
-                Entwurf
+                {t('editor.draft')}
               </button>
             </div>
 
@@ -414,8 +416,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
               }}
             >
               {publishing || isLoading
-                ? 'Speichern...'
-                : 'Veröffentlichen'
+                ? t('editor.saving')
+                : t('editor.publish')
               }
             </button>
           </div>
@@ -429,7 +431,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 disabled={publishing}
               >
-                Abbrechen
+                {t('common:actions.cancel')}
               </button>
             )}
             
@@ -439,7 +441,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               disabled={publishing}
             >
-              Als Entwurf speichern
+              {t('editor.saveDraft')}
             </button>
 
             <button
@@ -454,9 +456,9 @@ const PostEditor: React.FC<PostEditorProps> = ({
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
               }}
             >
-              {publishing || isLoading 
-                ? (editMode ? '📝 Wird aktualisiert...' : '📤 Wird veröffentlicht...')
-                : (editMode ? '📝 Aktualisieren' : '🚀 Veröffentlichen')
+              {publishing || isLoading
+                ? (editMode ? `📝 ${t('editor.updating')}` : `📤 ${t('editor.publishing')}`)
+                : (editMode ? `📝 ${t('editor.update')}` : `🚀 ${t('editor.publish')}`)
               }
             </button>
           </div>

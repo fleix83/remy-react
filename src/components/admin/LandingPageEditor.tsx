@@ -1,11 +1,26 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLandingContent, useContentEditor } from '../../hooks/useSiteContent'
 import { DEFAULT_LANDING_CONTENT, type LandingContent } from '../../types/landing-content.types'
-import { CmsField, CmsSection, CmsSaveBar } from './CmsField'
+import { CmsField, CmsSection, CmsSaveBar, CmsLanguageTabs } from './CmsField'
 
-/** Admin editor for the landing page marketing copy. */
+/** Admin editor for the landing page marketing copy (per language). */
 const LandingPageEditor: React.FC = () => {
-  const doc = useLandingContent()
+  const [lng, setLng] = useState('de')
+  return (
+    <div className="space-y-4">
+      <CmsLanguageTabs value={lng} onChange={setLng} />
+      {lng !== 'de' && (
+        <p className="text-xs text-slate-500">
+          Nicht übersetzte Felder zeigen auf der Seite automatisch den deutschen Text.
+        </p>
+      )}
+      <LandingPageEditorBody key={lng} lng={lng} />
+    </div>
+  )
+}
+
+const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
+  const doc = useLandingContent(lng)
   const editor = useContentEditor<LandingContent>(doc, DEFAULT_LANDING_CONTENT)
   const { draft, setDraft } = editor
 

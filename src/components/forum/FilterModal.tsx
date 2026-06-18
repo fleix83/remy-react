@@ -4,7 +4,8 @@ import { DesignationsService } from '../../services/designations.service'
 import { useCategories } from '../../hooks/usePosts'
 import { getDesignationLabel, therapistDesignationLabel } from '../../utils/designationHelpers'
 import { getCategoryName } from '../../utils/categoryHelpers'
-import { useAuthStore } from '../../stores/auth.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
+import { useTranslation } from 'react-i18next'
 import type { Designation, Therapist } from '../../types/database.types'
 
 interface PostFilters {
@@ -67,8 +68,8 @@ const CANTONS = [
 ]
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onFiltersChange, defaultCantonActive, defaultCantonLabel, onShowAllCantons }) => {
-  const { userProfile } = useAuthStore()
-  const lang = userProfile?.language_preference
+  const lang = useActiveLanguage()
+  const { t } = useTranslation('forum')
   const { data: categories = [] } = useCategories()
   const [designations, setDesignations] = useState<Designation[]>([])
   const [therapistSearch, setTherapistSearch] = useState('')
@@ -194,13 +195,13 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
         {/* Header */}
         <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-3">
-            <h2 className="text-xl font-semibold text-black">Filter</h2>
+            <h2 className="text-xl font-semibold text-black">{t('filter')}</h2>
             {hasActiveFilters && (
               <button
                 onClick={handleClearFilters}
                 className="text-sm text-[#4785ff] hover:opacity-80 underline transition-opacity"
               >
-                Zurücksetzen
+                {t('filterModal.reset')}
               </button>
             )}
           </div>
@@ -225,7 +226,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 onChange={(e) => handleFilterChange('category', e.target.value ? parseInt(e.target.value) : undefined)}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >
-                <option value="">Alle Kategorien</option>
+                <option value="">{t('allCategories')}</option>
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
                     {getCategoryName(category, lang)}
@@ -238,14 +239,14 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             <div className="relative">
               {defaultCantonActive ? (
                 <div className="w-full px-3 py-2 rounded-lg text-sm text-left bg-[#fff3f3]">
-                  <p className="text-gray-600">Nur Kanton «{defaultCantonLabel}» (inkl. Nachbarkantone)</p>
+                  <p className="text-gray-600">{t('filterModal.onlyCanton', { canton: defaultCantonLabel })}</p>
                   <button
                     type="button"
                     onClick={onShowAllCantons}
                     className="underline text-[var(--primary)] hover:opacity-80 mt-0.5"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                   >
-                    Alle Beiträge anzeigen
+                    {t('showAllPosts')}
                   </button>
                 </div>
               ) : (
@@ -258,7 +259,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                   }}
                   className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
                 >
-                  <option value="">Alle Kantone</option>
+                  <option value="">{t('filterModal.allCantons')}</option>
                   {CANTONS.map(canton => (
                     <option key={canton.code} value={canton.code}>
                       {canton.name}
@@ -272,7 +273,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
             <div className={`relative ${isTherapistExpanded ? 'absolute inset-0 z-40 col-span-2' : ''}`}>
               <input
                 type="text"
-                placeholder={selectedTherapist ? therapistsService.formatTherapistDisplay(selectedTherapist) : "Therapeuten"}
+                placeholder={selectedTherapist ? therapistsService.formatTherapistDisplay(selectedTherapist) : t('filterModal.therapists')}
                 value={therapistSearch}
                 onChange={(e) => handleTherapistSearchChange(e.target.value)}
                 onFocus={() => {
@@ -345,7 +346,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                         {personName || therapist.institution}
                       </div>
                       <div className="text-xs text-gray-600">
-                        {therapistDesignationLabel(therapist)}
+                        {therapistDesignationLabel(therapist, lang)}
                         {personName && therapist.institution && ` • ${therapist.institution}`}
                       </div>
                     </div>
@@ -365,7 +366,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 }}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >
-                <option value="">Alle Bezeichnungen</option>
+                <option value="">{t('allDesignations')}</option>
                 {designations.map(designation => (
                   <option key={designation.id} value={designation.id}>
                     {getDesignationLabel(designation, lang)}
@@ -381,9 +382,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 onChange={(e) => onFiltersChange({ ...filters, gender: (e.target.value || undefined) as 'm' | 'f' | undefined })}
                 className="w-full appearance-none bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none cursor-pointer text-sm"
               >
-                <option value="">Alle Geschlechter</option>
-                <option value="f">Frauen</option>
-                <option value="m">Männer</option>
+                <option value="">{t('filterModal.allGenders')}</option>
+                <option value="f">{t('women')}</option>
+                <option value="m">{t('men')}</option>
               </select>
             </div>
 
@@ -394,7 +395,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 value={filters.dateFrom || ''}
                 onChange={(e) => handleFilterChange('dateFrom', e.target.value || undefined)}
                 className="w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none text-sm [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                placeholder="tt.mm.jjjj"
+                placeholder={t('filterModal.datePlaceholder')}
               />
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -410,7 +411,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, filters, onF
                 value={filters.dateTo || ''}
                 onChange={(e) => handleFilterChange('dateTo', e.target.value || undefined)}
                 className="w-full bg-[#ff6467] hover:bg-[#e85a4f] text-white px-3 py-2 rounded-lg font-medium text-center focus:outline-none text-sm [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                placeholder="tt.mm.jjjj"
+                placeholder={t('filterModal.datePlaceholder')}
               />
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

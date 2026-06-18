@@ -1,8 +1,10 @@
 import React from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
 import UserAvatar from '../user/UserAvatar'
+import { useTranslation } from 'react-i18next'
 
 const MessagesList: React.FC = () => {
+  const { t } = useTranslation('messaging')
   const {
     conversations,
     currentConversation,
@@ -19,7 +21,7 @@ const MessagesList: React.FC = () => {
     if (diffDays === 0) {
       return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
     } else if (diffDays === 1) {
-      return 'Gestern'
+      return t('yesterday')
     } else if (diffDays < 7) {
       return date.toLocaleDateString('de-DE', { weekday: 'short' })
     } else {
@@ -55,10 +57,10 @@ const MessagesList: React.FC = () => {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="px-5 pt-5 pb-4 bg-[var(--bg-element)]">
-        <h2 className="text-lg font-semibold text-[var(--primary)] text-left">Nachrichten</h2>
+        <h2 className="text-lg font-semibold text-[var(--primary)] text-left">{t('title')}</h2>
         {conversations.length > 0 && (
           <p className="text-xs mt-1 text-left" style={{color: '#535353'}}>
-            {conversations.length} {conversations.length === 1 ? 'Konversation' : 'Konversationen'}
+            {t('conversationCount', { count: conversations.length })}
           </p>
         )}
       </div>
@@ -72,9 +74,9 @@ const MessagesList: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <h3 className="text-sm font-medium text-[var(--post-title)] mb-2">Noch keine Konversationen</h3>
+            <h3 className="text-sm font-medium text-[var(--post-title)] mb-2">{t('empty.title')}</h3>
             <p className="text-xs text-gray-500">
-              Starte eine Konversation über ein Benutzerprofil oder einen Beitrag.
+              {t('empty.body')}
             </p>
           </div>
         ) : (

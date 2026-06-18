@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { useNotificationsStore } from '../../stores/notifications.store'
 import { useMessagesStore } from '../../stores/messages.store'
@@ -16,6 +17,7 @@ const Navigation: React.FC<NavigationProps> = ({
   headerBg
 }) => {
   const { user, userProfile, logout } = useAuthStore()
+  const { t } = useTranslation()
   const { unreadCount: notificationCount, loadNotifications } = useNotificationsStore()
   const { unreadCount: messageCount, loadUnreadCount } = useMessagesStore()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -54,10 +56,8 @@ const Navigation: React.FC<NavigationProps> = ({
               >
                 REMY
               </div>
-              <div className="text-gray-500 md:text-gray-500 leading-tight text-left uppercase self-center" style={{fontSize: '10px', letterSpacing: '0.5px'}}>
-                <div>FORUM FÜR</div>
-                <div>MENSCHEN IN</div>
-                <div>PSYCHOTHERAPIE</div>
+              <div className="text-gray-500 md:text-gray-500 leading-tight text-left uppercase self-center whitespace-pre-line" style={{fontSize: '10px', letterSpacing: '0.5px'}}>
+                {t('brandClaim')}
               </div>
             </Link>
           </div>
@@ -72,7 +72,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 {userProfile && (
                   <UserAvatar user={userProfile} size="small" />
                 )}
-                <span className="text-sm font-medium">{userProfile?.username || 'Menü'}</span>
+                <span className="text-sm font-medium">{userProfile?.username || t('menu')}</span>
                 {totalUnreadCount > 0 && (
                   <div className="absolute -top-0.5 -right-2 rounded-full w-3 h-3" style={{ backgroundColor: '#ff6b35' }} />
                 )}
@@ -82,7 +82,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-gray-700 hover:opacity-80 px-3 py-2 rounded-md text-sm font-medium transition-opacity"
               >
-                Menü
+                {t('menu')}
               </button>
             )}
           </div>

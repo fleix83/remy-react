@@ -1,0 +1,50 @@
+{
+  "title": "Messaggi",
+  "yesterday": "Ieri",
+  "unknownDate": "Sconosciuto",
+  "unknownError": "Errore sconosciuto",
+  "conversationCount_one": "{{count}} conversazione",
+  "conversationCount_other": "{{count}} conversazioni",
+  "loginRequired": {
+    "title": "Accesso richiesto",
+    "body": "Accedi per vedere i tuoi messaggi."
+  },
+  "welcome": {
+    "title": "Benvenuto/a nei tuoi messaggi",
+    "body": "Seleziona una conversazione a sinistra o avviane una nuova da un profilo o da un post."
+  },
+  "empty": {
+    "title": "Ancora nessuna conversazione",
+    "body": "Avvia una conversazione da un profilo o da un post."
+  },
+  "selectConversation": {
+    "title": "Seleziona una conversazione",
+    "body": "Seleziona una conversazione a sinistra per scrivere."
+  },
+  "startWith": "Avvia una conversazione con {{username}}",
+  "blocked": "Bloccato",
+  "block": "Blocca",
+  "unblock": "Sblocca",
+  "userBlocked": "Utente bloccato",
+  "userUnblocked": "Utente sbloccato",
+  "blockError": "Errore durante l'aggiornamento: {{message}}",
+  "composer": {
+    "placeholder": "Messaggio a {{username}}...",
+    "sendTitle": "Invia messaggio",
+    "hint": "Invio per inviare, Maiusc+Invio per una nuova riga",
+    "postContext": "Riguardo al tuo post: \"{{title}}\"\n\n",
+    "sendError": "Errore durante l'invio del messaggio: {{message}}"
+  },
+  "bubble": {
+    "deleteConfirm": "Vuoi davvero eliminare questo messaggio?",
+    "deleteError": "Errore durante l'eliminazione del messaggio",
+    "deleteTitle": "Elimina messaggio"
+  },
+  "send": {
+    "title": "Invia un messaggio a {{username}}",
+    "privateMessage": "Messaggio privato",
+    "message": "Messaggio",
+    "sendMessage": "Invia messaggio",
+    "openError": "Errore durante l'apertura della conversazione"
+  }
+}

@@ -7,6 +7,7 @@ import { getDesignationLabel } from '../../utils/designationHelpers'
 import { PostsService } from '../../services/posts.service'
 import { TherapistsService } from '../../services/therapists.service'
 import { useAuthStore } from '../../stores/auth.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import UserAvatar from '../user/UserAvatar'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 
@@ -22,6 +23,7 @@ const TherapistDirectoryPage: React.FC = () => {
   const postsService = new PostsService()
   const therapistsService = new TherapistsService()
   const { user, userProfile, logout } = useAuthStore()
+  const lang = useActiveLanguage()
 
   const isModeratorOrAdmin = userProfile?.role === 'moderator' || userProfile?.role === 'admin'
 
@@ -211,7 +213,7 @@ const TherapistDirectoryPage: React.FC = () => {
                 {/* Curated designation (UI language) + verbatim professional title */}
                 {selectedTherapist.designations && (
                   <p className="text-gray-700 font-medium">
-                    {getDesignationLabel(selectedTherapist.designations, userProfile?.language_preference)}
+                    {getDesignationLabel(selectedTherapist.designations, lang)}
                   </p>
                 )}
                 {selectedTherapist.full_title && (

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { deepMerge } from './site-content.service'
+import { deepMerge, localizedBranch } from './site-content.service'
 import { DEFAULT_LANDING_CONTENT } from '../types/landing-content.types'
 
 describe('deepMerge', () => {
@@ -45,5 +45,29 @@ describe('deepMerge', () => {
     const snapshot = JSON.parse(JSON.stringify(DEFAULT_LANDING_CONTENT))
     deepMerge(DEFAULT_LANDING_CONTENT, { hero: { ctaLabel: 'changed' } })
     expect(DEFAULT_LANDING_CONTENT).toEqual(snapshot)
+  })
+})
+
+describe('localizedBranch', () => {
+  it('treats a legacy un-wrapped row as German for any language', () => {
+    const legacy = { hero: { ctaLabel: 'Mitmachen' } }
+    expect(localizedBranch(legacy, 'de')).toBe(legacy)
+    expect(localizedBranch(legacy, 'fr')).toBe(legacy)
+  })
+
+  it('returns the requested language branch when the row is wrapped', () => {
+    const wrapped = { de: { ctaLabel: 'DE' }, fr: { ctaLabel: 'FR' } }
+    expect(localizedBranch(wrapped, 'fr')).toEqual({ ctaLabel: 'FR' })
+    expect(localizedBranch(wrapped, 'de')).toEqual({ ctaLabel: 'DE' })
+  })
+
+  it('falls back to German when the requested language branch is missing', () => {
+    const wrapped = { de: { ctaLabel: 'DE' } }
+    expect(localizedBranch(wrapped, 'it')).toEqual({ ctaLabel: 'DE' })
+  })
+
+  it('returns undefined for non-object values so defaults take over', () => {
+    expect(localizedBranch(null, 'de')).toBeUndefined()
+    expect(localizedBranch('x', 'de')).toBeUndefined()
   })
 })

@@ -13,7 +13,9 @@ import { DesignationsService } from '../../services/designations.service'
 import { getDesignationLabel } from '../../utils/designationHelpers'
 import { getCategoryColor, getCategoryName } from '../../utils/categoryHelpers'
 import { useAuthStore } from '../../stores/auth.store'
+import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { toast } from '../../stores/toast.store'
+import { useTranslation } from 'react-i18next'
 import type { Designation } from '../../types/database.types'
 import type { DateRange } from 'react-day-picker'
 
@@ -40,7 +42,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   onCreatePost = () => {}
 }) => {
   const { userProfile } = useAuthStore()
-  const lang = userProfile?.language_preference
+  const lang = useActiveLanguage()
+  const { t } = useTranslation('forum')
   const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [searchExpanded, setSearchExpanded] = useState(false)
@@ -140,10 +143,10 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
       onCreatePostDialogClose() // Close dialog using prop
     } catch (error) {
       console.error('❌ ForumView: Error creating post:', error)
-      toast.error('Fehler beim Erstellen des Beitrags: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error(t('createError', { message: error instanceof Error ? error.message : t('unknownError') }))
       throw error
     }
-  }, [createPostMutation, onCreatePostDialogClose])
+  }, [createPostMutation, onCreatePostDialogClose, t])
 
   const handleCategoryFilter = useCallback((categoryId: number | null) => {
     // Clear search when applying filters, preserve canton selections
@@ -266,7 +269,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             <div className="forum-search relative flex-1">
               <input
                 type="text"
-                placeholder="Suche..."
+                placeholder={t('searchPlaceholder')}
                 value={searchInput}
                 onChange={handleSearchChange}
                 onFocus={() => setSearchExpanded(true)}
@@ -290,7 +293,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
-              <span className="md:hidden ml-2 text-sm font-medium">Filter</span>
+              <span className="md:hidden ml-2 text-sm font-medium">{t('filter')}</span>
               {getActiveFilterCount > 0 && (
                 <span className="bg-[var(--primary)] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-1 -right-1">
                   {getActiveFilterCount}
@@ -307,7 +310,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               <svg className="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
-              Neu
+              {t('new')}
             </button>
           </div>
         </div>
@@ -328,14 +331,14 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         {defaultCantonActive && !isSearchMode ? (
           <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} flex-col items-start canton-inline mt-[100px] mb-[-88px] md:mt-0 md:mb-20`} style={{ padding: '0 40px', fontFamily: 'Nunito' }}>
             <p className="text-gray-600 text-left" style={{ fontSize: 'medium' }}>
-              Es werden Beiträge aus deiner Region «{defaultCantonName}» angezeigt
+              {t('regionBanner', { canton: defaultCantonName })}
             </p>
             <button
               onClick={handleShowAllCantons}
               className="text-sm underline text-[var(--primary)] hover:opacity-80 mt-1"
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
-              Alle Beiträge anzeigen
+              {t('showAllPosts')}
             </button>
           </div>
         ) : (
@@ -349,7 +352,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               className="text-sm underline hover:opacity-80"
               style={{ color: '#4785ff', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
-              Meine Region anzeigen
+              {t('showMyRegion')}
             </button>
           </div>
         )}
@@ -385,7 +388,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               className="text-[var(--primary)] hover:opacity-80 ml-1"
               style={{ fontSize: '0.7rem', background: 'none', border: 'none', cursor: 'pointer' }}
             >
-              zurücksetzen
+              {t('reset')}
             </button>
           )}
         </div>
@@ -407,7 +410,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
             </button>
             <div className="overflow-y-auto flex-1 px-4 pt-[120px] pb-20">
               <h2 className="font-headline font-bold text-left mb-12" style={{ color: '#4785ff', fontSize: '20px' }}>
-                Neuen Beitrag erstellen
+                {t('newPostTitle')}
               </h2>
               <PostEditor
                 onSubmit={handleCreatePost}
@@ -425,14 +428,14 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           <div style={{ backgroundColor: 'white', borderRadius: '30px', padding: '30px' }}>
             <div className="flex items-start justify-between mb-6">
               <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
-                Neuen Beitrag erstellen
+                {t('newPostTitle')}
               </h2>
               <button
                 onClick={onCreatePostDialogClose}
                 className="text-base font-medium hover:underline transition-colors bg-transparent border-none cursor-pointer"
                 style={{ color: '#4785ff' }}
               >
-                zurück zum forum
+                {t('backToForum')}
               </button>
             </div>
             <PostEditor
@@ -466,8 +469,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               {filters.dateFrom && filters.dateTo
                 ? `${format(new Date(filters.dateFrom), 'dd.MM.yy')} – ${format(new Date(filters.dateTo), 'dd.MM.yy')}`
                 : filters.dateFrom
-                  ? `Ab ${format(new Date(filters.dateFrom), 'dd.MM.yy')}`
-                  : 'Datum'}
+                  ? t('dateFrom', { date: format(new Date(filters.dateFrom), 'dd.MM.yy') })
+                  : t('date')}
             </button>
             {(filters.dateFrom || filters.dateTo) && (
               <button
@@ -475,7 +478,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 className="text-[var(--primary)] hover:opacity-80"
                 style={{ fontSize: '0.75rem', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right' }}
               >
-                zurücksetzen
+                {t('reset')}
               </button>
             )}
             {showDatePicker && (
@@ -502,7 +505,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               }`}
               style={{fontSize: '0.65rem'}}
             >
-              Alle Kategorien
+              {t('allCategories')}
             </button>
             {categories.map((category) => (
               <button
@@ -535,14 +538,14 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               }`}
               style={{ fontSize: '0.65rem' }}
             >
-              Alle Bezeichnungen
+              {t('allDesignations')}
             </button>
 
             {/* Gender tabs — one line, choose one, none, or both */}
             <div className="flex gap-1.5">
               {([
-                { value: 'f' as const, label: 'Frauen' },
-                { value: 'm' as const, label: 'Männer' }
+                { value: 'f' as const, label: t('women') },
+                { value: 'm' as const, label: t('men') }
               ]).map(g => (
                 <button
                   key={g.value}
@@ -586,11 +589,11 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-white">Keine Beiträge gefunden</h3>
+              <h3 className="text-lg font-medium text-white">{t('empty.title')}</h3>
               <p className="text-gray-700 mt-1">
                 {filters.category
-                  ? 'In dieser Kategorie wurden noch keine Beiträge erstellt.'
-                  : 'Es wurden noch keine Beiträge erstellt.'}
+                  ? t('empty.inCategory')
+                  : t('empty.none')}
               </p>
             </div>
           ) : (

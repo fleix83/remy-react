@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useCommentsStore } from '../../stores/comments.store'
 import RichTextEditor from '../ui/RichTextEditor'
 import { toast } from '../../stores/toast.store'
+import { useTranslation } from 'react-i18next'
 
 interface CommentFormProps {
   postId: number
@@ -23,7 +24,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
   onSubmit,
   onCommentAdded,
   onCancel,
-  placeholder = "Schreibe einen Kommentar...",
+  placeholder,
   fullWidth = false
 }) => {
   const [content, setContent] = useState('')
@@ -31,6 +32,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
   const [selectedText, setSelectedText] = useState('')
 
   const { createComment } = useCommentsStore()
+  const { t } = useTranslation('forum')
 
   useEffect(() => {
     if (quotedText) {
@@ -44,7 +46,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     // Check text content without HTML tags
     const textContent = content.replace(/<[^>]*>/g, '').trim()
     if (!textContent) {
-      toast.info('Bitte gib einen Kommentar ein')
+      toast.info(t('comments.emptyError'))
       return
     }
 
@@ -74,7 +76,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
       }
     } catch (error) {
       console.error('Error creating comment:', error)
-      toast.error('Fehler beim Erstellen des Kommentars')
+      toast.error(t('comments.createError'))
     } finally {
       setSubmitting(false)
     }
@@ -97,7 +99,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
           <button
             onClick={removeQuote}
             className="ml-2 text-gray-500 hover:text-gray-600 transition-colors"
-            title="Zitat entfernen"
+            title={t('comments.removeQuote')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -114,7 +116,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
         {/* Replying To Display */}
         {replyingToUsername && (
           <div className="mb-3 flex items-center space-x-2">
-            <span className="text-sm text-gray-600">Antwort an:</span>
+            <span className="text-sm text-gray-600">{t('comments.replyingTo')}</span>
             <span className="text-sm font-semibold text-[var(--primary)]">@{replyingToUsername}</span>
           </div>
         )}
@@ -127,7 +129,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
           <RichTextEditor
             content={content}
             onChange={setContent}
-            placeholder={placeholder}
+            placeholder={placeholder ?? t('comments.placeholder')}
             minHeight={fullWidth ? "200px" : "120px"}
             autoFocus={!!replyingToUsername}
           />
@@ -136,7 +138,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
         {/* Character Count */}
         <div className="flex justify-between items-center mt-3">
           <span className="text-xs text-gray-500">
-            {content.replace(/<[^>]*>/g, '').length} Zeichen (ohne HTML)
+            {t('comments.charCount', { count: content.replace(/<[^>]*>/g, '').length })}
           </span>
           
           {/* Action Buttons */}
@@ -148,7 +150,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
                 className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 transition-colors"
                 disabled={submitting}
               >
-                Abbrechen
+                {t('common:actions.cancel')}
               </button>
             )}
             
@@ -157,7 +159,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
               disabled={submitting || !content.replace(/<[^>]*>/g, '').trim()}
               className="px-4 py-1.5 text-xs font-bold bg-[var(--primary)] text-white rounded-md hover:bg-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {submitting ? 'Wird gesendet...' : 'Kommentieren'}
+              {submitting ? t('comments.sending') : t('comments.submit')}
             </button>
           </div>
         </div>
@@ -167,9 +169,9 @@ const CommentForm: React.FC<CommentFormProps> = ({
       {!fullWidth && (
         <div className="mt-3 text-xs text-gray-500 border-t border-gray-300 pt-3">
           <div className="flex items-center space-x-4">
-            <span>💡 Tipp: Markiere Text um ihn zu zitieren</span>
-            <span>• Behandle andere respektvoll</span>
-            <span>• Teile keine persönlichen Daten</span>
+            <span>{t('comments.tipQuote')}</span>
+            <span>• {t('comments.tipRespect')}</span>
+            <span>• {t('comments.tipPrivacy')}</span>
           </div>
         </div>
       )}

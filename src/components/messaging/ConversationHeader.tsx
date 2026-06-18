@@ -3,6 +3,7 @@ import { UserBlocksService } from '../../services/user-blocks.service'
 import UserAvatar from '../user/UserAvatar'
 import type { Conversation } from '../../services/messages.service'
 import { toast } from '../../stores/toast.store'
+import { useTranslation } from 'react-i18next'
 
 interface ConversationHeaderProps {
   conversation: Conversation
@@ -17,6 +18,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
   const [loading, setLoading] = useState(false)
   
   const userBlocksService = new UserBlocksService()
+  const { t } = useTranslation('messaging')
 
   React.useEffect(() => {
     checkBlockStatus()
@@ -39,11 +41,11 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
       const result = await userBlocksService.toggleBlockUser(conversation.id)
       setIsBlocked(result.action === 'blocked')
 
-      toast.success(result.action === 'blocked' ? 'Benutzer wurde blockiert' : 'Benutzer wurde entsperrt')
+      toast.success(result.action === 'blocked' ? t('userBlocked') : t('userUnblocked'))
 
     } catch (error) {
       console.error('Error toggling block:', error)
-      toast.error('Fehler beim Aktualisieren: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error(t('blockError', { message: error instanceof Error ? error.message : t('unknownError') }))
     } finally {
       setLoading(false)
     }
@@ -75,7 +77,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
               {conversation.participant.username}
             </h2>
             {isBlocked && (
-              <span className="text-xs text-[#fa8072]">Blockiert</span>
+              <span className="text-xs text-[#fa8072]">{t('blocked')}</span>
             )}
           </div>
         </div>
@@ -95,7 +97,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
             {loading ? (
               <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
             ) : (
-              isBlocked ? 'Entsperren' : 'Blockieren'
+              isBlocked ? t('unblock') : t('block')
             )}
           </button>
 

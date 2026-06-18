@@ -104,3 +104,27 @@ export const CmsSaveBar: React.FC<CmsSaveBarProps> = ({
     </div>
   </div>
 )
+
+const CMS_EDIT_LANGS: ReadonlyArray<readonly [string, string]> = [
+  ['de', 'Deutsch'], ['fr', 'Français'], ['it', 'Italiano'], ['en', 'English'],
+]
+
+/** Language tabs for the per-language CMS editors. */
+export const CmsLanguageTabs: React.FC<{ value: string; onChange: (lng: string) => void }> = ({ value, onChange }) => (
+  <div className="flex flex-wrap gap-1 border-b border-[#efe9df]">
+    {CMS_EDIT_LANGS.map(([code, label]) => (
+      <button
+        key={code}
+        type="button"
+        onClick={() => onChange(code)}
+        className={`-mb-px rounded-t px-3 py-1.5 text-sm transition-colors ${
+          value === code
+            ? 'border border-b-0 border-[#efe9df] bg-white font-semibold text-[var(--primary)]'
+            : 'text-slate-500 hover:text-slate-700'
+        }`}
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+)

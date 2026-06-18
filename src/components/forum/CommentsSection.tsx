@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useCommentsStore } from '../../stores/comments.store'
 import CommentCard from './CommentCard'
 import CommentForm from './CommentForm'
+import { useTranslation } from 'react-i18next'
 
 interface CommentsSectionProps {
   postId: number
@@ -14,6 +15,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [selectedText, setSelectedText] = useState('')
   const [replyingToUsername, setReplyingToUsername] = useState('')
+  const { t } = useTranslation('forum')
 
   // Open form when parent requests it
   useEffect(() => {
@@ -81,7 +83,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
               setSelectedText('')
               setReplyingToUsername('')
             }}
-            placeholder="Teile deine Meinung zu diesem Beitrag..."
+            placeholder={t('comments.placeholderPost')}
             fullWidth={true}
           />
         </div>
@@ -92,7 +94,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
         {comments.length === 0 ? (
           <div className="px-6 py-8">
             <p className="text-center text-gray-500">
-              Noch keine Antworten vorhanden. Sei der erste der antwortet!
+              {t('comments.empty')}
             </p>
           </div>
         ) : (
@@ -121,7 +123,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, shouldOpenFor
       {comments.length > 0 && comments.length >= 10 && (
         <div className="px-6 py-4 text-center">
           <button className="text-sm text-gray-500 hover:text-[var(--primary)] transition-colors">
-            Weitere Kommentare laden...
+            {t('comments.loadMore')}
           </button>
         </div>
       )}

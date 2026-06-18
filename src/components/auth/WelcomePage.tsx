@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuthStore } from '../../stores/auth.store'
+import { useTranslation } from 'react-i18next'
 
 interface WelcomePageProps {
   onComplete: (username: string) => Promise<void>
@@ -12,6 +13,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { refreshSession } = useAuthStore()
+  const { t } = useTranslation('auth')
   const [username, setUsername] = useState('')
 
   // Override body background so no other bg bleeds through
@@ -31,14 +33,14 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
 
   const validateUsername = (value: string): string | null => {
     if (value.length < 2) {
-      return 'Benutzername muss mindestens 2 Zeichen lang sein'
+      return t('welcome.usernameTooShort')
     }
     if (value.length > 50) {
-      return 'Benutzername darf maximal 50 Zeichen lang sein'
+      return t('welcome.usernameTooLong')
     }
     // Check for valid characters (alphanumeric, underscores, hyphens)
     if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
-      return 'Benutzername darf nur Buchstaben, Zahlen, Unterstriche und Bindestriche enthalten'
+      return t('welcome.usernameInvalid')
     }
     return null
   }
@@ -67,7 +69,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
     try {
       const isAvailable = await checkUsernameAvailable(username)
       if (!isAvailable) {
-        setError('Dieser Benutzername ist bereits vergeben')
+        setError(t('welcome.usernameTaken'))
       }
     } catch (err) {
       console.error('Error checking username:', err)
@@ -93,7 +95,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
       // Check availability one more time
       const isAvailable = await checkUsernameAvailable(username)
       if (!isAvailable) {
-        setError('Dieser Benutzername ist bereits vergeben')
+        setError(t('welcome.usernameTaken'))
         setIsSubmitting(false)
         return
       }
@@ -109,9 +111,9 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
           // Translate common errors to German
           let errorMessage = verifyError.message
           if (verifyError.message.includes('expired')) {
-            errorMessage = 'Der Bestätigungslink ist abgelaufen. Bitte registriere dich erneut.'
+            errorMessage = t('welcome.linkExpired')
           } else if (verifyError.message.includes('invalid')) {
-            errorMessage = 'Der Bestätigungslink ist ungültig. Bitte registriere dich erneut.'
+            errorMessage = t('welcome.linkInvalid')
           }
           setError(errorMessage)
           setIsSubmitting(false)
@@ -129,7 +131,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
       navigate('/')
     } catch (err) {
       console.error('Error completing onboarding:', err)
-      setError(err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten')
+      setError(err instanceof Error ? err.message : t('errorGeneric'))
       setIsSubmitting(false)
     }
   }
@@ -144,12 +146,12 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
           className="font-headline font-bold text-left mb-6"
           style={{ color: '#4785ff', fontSize: '28px' }}
         >
-          Herzlich Willkommen
+          {t('welcome.heading')}
         </h1>
 
         {/* Guidelines Section */}
         <p className="text-gray-700 text-left mb-4 leading-relaxed">
-          Bitte lese dir zu Beginn die Community Guidelines durch. Sie sind gerade hinsichtlich Thema Psychotherapie wichtig.
+          {t('welcome.guidelinesIntro')}
         </p>
 
         <div className="mb-10 text-left">
@@ -159,20 +161,20 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
             className="inline-block px-6 py-2 rounded-full text-white font-medium"
             style={{ backgroundColor: '#4785ff' }}
           >
-            Community Guidelines
+            {t('welcome.guidelinesLink')}
           </Link>
         </div>
 
         {/* Username Section */}
         <p className="text-gray-700 text-left mb-4 font-medium">
-          Dann benötigst du nur noch einen Benutzernamen
+          {t('welcome.usernamePrompt')}
         </p>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
             <input
               type="text"
-              placeholder="Dein Benutzername"
+              placeholder={t('welcome.usernamePlaceholder')}
               value={username}
               onChange={handleUsernameChange}
               onBlur={handleUsernameBlur}
@@ -185,13 +187,13 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
               <p className="text-red-500 text-sm mt-2 ml-4">{error}</p>
             )}
             {isChecking && (
-              <p className="text-gray-500 text-sm mt-2 ml-4">Prüfe Verfügbarkeit...</p>
+              <p className="text-gray-500 text-sm mt-2 ml-4">{t('welcome.checking')}</p>
             )}
           </div>
 
           {/* Continue Section */}
           <p className="text-gray-700 text-left mb-4">
-            Perfekt, hier geht es weiter zum Forum
+            {t('welcome.continuePrompt')}
           </p>
 
           <div className="flex justify-end">
@@ -201,7 +203,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
               className="px-6 py-2 rounded-full text-white font-medium transition-opacity disabled:opacity-50"
               style={{ backgroundColor: '#4785ff' }}
             >
-              {isSubmitting ? 'Wird gespeichert...' : 'Weiter'}
+              {isSubmitting ? t('welcome.saving') : t('welcome.continue')}
             </button>
           </div>
         </form>

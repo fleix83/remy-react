@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
 import { toast } from '../../stores/toast.store'
+import { useTranslation } from 'react-i18next'
 
 interface MessageComposerProps {
   recipientId: string
@@ -12,6 +13,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
   recipientUsername
 }) => {
   const { sendMessage } = useMessagesStore()
+  const { t } = useTranslation('messaging')
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -22,7 +24,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
     if (contextData) {
       try {
         const { postTitle } = JSON.parse(contextData)
-        const contextMessage = `Zu deinem Beitrag: "${postTitle}"\n\n`
+        const contextMessage = t('composer.postContext', { title: postTitle })
         setMessage(contextMessage)
         
         // Clear context after using it
@@ -37,7 +39,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
         console.error('Error parsing message context:', error)
       }
     }
-  }, [])
+  }, [t])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -63,7 +65,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
       setMessage('')
     } catch (error) {
       console.error('Error sending message:', error)
-      toast.error('Fehler beim Senden der Nachricht: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error(t('composer.sendError', { message: error instanceof Error ? error.message : t('unknownError') }))
     } finally {
       setSending(false)
     }
@@ -86,7 +88,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={`Nachricht an ${recipientUsername}...`}
+            placeholder={t('composer.placeholder', { username: recipientUsername })}
             className="w-full p-3 bg-white text-[var(--type)] rounded-xl border border-[#e3ddcc] focus:border-[var(--primary)] focus:outline-none resize-none min-h-[44px] max-h-32 scrollbar-hide"
             style={{ WebkitAppearance: 'none', appearance: 'none' }}
             rows={1}
@@ -99,7 +101,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
           type="submit"
           disabled={!message.trim() || sending || message.length > 1000}
           className="p-3 bg-[var(--primary)] hover:bg-[#3b71e6] disabled:bg-[#c8c8c8b3] disabled:cursor-not-allowed text-white rounded-xl transition-colors flex items-center justify-center min-w-[48px] min-h-[48px] flex-shrink-0"
-          title="Nachricht senden"
+          title={t('composer.sendTitle')}
         >
           {sending ? (
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -114,7 +116,7 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
       {/* Helper text */}
       <div className="flex items-center justify-between mt-2">
         <span className="text-xs text-gray-400">
-          Enter zum Senden, Shift+Enter für neue Zeile
+          {t('composer.hint')}
         </span>
         <span className="text-xs text-gray-400">
           {message.length}/1000
