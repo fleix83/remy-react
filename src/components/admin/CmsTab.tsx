@@ -1,26 +1,30 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import LandingPageEditor from './LandingPageEditor'
 import FooterEditor from './FooterEditor'
 
 type CmsSection = 'landing' | 'footer'
 
-const SECTIONS: { key: CmsSection; label: string }[] = [
-  { key: 'landing', label: 'Landing Page' },
-  { key: 'footer', label: 'Footer' },
-]
+const SECTION_KEYS: CmsSection[] = ['landing', 'footer']
+
+const SECTION_LABEL_KEY: Record<CmsSection, string> = {
+  landing: 'cms.sectionLanding',
+  footer: 'cms.sectionFooter',
+}
 
 /**
  * CMS tab shell: a vertical tab rail (left) selecting which content document to
  * edit (right). Built to accept more pages over time.
  */
 const CmsTab: React.FC = () => {
+  const { t } = useTranslation('admin')
   const [section, setSection] = useState<CmsSection>('landing')
 
   return (
     <div className="flex flex-col gap-6 md:flex-row">
       {/* Vertical tab rail */}
-      <nav className="flex flex-row gap-1 md:w-48 md:shrink-0 md:flex-col" aria-label="CMS-Bereiche">
-        {SECTIONS.map(({ key, label }) => {
+      <nav className="flex flex-row gap-1 md:w-48 md:shrink-0 md:flex-col" aria-label={t('cms.railLabel')}>
+        {SECTION_KEYS.map((key) => {
           const active = section === key
           return (
             <button
@@ -34,7 +38,7 @@ const CmsTab: React.FC = () => {
                   : 'text-slate-500 hover:bg-[#eef3ff] hover:text-[var(--primary)]'
               }`}
             >
-              {label}
+              {t(SECTION_LABEL_KEY[key])}
             </button>
           )
         })}

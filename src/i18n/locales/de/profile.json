@@ -1,1 +1,104 @@
-{}
+{
+  "header": {
+    "loading": "Profil wird geladen...",
+    "backToForum": "Zurück zum Forum",
+    "edit": "Bearbeiten",
+    "registeredOn": "Registriert am {{date}}",
+    "unknownDate": "Unbekannt",
+    "changeBanner": "Banner ändern",
+    "uploadingBanner": "Wird hochgeladen...",
+    "backgroundUploadError": "Fehler beim Hochladen des Hintergrundbilds"
+  },
+  "settings": {
+    "title": "Profileinstellungen",
+    "username": "Benutzername",
+    "bio": "Bio",
+    "bioPlaceholder": "Erzähl ein bisschen von dir...",
+    "noBio": "Keine Bio angegeben",
+    "privateSettings": "Private Einstellungen",
+    "defaultRegion": "Standard Region:",
+    "preferredLanguage": "Bevorzugte Sprache:",
+    "privateMessages": "Private Nachrichten:",
+    "allCantons": "Alle Kantone",
+    "on": "An",
+    "off": "Aus",
+    "saving": "Wird gespeichert...",
+    "saveChanges": "Änderungen speichern",
+    "updateSuccess": "Einstellungen erfolgreich aktualisiert!",
+    "updateError": "Einstellungen konnten nicht aktualisiert werden"
+  },
+  "blocked": {
+    "title": "Geblockte User",
+    "searchLabel": "User zum Blockieren suchen",
+    "searchPlaceholder": "Benutzername eingeben...",
+    "block": "Blockieren",
+    "unblock": "Freigeben",
+    "noResults": "Keine User gefunden für \"{{query}}\"",
+    "memberSince": "Mitglied seit {{date}}",
+    "noneBlocked": "Keine User geblockt",
+    "countBlocked_one": "{{count}} User geblockt",
+    "countBlocked_other": "{{count}} User geblockt",
+    "emptyHint": "Hier erscheinen User, die du blockierst.",
+    "unknownUser": "Unbekannter User",
+    "blockedOn": "Blockiert am {{date}}",
+    "unknownDate": "Unbekannt",
+    "loadError": "Geblockte User konnten nicht geladen werden",
+    "searchError": "Suche fehlgeschlagen",
+    "blockSuccess": "{{name}} blockiert",
+    "blockError": "User konnte nicht blockiert werden",
+    "unblockSuccess": "{{name}} freigegeben",
+    "unblockError": "User konnte nicht freigegeben werden",
+    "fallbackUser": "User"
+  },
+  "avatar": {
+    "removeTitle": "Avatar entfernen",
+    "changeTitle": "Avatar ändern",
+    "uploadError": "Avatar konnte nicht hochgeladen werden",
+    "removeError": "Avatar konnte nicht entfernt werden"
+  },
+  "content": {
+    "title": "Meine Beiträge",
+    "tabs": {
+      "posts": "Beiträge",
+      "comments": "Kommentare",
+      "drafts": "Entwürfe"
+    },
+    "noTitle": "Ohne Titel",
+    "unknownDate": "Unbekannt",
+    "experienceWith": "Erfahrung mit {{therapist}}",
+    "edit": "Bearbeiten",
+    "editPostTitle": "Beitrag bearbeiten",
+    "deletePostTitle": "Beitrag löschen",
+    "editDraftTitle": "Entwurf bearbeiten",
+    "deleteDraftTitle": "Entwurf löschen",
+    "deleteCommentTitle": "Kommentar löschen",
+    "draft": "Entwurf",
+    "posts": {
+      "empty": "Noch keine Beiträge",
+      "emptyHint": "Deine veröffentlichten und ausstehenden Beiträge erscheinen hier"
+    },
+    "comments": {
+      "empty": "Noch keine Kommentare",
+      "emptyHint": "Deine Kommentare zu Beiträgen erscheinen hier",
+      "commentOn": "Kommentar zu:",
+      "comment": "Kommentar",
+      "commentedOn": "Kommentiert am: {{date}}",
+      "edited": "Bearbeitet"
+    },
+    "drafts": {
+      "empty": "Keine Entwürfe",
+      "emptyHint": "Deine gespeicherten Entwürfe erscheinen hier"
+    },
+    "loadError": "Inhalte konnten nicht geladen werden",
+    "deleteDraftConfirm": "Diesen Entwurf wirklich löschen?",
+    "deleteDraftSuccess": "Entwurf gelöscht",
+    "deleteDraftError": "Entwurf konnte nicht gelöscht werden",
+    "deleteCommentConfirm": "Diesen Kommentar wirklich löschen?",
+    "deleteCommentError": "Kommentar konnte nicht gelöscht werden",
+    "updatePostSuccess": "Beitrag aktualisiert",
+    "updatePostError": "Beitrag konnte nicht aktualisiert werden",
+    "deletePostConfirm": "Diesen Beitrag wirklich löschen? Er wird ausgeblendet, vorhandene Kommentare bleiben erhalten.",
+    "deletePostSuccess": "Beitrag gelöscht",
+    "deletePostError": "Beitrag konnte nicht gelöscht werden"
+  }
+}

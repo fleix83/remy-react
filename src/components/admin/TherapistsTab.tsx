@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Designation, TherapistWithDesignation } from '../../types/database.types'
 import { TherapistsService } from '../../services/therapists.service'
 import { DesignationsService } from '../../services/designations.service'
@@ -12,6 +13,7 @@ import TherapistCreateModal from '../therapist/TherapistCreateModal'
  * unclassified entries (no designation_id) that still need attribution.
  */
 const TherapistsTab: React.FC = () => {
+  const { t } = useTranslation('admin')
   const [therapists, setTherapists] = useState<TherapistWithDesignation[]>([])
   const [designations, setDesignations] = useState<Designation[]>([])
   const [loading, setLoading] = useState(true)
@@ -39,7 +41,7 @@ const TherapistsTab: React.FC = () => {
       setDesignations(designationsData)
     } catch (err) {
       console.error('Error loading therapists:', err)
-      setError('Fehler beim Laden der Therapeuten')
+      setError(t('therapists.loadError'))
     } finally {
       setLoading(false)
     }
@@ -77,7 +79,7 @@ const TherapistsTab: React.FC = () => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent"></div>
-        <span className="ml-3 text-slate-500">Lade Therapeuten...</span>
+        <span className="ml-3 text-slate-500">{t('therapists.loading')}</span>
       </div>
     )
   }
@@ -90,7 +92,7 @@ const TherapistsTab: React.FC = () => {
           onClick={loadData}
           className="ml-4 text-sm underline hover:no-underline"
         >
-          Erneut versuchen
+          {t('therapists.retry')}
         </button>
       </div>
     )
@@ -101,7 +103,7 @@ const TherapistsTab: React.FC = () => {
       {/* Header with search and missing-designation filter */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl font-bold text-[var(--type)]">Therapeutenverwaltung</h2>
+          <h2 className="text-xl font-bold text-[var(--type)]">{t('therapists.title')}</h2>
           <span className="rounded-full bg-[#eef3ff] px-2.5 py-0.5 text-xs font-semibold text-[var(--primary)]">{therapists.length}</span>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -114,16 +116,16 @@ const TherapistsTab: React.FC = () => {
                   ? 'bg-amber-400 text-amber-950'
                   : 'bg-amber-100 text-amber-800 hover:bg-amber-200'
               }`}
-              title="Nur Therapeuten ohne zugeordnete Bezeichnung anzeigen"
+              title={t('therapists.missingFilterTitle')}
             >
-              ⚠ {missingCount} ohne Bezeichnung
+              {t('therapists.missingFilter', { count: missingCount })}
             </button>
           )}
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Suchen (Name, Institution, Titel…)"
+            placeholder={t('therapists.searchPlaceholder')}
             className="w-64 rounded-lg border border-[#e2ddd3] bg-white px-3 py-1.5 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50"
           />
           <button
@@ -133,7 +135,7 @@ const TherapistsTab: React.FC = () => {
             <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m-7-7h14" />
             </svg>
-            Neu
+            {t('therapists.new')}
           </button>
         </div>
       </div>
@@ -145,20 +147,20 @@ const TherapistsTab: React.FC = () => {
           {/* Table Header */}
           <div className="border-b border-[#efe9df] bg-[#faf8f4]">
             <div className="flex items-center gap-2 px-2 py-3">
-              <div className="w-28 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Anrede</div>
-              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Vorname</div>
-              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Nachname</div>
-              <div className="w-48 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Bezeichnung</div>
-              <div className="min-w-0 grow basis-56 text-xs font-semibold text-slate-500 uppercase text-left">Offizieller Titel</div>
-              <div className="w-40 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Institution</div>
-              <div className="w-28 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Ort</div>
-              <div className="w-20 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Kanton</div>
-              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Sprachen</div>
-              <div className="w-24 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Geschlecht</div>
-              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Fachgebiet</div>
-              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Angebote</div>
-              <div className="w-24 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">Status</div>
-              <div className="w-48 shrink-0 text-xs font-semibold text-slate-500 uppercase flex justify-end">Aktionen</div>
+              <div className="w-28 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colFormOfAddress')}</div>
+              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colFirstName')}</div>
+              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colLastName')}</div>
+              <div className="w-48 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colDesignation')}</div>
+              <div className="min-w-0 grow basis-56 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colFullTitle')}</div>
+              <div className="w-40 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colInstitution')}</div>
+              <div className="w-28 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colCity')}</div>
+              <div className="w-20 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colCanton')}</div>
+              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colLanguages')}</div>
+              <div className="w-24 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colGender')}</div>
+              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colSpecialty')}</div>
+              <div className="w-32 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colServices')}</div>
+              <div className="w-24 shrink-0 text-xs font-semibold text-slate-500 uppercase text-left">{t('therapists.colStatus')}</div>
+              <div className="w-48 shrink-0 text-xs font-semibold text-slate-500 uppercase flex justify-end">{t('therapists.colActions')}</div>
             </div>
           </div>
 
@@ -167,8 +169,8 @@ const TherapistsTab: React.FC = () => {
             {filteredTherapists.length === 0 ? (
               <div className="text-center py-12 text-slate-500">
                 {therapists.length === 0
-                  ? 'Keine Therapeuten vorhanden.'
-                  : 'Keine Therapeuten gefunden.'}
+                  ? t('therapists.emptyNone')
+                  : t('therapists.emptyFiltered')}
               </div>
             ) : (
               filteredTherapists.map((therapist) => (
@@ -188,13 +190,13 @@ const TherapistsTab: React.FC = () => {
 
       {/* Footer Stats */}
       <div className="text-sm text-slate-500 text-right">
-        {filteredTherapists.length} von {therapists.length} Therapeut{therapists.length !== 1 ? 'en' : ''}
+        {t('therapists.summary', { count: therapists.length, shown: filteredTherapists.length, total: therapists.length })}
         {' • '}
         <span className={missingCount > 0 ? 'font-semibold text-amber-700' : ''}>
-          {missingCount} ohne Bezeichnung
+          {t('therapists.summaryMissing', { count: missingCount })}
         </span>
         {' • '}
-        {inactiveCount} inaktiv
+        {t('therapists.summaryInactive', { count: inactiveCount })}
       </div>
 
       {/* Reuses the directory's create modal (incl. CSV import) unchanged */}

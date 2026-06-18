@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useTranslation, Trans } from 'react-i18next'
 import { createPortal } from 'react-dom'
 import { TherapistsService } from '../../services/therapists.service'
 import { DesignationsService } from '../../services/designations.service'
@@ -27,6 +28,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
   preselectedCanton = '',
   therapist = null
 }) => {
+  const { t } = useTranslation('therapist')
   const isEditMode = !!therapist
 
   // person (default) | person_institution (works at a clinic etc.) | institution
@@ -156,7 +158,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
       event.target.value = ''
     } catch (error) {
       console.error('❌ CSV import error:', error)
-      setError(error instanceof Error ? error.message : 'CSV import failed')
+      setError(error instanceof Error ? error.message : t('modal.import.failedFallback'))
     } finally {
       setIsImporting(false)
     }
@@ -188,7 +190,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
       onClose()
     } catch (error) {
       console.error('❌ TherapistCreateModal: Error deleting therapist:', error)
-      setError(error instanceof Error ? error.message : 'Fehler beim Löschen')
+      setError(error instanceof Error ? error.message : t('modal.errors.deleteFailed'))
       setShowDeleteConfirm(false)
     } finally {
       setIsDeleting(false)
@@ -197,11 +199,11 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
   const validateForm = () => {
     if (!formData.canton) {
-      setError('Bitte wählen Sie einen Kanton aus')
+      setError(t('modal.errors.cantonRequired'))
       return false
     }
     if (entryType !== 'person' && !formData.institution.trim()) {
-      setError('Bitte geben Sie den Namen der Institution ein')
+      setError(t('modal.errors.institutionRequired'))
       return false
     }
     if (entryType === 'institution') {
@@ -209,15 +211,15 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
       return true
     }
     if (!formData.first_name.trim()) {
-      setError('Bitte geben Sie den Vornamen ein')
+      setError(t('modal.errors.firstNameRequired'))
       return false
     }
     if (!formData.last_name.trim()) {
-      setError('Bitte geben Sie den Nachnamen ein')
+      setError(t('modal.errors.lastNameRequired'))
       return false
     }
     if (!formData.designation_id) {
-      setError('Bitte wählen Sie eine Berufsbezeichnung aus')
+      setError(t('modal.errors.designationRequired'))
       return false
     }
     return true
@@ -281,7 +283,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
       }
     } catch (error) {
       console.error(`❌ TherapistCreateModal: Error ${isEditMode ? 'updating' : 'creating'} therapist:`, error)
-      setError(error instanceof Error ? error.message : 'Fehler beim Speichern')
+      setError(error instanceof Error ? error.message : t('modal.errors.saveFailed'))
     } finally {
       setIsSubmitting(false)
     }
@@ -313,7 +315,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           </button>
           <div className="mb-10"></div>
           <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
-            {isEditMode ? 'Eintrag bearbeiten' : 'Therapeut:in oder Institution hinzufügen'}
+            {isEditMode ? t('modal.editTitle') : t('modal.createTitle')}
           </h2>
         </div>
 
@@ -328,7 +330,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 className="px-4 py-2 rounded-md font-medium transition-colors text-sm flex items-center gap-2"
                 style={{ backgroundColor: '#ff6b6b', color: 'white' }}
               >
-                <span>CSV Import (Admin)</span>
+                <span>{t('modal.import.button')}</span>
                 <svg
                   className={`w-4 h-4 transition-transform ${showImportSection ? 'rotate-180' : ''}`}
                   fill="none"
@@ -342,7 +344,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
               {showImportSection && (
                 <div className="space-y-3 mt-4">
                   <p className="text-sm" style={{ color: 'var(--primary)' }}>
-                    Importieren Sie mehrere Therapeuten gleichzeitig aus einer CSV-Datei.
+                    {t('modal.import.intro')}
                   </p>
 
                   {/* Template Download */}
@@ -354,7 +356,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <span>CSV-Vorlage herunterladen</span>
+                    <span>{t('modal.import.downloadTemplate')}</span>
                   </button>
 
                   {/* File Upload */}
@@ -376,7 +378,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Importiere Therapeuten...
+                      {t('modal.import.importing')}
                     </div>
                   )}
 
@@ -388,25 +390,25 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                         : 'bg-red-500 bg-opacity-20 border-red-500 text-red-700'
                     }`}>
                       <div className="font-semibold mb-2">
-                        {importResult.success ? '✓ Import erfolgreich' : '✗ Import fehlgeschlagen'}
+                        {importResult.success ? t('modal.import.success') : t('modal.import.failed')}
                       </div>
                       <div className="text-sm space-y-1">
-                        <div>Importiert: {importResult.imported}</div>
-                        <div>Duplikate übersprungen: {importResult.skipped}</div>
+                        <div>{t('modal.import.imported', { count: importResult.imported })}</div>
+                        <div>{t('modal.import.skipped', { count: importResult.skipped })}</div>
                         {importResult.needsReview > 0 && (
-                          <div>Zur Prüfung (keine Bezeichnung zugeordnet): {importResult.needsReview}</div>
+                          <div>{t('modal.import.needsReview', { count: importResult.needsReview })}</div>
                         )}
                         {importResult.errors.length > 0 && (
                           <div>
-                            <div className="font-semibold mt-2">Fehler ({importResult.errors.length}):</div>
+                            <div className="font-semibold mt-2">{t('modal.import.errorsTitle', { count: importResult.errors.length })}</div>
                             <ul className="list-disc list-inside max-h-32 overflow-y-auto">
                               {importResult.errors.slice(0, 5).map((err, idx) => (
                                 <li key={idx}>
-                                  Zeile {err.row}: {err.error}
+                                  {t('modal.import.errorRow', { row: err.row, error: err.error })}
                                 </li>
                               ))}
                               {importResult.errors.length > 5 && (
-                                <li>... und {importResult.errors.length - 5} weitere Fehler</li>
+                                <li>{t('modal.import.moreErrors', { count: importResult.errors.length - 5 })}</li>
                               )}
                             </ul>
                           </div>
@@ -416,7 +418,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   )}
 
                   <div className="text-xs" style={{ color: '#888' }}>
-                    <p>Hinweis: Bei Duplikaten (gleicher Name + Kanton) wird der Eintrag mit mehr ausgefüllten Feldern behalten.</p>
+                    <p>{t('modal.import.hint')}</p>
                   </div>
                 </div>
               )}
@@ -435,7 +437,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {/* Kanton */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Kanton
+                {t('modal.canton')}
               </label>
               <select
                 value={formData.canton}
@@ -463,7 +465,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   disabled={isSubmitting}
                   className="mt-0.5 accent-[#4785ff]"
                 />
-                <span>Therapeut:in arbeitet in einer Institution (z.&nbsp;B. Klinik)</span>
+                <span>{t('modal.entryType.personInstitution')}</span>
               </label>
               <label className="flex items-start gap-2 text-sm cursor-pointer" style={{ color: 'var(--primary)' }}>
                 <input
@@ -473,7 +475,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   disabled={isSubmitting}
                   className="mt-0.5 accent-[#4785ff]"
                 />
-                <span>Eintrag ist eine Institution (keine einzelne Person)</span>
+                <span>{t('modal.entryType.institution')}</span>
               </label>
             </div>
 
@@ -481,13 +483,13 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {entryType !== 'person' && (
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                  Name der Institution
+                  {t('modal.institutionName')}
                 </label>
                 <input
                   type="text"
                   value={formData.institution}
                   onChange={(e) => handleInputChange('institution', e.target.value)}
-                  placeholder="z.B. Klinik, Tagesstruktur, Programm"
+                  placeholder={t('modal.institutionNamePlaceholder')}
                   className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                   style={{ borderColor: '#ebebeb' }}
                   disabled={isSubmitting}
@@ -501,7 +503,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {/* Anrede */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Anrede
+                {t('modal.formOfAddress')}
               </label>
               <select
                 value={formData.form_of_address}
@@ -510,7 +512,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
               >
-                <option value="" className="bg-white">Anrede auswählen (optional)</option>
+                <option value="" className="bg-white">{t('modal.formOfAddressPlaceholder')}</option>
                 {FORMS_OF_ADDRESS.map((address) => (
                   <option key={address} value={address} className="bg-white">
                     {address}
@@ -522,13 +524,13 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {/* Vorname */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Vorname
+                {t('modal.firstName')}
               </label>
               <input
                 type="text"
                 value={formData.first_name}
                 onChange={(e) => handleInputChange('first_name', e.target.value)}
-                placeholder="Vorname"
+                placeholder={t('modal.firstNamePlaceholder')}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
@@ -539,13 +541,13 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {/* Nachname */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Nachname
+                {t('modal.lastName')}
               </label>
               <input
                 type="text"
                 value={formData.last_name}
                 onChange={(e) => handleInputChange('last_name', e.target.value)}
-                placeholder="Nachname"
+                placeholder={t('modal.lastNamePlaceholder')}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
@@ -556,7 +558,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {/* Berufsbezeichnung */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Berufsbezeichnung
+                {t('modal.designation')}
               </label>
               <select
                 value={formData.designation_id ?? ''}
@@ -571,7 +573,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 required
               >
                 <option value="" className="bg-white">
-                  {loadingDesignations ? 'Lade Bezeichnungen...' : 'Berufsbezeichnung auswählen'}
+                  {loadingDesignations ? t('modal.designationLoading') : t('modal.designationPlaceholder')}
                 </option>
                 {designationOptions.map(option => (
                   <option key={option.id} value={option.id} className="bg-white">
@@ -588,15 +590,15 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 Institutionen die Art der Einrichtung. */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                {entryType === 'institution' ? 'Art der Institution oder Abteilung (optional)' : 'Offizieller Titel (optional)'}
+                {entryType === 'institution' ? t('modal.fullTitleInstitution') : t('modal.fullTitlePerson')}
               </label>
               <input
                 type="text"
                 value={formData.full_title}
                 onChange={(e) => handleInputChange('full_title', e.target.value)}
                 placeholder={entryType === 'institution'
-                  ? 'z.B. Psychiatrische Klinik, Tagesklinik'
-                  : 'z.B. Fachärztin für Psychiatrie und Psychotherapie FMH'}
+                  ? t('modal.fullTitleInstitutionPlaceholder')
+                  : t('modal.fullTitlePersonPlaceholder')}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
@@ -608,7 +610,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {entryType !== 'institution' && (
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Geschlecht (optional)
+                {t('modal.gender')}
               </label>
               <select
                 value={formData.gender}
@@ -617,9 +619,9 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
               >
-                <option value="" className="bg-white">Keine Angabe</option>
-                <option value="f" className="bg-white">Weiblich</option>
-                <option value="m" className="bg-white">Männlich</option>
+                <option value="" className="bg-white">{t('modal.genderNone')}</option>
+                <option value="f" className="bg-white">{t('modal.genderFemale')}</option>
+                <option value="m" className="bg-white">{t('modal.genderMale')}</option>
               </select>
             </div>
             )}
@@ -627,13 +629,13 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {/* City */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Stadt (optional)
+                {t('modal.city')}
               </label>
               <input
                 type="text"
                 value={formData.city}
                 onChange={(e) => handleInputChange('city', e.target.value)}
-                placeholder="z.B. Zürich, Bern"
+                placeholder={t('modal.cityPlaceholder')}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
@@ -644,13 +646,13 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             {/* Languages */}
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
-                Sprachen (optional)
+                {t('modal.languages')}
               </label>
               <input
                 type="text"
                 value={formData.languages}
                 onChange={(e) => handleInputChange('languages', e.target.value)}
-                placeholder="z.B. Deutsch, Englisch, Französisch"
+                placeholder={t('modal.languagesPlaceholder')}
                 className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
@@ -668,7 +670,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   disabled={isSubmitting || isDeleting}
                   className="px-3 py-1.5 text-sm bg-red-500 hover:bg-red-600 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Löschen
+                  {t('common:actions.delete')}
                 </button>
               )}
 
@@ -680,7 +682,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   disabled={isSubmitting || isDeleting}
                   className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Abbrechen
+                  {t('common:actions.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -688,7 +690,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                   className="px-3 py-1.5 text-sm text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ backgroundColor: '#4785ff' }}
                 >
-                  {isSubmitting ? 'Speichern...' : 'Speichern'}
+                  {isSubmitting ? t('modal.submitting') : t('common:actions.save')}
                 </button>
               </div>
             </div>
@@ -699,10 +701,15 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
               <div className="bg-white rounded-lg max-w-sm w-full p-6 shadow-xl">
                 <h3 className="text-lg font-bold mb-3" style={{ color: 'var(--primary)' }}>
-                  {entryType === 'institution' ? 'Institution löschen?' : 'Therapeut löschen?'}
+                  {entryType === 'institution' ? t('modal.deleteConfirm.titleInstitution') : t('modal.deleteConfirm.titlePerson')}
                 </h3>
                 <p className="mb-6 text-gray-700">
-                  Sind Sie sicher, dass Sie <strong>{entryType === 'institution' ? formData.institution : `${formData.first_name} ${formData.last_name}`.trim()}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.
+                  <Trans
+                    t={t}
+                    i18nKey="modal.deleteConfirm.body"
+                    values={{ name: entryType === 'institution' ? formData.institution : `${formData.first_name} ${formData.last_name}`.trim() }}
+                    components={{ strong: <strong /> }}
+                  />
                 </p>
                 <div className="flex justify-end gap-3">
                   <button
@@ -711,7 +718,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                     disabled={isDeleting}
                     className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors disabled:opacity-50"
                   >
-                    Abbrechen
+                    {t('common:actions.cancel')}
                   </button>
                   <button
                     type="button"
@@ -719,7 +726,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                     disabled={isDeleting}
                     className="px-3 py-1.5 text-sm bg-red-500 hover:bg-red-600 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isDeleting ? 'Löschen...' : 'Löschen'}
+                    {isDeleting ? t('modal.deleteConfirm.deleting') : t('common:actions.delete')}
                   </button>
                 </div>
               </div>

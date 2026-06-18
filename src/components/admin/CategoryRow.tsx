@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Category } from '../../types/database.types'
 import InlineEditCell from '../ui/InlineEditCell'
 import { CategoriesService } from '../../services/categories.service'
@@ -16,6 +17,7 @@ interface CategoryRowProps {
  * fixed ids (1 Erfahrung, 4 Rant), so only their appearance is editable.
  */
 const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
+  const { t } = useTranslation('admin')
   const categoriesService = new CategoriesService()
 
   // Local color state for live preview; persisting is debounced because the
@@ -38,7 +40,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
     if (saveTimeout.current) clearTimeout(saveTimeout.current)
     saveTimeout.current = setTimeout(() => {
       handleUpdate('color', value).catch(() => {
-        toast.error('Fehler beim Speichern der Farbe (Migration 022 schon eingespielt?)')
+        toast.error(t('categoryRow.colorSaveError'))
         setColor(getCategoryColor(category))
       })
     }, 400)
@@ -54,7 +56,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
             value={color}
             onChange={(e) => handleColorChange(e.target.value)}
             className="h-8 w-10 cursor-pointer rounded border border-[#e2ddd3] bg-white p-0.5"
-            title="Kategoriefarbe"
+            title={t('categoryRow.colorTitle')}
           />
           <span className="text-xs text-slate-500 uppercase tabular-nums">{color}</span>
         </div>
@@ -62,7 +64,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
           <InlineEditCell
             value={category.name_de}
             onSave={(v) => handleUpdate('name_de', v)}
-            placeholder="Name DE"
+            placeholder={t('categoryRow.namePlaceholderDe')}
             displayClassName="text-left"
             required
           />
@@ -71,7 +73,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
           <InlineEditCell
             value={category.name_fr || ''}
             onSave={(v) => handleUpdate('name_fr', v)}
-            placeholder="Name FR"
+            placeholder={t('categoryRow.namePlaceholderFr')}
             displayClassName="text-left"
           />
         </div>
@@ -79,7 +81,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
           <InlineEditCell
             value={category.name_it || ''}
             onSave={(v) => handleUpdate('name_it', v)}
-            placeholder="Name IT"
+            placeholder={t('categoryRow.namePlaceholderIt')}
             displayClassName="text-left"
           />
         </div>
@@ -98,7 +100,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, onUpdate }) => {
             checked={category.is_active ?? true}
             onChange={(e) => handleUpdate('is_active', e.target.checked)}
             className="h-5 w-5 cursor-pointer rounded border-gray-300 accent-[var(--primary)] focus:ring-[var(--primary)]"
-            title={category.is_active ? 'Aktiv' : 'Inaktiv'}
+            title={category.is_active ? t('categoryRow.activeTitle') : t('categoryRow.inactiveTitle')}
           />
         </div>
       </div>

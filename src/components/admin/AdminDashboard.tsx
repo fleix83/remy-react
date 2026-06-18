@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationService } from '../../services/moderation.service'
 import UserAvatar from '../user/UserAvatar'
@@ -31,6 +32,7 @@ const TAB_ICONS: Record<TabId, string> = {
 }
 
 const AdminDashboard: React.FC = () => {
+  const { t } = useTranslation('admin')
   const permissions = usePermissions()
   const [stats, setStats] = useState<ModerationStats | null>(null)
   const [users, setUsers] = useState<User[]>([])
@@ -65,10 +67,10 @@ const AdminDashboard: React.FC = () => {
     try {
       await moderationService.updateUserRole(userId, newRole)
       await loadDashboardData() // Reload data
-      toast.success('Benutzerrolle erfolgreich geändert')
+      toast.success(t('users.roleChangeSuccess'))
     } catch (error) {
       console.error('Error changing user role:', error)
-      toast.error('Fehler beim Ändern der Benutzerrolle')
+      toast.error(t('users.roleChangeError'))
     }
   }
 
@@ -80,10 +82,10 @@ const AdminDashboard: React.FC = () => {
         await moderationService.unbanUser(userId)
       }
       await loadDashboardData() // Reload data
-      toast.success(`Benutzer ${shouldBan ? 'gesperrt' : 'entsperrt'}`)
+      toast.success(shouldBan ? t('users.bannedToast') : t('users.unbannedToast'))
     } catch (error) {
       console.error('Error banning/unbanning user:', error)
-      toast.error('Fehler beim Sperren/Entsperren des Benutzers')
+      toast.error(t('users.banError'))
     }
   }
 
@@ -92,8 +94,8 @@ const AdminDashboard: React.FC = () => {
     return (
       <div className="min-h-screen bg-[var(--bg-body)] flex items-center justify-center px-4">
         <div className="max-w-sm rounded-2xl border border-[#ece7dd] bg-white px-8 py-10 text-center shadow-[0_8px_30px_rgba(20,66,32,0.06)]">
-          <h1 className="text-2xl font-bold text-[var(--type)] mb-2">Zugriff verweigert</h1>
-          <p className="text-slate-500">Sie haben keine Berechtigung für diese Seite.</p>
+          <h1 className="text-2xl font-bold text-[var(--type)] mb-2">{t('dashboard.accessDeniedTitle')}</h1>
+          <p className="text-slate-500">{t('dashboard.accessDeniedBody')}</p>
         </div>
       </div>
     )
@@ -107,13 +109,13 @@ const AdminDashboard: React.FC = () => {
     )
   }
 
-  const tabs: { id: TabId; label: string }[] = [
-    { id: 'overview', label: 'Übersicht' },
-    { id: 'users', label: 'Benutzer' },
-    ...(permissions.isAdmin ? [{ id: 'therapists' as TabId, label: 'Therapeuten' }] : []),
-    ...(permissions.isAdmin ? [{ id: 'designations' as TabId, label: 'Bezeichnungen' }] : []),
-    ...(permissions.isAdmin ? [{ id: 'categories' as TabId, label: 'Kategorien' }] : []),
-    ...(permissions.isAdmin ? [{ id: 'cms' as TabId, label: 'Cms' }] : []),
+  const tabs: { id: TabId }[] = [
+    { id: 'overview' },
+    { id: 'users' },
+    ...(permissions.isAdmin ? [{ id: 'therapists' as TabId }] : []),
+    ...(permissions.isAdmin ? [{ id: 'designations' as TabId }] : []),
+    ...(permissions.isAdmin ? [{ id: 'categories' as TabId }] : []),
+    ...(permissions.isAdmin ? [{ id: 'cms' as TabId }] : []),
   ]
 
   return (
@@ -122,7 +124,7 @@ const AdminDashboard: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-left text-3xl font-bold text-[var(--primary)]">
-            {permissions.isAdmin ? 'Admin Dashboard' : 'Moderator Dashboard'}
+            {permissions.isAdmin ? t('dashboard.titleAdmin') : t('dashboard.titleModerator')}
           </h1>
         </div>
 
@@ -145,7 +147,7 @@ const AdminDashboard: React.FC = () => {
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d={TAB_ICONS[tab.id]} />
                   </svg>
-                  {tab.label}
+                  {t(`tabs.${tab.id}`)}
                 </button>
               )
             })}
@@ -156,15 +158,15 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'overview' && stats && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {([
-              { label: 'Benutzer gesamt', value: stats.totalUsers, color: '#C5D0FF', radius: '42% 58% 70% 30% / 45% 45% 55% 55%' },
-              { label: 'Gesperrte Benutzer', value: stats.bannedUsers, color: '#FFC8C8', radius: '63% 37% 54% 46% / 55% 48% 52% 45%' },
-              { label: 'Beiträge gesamt', value: stats.totalPosts, color: '#98FFC7', radius: '38% 62% 63% 37% / 41% 44% 56% 59%' },
-              { label: 'Kommentare gesamt', value: stats.totalComments, color: '#ffeb99', radius: '50% 50% 33% 67% / 55% 38% 62% 45%' },
-              { label: 'Moderatoren', value: stats.moderators, color: '#edd3ff', radius: '67% 33% 47% 53% / 37% 62% 38% 63%' },
-              { label: 'Admins', value: stats.admins, color: '#bfead0', radius: '58% 42% 38% 62% / 63% 34% 66% 37%' },
+              { key: 'totalUsers', label: t('stats.totalUsers'), value: stats.totalUsers, color: '#C5D0FF', radius: '42% 58% 70% 30% / 45% 45% 55% 55%' },
+              { key: 'bannedUsers', label: t('stats.bannedUsers'), value: stats.bannedUsers, color: '#FFC8C8', radius: '63% 37% 54% 46% / 55% 48% 52% 45%' },
+              { key: 'totalPosts', label: t('stats.totalPosts'), value: stats.totalPosts, color: '#98FFC7', radius: '38% 62% 63% 37% / 41% 44% 56% 59%' },
+              { key: 'totalComments', label: t('stats.totalComments'), value: stats.totalComments, color: '#ffeb99', radius: '50% 50% 33% 67% / 55% 38% 62% 45%' },
+              { key: 'moderators', label: t('stats.moderators'), value: stats.moderators, color: '#edd3ff', radius: '67% 33% 47% 53% / 37% 62% 38% 63%' },
+              { key: 'admins', label: t('stats.admins'), value: stats.admins, color: '#bfead0', radius: '58% 42% 38% 62% / 63% 34% 66% 37%' },
             ]).map((stat) => (
               <div
-                key={stat.label}
+                key={stat.key}
                 className="flex items-center justify-between rounded-2xl border border-[#ece7dd] bg-white p-5 shadow-[0_2px_10px_rgba(20,66,32,0.04)] transition-shadow duration-200 hover:shadow-[0_8px_24px_rgba(20,66,32,0.09)]"
               >
                 <div
@@ -188,19 +190,19 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'users' && (
           <div className="overflow-hidden rounded-2xl border border-[#ece7dd] bg-white shadow-[0_2px_10px_rgba(20,66,32,0.04)]">
             <div className="flex items-center justify-between border-b border-[#efe9df] px-6 py-4">
-              <h2 className="text-base font-bold text-[var(--type)]">Benutzerverwaltung</h2>
+              <h2 className="text-base font-bold text-[var(--type)]">{t('users.title')}</h2>
               <span className="rounded-full bg-[#eef3ff] px-2.5 py-0.5 text-xs font-semibold text-[var(--primary)]">{users.length}</span>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-[#efe9df] bg-[#faf8f4]">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Benutzer</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Rolle</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Registriert</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('users.colUser')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('users.colRole')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('users.colStatus')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('users.colRegistered')}</th>
                     {permissions.isAdmin && (
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aktionen</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('users.colActions')}</th>
                     )}
                   </tr>
                 </thead>
@@ -229,18 +231,18 @@ const AdminDashboard: React.FC = () => {
                             ? 'bg-blue-100 text-blue-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}>
-                          {user.role === 'admin' ? 'Admin' : user.role === 'moderator' ? 'Moderator' : 'Benutzer'}
+                          {user.role === 'admin' ? t('users.roleAdmin') : user.role === 'moderator' ? t('users.roleModerator') : t('users.roleUser')}
                         </span>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           user.is_banned ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
                         }`}>
-                          {user.is_banned ? 'Gesperrt' : 'Aktiv'}
+                          {user.is_banned ? t('users.statusBanned') : t('users.statusActive')}
                         </span>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {user.created_at ? new Date(user.created_at).toLocaleDateString('de-DE') : 'Unbekannt'}
+                        {user.created_at ? new Date(user.created_at).toLocaleDateString('de-DE') : t('users.registeredUnknown')}
                       </td>
                       {permissions.isAdmin && (
                         <td className="px-4 py-4 whitespace-nowrap text-sm">
@@ -250,14 +252,14 @@ const AdminDashboard: React.FC = () => {
                                 onClick={() => handleBanUser(user.id, true)}
                                 className="rounded-lg bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100"
                               >
-                                Sperren
+                                {t('users.ban')}
                               </button>
                             ) : (
                               <button
                                 onClick={() => handleBanUser(user.id, false)}
                                 className="rounded-lg bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700 transition-colors hover:bg-green-100"
                               >
-                                Entsperren
+                                {t('users.unban')}
                               </button>
                             )}
                             <select
@@ -265,9 +267,9 @@ const AdminDashboard: React.FC = () => {
                               onChange={(e) => handleUserRoleChange(user.id, e.target.value as 'user' | 'moderator' | 'admin')}
                               className="rounded-lg border border-[#e2ddd3] bg-white px-2 py-1 text-sm text-gray-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50"
                             >
-                              <option value="user">Benutzer</option>
-                              <option value="moderator">Moderator</option>
-                              <option value="admin">Admin</option>
+                              <option value="user">{t('users.roleUser')}</option>
+                              <option value="moderator">{t('users.roleModerator')}</option>
+                              <option value="admin">{t('users.roleAdmin')}</option>
                             </select>
                           </div>
                         </td>

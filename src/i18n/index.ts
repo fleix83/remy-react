@@ -8,7 +8,7 @@ export type AppLng = (typeof SUPPORTED_LNGS)[number]
 
 // Feature namespaces — one bundle per feature, mirroring the lazy() routes.
 export const NAMESPACES = [
-  'common', 'auth', 'forum', 'therapist', 'messaging', 'profile', 'admin',
+  'common', 'auth', 'forum', 'therapist', 'messaging', 'profile', 'admin', 'moderation',
 ] as const
 
 // Resolves when the initial language + 'common' namespace are loaded.

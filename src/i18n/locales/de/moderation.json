@@ -1,0 +1,136 @@
+{
+  "title": "Moderation",
+  "accessDenied": {
+    "title": "Zugriff verweigert",
+    "body": "Du hast keine Berechtigung für die Moderationsqueue."
+  },
+  "pendingCount": "Elemente warten auf Moderation",
+  "filter": {
+    "all": "Alle",
+    "posts": "Beiträge",
+    "comments": "Kommentare",
+    "therapists": "Therapeuten"
+  },
+  "contentType": {
+    "post": "Beitrag",
+    "comment": "Kommentar",
+    "therapist": "Therapeut"
+  },
+  "bulk": {
+    "selectedCount": "{{count}} ausgewählt",
+    "publish": "Publizieren",
+    "reject": "Ablehnen",
+    "delete": "Löschen",
+    "clearSelection": "Auswahl aufheben"
+  },
+  "empty": {
+    "queueEmptyTitle": "Queue ist leer",
+    "noFilterTitle": "Keine {{filter}}",
+    "queueEmptyBody": "Alle Inhalte wurden moderiert!",
+    "noFilterBody": "Keine Inhalte in diesem Filter."
+  },
+  "category": {
+    "choose": "Kategorie wählen",
+    "none": "Keine Kategorie"
+  },
+  "designation": {
+    "assign": "Bezeichnung zuweisen…"
+  },
+  "comment": {
+    "replyTo": "Kommentar zu:",
+    "postFallback": "Beitrag #{{id}}"
+  },
+  "actions": {
+    "publish": "Publizieren",
+    "reject": "Ablehnen",
+    "delete": "Löschen",
+    "approve": "Freigeben",
+    "sendMessageTitle": "Nachricht senden",
+    "message": "Nachricht"
+  },
+  "processing": "Verarbeitung …",
+  "toast": {
+    "loadError": "Fehler beim Laden der Moderationsqueue",
+    "postApproved": "Beitrag genehmigt!",
+    "commentApproved": "Kommentar genehmigt!",
+    "approveError": "Fehler beim Genehmigen: {{message}}",
+    "postRejected": "Beitrag abgelehnt!",
+    "commentRejected": "Kommentar abgelehnt!",
+    "rejectError": "Fehler beim Ablehnen: {{message}}",
+    "bulkApproved": "{{count}} Elemente genehmigt!",
+    "bulkApproveError": "Fehler bei der Massengenehmigung",
+    "bulkRejected": "{{count}} Elemente abgelehnt!",
+    "bulkRejectError": "Fehler bei der Massenablehnung",
+    "bulkDeleted": "{{count}} Elemente gelöscht!",
+    "bulkDeleteError": "Fehler bei der Massenlöschung",
+    "postDeleted": "Beitrag gelöscht!",
+    "commentDeleted": "Kommentar gelöscht!",
+    "therapistDeleted": "Therapeut gelöscht!",
+    "deleteError": "Fehler beim Löschen",
+    "categoryChanged": "Kategorie erfolgreich geändert!",
+    "categoryChangeError": "Fehler beim Ändern der Kategorie",
+    "designationAssignError": "Fehler beim Zuweisen der Bezeichnung",
+    "therapistApproved": "Therapeut freigegeben!",
+    "therapistApproveError": "Fehler beim Freigeben",
+    "messageSent": "Nachricht gesendet!",
+    "unknownError": "Unbekannter Fehler"
+  },
+  "bulkReject": {
+    "prompt": "Grund für die Ablehnung (optional):"
+  },
+  "confirm": {
+    "bulkDelete": "Bist du sicher, dass du {{count}} Elemente endgültig löschen möchtest?",
+    "deletePost": "Bist du sicher, dass du diesen Beitrag endgültig löschen möchtest?",
+    "deleteComment": "Bist du sicher, dass du diesen Kommentar endgültig löschen möchtest?",
+    "deleteTherapist": "Bist du sicher, dass du diesen Therapeuten endgültig löschen möchtest?"
+  },
+  "messageModal": {
+    "title": {
+      "approvePost": "Beitrag publizieren",
+      "approveComment": "Kommentar publizieren",
+      "rejectPost": "Beitrag ablehnen",
+      "rejectComment": "Kommentar ablehnen",
+      "message": "Nachricht an {{username}} senden",
+      "fallback": "Moderation"
+    },
+    "userFallback": "Benutzer",
+    "description": {
+      "approvePost": "Dieser Beitrag wird für alle Benutzer sichtbar gemacht.",
+      "approveComment": "Dieser Kommentar wird für alle Benutzer sichtbar gemacht.",
+      "rejectPost": "Dieser Beitrag wird abgelehnt und bleibt nur für den Autor sichtbar.",
+      "rejectComment": "Dieser Kommentar wird abgelehnt und bleibt nur für den Autor sichtbar.",
+      "message": "Sende dem Benutzer eine Nachricht zu seinem Inhalt."
+    },
+    "button": {
+      "publish": "Publizieren",
+      "reject": "Ablehnen",
+      "sendMessage": "Nachricht senden",
+      "confirm": "Bestätigen"
+    },
+    "preview": {
+      "postLabel": "Beitragstitel:",
+      "commentLabel": "Kommentar:",
+      "noTitle": "Kein Titel",
+      "by": "von {{username}}",
+      "unknownUser": "Unbekannt"
+    },
+    "sendToUser": "Nachricht an Benutzer senden",
+    "messageLabel": "Nachricht",
+    "reasonLabel": "Grund für Ablehnung",
+    "rejectPlaceholder": "Erkläre, warum dieser Inhalt nicht geeignet ist …",
+    "messagePlaceholder": "Deine Nachricht an den Benutzer …",
+    "validation": {
+      "messageRequired": "Bitte gib eine Nachricht ein.",
+      "rejectMessageRequired": "Bitte gib eine Nachricht ein oder deaktiviere die Nachrichtenoption."
+    }
+  },
+  "preview": {
+    "replyTo": "Kommentar zu:",
+    "postFallback": "Beitrag #{{id}}",
+    "categoryFallback": "Kategorie",
+    "message": "Nachricht",
+    "delete": "Löschen",
+    "reject": "Ablehnen",
+    "publish": "Publizieren"
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Designation, Therapist, TherapistWithDesignation } from '../../types/database.types'
 import InlineEditCell from '../ui/InlineEditCell'
 import { TherapistsService } from '../../services/therapists.service'
@@ -25,6 +26,7 @@ const selectClass =
  * in the directory) and is flagged amber until an admin assigns a designation.
  */
 const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, adminId, onUpdated, onDeleted }) => {
+  const { t } = useTranslation('admin')
   const [isDeleting, setIsDeleting] = useState(false)
   const [isDismissing, setIsDismissing] = useState(false)
   const [isToggling, setIsToggling] = useState(false)
@@ -48,15 +50,15 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
   const handleTextUpdate = (field: keyof Therapist) => (v: string) => handleUpdate(field, v.trim() || null)
 
   const handleDelete = async () => {
-    const entryName = `${therapist.first_name} ${therapist.last_name}`.trim() || therapist.institution || 'diesen Eintrag'
-    if (!(await confirmDialog({ message: `Möchten Sie "${entryName}" wirklich löschen?`, confirmLabel: 'Löschen', danger: true }))) return
+    const entryName = `${therapist.first_name} ${therapist.last_name}`.trim() || therapist.institution || t('therapistRow.deleteFallbackName')
+    if (!(await confirmDialog({ message: t('therapistRow.deleteConfirm', { name: entryName }), confirmLabel: t('common:actions.delete'), danger: true }))) return
     setIsDeleting(true)
     try {
       await therapistsService.deleteTherapist(therapist.id)
       onDeleted(therapist.id)
     } catch (error) {
       console.error('Error deleting therapist:', error)
-      toast.error('Fehler beim Löschen des Therapeuten')
+      toast.error(t('therapistRow.deleteError'))
     } finally {
       setIsDeleting(false)
     }
@@ -67,7 +69,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
     try {
       await handleUpdate('is_active', !isActive)
     } catch {
-      toast.error('Fehler beim Ändern des Status (Migration 021 angewendet?)')
+      toast.error(t('therapistRow.toggleError'))
     } finally {
       setIsToggling(false)
     }
@@ -81,7 +83,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
       onUpdated({ ...therapist, needs_review: false, reviewed_by: adminId, reviewed_at: new Date().toISOString() })
     } catch (error) {
       console.error('Error dismissing review:', error)
-      toast.error('Fehler beim Bestätigen der Prüfung')
+      toast.error(t('therapistRow.dismissReviewError'))
     } finally {
       setIsDismissing(false)
     }
@@ -109,7 +111,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           <InlineEditCell
             value={therapist.first_name}
             onSave={(v) => handleUpdate('first_name', v)}
-            placeholder="Vorname"
+            placeholder={t('therapistRow.firstNamePlaceholder')}
             displayClassName="text-left"
             required
           />
@@ -120,7 +122,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           <InlineEditCell
             value={therapist.last_name}
             onSave={(v) => handleUpdate('last_name', v)}
-            placeholder="Nachname"
+            placeholder={t('therapistRow.lastNamePlaceholder')}
             displayClassName="text-left"
             required
           />
@@ -132,9 +134,9 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
             value={therapist.designation_id ?? ''}
             onChange={(e) => handleUpdate('designation_id', e.target.value ? parseInt(e.target.value) : null)}
             className={`${selectClass} ${missingDesignation ? 'border-amber-400 bg-amber-50 font-semibold text-amber-800' : ''}`}
-            title={missingDesignation ? 'Keine Bezeichnung zugeordnet — bitte zuordnen' : undefined}
+            title={missingDesignation ? t('therapistRow.missingDesignationTitle') : undefined}
           >
-            <option value="">⚠ Ohne Bezeichnung</option>
+            <option value="">{t('therapistRow.noDesignation')}</option>
             {designations.map((d) => (
               <option key={d.id} value={d.id}>{getDesignationLabel(d)}</option>
             ))}
@@ -146,7 +148,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           <InlineEditCell
             value={therapist.full_title || ''}
             onSave={handleTextUpdate('full_title')}
-            placeholder="Offizieller Titel"
+            placeholder={t('therapistRow.fullTitlePlaceholder')}
             displayClassName="text-left"
           />
         </div>
@@ -156,7 +158,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           <InlineEditCell
             value={therapist.institution || ''}
             onSave={handleTextUpdate('institution')}
-            placeholder="Institution"
+            placeholder={t('therapistRow.institutionPlaceholder')}
             displayClassName="text-left"
           />
         </div>
@@ -166,7 +168,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           <InlineEditCell
             value={therapist.city || ''}
             onSave={handleTextUpdate('city')}
-            placeholder="Ort"
+            placeholder={t('therapistRow.cityPlaceholder')}
             displayClassName="text-left"
           />
         </div>
@@ -190,7 +192,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           <InlineEditCell
             value={therapist.languages || ''}
             onSave={handleTextUpdate('languages')}
-            placeholder="Sprachen"
+            placeholder={t('therapistRow.languagesPlaceholder')}
             displayClassName="text-left"
           />
         </div>
@@ -203,8 +205,8 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
             className={selectClass}
           >
             <option value="">—</option>
-            <option value="f">Weiblich</option>
-            <option value="m">Männlich</option>
+            <option value="f">{t('therapistRow.genderFemale')}</option>
+            <option value="m">{t('therapistRow.genderMale')}</option>
           </select>
         </div>
 
@@ -213,7 +215,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           <InlineEditCell
             value={therapist.specialty || ''}
             onSave={handleTextUpdate('specialty')}
-            placeholder="Fachgebiet"
+            placeholder={t('therapistRow.specialtyPlaceholder')}
             displayClassName="text-left"
           />
         </div>
@@ -223,7 +225,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           <InlineEditCell
             value={therapist.services || ''}
             onSave={handleTextUpdate('services')}
-            placeholder="Angebote"
+            placeholder={t('therapistRow.servicesPlaceholder')}
             displayClassName="text-left"
           />
         </div>
@@ -231,19 +233,19 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
         {/* Status (Review-Queue / Inaktiv) */}
         <div className="flex w-24 shrink-0 flex-col items-start gap-1">
           {!isActive && (
-            <span className="inline-flex rounded-full bg-gray-200 px-2 py-1 text-xs font-semibold text-gray-600">Inaktiv</span>
+            <span className="inline-flex rounded-full bg-gray-200 px-2 py-1 text-xs font-semibold text-gray-600">{t('therapistRow.statusInactive')}</span>
           )}
           {therapist.needs_review ? (
             <button
               onClick={handleDismissReview}
               disabled={isDismissing || !adminId}
               className="rounded-full bg-orange-100 px-2 py-1 text-xs font-semibold text-orange-800 transition-colors hover:bg-orange-200 disabled:opacity-50"
-              title="Als geprüft markieren"
+              title={t('therapistRow.reviewPendingTitle')}
             >
-              {isDismissing ? '…' : 'Prüfung ✓'}
+              {isDismissing ? '…' : t('therapistRow.reviewPending')}
             </button>
           ) : (
-            <span className="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">Geprüft</span>
+            <span className="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">{t('therapistRow.reviewed')}</span>
           )}
         </div>
 
@@ -257,16 +259,16 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
                 ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 : 'bg-green-50 text-green-700 hover:bg-green-100'
             }`}
-            title={isActive ? 'Im Verzeichnis ausblenden (bleibt erhalten)' : 'Wieder im Verzeichnis anzeigen'}
+            title={isActive ? t('therapistRow.deactivateTitle') : t('therapistRow.activateTitle')}
           >
-            {isToggling ? '…' : isActive ? 'Deaktivieren' : 'Aktivieren'}
+            {isToggling ? '…' : isActive ? t('therapistRow.deactivate') : t('therapistRow.activate')}
           </button>
           <button
             onClick={handleDelete}
             disabled={isDeleting}
             className="rounded-lg bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:opacity-50"
           >
-            {isDeleting ? '…' : 'Löschen'}
+            {isDeleting ? '…' : t('common:actions.delete')}
           </button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import UserContentService from '../../services/user-content.service'
 import { useForumStore } from '../../stores/forum.store'
@@ -20,6 +21,7 @@ interface UserContentProps {
 type ContentTab = 'drafts' | 'posts' | 'comments'
 
 const UserContent: React.FC<UserContentProps> = ({ userId }) => {
+  const { t } = useTranslation('profile')
   const [activeTab, setActiveTab] = useState<ContentTab>('posts')
   const [posts, setPosts] = useState<PostWithRelations[]>([])
   const [comments, setComments] = useState<(CommentWithUser & { posts?: Post })[]>([])
@@ -63,7 +65,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
       console.error(`Error loading ${activeTab}:`, error)
       setMessage({
         type: 'error',
-        text: 'Inhalte konnten nicht geladen werden'
+        text: t('content.loadError')
       })
     } finally {
       setLoading(false)
@@ -71,11 +73,11 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   }
 
   const handleDeleteDraft = async (draftId: number) => {
-    if (!(await confirmDialog({ message: 'Diesen Entwurf wirklich löschen?', confirmLabel: 'Löschen', danger: true }))) return
+    if (!(await confirmDialog({ message: t('content.deleteDraftConfirm'), confirmLabel: t('common:actions.delete'), danger: true }))) return
 
     try {
       await UserContentService.deleteDraft(draftId, userId)
-      setMessage({ type: 'success', text: 'Entwurf gelöscht' })
+      setMessage({ type: 'success', text: t('content.deleteDraftSuccess') })
       // Reload drafts
       if (activeTab === 'drafts') {
         await loadContent()
@@ -84,13 +86,13 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
       console.error('Error deleting draft:', error)
       setMessage({
         type: 'error',
-        text: 'Entwurf konnte nicht gelöscht werden'
+        text: t('content.deleteDraftError')
       })
     }
   }
 
   const handleDeleteComment = async (commentId: number) => {
-    if (!(await confirmDialog({ message: 'Diesen Kommentar wirklich löschen?', confirmLabel: 'Löschen', danger: true }))) return
+    if (!(await confirmDialog({ message: t('content.deleteCommentConfirm'), confirmLabel: t('common:actions.delete'), danger: true }))) return
 
     // Optimistic removal for instant feedback
     const previous = comments
@@ -101,7 +103,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
     } catch (error) {
       console.error('Error deleting comment:', error)
       setComments(previous)
-      setMessage({ type: 'error', text: 'Kommentar konnte nicht gelöscht werden' })
+      setMessage({ type: 'error', text: t('content.deleteCommentError') })
     }
   }
 
@@ -190,7 +192,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
       <div className="flex flex-col items-end leading-tight flex-shrink-0">
         <span className="text-xs font-medium" style={{ color: status.textColor }}>{status.text}</span>
         <span className="text-gray-500" style={{ fontSize: '0.65rem' }}>
-          {item.created_at ? formatDate(item.created_at) : 'Unbekannt'}
+          {item.created_at ? formatDate(item.created_at) : t('content.unknownDate')}
         </span>
       </div>
     </div>
@@ -219,7 +221,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
         therapist_id: postData.therapist_id
       })
       
-      setMessage({ type: 'success', text: 'Beitrag aktualisiert' })
+      setMessage({ type: 'success', text: t('content.updatePostSuccess') })
       setShowEditModal(false)
       setEditingPost(null)
       
@@ -231,13 +233,13 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
       console.error('Error updating post:', error)
       setMessage({
         type: 'error',
-        text: 'Beitrag konnte nicht aktualisiert werden'
+        text: t('content.updatePostError')
       })
     }
   }
 
   const handleDeletePost = async (postId: number) => {
-    if (!(await confirmDialog({ message: 'Diesen Beitrag wirklich löschen? Er wird ausgeblendet, vorhandene Kommentare bleiben erhalten.', confirmLabel: 'Löschen', danger: true }))) {
+    if (!(await confirmDialog({ message: t('content.deletePostConfirm'), confirmLabel: t('common:actions.delete'), danger: true }))) {
       return
     }
 
@@ -267,7 +269,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
         throw new Error('Could not delete post - you may not have permission')
       }
 
-      setMessage({ type: 'success', text: 'Beitrag gelöscht' })
+      setMessage({ type: 'success', text: t('content.deletePostSuccess') })
 
       // Reload posts to remove deleted post from view
       if (activeTab === 'posts') {
@@ -277,7 +279,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
       console.error('Error deleting post:', error)
       setMessage({
         type: 'error',
-        text: 'Beitrag konnte nicht gelöscht werden'
+        text: t('content.deletePostError')
       })
     }
   }
@@ -286,14 +288,14 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
     <div className="bg-white shadow-sm" style={{ borderRadius: '28px' }}>
       <div className="border-b border-gray-200">
         <div className="p-6 pb-0">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 text-left">Meine Beiträge</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4 text-left">{t('content.title')}</h2>
 
           {/* Tabs — evenly distributed on mobile to avoid overflow, left-aligned on desktop */}
           <div className="flex md:space-x-8">
             {[
-              { id: 'posts' as ContentTab, label: 'Beiträge', count: posts.length },
-              { id: 'comments' as ContentTab, label: 'Kommentare', count: comments.length },
-              { id: 'drafts' as ContentTab, label: 'Entwürfe', count: drafts.length }
+              { id: 'posts' as ContentTab, label: t('content.tabs.posts'), count: posts.length },
+              { id: 'comments' as ContentTab, label: t('content.tabs.comments'), count: comments.length },
+              { id: 'drafts' as ContentTab, label: t('content.tabs.drafts'), count: drafts.length }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -351,8 +353,8 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                     <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <p className="text-gray-500">Noch keine Beiträge</p>
-                    <p className="text-sm text-gray-400 mt-1">Deine veröffentlichten und ausstehenden Beiträge erscheinen hier</p>
+                    <p className="text-gray-500">{t('content.posts.empty')}</p>
+                    <p className="text-sm text-gray-400 mt-1">{t('content.posts.emptyHint')}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -368,7 +370,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                         {/* Title - Hidden for Rant posts */}
                         {post.category_id !== 4 && (
                           <h3 className="text-lg font-medium mb-1 text-left leading-tight" style={{color: 'var(--post-title)'}}>
-                            {post.title || 'Ohne Titel'}
+                            {post.title || t('content.noTitle')}
                           </h3>
                         )}
 
@@ -385,7 +387,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            Erfahrung mit {formatTherapistPostLine(post.therapists)}
+                            {t('content.experienceWith', { therapist: formatTherapistPostLine(post.therapists) })}
                           </div>
                         )}
 
@@ -404,9 +406,9 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 handleEditPost(post)
                               }}
                               className="text-[var(--primary)] hover:text-[#2d8544] text-xs font-medium transition-colors duration-200"
-                              title="Beitrag bearbeiten"
+                              title={t('content.editPostTitle')}
                             >
-                              Bearbeiten
+                              {t('content.edit')}
                             </button>
                           )}
 
@@ -418,7 +420,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 handleDeletePost(post.id)
                               }}
                               className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
-                              title="Beitrag löschen"
+                              title={t('content.deletePostTitle')}
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -441,8 +443,8 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                     <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    <p className="text-gray-500">Noch keine Kommentare</p>
-                    <p className="text-sm text-gray-400 mt-1">Deine Kommentare zu Beiträgen erscheinen hier</p>
+                    <p className="text-gray-500">{t('content.comments.empty')}</p>
+                    <p className="text-sm text-gray-400 mt-1">{t('content.comments.emptyHint')}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -452,16 +454,16 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                         <div className="-mx-4 -mt-4 mb-3 px-4 py-1.5 text-left" style={{ backgroundColor: 'rgba(107,114,128,0.07)' }}>
                           {comment.posts ? (
                             <span className="text-xs font-medium text-gray-600">
-                              Kommentar zu:{' '}
+                              {t('content.comments.commentOn')}{' '}
                               <Link
                                 to={`/post/${comment.posts.id}`}
                                 className="text-[var(--primary)] hover:text-[#2d8544] underline transition-colors duration-200"
                               >
-                                {comment.posts.title || 'Ohne Titel'}
+                                {comment.posts.title || t('content.noTitle')}
                               </Link>
                             </span>
                           ) : (
-                            <span className="text-xs font-medium text-gray-600">Kommentar</span>
+                            <span className="text-xs font-medium text-gray-600">{t('content.comments.comment')}</span>
                           )}
                         </div>
 
@@ -471,15 +473,15 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3 text-sm text-gray-500">
-                            <span className="text-left">Kommentiert am: {comment.created_at ? formatDate(comment.created_at) : 'Unbekannt'}</span>
+                            <span className="text-left">{t('content.comments.commentedOn', { date: comment.created_at ? formatDate(comment.created_at) : t('content.unknownDate') })}</span>
                             {comment.is_edited && (
-                              <span className="text-xs text-gray-400">Bearbeitet</span>
+                              <span className="text-xs text-gray-400">{t('content.comments.edited')}</span>
                             )}
                           </div>
                           <button
                             onClick={() => handleDeleteComment(comment.id)}
                             className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
-                            title="Kommentar löschen"
+                            title={t('content.deleteCommentTitle')}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -501,8 +503,8 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                     <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <p className="text-gray-500">Keine Entwürfe</p>
-                    <p className="text-sm text-gray-400 mt-1">Deine gespeicherten Entwürfe erscheinen hier</p>
+                    <p className="text-gray-500">{t('content.drafts.empty')}</p>
+                    <p className="text-sm text-gray-400 mt-1">{t('content.drafts.emptyHint')}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -513,11 +515,11 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                         onClick={() => handlePostClick(draft.id)}
                       >
                         {/* Header band - category/canton (left) + status + date (right) */}
-                        {renderItemHeader(draft, { text: 'Entwurf', textColor: '#2563eb', bgColor: 'rgba(37,99,235,0.08)' })}
+                        {renderItemHeader(draft, { text: t('content.draft'), textColor: '#2563eb', bgColor: 'rgba(37,99,235,0.08)' })}
 
                         {/* Post Title */}
                         <h3 className="text-lg font-semibold mb-1 text-left leading-tight">
-                          {draft.title || 'Ohne Titel'}
+                          {draft.title || t('content.noTitle')}
                         </h3>
 
                         {/* Therapist line below title - blue, matches forum list item */}
@@ -533,7 +535,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            Erfahrung mit {formatTherapistPostLine(draft.therapists)}
+                            {t('content.experienceWith', { therapist: formatTherapistPostLine(draft.therapists) })}
                           </div>
                         )}
 
@@ -552,9 +554,9 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 handleEditPost(draft)
                               }}
                               className="text-[var(--primary)] hover:text-[#2d8544] text-xs font-medium transition-colors duration-200"
-                              title="Entwurf bearbeiten"
+                              title={t('content.editDraftTitle')}
                             >
-                              Bearbeiten
+                              {t('content.edit')}
                             </button>
                           )}
 
@@ -566,7 +568,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                                 handleDeleteDraft(draft.id)
                               }}
                               className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
-                              title="Entwurf löschen"
+                              title={t('content.deleteDraftTitle')}
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import UserAvatar from './UserAvatar'
@@ -10,6 +11,7 @@ import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { toast } from '../../stores/toast.store'
 
 const UserProfile: React.FC = () => {
+  const { t } = useTranslation('profile')
   const navigate = useNavigate()
   const { user, userProfile, loadUserProfile, logout } = useAuthStore()
   const [showSettings, setShowSettings] = useState(false)
@@ -23,7 +25,7 @@ const UserProfile: React.FC = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Profil wird geladen...</p>
+          <p className="mt-4 text-gray-600">{t('header.loading')}</p>
         </div>
       </div>
     )
@@ -51,7 +53,7 @@ const UserProfile: React.FC = () => {
       await loadUserProfile()
     } catch (error) {
       console.error('Error uploading background:', error)
-      toast.error(error instanceof Error ? error.message : 'Fehler beim Hochladen des Hintergrundbilds')
+      toast.error(error instanceof Error ? error.message : t('header.backgroundUploadError'))
     } finally {
       setUploadingBackground(false)
       if (backgroundInputRef.current) {
@@ -86,7 +88,7 @@ const UserProfile: React.FC = () => {
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Zurück zum Forum
+            {t('header.backToForum')}
           </button>
 
           {user && (
@@ -144,14 +146,14 @@ const UserProfile: React.FC = () => {
                 {uploadingBackground ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-[var(--primary)]"></div>
-                    Wird hochgeladen...
+                    {t('header.uploadingBanner')}
                   </>
                 ) : (
                   <>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    Banner ändern
+                    {t('header.changeBanner')}
                   </>
                 )}
               </div>
@@ -200,14 +202,14 @@ const UserProfile: React.FC = () => {
             className="absolute border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium text-sm rounded-md px-3 py-1 transition-colors duration-200"
             style={{ top: '16px', right: '16px' }}
           >
-            Bearbeiten
+            {t('header.edit')}
           </button>
           <div className="text-left">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {userProfile.username}
             </h1>
             <p className="text-gray-400 text-sm mb-4">
-              Registriert am {userProfile.created_at ? formatDate(userProfile.created_at) : 'Unbekannt'}
+              {t('header.registeredOn', { date: userProfile.created_at ? formatDate(userProfile.created_at) : t('header.unknownDate') })}
             </p>
 
             {userProfile.bio && (

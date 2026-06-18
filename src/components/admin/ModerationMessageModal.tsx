@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
 import { toast } from '../../stores/toast.store'
@@ -20,6 +21,7 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
   onConfirm,
   isProcessing
 }) => {
+  const { t } = useTranslation('moderation')
   const [message, setMessage] = useState('')
   const [sendMessage, setSendMessage] = useState(false)
 
@@ -33,27 +35,29 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
 
   if (!isOpen || !item || !actionType) return null
 
+  const isPost = item.content_type === 'post'
+
   const getTitle = () => {
     switch (actionType) {
       case 'approve':
-        return `${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} publizieren`
+        return t(isPost ? 'messageModal.title.approvePost' : 'messageModal.title.approveComment')
       case 'reject':
-        return `${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} ablehnen`
+        return t(isPost ? 'messageModal.title.rejectPost' : 'messageModal.title.rejectComment')
       case 'message':
-        return `Nachricht an ${item.users?.username || 'Benutzer'} senden`
+        return t('messageModal.title.message', { username: item.users?.username || t('messageModal.userFallback') })
       default:
-        return 'Moderation'
+        return t('messageModal.title.fallback')
     }
   }
 
   const getDescription = () => {
     switch (actionType) {
       case 'approve':
-        return `Dieser ${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} wird für alle Benutzer sichtbar gemacht.`
+        return t(isPost ? 'messageModal.description.approvePost' : 'messageModal.description.approveComment')
       case 'reject':
-        return `Dieser ${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} wird abgelehnt und nur für den Autor sichtbar bleiben.`
+        return t(isPost ? 'messageModal.description.rejectPost' : 'messageModal.description.rejectComment')
       case 'message':
-        return 'Senden Sie eine Nachricht an den Benutzer bezüglich ihres Inhalts.'
+        return t('messageModal.description.message')
       default:
         return ''
     }
@@ -62,24 +66,24 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
   const getActionButton = () => {
     switch (actionType) {
       case 'approve':
-        return { text: 'Publizieren', color: 'bg-[var(--primary)] hover:bg-[#3b71e6]' }
+        return { text: t('messageModal.button.publish'), color: 'bg-[var(--primary)] hover:bg-[#3b71e6]' }
       case 'reject':
-        return { text: 'Ablehnen', color: 'bg-red-500 hover:bg-red-600' }
+        return { text: t('messageModal.button.reject'), color: 'bg-red-500 hover:bg-red-600' }
       case 'message':
-        return { text: 'Nachricht senden', color: 'bg-[var(--primary)] hover:bg-[#3b71e6]' }
+        return { text: t('messageModal.button.sendMessage'), color: 'bg-[var(--primary)] hover:bg-[#3b71e6]' }
       default:
-        return { text: 'Bestätigen', color: 'bg-gray-600 hover:bg-gray-700' }
+        return { text: t('messageModal.button.confirm'), color: 'bg-gray-600 hover:bg-gray-700' }
     }
   }
 
   const handleSubmit = () => {
     if (actionType === 'message' && !message.trim()) {
-      toast.info('Bitte geben Sie eine Nachricht ein.')
+      toast.info(t('messageModal.validation.messageRequired'))
       return
     }
 
     if (actionType === 'reject' && sendMessage && !message.trim()) {
-      toast.info('Bitte geben Sie eine Nachricht ein oder deaktivieren Sie die Nachrichtenoption.')
+      toast.info(t('messageModal.validation.rejectMessageRequired'))
       return
     }
 
@@ -121,11 +125,11 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
         {/* Content Preview */}
         <div className="bg-white/80 p-3 rounded-xl mb-4 text-left">
           <div className="text-xs text-gray-500 mb-1">
-            {item.content_type === 'post' ? 'Beitragstitel:' : 'Kommentar:'}
+            {item.content_type === 'post' ? t('messageModal.preview.postLabel') : t('messageModal.preview.commentLabel')}
           </div>
           <div className="text-sm text-[var(--type)]">
             {item.content_type === 'post'
-              ? item.title || 'Kein Titel'
+              ? item.title || t('messageModal.preview.noTitle')
               : (item.content || '').replace(/<[^>]*>/g, '').substring(0, 100) + '...'
             }
           </div>
@@ -139,7 +143,7 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
               </div>
             )}
             <div className="text-xs text-gray-500">
-              von {item.users?.username || 'Unbekannt'}
+              {t('messageModal.preview.by', { username: item.users?.username || t('messageModal.preview.unknownUser') })}
             </div>
           </div>
         </div>
@@ -155,7 +159,7 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
                 className="w-4 h-4 accent-[var(--primary)] bg-white border-gray-300 rounded"
               />
               <span className="text-sm text-gray-700">
-                Nachricht an Benutzer senden
+                {t('messageModal.sendToUser')}
               </span>
             </label>
           </div>
@@ -165,7 +169,7 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
         {(actionType === 'message' || sendMessage) && (
           <div className="mb-4 text-left">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {actionType === 'reject' ? 'Grund für Ablehnung' : 'Nachricht'}
+              {actionType === 'reject' ? t('messageModal.reasonLabel') : t('messageModal.messageLabel')}
             </label>
             <textarea
               value={message}
@@ -174,8 +178,8 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
               rows={3}
               placeholder={
                 actionType === 'reject'
-                  ? 'Erklären Sie, warum dieser Inhalt nicht geeignet ist...'
-                  : 'Ihre Nachricht an den Benutzer...'
+                  ? t('messageModal.rejectPlaceholder')
+                  : t('messageModal.messagePlaceholder')
               }
             />
           </div>
@@ -187,7 +191,7 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
             disabled={isProcessing}
             className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-50"
           >
-            Abbrechen
+            {t('common:actions.cancel')}
           </button>
 
           <button
@@ -195,7 +199,7 @@ const ModerationMessageModal: React.FC<ModerationMessageModalProps> = ({
             disabled={isProcessing}
             className={`rounded-full px-5 py-2 text-sm font-medium text-white transition-colors disabled:opacity-50 ${action.color}`}
           >
-            {isProcessing ? 'Verarbeitung...' : action.text}
+            {isProcessing ? t('processing') : action.text}
           </button>
         </div>
       </div>

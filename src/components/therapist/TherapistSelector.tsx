@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { TherapistsService } from '../../services/therapists.service'
 import TherapistCreateModal from './TherapistCreateModal'
 import type { Therapist, TherapistWithDesignation } from '../../types/database.types'
@@ -19,6 +20,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
   canton = '',
   disabled = false
 }) => {
+  const { t } = useTranslation('therapist')
   const [searchTerm, setSearchTerm] = useState('')
   const [therapists, setTherapists] = useState<TherapistWithDesignation[]>([])
   const [filteredTherapists, setFilteredTherapists] = useState<TherapistWithDesignation[]>([])
@@ -196,7 +198,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
           onBlur={handleInputBlur}
           onClick={handleInputFocus}
           onKeyDown={handleKeyDown}
-          placeholder="Therapeut:innen/Institution suchen"
+          placeholder={t('selector.searchPlaceholder')}
           disabled={disabled}
           className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-[#37a653] disabled:bg-gray-100 disabled:text-gray-500"
         />
@@ -236,29 +238,29 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span>Therapeut:in oder Institution hinzufügen</span>
+            <span>{t('selector.addEntry')}</span>
           </div>
 
           {/* Therapist options */}
           {filteredTherapists.length === 0 && searchTerm ? (
             <div className="px-4 py-3 text-gray-500 text-sm text-left">
-              Keine Therapeuten gefunden für "{searchTerm}"
+              {t('selector.noResults', { term: searchTerm })}
               {therapists.length > 0 && (
                 <div className="text-xs mt-1">
-                  ({therapists.length} Therapeuten insgesamt verfügbar)
+                  {t('selector.totalAvailable', { count: therapists.length })}
                 </div>
               )}
             </div>
           ) : filteredTherapists.length === 0 && therapists.length === 0 ? (
             <div className="px-4 py-3 text-gray-500 text-sm text-left">
-              Noch keine Therapeuten vorhanden. Erstellen Sie den ersten Therapeuten.
+              {t('selector.noneYet')}
             </div>
           ) : filteredTherapists.length === 0 ? (
             <div className="px-4 py-3 text-gray-500 text-sm text-left">
-              Keine Therapeuten für diesen Kanton gefunden
+              {t('selector.noneForCanton')}
               {therapists.length > 0 && (
                 <div className="text-xs mt-1">
-                  ({therapists.length} Therapeuten insgesamt verfügbar)
+                  {t('selector.totalAvailable', { count: therapists.length })}
                 </div>
               )}
             </div>
@@ -284,9 +286,9 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
                       fill="none"
                       stroke="#856404"
                       viewBox="0 0 24 24"
-                      aria-label="Wird geprüft"
+                      aria-label={t('selector.underReview')}
                     >
-                      <title>Wird geprüft</title>
+                      <title>{t('selector.underReview')}</title>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
                     </svg>
                   )}

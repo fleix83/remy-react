@@ -1,0 +1,136 @@
+{
+  "title": "Moderation",
+  "accessDenied": {
+    "title": "Access denied",
+    "body": "You don't have permission to access the moderation queue."
+  },
+  "pendingCount": "items waiting for moderation",
+  "filter": {
+    "all": "All",
+    "posts": "Posts",
+    "comments": "Comments",
+    "therapists": "Therapists"
+  },
+  "contentType": {
+    "post": "Post",
+    "comment": "Comment",
+    "therapist": "Therapist"
+  },
+  "bulk": {
+    "selectedCount": "{{count}} selected",
+    "publish": "Publish",
+    "reject": "Reject",
+    "delete": "Delete",
+    "clearSelection": "Clear selection"
+  },
+  "empty": {
+    "queueEmptyTitle": "Queue is empty",
+    "noFilterTitle": "No {{filter}}",
+    "queueEmptyBody": "All content has been moderated!",
+    "noFilterBody": "No content in this filter."
+  },
+  "category": {
+    "choose": "Choose category",
+    "none": "No category"
+  },
+  "designation": {
+    "assign": "Assign designation…"
+  },
+  "comment": {
+    "replyTo": "Comment on:",
+    "postFallback": "Post #{{id}}"
+  },
+  "actions": {
+    "publish": "Publish",
+    "reject": "Reject",
+    "delete": "Delete",
+    "approve": "Approve",
+    "sendMessageTitle": "Send message",
+    "message": "Message"
+  },
+  "processing": "Processing …",
+  "toast": {
+    "loadError": "Error loading the moderation queue",
+    "postApproved": "Post approved!",
+    "commentApproved": "Comment approved!",
+    "approveError": "Error approving: {{message}}",
+    "postRejected": "Post rejected!",
+    "commentRejected": "Comment rejected!",
+    "rejectError": "Error rejecting: {{message}}",
+    "bulkApproved": "{{count}} items approved!",
+    "bulkApproveError": "Error during bulk approval",
+    "bulkRejected": "{{count}} items rejected!",
+    "bulkRejectError": "Error during bulk rejection",
+    "bulkDeleted": "{{count}} items deleted!",
+    "bulkDeleteError": "Error during bulk deletion",
+    "postDeleted": "Post deleted!",
+    "commentDeleted": "Comment deleted!",
+    "therapistDeleted": "Therapist deleted!",
+    "deleteError": "Error deleting",
+    "categoryChanged": "Category changed successfully!",
+    "categoryChangeError": "Error changing the category",
+    "designationAssignError": "Error assigning the designation",
+    "therapistApproved": "Therapist approved!",
+    "therapistApproveError": "Error approving",
+    "messageSent": "Message sent!",
+    "unknownError": "Unknown error"
+  },
+  "bulkReject": {
+    "prompt": "Reason for rejection (optional):"
+  },
+  "confirm": {
+    "bulkDelete": "Are you sure you want to permanently delete {{count}} items?",
+    "deletePost": "Are you sure you want to permanently delete this post?",
+    "deleteComment": "Are you sure you want to permanently delete this comment?",
+    "deleteTherapist": "Are you sure you want to permanently delete this therapist?"
+  },
+  "messageModal": {
+    "title": {
+      "approvePost": "Publish post",
+      "approveComment": "Publish comment",
+      "rejectPost": "Reject post",
+      "rejectComment": "Reject comment",
+      "message": "Send a message to {{username}}",
+      "fallback": "Moderation"
+    },
+    "userFallback": "User",
+    "description": {
+      "approvePost": "This post will be made visible to all users.",
+      "approveComment": "This comment will be made visible to all users.",
+      "rejectPost": "This post will be rejected and will remain visible only to the author.",
+      "rejectComment": "This comment will be rejected and will remain visible only to the author.",
+      "message": "Send the user a message about their content."
+    },
+    "button": {
+      "publish": "Publish",
+      "reject": "Reject",
+      "sendMessage": "Send message",
+      "confirm": "Confirm"
+    },
+    "preview": {
+      "postLabel": "Post title:",
+      "commentLabel": "Comment:",
+      "noTitle": "No title",
+      "by": "by {{username}}",
+      "unknownUser": "Unknown"
+    },
+    "sendToUser": "Send a message to the user",
+    "messageLabel": "Message",
+    "reasonLabel": "Reason for rejection",
+    "rejectPlaceholder": "Explain why this content is not suitable …",
+    "messagePlaceholder": "Your message to the user …",
+    "validation": {
+      "messageRequired": "Please enter a message.",
+      "rejectMessageRequired": "Please enter a message or disable the message option."
+    }
+  },
+  "preview": {
+    "replyTo": "Comment on:",
+    "postFallback": "Post #{{id}}",
+    "categoryFallback": "Category",
+    "message": "Message",
+    "delete": "Delete",
+    "reject": "Reject",
+    "publish": "Publish"
+  }
+}

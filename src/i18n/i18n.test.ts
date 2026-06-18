@@ -90,4 +90,22 @@ describe('i18n runtime chain', () => {
 
     await i18n.changeLanguage('de')
   })
+
+  it('lazy-loads the profile/therapist/admin/moderation namespaces', async () => {
+    await i18n.changeLanguage('de')
+    await i18n.loadNamespaces(['profile', 'therapist', 'admin', 'moderation'])
+    expect(i18n.t('profile:header.edit')).toBe('Bearbeiten')
+    expect(i18n.t('therapist:directory.title')).toBe('Therapeut:innen')
+    expect(i18n.t('admin:dashboard.accessDeniedTitle')).toBe('Zugriff verweigert')
+    expect(i18n.t('moderation:title')).toBe('Moderation')
+
+    await i18n.changeLanguage('en')
+    await i18n.loadNamespaces(['profile', 'therapist', 'admin', 'moderation'])
+    // EN bundles load and resolve (not returning the raw key)
+    expect(i18n.t('therapist:directory.title')).not.toBe('directory.title')
+    expect(i18n.t('admin:dashboard.accessDeniedTitle')).not.toBe('dashboard.accessDeniedTitle')
+    expect(i18n.t('moderation:accessDenied.title')).not.toBe('accessDenied.title')
+
+    await i18n.changeLanguage('de')
+  })
 })

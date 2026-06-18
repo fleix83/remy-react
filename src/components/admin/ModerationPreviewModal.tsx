@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import UserAvatar from '../user/UserAvatar'
 import type { ModerationQueueItem } from '../../types/database.types'
 import { getPostDisplayTitle } from '../../utils/text.utils'
@@ -42,6 +43,8 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
   postTitles,
   categories
 }) => {
+  const { t } = useTranslation('moderation')
+
   if (!isOpen || !item) return null
 
   const formatDate = (dateString: string | null) => {
@@ -83,7 +86,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
               className={`absolute -top-2 left-4 z-10 inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-md text-white ${badgeTint[item.content_type]}`}
               style={{fontSize: '0.65rem'}}
             >
-              {item.content_type === 'post' ? 'Beitrag' : item.content_type === 'therapist' ? 'Therapeut' : 'Kommentar'}
+              {t(`contentType.${item.content_type}`)}
             </span>
             {/* Header with Canton */}
             <div className="flex items-start justify-end mb-4">
@@ -113,7 +116,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
             {(item as any).category_id && (
               <div className="mb-2 flex justify-start">
                 <span className="inline-flex items-center px-2 py-0.5 font-medium bg-[var(--primary)] text-white" style={{fontSize: '0.65rem', borderRadius: '3px'}}>
-                  {categories[(item as any).category_id] || 'Kategorie'}
+                  {categories[(item as any).category_id] || t('preview.categoryFallback')}
                 </span>
               </div>
             )}
@@ -165,11 +168,11 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                 <div>
                   {item.post_id && (
                     <div className="text-xs text-gray-500 mb-4 text-left">
-                      Kommentar zu: <Link
+                      {t('preview.replyTo')} <Link
                         to={`/post/${item.post_id}`}
                         className="text-[var(--primary)] hover:underline"
                       >
-                        {postTitles[item.post_id] ? truncateTitle(postTitles[item.post_id]) : `Post #${item.post_id}`}
+                        {postTitles[item.post_id] ? truncateTitle(postTitles[item.post_id]) : t('preview.postFallback', { id: item.post_id })}
                       </Link>
                     </div>
                   )}
@@ -189,12 +192,12 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                 onClick={() => onDelete(item)}
                 disabled={isProcessing}
                 className="flex items-center gap-1.5 text-xs font-medium text-red-500 hover:text-red-700 transition-colors duration-200 disabled:opacity-50"
-                title="Löschen"
+                title={t('preview.delete')}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                Löschen
+                {t('preview.delete')}
               </button>
             ) : (
               <>
@@ -202,42 +205,42 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                   onClick={() => onMessage(item)}
                   disabled={isProcessing}
                   className="flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-[var(--primary)] transition-colors duration-200 disabled:opacity-50"
-                  title="Nachricht senden"
+                  title={t('actions.sendMessageTitle')}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  Message
+                  {t('preview.message')}
                 </button>
 
                 <button
                   onClick={() => onDelete(item)}
                   disabled={isProcessing}
                   className="flex items-center gap-1.5 text-xs font-medium text-red-500 hover:text-red-700 transition-colors duration-200 disabled:opacity-50"
-                  title="Löschen"
+                  title={t('preview.delete')}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
-                  Löschen
+                  {t('preview.delete')}
                 </button>
 
                 <button
                   onClick={() => onReject(item)}
                   disabled={isProcessing}
                   className="text-xs font-medium text-red-500 hover:text-red-700 transition-colors duration-200 disabled:opacity-50"
-                  title="Ablehnen"
+                  title={t('preview.reject')}
                 >
-                  Ablehnen
+                  {t('preview.reject')}
                 </button>
 
                 <button
                   onClick={() => onApprove(item)}
                   disabled={isProcessing}
                   className="rounded-full bg-[var(--primary)] hover:bg-[#3b71e6] text-white px-5 py-2 text-xs font-medium transition-colors disabled:opacity-50"
-                  title="Publizieren"
+                  title={t('preview.publish')}
                 >
-                  {isProcessing ? 'Verarbeitung...' : 'Publizieren'}
+                  {isProcessing ? t('processing') : t('preview.publish')}
                 </button>
               </>
             )}

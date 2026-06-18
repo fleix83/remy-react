@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Designation } from '../../types/database.types'
 import InlineEditCell from '../ui/InlineEditCell'
 import { DesignationsService } from '../../services/designations.service'
@@ -16,6 +17,7 @@ interface DesignationRowProps {
  * sort order (also the keyword-match priority — most specific first), active flag.
  */
 const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, onDelete }) => {
+  const { t } = useTranslation('admin')
   const [isDeleting, setIsDeleting] = useState(false)
   const designationsService = new DesignationsService()
 
@@ -30,14 +32,14 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
   }
 
   const handleDelete = async () => {
-    if (!(await confirmDialog({ message: `Möchten Sie die Bezeichnung "${designation.label_de}" wirklich löschen?`, confirmLabel: 'Löschen', danger: true }))) return
+    if (!(await confirmDialog({ message: t('designationRow.deleteConfirm', { label: designation.label_de }), confirmLabel: t('common:actions.delete'), danger: true }))) return
     setIsDeleting(true)
     try {
       await designationsService.deleteDesignation(designation.id)
       onDelete(designation.id)
     } catch (error) {
       console.error('Error deleting designation:', error)
-      toast.error('Fehler beim Löschen der Bezeichnung (wird sie noch von Therapeuten verwendet?)')
+      toast.error(t('designationRow.deleteError'))
     } finally {
       setIsDeleting(false)
     }
@@ -50,7 +52,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
           <InlineEditCell
             value={designation.slug}
             onSave={(v) => handleUpdate('slug', v)}
-            placeholder="slug"
+            placeholder={t('designationRow.slugPlaceholder')}
             displayClassName="text-left"
           />
         </div>
@@ -58,7 +60,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
           <InlineEditCell
             value={designation.label_de}
             onSave={(v) => handleUpdate('label_de', v)}
-            placeholder="Label DE"
+            placeholder={t('designationRow.labelPlaceholderDe')}
             displayClassName="text-left"
           />
         </div>
@@ -66,7 +68,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
           <InlineEditCell
             value={designation.label_fr}
             onSave={(v) => handleUpdate('label_fr', v)}
-            placeholder="Label FR"
+            placeholder={t('designationRow.labelPlaceholderFr')}
             displayClassName="text-left"
           />
         </div>
@@ -74,7 +76,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
           <InlineEditCell
             value={designation.label_it}
             onSave={(v) => handleUpdate('label_it', v)}
-            placeholder="Label IT"
+            placeholder={t('designationRow.labelPlaceholderIt')}
             displayClassName="text-left"
           />
         </div>
@@ -82,7 +84,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
           <InlineEditCell
             value={designation.keywords || ''}
             onSave={(v) => handleUpdate('keywords', v)}
-            placeholder="Keywords (kommagetrennt, z.B. FMH, Psychiat)"
+            placeholder={t('designationRow.keywordsPlaceholder')}
             displayClassName="text-left"
           />
         </div>
@@ -90,7 +92,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
           <InlineEditCell
             value={String(designation.sort_order)}
             onSave={(v) => handleUpdate('sort_order', parseInt(v) || 100)}
-            placeholder="Sort"
+            placeholder={t('designationRow.sortPlaceholder')}
             displayClassName="text-center"
           />
         </div>
@@ -100,7 +102,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
             checked={designation.is_active}
             onChange={(e) => handleUpdate('is_active', e.target.checked)}
             className="h-5 w-5 cursor-pointer rounded border-gray-300 accent-[var(--primary)] focus:ring-[var(--primary)]"
-            title={designation.is_active ? 'Aktiv' : 'Inaktiv'}
+            title={designation.is_active ? t('designationRow.activeTitle') : t('designationRow.inactiveTitle')}
           />
         </div>
         <div className="w-20 flex justify-end">
@@ -109,7 +111,7 @@ const DesignationRow: React.FC<DesignationRowProps> = ({ designation, onUpdate, 
             disabled={isDeleting}
             className="px-2 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
           >
-            {isDeleting ? '...' : 'Löschen'}
+            {isDeleting ? '...' : t('common:actions.delete')}
           </button>
         </div>
       </div>

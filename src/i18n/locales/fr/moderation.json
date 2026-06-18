@@ -1,0 +1,136 @@
+{
+  "title": "Modération",
+  "accessDenied": {
+    "title": "Accès refusé",
+    "body": "Tu n'as pas l'autorisation d'accéder à la file de modération."
+  },
+  "pendingCount": "éléments en attente de modération",
+  "filter": {
+    "all": "Tous",
+    "posts": "Publications",
+    "comments": "Commentaires",
+    "therapists": "Thérapeutes"
+  },
+  "contentType": {
+    "post": "Publication",
+    "comment": "Commentaire",
+    "therapist": "Thérapeute"
+  },
+  "bulk": {
+    "selectedCount": "{{count}} sélectionné(s)",
+    "publish": "Publier",
+    "reject": "Refuser",
+    "delete": "Supprimer",
+    "clearSelection": "Annuler la sélection"
+  },
+  "empty": {
+    "queueEmptyTitle": "La file est vide",
+    "noFilterTitle": "Aucun(e) {{filter}}",
+    "queueEmptyBody": "Tous les contenus ont été modérés !",
+    "noFilterBody": "Aucun contenu dans ce filtre."
+  },
+  "category": {
+    "choose": "Choisir une catégorie",
+    "none": "Aucune catégorie"
+  },
+  "designation": {
+    "assign": "Attribuer une désignation…"
+  },
+  "comment": {
+    "replyTo": "Commentaire sur :",
+    "postFallback": "Publication n°{{id}}"
+  },
+  "actions": {
+    "publish": "Publier",
+    "reject": "Refuser",
+    "delete": "Supprimer",
+    "approve": "Valider",
+    "sendMessageTitle": "Envoyer un message",
+    "message": "Message"
+  },
+  "processing": "Traitement …",
+  "toast": {
+    "loadError": "Erreur lors du chargement de la file de modération",
+    "postApproved": "Publication approuvée !",
+    "commentApproved": "Commentaire approuvé !",
+    "approveError": "Erreur lors de l'approbation : {{message}}",
+    "postRejected": "Publication refusée !",
+    "commentRejected": "Commentaire refusé !",
+    "rejectError": "Erreur lors du refus : {{message}}",
+    "bulkApproved": "{{count}} éléments approuvés !",
+    "bulkApproveError": "Erreur lors de l'approbation groupée",
+    "bulkRejected": "{{count}} éléments refusés !",
+    "bulkRejectError": "Erreur lors du refus groupé",
+    "bulkDeleted": "{{count}} éléments supprimés !",
+    "bulkDeleteError": "Erreur lors de la suppression groupée",
+    "postDeleted": "Publication supprimée !",
+    "commentDeleted": "Commentaire supprimé !",
+    "therapistDeleted": "Thérapeute supprimé !",
+    "deleteError": "Erreur lors de la suppression",
+    "categoryChanged": "Catégorie modifiée avec succès !",
+    "categoryChangeError": "Erreur lors de la modification de la catégorie",
+    "designationAssignError": "Erreur lors de l'attribution de la désignation",
+    "therapistApproved": "Thérapeute validé !",
+    "therapistApproveError": "Erreur lors de la validation",
+    "messageSent": "Message envoyé !",
+    "unknownError": "Erreur inconnue"
+  },
+  "bulkReject": {
+    "prompt": "Motif du refus (facultatif) :"
+  },
+  "confirm": {
+    "bulkDelete": "Es-tu sûr de vouloir supprimer définitivement {{count}} éléments ?",
+    "deletePost": "Es-tu sûr de vouloir supprimer définitivement cette publication ?",
+    "deleteComment": "Es-tu sûr de vouloir supprimer définitivement ce commentaire ?",
+    "deleteTherapist": "Es-tu sûr de vouloir supprimer définitivement ce thérapeute ?"
+  },
+  "messageModal": {
+    "title": {
+      "approvePost": "Publier la publication",
+      "approveComment": "Publier le commentaire",
+      "rejectPost": "Refuser la publication",
+      "rejectComment": "Refuser le commentaire",
+      "message": "Envoyer un message à {{username}}",
+      "fallback": "Modération"
+    },
+    "userFallback": "Utilisateur",
+    "description": {
+      "approvePost": "Cette publication sera rendue visible pour tous les utilisateurs.",
+      "approveComment": "Ce commentaire sera rendu visible pour tous les utilisateurs.",
+      "rejectPost": "Cette publication sera refusée et restera visible uniquement pour l'auteur.",
+      "rejectComment": "Ce commentaire sera refusé et restera visible uniquement pour l'auteur.",
+      "message": "Envoie un message à l'utilisateur au sujet de son contenu."
+    },
+    "button": {
+      "publish": "Publier",
+      "reject": "Refuser",
+      "sendMessage": "Envoyer un message",
+      "confirm": "Confirmer"
+    },
+    "preview": {
+      "postLabel": "Titre de la publication :",
+      "commentLabel": "Commentaire :",
+      "noTitle": "Sans titre",
+      "by": "de {{username}}",
+      "unknownUser": "Inconnu"
+    },
+    "sendToUser": "Envoyer un message à l'utilisateur",
+    "messageLabel": "Message",
+    "reasonLabel": "Motif du refus",
+    "rejectPlaceholder": "Explique pourquoi ce contenu ne convient pas …",
+    "messagePlaceholder": "Ton message à l'utilisateur …",
+    "validation": {
+      "messageRequired": "Veuillez saisir un message.",
+      "rejectMessageRequired": "Veuillez saisir un message ou désactiver l'option de message."
+    }
+  },
+  "preview": {
+    "replyTo": "Commentaire sur :",
+    "postFallback": "Publication n°{{id}}",
+    "categoryFallback": "Catégorie",
+    "message": "Message",
+    "delete": "Supprimer",
+    "reject": "Refuser",
+    "publish": "Publier"
+  }
+}

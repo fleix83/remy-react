@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationQueueService } from '../../services/moderation-queue.service'
 import { supabase } from '../../lib/supabase'
@@ -16,6 +17,7 @@ import { toast } from '../../stores/toast.store'
 import { confirmDialog } from '../../stores/confirm.store'
 
 const ModerationQueue: React.FC = () => {
+  const { t } = useTranslation('moderation')
   const permissions = usePermissions()
   const [queueItems, setQueueItems] = useState<ModerationQueueItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -186,7 +188,7 @@ const ModerationQueue: React.FC = () => {
       ])
     } catch (error) {
       console.error('Error loading moderation queue:', error)
-      toast.error('Fehler beim Laden der Moderationsqueue')
+      toast.error(t('toast.loadError'))
     } finally {
       setLoading(false)
     }
@@ -214,10 +216,10 @@ const ModerationQueue: React.FC = () => {
       
       // Remove item from queue
       setQueueItems(prev => prev.filter(i => i.id !== item.id))
-      toast.success(`${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} genehmigt!`)
+      toast.success(item.content_type === 'post' ? t('toast.postApproved') : t('toast.commentApproved'))
     } catch (error) {
       console.error('Error approving content:', error)
-      toast.error('Fehler beim Genehmigen: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error(t('toast.approveError', { message: error instanceof Error ? error.message : t('toast.unknownError') }))
       throw error // Re-throw so the modal doesn't close
     } finally {
       setProcessingId(null)
@@ -246,10 +248,10 @@ const ModerationQueue: React.FC = () => {
       
       // Remove item from queue
       setQueueItems(prev => prev.filter(i => i.id !== item.id))
-      toast.success(`${item.content_type === 'post' ? 'Beitrag' : 'Kommentar'} abgelehnt!`)
+      toast.success(item.content_type === 'post' ? t('toast.postRejected') : t('toast.commentRejected'))
     } catch (error) {
       console.error('Error rejecting content:', error)
-      toast.error('Fehler beim Ablehnen: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'))
+      toast.error(t('toast.rejectError', { message: error instanceof Error ? error.message : t('toast.unknownError') }))
       throw error // Re-throw so the modal doesn't close
     } finally {
       setProcessingId(null)
@@ -270,17 +272,17 @@ const ModerationQueue: React.FC = () => {
       // Remove items from queue
       setQueueItems(prev => prev.filter(i => !selectedItems.has(i.id)))
       setSelectedItems(new Set())
-      toast.success(`${items.length} Elemente genehmigt!`)
+      toast.success(t('toast.bulkApproved', { count: items.length }))
     } catch (error) {
       console.error('Error bulk approving:', error)
-      toast.error('Fehler bei der Massengenehmigung')
+      toast.error(t('toast.bulkApproveError'))
     }
   }
 
   const handleBulkReject = async () => {
     if (!permissions.canModerate || !permissions.userProfile?.id || selectedItems.size === 0) return
 
-    const reason = prompt('Grund für die Ablehnung (optional):')
+    const reason = prompt(t('bulkReject.prompt'))
     if (reason === null) return // User cancelled
 
     const items = Array.from(selectedItems).map(id => {
@@ -300,18 +302,18 @@ const ModerationQueue: React.FC = () => {
       // Remove items from queue
       setQueueItems(prev => prev.filter(i => !selectedItems.has(i.id)))
       setSelectedItems(new Set())
-      toast.success(`${items.length} Elemente abgelehnt!`)
+      toast.success(t('toast.bulkRejected', { count: items.length }))
     } catch (error) {
       console.error('Error bulk rejecting:', error)
-      toast.error('Fehler bei der Massenablehnung')
+      toast.error(t('toast.bulkRejectError'))
     }
   }
 
   const handleBulkDelete = async () => {
     if (!permissions.canModerate || selectedItems.size === 0) return
 
-    const confirmMessage = `Sind Sie sicher, dass Sie ${selectedItems.size} Elemente endgültig löschen möchten?`
-    if (!(await confirmDialog({ message: confirmMessage, confirmLabel: 'Löschen', danger: true }))) return
+    const confirmMessage = t('confirm.bulkDelete', { count: selectedItems.size })
+    if (!(await confirmDialog({ message: confirmMessage, confirmLabel: t('common:actions.delete'), danger: true }))) return
 
     const items = Array.from(selectedItems).map(id => {
       const item = queueItems.find(i => i.id === id)
@@ -324,10 +326,10 @@ const ModerationQueue: React.FC = () => {
       // Remove items from queue
       setQueueItems(prev => prev.filter(i => !selectedItems.has(i.id)))
       setSelectedItems(new Set())
-      toast.success(`${items.length} Elemente gelöscht!`)
+      toast.success(t('toast.bulkDeleted', { count: items.length }))
     } catch (error) {
       console.error('Error bulk deleting:', error)
-      toast.error('Fehler bei der Massenlöschung')
+      toast.error(t('toast.bulkDeleteError'))
     }
   }
 
@@ -374,10 +376,13 @@ const ModerationQueue: React.FC = () => {
   }
 
   const handleDelete = async (item: ModerationQueueItem) => {
-    const contentTypeLabel = item.content_type === 'post' ? 'diesen Beitrag' : item.content_type === 'therapist' ? 'diesen Therapeuten' : 'diesen Kommentar'
-    const confirmMessage = `Sind Sie sicher, dass Sie ${contentTypeLabel} endgültig löschen möchten?`
+    const confirmMessage = item.content_type === 'post'
+      ? t('confirm.deletePost')
+      : item.content_type === 'therapist'
+        ? t('confirm.deleteTherapist')
+        : t('confirm.deleteComment')
 
-    if (!(await confirmDialog({ message: confirmMessage, confirmLabel: 'Löschen', danger: true }))) return
+    if (!(await confirmDialog({ message: confirmMessage, confirmLabel: t('common:actions.delete'), danger: true }))) return
 
     setProcessingId(item.id)
     try {
@@ -391,11 +396,15 @@ const ModerationQueue: React.FC = () => {
 
       // Remove item from queue
       setQueueItems(prev => prev.filter(i => i.id !== item.id))
-      const deletedLabel = item.content_type === 'post' ? 'Beitrag' : item.content_type === 'therapist' ? 'Therapeut' : 'Kommentar'
-      toast.success(`${deletedLabel} gelöscht!`)
+      const deletedToast = item.content_type === 'post'
+        ? t('toast.postDeleted')
+        : item.content_type === 'therapist'
+          ? t('toast.therapistDeleted')
+          : t('toast.commentDeleted')
+      toast.success(deletedToast)
     } catch (error) {
       console.error('Error deleting content:', error)
-      toast.error('Fehler beim Löschen')
+      toast.error(t('toast.deleteError'))
     } finally {
       setProcessingId(null)
     }
@@ -418,7 +427,7 @@ const ModerationQueue: React.FC = () => {
       } else if (messageAction === 'message') {
         // TODO: Implement direct messaging
         console.log(`Direct message to user: ${message}`)
-        toast.success('Nachricht gesendet!')
+        toast.success(t('toast.messageSent'))
       }
       
       // Only close modal if operations succeeded
@@ -456,10 +465,10 @@ const ModerationQueue: React.FC = () => {
           : item
       ))
       
-      toast.success('Kategorie erfolgreich geändert!')
+      toast.success(t('toast.categoryChanged'))
     } catch (error) {
       console.error('Error updating category:', error)
-      toast.error('Fehler beim Ändern der Kategorie')
+      toast.error(t('toast.categoryChangeError'))
     }
   }
 
@@ -598,8 +607,8 @@ const ModerationQueue: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#f8f5e6] flex items-center justify-center px-4">
         <div className="max-w-sm rounded-2xl border border-[#ece7dd] bg-white px-8 py-10 text-center shadow-[0_8px_30px_rgba(20,66,32,0.06)]">
-          <h1 className="text-2xl font-bold text-[var(--type)] mb-2">Zugriff verweigert</h1>
-          <p className="text-slate-500">Sie haben keine Berechtigung für die Moderationsqueue.</p>
+          <h1 className="text-2xl font-bold text-[var(--type)] mb-2">{t('accessDenied.title')}</h1>
+          <p className="text-slate-500">{t('accessDenied.body')}</p>
         </div>
       </div>
     )
@@ -627,23 +636,23 @@ const ModerationQueue: React.FC = () => {
         {/* Header */}
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="text-left">
-            <h1 className="text-2xl font-bold text-[var(--primary)] mb-2 text-left">Moderation</h1>
+            <h1 className="text-2xl font-bold text-[var(--primary)] mb-2 text-left">{t('title')}</h1>
             <p className="text-[var(--primary)] text-left flex items-center gap-2">
               <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-sm" style={{fontSize: '22px', color: '#fa8072'}}>
                 {filteredQueueItems.length}
               </span>
-              Elemente warten auf Moderation
+              {t('pendingCount')}
             </p>
           </div>
 
           {/* Filter pills */}
           <div className="flex items-center gap-1 rounded-full bg-white/80 p-1 shadow-sm self-start md:self-auto">
             {([
-              ['alle', 'Alle'],
-              ['beiträge', 'Beiträge'],
-              ['kommentare', 'Kommentare'],
-              ['therapeuten', 'Therapeuten']
-            ] as const).map(([value, label]) => (
+              ['alle', 'filter.all'],
+              ['beiträge', 'filter.posts'],
+              ['kommentare', 'filter.comments'],
+              ['therapeuten', 'filter.therapists']
+            ] as const).map(([value, labelKey]) => (
               <button
                 key={value}
                 onClick={() => setContentFilter(value)}
@@ -653,7 +662,7 @@ const ModerationQueue: React.FC = () => {
                     : 'text-[var(--primary)] hover:bg-[#eef3ff]'
                 }`}
               >
-                {label}
+                {t(labelKey)}
               </button>
             ))}
           </div>
@@ -663,31 +672,31 @@ const ModerationQueue: React.FC = () => {
         {selectedItems.size > 0 && (
           <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/80 px-5 py-3 shadow-sm">
             <span className="text-sm font-medium text-slate-600">
-              {selectedItems.size} ausgewählt
+              {t('bulk.selectedCount', { count: selectedItems.size })}
             </span>
             <button
               onClick={handleBulkApprove}
               className="rounded-full bg-[var(--primary)] hover:bg-[#3b71e6] text-white px-4 py-1.5 text-xs font-medium transition-colors"
             >
-              Publizieren
+              {t('bulk.publish')}
             </button>
             <button
               onClick={handleBulkReject}
               className="text-xs font-medium text-red-500 hover:text-red-700 transition-colors"
             >
-              Ablehnen
+              {t('bulk.reject')}
             </button>
             <button
               onClick={handleBulkDelete}
               className="text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
             >
-              Löschen
+              {t('bulk.delete')}
             </button>
             <button
               onClick={() => setSelectedItems(new Set())}
               className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition-colors"
             >
-              Auswahl aufheben
+              {t('bulk.clearSelection')}
             </button>
           </div>
         )}
@@ -701,10 +710,18 @@ const ModerationQueue: React.FC = () => {
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-[var(--primary)] mb-2">
-              {contentFilter === 'alle' ? 'Queue ist leer' : `Keine ${contentFilter}`}
+              {contentFilter === 'alle'
+                ? t('empty.queueEmptyTitle')
+                : t('empty.noFilterTitle', {
+                    filter: contentFilter === 'beiträge'
+                      ? t('filter.posts')
+                      : contentFilter === 'kommentare'
+                        ? t('filter.comments')
+                        : t('filter.therapists')
+                  })}
             </h3>
             <p className="text-[var(--primary)]">
-              {contentFilter === 'alle' ? 'Alle Inhalte wurden moderiert!' : 'Keine Inhalte in diesem Filter.'}
+              {contentFilter === 'alle' ? t('empty.queueEmptyBody') : t('empty.noFilterBody')}
             </p>
           </div>
         ) : (
@@ -727,7 +744,7 @@ const ModerationQueue: React.FC = () => {
                   className={`absolute -top-2 left-4 z-10 inline-flex items-center px-2 py-0.5 rounded-lg font-medium shadow-md text-white ${badgeTint[item.content_type]}`}
                   style={{fontSize: '0.65rem'}}
                 >
-                  {item.content_type === 'post' ? 'Beitrag' : item.content_type === 'therapist' ? 'Therapeut' : 'Kommentar'}
+                  {t(`contentType.${item.content_type}`)}
                 </span>
                 {/* Header with Canton */}
                 <div className="flex items-start justify-end mb-4">
@@ -790,7 +807,7 @@ const ModerationQueue: React.FC = () => {
                           }}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <option value="" disabled>Kategorie wählen</option>
+                          <option value="" disabled>{t('category.choose')}</option>
                           {allCategories.map(cat => (
                             <option key={cat.id} value={cat.id} style={{backgroundColor: '#1a3442', color: 'white'}}>
                               {cat.name_de}
@@ -809,12 +826,12 @@ const ModerationQueue: React.FC = () => {
                         >
                           {item.category_id && categories[item.category_id]
                             ? categories[item.category_id]
-                            : 'Kategorie wählen'}
+                            : t('category.choose')}
                         </span>
                       </div>
                     ) : (
                       <span className="px-2 py-0.5 font-medium bg-[var(--primary)] text-white inline-block" style={{fontSize: '0.65rem', borderRadius: '3px'}}>
-                        {item.category_id && categories[item.category_id] ? categories[item.category_id] : 'Keine Kategorie'}
+                        {item.category_id && categories[item.category_id] ? categories[item.category_id] : t('category.none')}
                       </span>
                     )}
                   </div>
@@ -878,13 +895,13 @@ const ModerationQueue: React.FC = () => {
                             ))
                           } catch (error) {
                             console.error('Error assigning designation:', error)
-                            toast.error('Fehler beim Zuweisen der Bezeichnung')
+                            toast.error(t('toast.designationAssignError'))
                           }
                         }}
                         className="mt-2 text-sm border rounded px-2 py-1 bg-white text-gray-700"
                         style={{ borderColor: '#ebebeb' }}
                       >
-                        <option value="">Bezeichnung zuweisen…</option>
+                        <option value="">{t('designation.assign')}</option>
                         {designations.map(d => (
                           <option key={d.id} value={d.id}>{getDesignationLabel(d)}</option>
                         ))}
@@ -898,14 +915,14 @@ const ModerationQueue: React.FC = () => {
                       </div>
                       {item.post_id && (
                         <div className="text-xs text-gray-500 text-left">
-                          Kommentar zu: <Link
+                          {t('comment.replyTo')} <Link
                             to={`/post/${item.post_id}`}
                             className="text-[var(--primary)] hover:underline"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {postTitles[item.post_id] ?
                               truncateText(postTitles[item.post_id], 40) :
-                              `Post #${item.post_id}`
+                              t('comment.postFallback', { id: item.post_id })
                             }
                           </Link>
                         </div>
@@ -931,7 +948,7 @@ const ModerationQueue: React.FC = () => {
                         }}
                         disabled={processingId === item.id}
                         className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200 disabled:opacity-50"
-                        title="Löschen"
+                        title={t('actions.delete')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -947,19 +964,19 @@ const ModerationQueue: React.FC = () => {
                           try {
                             await moderationService.dismissTherapist(item.id, permissions.userProfile.id)
                             setQueueItems(prev => prev.filter(i => i.id !== item.id))
-                            toast.success('Therapeut freigegeben!')
+                            toast.success(t('toast.therapistApproved'))
                           } catch (error) {
                             console.error('Error dismissing therapist:', error)
-                            toast.error('Fehler beim Freigeben')
+                            toast.error(t('toast.therapistApproveError'))
                           } finally {
                             setProcessingId(null)
                           }
                         }}
                         disabled={processingId === item.id}
                         className="text-xs font-medium text-[#37a653] hover:text-[#2c8743] transition-colors duration-200 disabled:opacity-50"
-                        title="Freigeben"
+                        title={t('actions.approve')}
                       >
-                        Freigeben
+                        {t('actions.approve')}
                       </button>
                     </>
                   ) : (
@@ -972,7 +989,7 @@ const ModerationQueue: React.FC = () => {
                         }}
                         disabled={processingId === item.id}
                         className="text-gray-400 hover:text-[var(--primary)] p-1 transition-colors duration-200 disabled:opacity-50"
-                        title="Nachricht senden"
+                        title={t('actions.sendMessageTitle')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -986,7 +1003,7 @@ const ModerationQueue: React.FC = () => {
                         }}
                         disabled={processingId === item.id}
                         className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200 disabled:opacity-50"
-                        title="Löschen"
+                        title={t('actions.delete')}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -1002,9 +1019,9 @@ const ModerationQueue: React.FC = () => {
                         }}
                         disabled={processingId === item.id}
                         className="text-xs font-medium text-red-500 hover:text-red-700 transition-colors duration-200 disabled:opacity-50"
-                        title="Ablehnen"
+                        title={t('actions.reject')}
                       >
-                        Ablehnen
+                        {t('actions.reject')}
                       </button>
 
                       <button
@@ -1016,9 +1033,9 @@ const ModerationQueue: React.FC = () => {
                         }}
                         disabled={processingId === item.id}
                         className="text-xs font-medium text-[var(--primary)] hover:text-[#3b71e6] transition-colors duration-200 disabled:opacity-50"
-                        title="Publizieren"
+                        title={t('actions.publish')}
                       >
-                        Publizieren
+                        {t('actions.publish')}
                       </button>
                     </>
                   )}

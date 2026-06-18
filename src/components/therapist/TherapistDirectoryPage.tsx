@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import TherapistSelector from './TherapistSelector'
 import TherapistCreateModal from './TherapistCreateModal'
@@ -12,6 +13,7 @@ import UserAvatar from '../user/UserAvatar'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 
 const TherapistDirectoryPage: React.FC = () => {
+  const { t } = useTranslation('therapist')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [selectedTherapist, setSelectedTherapist] = useState<TherapistWithDesignation | null>(null)
@@ -119,7 +121,7 @@ const TherapistDirectoryPage: React.FC = () => {
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Zurück zum Forum
+            {t('directory.backToForum')}
           </button>
 
           {user && userProfile && (
@@ -139,12 +141,12 @@ const TherapistDirectoryPage: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '48px' }}>
         {/* Title */}
         <h1 className="text-2xl font-bold mb-4 text-left" style={{ color: 'var(--primary)' }}>
-          Therapeut:innen
+          {t('directory.title')}
         </h1>
 
         {/* Lead text */}
         <p className="text-gray-700 leading-relaxed mb-8 text-base text-left">
-          Finde hier alle Therapeut:innen und Institutionen und dazugehörige Erfahrungsberichte.
+          {t('directory.lead')}
         </p>
 
         {/* White container for search and results */}
@@ -162,12 +164,12 @@ const TherapistDirectoryPage: React.FC = () => {
                   onClick={() => setShowEditModal(true)}
                   className="absolute right-0 text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1 text-sm"
                   style={{ top: '-10px' }}
-                  title="Therapeut bearbeiten"
+                  title={t('directory.editTitle')}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  <span>Bearbeiten</span>
+                  <span>{t('directory.edit')}</span>
                 </button>
               )}
 
@@ -184,7 +186,7 @@ const TherapistDirectoryPage: React.FC = () => {
                   <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
                   </svg>
-                  <span>Wird geprüft</span>
+                  <span>{t('directory.underReview')}</span>
                 </div>
               )}
 
@@ -233,14 +235,14 @@ const TherapistDirectoryPage: React.FC = () => {
                 {/* City */}
                 {selectedTherapist.city && (
                   <p className="text-gray-700 mt-2">
-                    <strong>Stadt:</strong> {selectedTherapist.city}
+                    <strong>{t('directory.city')}</strong> {selectedTherapist.city}
                   </p>
                 )}
 
                 {/* Languages */}
                 {selectedTherapist.languages && (
                   <p className="text-gray-700 mt-2">
-                    <strong>Sprachen:</strong> {selectedTherapist.languages}
+                    <strong>{t('directory.languages')}</strong> {selectedTherapist.languages}
                   </p>
                 )}
               </div>
@@ -248,7 +250,7 @@ const TherapistDirectoryPage: React.FC = () => {
               {/* Posts Container */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <h4 className="text-lg font-bold text-gray-900 mb-4 text-left">
-                  Beiträge über {displayName}
+                  {t('directory.postsAbout', { name: displayName })}
                 </h4>
 
                 {isLoadingPosts ? (
@@ -273,9 +275,9 @@ const TherapistDirectoryPage: React.FC = () => {
                                 {post.title}
                               </h5>
                               <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                                <span>{post.users?.username || 'Anonym'}</span>
+                                <span>{post.users?.username || t('directory.anonymous')}</span>
                                 <span>•</span>
-                                <span>{post.created_at ? formatDate(post.created_at) : 'Unbekannt'}</span>
+                                <span>{post.created_at ? formatDate(post.created_at) : t('directory.unknownDate')}</span>
                               </div>
 
                               {/* Tags */}
@@ -315,7 +317,7 @@ const TherapistDirectoryPage: React.FC = () => {
                   </div>
                 ) : (
                   <p className="text-gray-500 text-left py-4">
-                    Noch keine Beiträge über diesen Therapeuten vorhanden.
+                    {t('directory.noPosts')}
                   </p>
                 )}
               </div>
