@@ -65,17 +65,19 @@ const Navigation: React.FC<NavigationProps> = ({
             {/* Avatar + username → slide menu */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex items-center gap-2 text-gray-700 hover:opacity-80 transition-opacity relative"
+              className="flex items-center gap-2 text-gray-700 hover:opacity-80 transition-opacity"
             >
               {userProfile && (
-                <UserAvatar user={userProfile} size="small" />
+                <span className="relative inline-flex">
+                  <UserAvatar user={userProfile} size="small" />
+                  {totalUnreadCount > 0 && (
+                    <div className="absolute -top-0.5 -right-0.5 rounded-full w-3 h-3" style={{ backgroundColor: '#ff6b35' }} />
+                  )}
+                </span>
               )}
               <span className="rounded-full bg-white/60 px-3 py-1 text-sm font-medium">
                 {userProfile?.username || t('menu')}
               </span>
-              {totalUnreadCount > 0 && (
-                <div className="absolute -top-0.5 -right-2 rounded-full w-3 h-3" style={{ backgroundColor: '#ff6b35' }} />
-              )}
             </button>
 
             {/* Default region (only when the user has one set) */}

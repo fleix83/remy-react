@@ -1,12 +1,11 @@
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMessagesStore } from '../../stores/messages.store'
-import { useAuthStore } from '../../stores/auth.store'
+import { useNotificationsStore } from '../../stores/notifications.store'
 import { format } from 'date-fns'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { dateFnsLocale } from '../../utils/dateFormat'
-import type { Conversation } from '../../services/messages.service'
 
 interface MobileSlideMenuProps {
   isOpen: boolean
@@ -22,28 +21,18 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate()
-  const { user } = useAuthStore()
   const { t } = useTranslation()
   const lang = useActiveLanguage()
-  const { unreadCount: messageCount, loadConversations, setCurrentConversation } = useMessagesStore()
-  const [recentConversations, setRecentConversations] = useState<Conversation[]>([])
+  const { unreadCount: messageCount, conversations, loadConversations, setCurrentConversation } = useMessagesStore()
+  const { notifications, loadNotifications, markPostNotificationsAsRead } = useNotificationsStore()
 
-  // Load recent conversations when menu opens
+  // Refresh unread messages + notifications whenever the menu opens
   useEffect(() => {
     if (isOpen) {
-      loadConversations().then(() => {
-        const convs = useMessagesStore.getState().conversations
-        // Only show conversations where the last message is incoming
-        const incoming = convs.filter(c =>
-          c.lastMessage && c.lastMessage.sender_id !== user?.id
-        )
-        const sorted = [...incoming].sort((a, b) =>
-          new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
-        )
-        setRecentConversations(sorted.slice(0, 5))
-      })
+      loadConversations()
+      loadNotifications()
     }
-  }, [isOpen, loadConversations])
+  }, [isOpen, loadConversations, loadNotifications])
 
   // Handle escape key
   useEffect(() => {
@@ -78,6 +67,42 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
     onLogout()
     onClose()
   }, [onLogout, onClose])
+
+  // Top-of-menu feed: unread direct messages + unread "comment on your post"
+  // notifications, merged into one time-sorted list capped at 3. Items vanish
+  // once read (the conversation/notification is marked read on click and on
+  // viewing the target), so only genuinely-unread items ever appear here.
+  const menuMessages = useMemo(() => {
+    const dmItems = conversations
+      .filter(c => c.unreadCount > 0 && c.lastMessage)
+      .map(c => ({
+        key: `dm-${c.id}`,
+        name: c.participant.username,
+        date: c.lastMessage?.created_at || c.lastActivity,
+        preview: c.lastMessage?.content?.replace(/<[^>]*>/g, '').slice(0, 50) || '…',
+        onClick: () => {
+          setCurrentConversation(c)
+          handleNavigation('/messages')
+        },
+      }))
+
+    const commentItems = notifications
+      .filter(n => n.type === 'post_comment' && !n.is_read && n.related_post_id)
+      .map(n => ({
+        key: `comment-${n.id}`,
+        name: n.title || 'Neue Antwort',
+        date: n.created_at || '',
+        preview: (n.message || '').replace(/<[^>]*>/g, '').slice(0, 60) || '…',
+        onClick: () => {
+          markPostNotificationsAsRead(n.related_post_id!)
+          handleNavigation(`/post/${n.related_post_id}`)
+        },
+      }))
+
+    return [...dmItems, ...commentItems]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 3)
+  }, [conversations, notifications, setCurrentConversation, markPostNotificationsAsRead, handleNavigation])
 
   // Don't render if not open
   if (!isOpen) return null
@@ -116,42 +141,37 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
         <div className="flex flex-col h-full pt-16">
           <nav className="flex-1 flex items-center justify-center">
             <div className="text-left">
-            {/* Recent messages - desktop only */}
-            {recentConversations.length > 0 && (
-              <div className="hidden md:block mb-4">
+            {/* Unread messages + post-comment notifications, newest first (max 3) */}
+            {menuMessages.length > 0 && (
+              <div className="mb-4">
                 <div className="space-y-1">
-                  {recentConversations.map(conv => (
+                  {menuMessages.map(item => (
                     <button
-                      key={conv.id}
-                      onClick={() => {
-                        setCurrentConversation(conv)
-                        handleNavigation('/messages')
-                      }}
+                      key={item.key}
+                      onClick={item.onClick}
                       className="block text-left hover:opacity-80 transition-opacity"
                       style={{
                         padding: '4px 8px',
                         borderRadius: '6px',
                         width: 'fit-content',
-                        backgroundColor: conv.unreadCount > 0 ? '#ffffffb3' : '#f1fbf47a'
+                        backgroundColor: '#fffae6'
                       }}
                     >
                       <div className="text-sm text-gray-700 flex items-center">
-                        {conv.unreadCount > 0 && (
-                          <span
-                            className="mr-1.5 inline-block h-2 w-2 flex-shrink-0 rounded-full"
-                            style={{ backgroundColor: '#ff6b35' }}
-                          />
-                        )}
-                        <span className="font-medium">{conv.participant.username}</span>
+                        <span
+                          className="mr-1.5 inline-block h-2 w-2 flex-shrink-0 rounded-full"
+                          style={{ backgroundColor: '#ff6b35' }}
+                        />
+                        <span className="font-medium">{item.name}</span>
                         <span className="text-gray-400 mx-1">·</span>
                         <span className="text-gray-400" style={{ fontSize: '0.75rem' }}>
-                          {conv.lastMessage?.created_at
-                            ? format(new Date(conv.lastMessage.created_at), 'dd. MMM', { locale: dateFnsLocale(lang) })
+                          {item.date
+                            ? format(new Date(item.date), 'dd. MMM', { locale: dateFnsLocale(lang) })
                             : ''}
                         </span>
                       </div>
                       <div className="text-xs text-gray-500 truncate" style={{ maxWidth: '220px' }}>
-                        {conv.lastMessage?.content?.replace(/<[^>]*>/g, '').slice(0, 50) || '...'}
+                        {item.preview}
                       </div>
                     </button>
                   ))}
