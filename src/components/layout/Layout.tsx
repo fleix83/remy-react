@@ -79,22 +79,22 @@ const Layout: React.FC<LayoutProps> = ({
               style={{ filter: 'grayscale(100%)' }}
             />
             <div
-              className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[17px] text-[#828282] md:pb-[5px] md:whitespace-nowrap"
+              className="flex flex-col items-start gap-y-2 text-left text-[17px] text-[#828282] md:pb-[5px]"
               style={{ fontFamily: '"Nunito Sans", sans-serif' }}
             >
               <a href="/impressum" className="transition-opacity hover:opacity-70">Impressum</a>
               <a href="/datenschutz" className="transition-opacity hover:opacity-70">Datenschutz</a>
-              <span className="hidden h-[18px] w-px self-center bg-[#828282] opacity-40 md:block" aria-hidden="true"></span>
-              <span>Made by Studio LUMINELLI</span>
+              <span>Made by<br />Studio LUMINELLI</span>
             </div>
           </div>
 
           {/* Right: lead text (desktop only) */}
           <div
-            className="hidden shrink-0 uppercase leading-[1.18] text-[#828282] md:block md:text-right md:text-[30px] lg:text-[36px] xl:text-[42px]"
+            className="hidden shrink-0 leading-[1.18] text-[#828282] md:block md:max-w-[300px]"
             style={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, letterSpacing: '0.06em', wordSpacing: '0.1em' }}
           >
-            REMY, DAS FORUM<br />FÜR MENSCHEN IN<br />PSYCHOTHERAPIE
+            <p className="md:text-[34px]">Die Wahrheit ist selten rein und nie einfach.</p>
+            <p className="md:text-[28px] md:text-right">Oscar Wilde</p>
           </div>
         </div>
       </footer>
