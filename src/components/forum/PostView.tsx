@@ -156,8 +156,15 @@ const PostView: React.FC = () => {
 
   if (!post) return null
 
+  // Header gradient tints to the post's category colour (at 75% HWB whiteness,
+  // applied in CSS via the --postview-cat custom property).
+  const headerCatColor = getCategoryColorById(post.category_id, allCategories)
+
   return (
-    <div className="page-postview min-h-screen relative z-10" style={{ backgroundColor: '#fff' }}>
+    <div
+      className="page-postview min-h-screen relative z-10"
+      style={{ backgroundColor: '#fff', '--postview-cat': headerCatColor } as React.CSSProperties}
+    >
       {/* Shared forum top header: gradient, REMY logo, lebenskurve curve and
           the avatar/region/language group. */}
       <Navigation onCreatePost={() => {}} />

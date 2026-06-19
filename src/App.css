@@ -792,6 +792,12 @@
     background: linear-gradient(180deg, #e2ecff, transparent);
   }
 
+  /* Post view: the header gradient tints to the current post's category colour
+     at 75% HWB whiteness (--postview-cat is set on .page-postview by PostView). */
+  .page-postview nav {
+    background: linear-gradient(180deg, hwb(from var(--postview-cat, #e2ecff) h 75% b), transparent);
+  }
+
   /* Lebenskurve line art layered on top of the gradient (gradient stays
      visible through the transparent SVG). Sits behind the logo/avatar. */
   .page-forum nav .forum-curve,
