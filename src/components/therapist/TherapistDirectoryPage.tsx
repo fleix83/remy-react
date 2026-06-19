@@ -101,13 +101,13 @@ const TherapistDirectoryPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#eefaf0' }}>
+    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#faeeee' }}>
       {/* Header bar - matching PostView */}
       <div
         className="w-full flex items-center justify-center relative"
         style={{
-          height: '65px',
-          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
+          height: '265px',
+          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, transparent 100%)'
         }}
       >
         <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
@@ -193,7 +193,7 @@ const TherapistDirectoryPage: React.FC = () => {
 
               {/* Therapist name with canton flag */}
               <div className="flex items-center gap-2 mb-4">
-                <h3 className="text-xl font-bold text-[#37a653] text-left">
+                <h3 className="text-xl font-bold text-[var(--primary)] text-left">
                   {displayName}
                 </h3>
                 {selectedTherapist.canton && (
@@ -272,7 +272,7 @@ const TherapistDirectoryPage: React.FC = () => {
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <h5 className="font-semibold text-[#37a653] hover:text-[#2d8542] mb-2">
+                              <h5 className="font-semibold text-[#fa8072] hover:text-[#e9685b] mb-2">
                                 {post.title}
                               </h5>
                               <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
