@@ -325,7 +325,7 @@
     gap: 6px !important;
     background-color: #ffffff !important;
     color: #000 !important;
-    font-family: "Gaegu", cursive !important;
+    font-family: "Gaegu", "Gaegu Accents", cursive !important;
     font-weight: 500 !important;
     font-size: 18px !important;
     line-height: 1 !important;
@@ -345,7 +345,7 @@
     position: absolute !important;
     background-color: rgba(255, 255, 255, 0.6) !important;
     border-radius: 60px !important;
-    font-family: "Gaegu", cursive !important;
+    font-family: "Gaegu", "Gaegu Accents", cursive !important;
     font-weight: 700 !important;
     color: rgb(84, 130, 255) !important;
     white-space: nowrap !important;
@@ -390,7 +390,7 @@
     width: auto !important;
     min-width: 180px !important;
     max-width: 240px !important;
-    font-family: "Gaegu", cursive !important;
+    font-family: "Gaegu", "Gaegu Accents", cursive !important;
     font-size: 28px !important;
     padding: 12px 28px !important;
     align-self: auto !important;
@@ -784,15 +784,18 @@
     --bg-element: #e6efff;
   }
 
-  /* Top header: taller, blue gradient fading into the white page */
-  .page-forum nav {
+  /* Top header: taller, blue gradient fading into the white page.
+     Shared by the forum landing and the post view. */
+  .page-forum nav,
+  .page-postview nav {
     height: 200px;
     background: linear-gradient(180deg, #e2ecff, transparent);
   }
 
   /* Lebenskurve line art layered on top of the gradient (gradient stays
      visible through the transparent SVG). Sits behind the logo/avatar. */
-  .page-forum nav .forum-curve {
+  .page-forum nav .forum-curve,
+  .page-postview nav .forum-curve {
     display: block;
     position: absolute;
     left: 50%;
@@ -807,10 +810,12 @@
   }
 
   /* Logo top-aligned and pulled left 36px */
-  .page-forum nav .h-20 {
+  .page-forum nav .h-20,
+  .page-postview nav .h-20 {
     align-items: flex-start;
   }
-  .page-forum nav .h-20 > div:first-child {
+  .page-forum nav .h-20 > div:first-child,
+  .page-postview nav .h-20 > div:first-child {
     margin-left: -36px;
   }
 

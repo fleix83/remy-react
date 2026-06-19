@@ -14,7 +14,7 @@ import { SelectableText } from '../ui/RichTextEditor'
 import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
-import MobileSlideMenu from '../layout/MobileSlideMenu'
+import Navigation from '../layout/Navigation'
 import { getPostDisplayTitle } from '../../utils/text.utils'
 import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
@@ -26,12 +26,11 @@ const PostView: React.FC = () => {
   const location = useLocation()
   const postId = id ? parseInt(id) : null
   const [showEditModal, setShowEditModal] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openCommentForm, setOpenCommentForm] = useState(false)
   const [replyToPostAuthor, setReplyToPostAuthor] = useState(false)
 
   const { currentPost: post, loading, loadPost, updatePost } = useForumStore()
-  const { user, userProfile, logout } = useAuthStore()
+  const { user } = useAuthStore()
 
   // Set up real-time comments for this post
   useCommentsRealtime(postId!)
@@ -116,10 +115,6 @@ const PostView: React.FC = () => {
     return user && post && user.id === post.user_id
   }
 
-  const handleSignOut = async () => {
-    await logout()
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: '#f6fff7' }}>
@@ -162,54 +157,30 @@ const PostView: React.FC = () => {
   if (!post) return null
 
   return (
-    <div className="min-h-screen relative z-10" style={{ backgroundColor: 'rgb(238 250 240)' }}>
-      {/* Header bar */}
-      <div
-        className="w-full flex items-center justify-center relative"
-        style={{
-          height: '65px',
-          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
-        }}
-      >
-        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
-          {/* Invisible spacer to balance the avatar and center the back button */}
-          <div className="w-6 h-6"></div>
-
-          <button
-            onClick={() => navigate('/')}
-            className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
-            style={{ color: 'var(--primary)' }}
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            {t('backToForumNav')}
-          </button>
-
-          {user && (
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden relative p-1 rounded-full transition-colors mr-2.5"
-            >
-              {userProfile && (
-                <UserAvatar
-                  user={userProfile}
-                  size="small"
-                />
-              )}
-            </button>
-          )}
-        </div>
-      </div>
+    <div className="page-postview min-h-screen relative z-10" style={{ backgroundColor: '#fff' }}>
+      {/* Shared forum top header: gradient, REMY logo, lebenskurve curve and
+          the avatar/region/language group. */}
+      <Navigation onCreatePost={() => {}} />
 
       <div className="max-w-6xl mx-auto md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '24px' }}>
+        {/* Back to forum — sits a bit below the lebenskurve header */}
+        <button
+          onClick={() => navigate('/')}
+          className="inline-flex items-center font-medium hover:opacity-80 transition-opacity mb-4 px-4 md:px-0"
+          style={{ color: 'var(--primary)' }}
+        >
+          <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          {t('backToForumNav')}
+        </button>
+
 
         {/* Post Content */}
         <div
           className="p-6 mb-4 relative"
           style={{
             borderRadius: '30px',
-            backgroundColor: 'rgb(242, 251, 244)',
             zIndex: 1,
             paddingTop: '66px'
           }}
@@ -379,14 +350,6 @@ const PostView: React.FC = () => {
             onUpdate={handleEditPost}
           />
         )}
-
-        {/* Mobile Slide-in Menu */}
-        <MobileSlideMenu
-          isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
-          userRole={userProfile?.role || undefined}
-          onLogout={handleSignOut}
-        />
       </div>
     </div>
   )

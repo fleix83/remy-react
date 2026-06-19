@@ -107,7 +107,7 @@ const Navigation: React.FC<NavigationProps> = ({
               <div 
                 className="text-[var(--primary)]"
                 style={{ 
-                  fontFamily: 'Gaegu, cursive',
+                  fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                   fontWeight: 700,
                   fontSize: '60px',
                   letterSpacing: '-2.1px'

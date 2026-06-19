@@ -435,7 +435,7 @@ function AuthForm() {
               {/* Tagline - mobile single block (hidden on desktop via CSS) */}
               {!showRegisterForm && (
                 <div className="landing-tagline" style={{
-                  fontFamily: '"Gaegu", cursive',
+                  fontFamily: '"Gaegu", "Gaegu Accents", cursive',
                   fontWeight: 700,
                   fontSize: '51px',
                   lineHeight: '45px',
@@ -662,7 +662,7 @@ function AuthForm() {
             padding: '0 24px'
           }}>
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-              <h2 style={{ fontFamily: 'Gaegu, cursive', fontWeight: 'bold', fontSize: '60px', color: 'var(--primary)', lineHeight: '0.9', marginBottom: '8px' }}>
+              <h2 style={{ fontFamily: 'Gaegu, "Gaegu Accents", cursive', fontWeight: 'bold', fontSize: '60px', color: 'var(--primary)', lineHeight: '0.9', marginBottom: '8px' }}>
                 {landing.login.title}
               </h2>
               <p style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '18px', color: '#144220' }}>

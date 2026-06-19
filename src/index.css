@@ -3,6 +3,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 
+/* Gaegu has no accented-Latin glyphs (é/è/É/È). These patched faces supply just
+   those four — composed from Gaegu's own apostrophe stroke — and are used as a
+   per-glyph fallback right after "Gaegu" in the font stacks. unicode-range keeps
+   them from downloading unless an accented character actually appears. */
+@font-face {
+  font-family: 'Gaegu Accents';
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/gaegu-accents-300.woff2') format('woff2');
+  unicode-range: U+00C8-00C9, U+00E8-00E9;
+}
+@font-face {
+  font-family: 'Gaegu Accents';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/gaegu-accents-400.woff2') format('woff2');
+  unicode-range: U+00C8-00C9, U+00E8-00E9;
+}
+@font-face {
+  font-family: 'Gaegu Accents';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/gaegu-accents-700.woff2') format('woff2');
+  unicode-range: U+00C8-00C9, U+00E8-00E9;
+}
+
 /* Global CSS Custom Properties for Light Theme */
 :root {
   /* Core Theme Colors */

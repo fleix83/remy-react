@@ -22,8 +22,8 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate()
-  const { user, updateProfile } = useAuthStore()
-  const { t, i18n } = useTranslation()
+  const { user } = useAuthStore()
+  const { t } = useTranslation()
   const lang = useActiveLanguage()
   const { unreadCount: messageCount, loadConversations, setCurrentConversation } = useMessagesStore()
   const [recentConversations, setRecentConversations] = useState<Conversation[]>([])
@@ -44,13 +44,6 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
       })
     }
   }, [isOpen, loadConversations])
-
-  // Handle clicking outside the menu
-  const handleBackdropClick = useCallback((event: React.MouseEvent) => {
-    if (event.target === event.currentTarget) {
-      onClose()
-    }
-  }, [onClose])
 
   // Handle escape key
   useEffect(() => {
@@ -86,37 +79,23 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
     onClose()
   }, [onLogout, onClose])
 
-  // Switch UI language: flip i18next instantly (chrome + content), then persist
-  // to the user's profile so it follows them across devices. Menu stays open.
-  const handleLanguageChange = useCallback((lng: string) => {
-    void i18n.changeLanguage(lng)
-    if (user) updateProfile({ language_preference: lng }).catch(() => {})
-  }, [i18n, user, updateProfile])
-
   // Don't render if not open
   if (!isOpen) return null
 
   return (
     <div
-      className="fixed inset-0 z-50"
+      className="fixed inset-0 z-50 pointer-events-none"
       role="dialog"
       aria-modal="true"
       aria-label="Navigation menu"
     >
-      {/* Backdrop with custom green overlay */}
-      <div 
-        className="absolute inset-0 cursor-pointer transition-opacity duration-300 ease-in-out"
-        style={{ backgroundColor: '#aed0b4f5' }}
-        onClick={handleBackdropClick}
-      />
-      
-      {/* Slide-in menu - full on mobile, 30% on desktop */}
+      {/* Slide-in menu - full on mobile, 30% on desktop. No backdrop. */}
       <div
-        className={`slide-menu-panel absolute right-0 top-0 h-full transform transition-transform duration-300 ease-in-out ${
+        className={`slide-menu-panel pointer-events-auto absolute right-0 top-0 h-full transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{
-          backgroundColor: '#d1f2d7'
+          backgroundColor: '#e2ecff'
         }}
       >
         {/* Close button */}
@@ -124,7 +103,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
           <button
             onClick={onClose}
             className="p-2 hover:opacity-70 transition-opacity"
-            style={{ color: 'rgb(241, 251, 244)' }}
+            style={{ color: 'var(--primary)' }}
             aria-label="Close menu"
           >
             <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,30 +114,6 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
 
         {/* Menu content */}
         <div className="flex flex-col h-full pt-16">
-          {/* Language selector — matches the nav items; active one underlined */}
-          <div className="flex items-center justify-center space-x-6 mb-6">
-            {([['de', 'DE'], ['fr', 'FR'], ['it', 'IT'], ['en', 'EN']] as const).map(([lng, label]) => {
-              const active = (i18n.language || 'de').split('-')[0] === lng
-              return (
-                <button
-                  key={lng}
-                  onClick={() => handleLanguageChange(lng)}
-                  aria-current={active ? 'true' : undefined}
-                  className="font-bold uppercase transition-opacity hover:opacity-80 focus:outline-none focus:opacity-80"
-                  style={{
-                    fontFamily: 'Gaegu, cursive',
-                    fontSize: '38px',
-                    color: '#4785ff',
-                    textDecoration: active ? 'underline' : 'none',
-                    textUnderlineOffset: '6px',
-                  }}
-                >
-                  {label}
-                </button>
-              )
-            })}
-          </div>
-
           <nav className="flex-1 flex items-center justify-center">
             <div className="text-left">
             {/* Recent messages - desktop only */}
@@ -211,7 +166,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   onClick={() => handleNavigation('/')}
                   className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
                   style={{ 
-                    fontFamily: 'Gaegu, cursive',
+                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                     fontSize: '38px',
                     color: '#4785ff'
                   }}
@@ -226,7 +181,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   onClick={() => handleNavigation('/therapists')}
                   className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
                   style={{ 
-                    fontFamily: 'Gaegu, cursive',
+                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                     fontSize: '38px',
                     color: '#4785ff'
                   }}
@@ -241,7 +196,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   onClick={() => handleNavigation('/profile')}
                   className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
                   style={{ 
-                    fontFamily: 'Gaegu, cursive',
+                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                     fontSize: '38px',
                     color: '#4785ff'
                   }}
@@ -256,7 +211,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   onClick={() => handleNavigation('/messages')}
                   className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80 flex items-center"
                   style={{
-                    fontFamily: 'Gaegu, cursive',
+                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                     fontSize: '38px',
                     color: '#4785ff'
                   }}
@@ -284,7 +239,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   onClick={() => handleNavigation('/community-guidelines')}
                   className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
                   style={{
-                    fontFamily: 'Gaegu, cursive',
+                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                     fontSize: '38px',
                     color: '#4785ff'
                   }}
@@ -300,7 +255,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     onClick={() => handleNavigation('/admin/moderation')}
                     className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
                     style={{
-                      fontFamily: 'Gaegu, cursive',
+                      fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                       fontSize: '38px',
                       color: '#4785ff'
                     }}
@@ -317,7 +272,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                     onClick={() => handleNavigation('/admin')}
                     className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
                     style={{ 
-                      fontFamily: 'Gaegu, cursive',
+                      fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                       fontSize: '38px',
                       color: '#4785ff'
                     }}
@@ -333,7 +288,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                   onClick={handleLogout}
                   className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
                   style={{ 
-                    fontFamily: 'Gaegu, cursive',
+                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
                     fontSize: '38px',
                     color: '#4785ff'
                   }}

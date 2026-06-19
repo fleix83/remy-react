@@ -2,7 +2,7 @@ import React from 'react'
 
 /** Inline styling for the cursive "Remy" brand word, matching the landing page. */
 export const REMY_SPAN_STYLE: React.CSSProperties = {
-  fontFamily: '"Gaegu", cursive',
+  fontFamily: '"Gaegu", "Gaegu Accents", cursive',
   fontSize: '30px',
   letterSpacing: '0.04em',
 }
