@@ -162,7 +162,7 @@ const PostEditor: React.FC<PostEditorProps> = ({
         {mobileOptimized ? (
           <>
             {/* 1. Category Badge Dropdown - First */}
-            <div className="mb-4" style={{ marginTop: '12px' }}>
+            <div className="mb-4">
               <BadgeDropdown
                 value={categoryId}
                 options={categories.map(cat => ({ value: cat.id, label: getCategoryName(cat, lang) }))}

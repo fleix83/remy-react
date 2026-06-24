@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { usePaginatedPosts, useCategories, useCreatePost, useSearchPosts } from '../../hooks/usePosts'
 import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
@@ -349,7 +350,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         {/* Default-canton banner — replaces the canton filter while active
             (hidden during search, which ignores filters anyway) */}
         {defaultCantonActive && !isSearchMode ? (
-          <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} flex-col items-start canton-inline mt-[100px] mb-[-88px] md:mt-0 md:mb-20`} style={{ padding: '0 40px', fontFamily: 'Nunito' }}>
+          <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} flex-col items-start canton-inline mt-[50px] mb-[-88px] md:mt-0 md:mb-20`} style={{ padding: '0 40px', fontFamily: 'Nunito' }}>
             <p className="text-gray-600 text-left" style={{ fontSize: 'medium' }}>
               {t('regionBanner', { canton: defaultCantonName })}
             </p>
@@ -366,7 +367,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         {/* "Meine Region anzeigen" — opt back into the default-region restriction.
             Shown only when a default region is set but the user is viewing all posts. */}
         {defaultCantons && showAllCantons && !isSearchMode && (
-          <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} justify-end mt-[100px] mb-4 md:mt-0 md:mb-4`} style={{ padding: '0 40px', fontFamily: 'Nunito' }}>
+          <div className={`${showCreatePostDialog ? 'hidden' : 'flex'} justify-end mt-[50px] mb-4 md:mt-0 md:mb-4`} style={{ padding: '0 40px', fontFamily: 'Nunito' }}>
             <button
               onClick={handleShowMyRegion}
               className="text-sm underline hover:opacity-80"
@@ -415,13 +416,15 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         </>
         )}
 
-      {/* Post Editor Dialog — Mobile only (full-screen modal) */}
-      {showCreatePostDialog && (
+      {/* Post Editor Dialog — Mobile only (full-screen modal). Portaled to
+          <body> so it covers the site nav (logo/avatar) rather than being
+          trapped under it inside <main>'s z-2 stacking context. */}
+      {showCreatePostDialog && createPortal(
         <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 z-[70]">
-          <div className="w-full h-full overflow-hidden flex flex-col relative" style={{backgroundColor: '#ecffef'}}>
+          <div className="w-full h-full overflow-hidden flex flex-col relative" style={{ background: 'linear-gradient(180deg, #e6eeff 0%, #ffffff 200px)' }}>
             <button
               onClick={onCreatePostDialogClose}
-              className="absolute text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1.5 z-10 rounded-full bg-[#ecffef]/85 backdrop-blur-sm"
+              className="absolute text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1.5 z-10 rounded-full bg-white/70 backdrop-blur-sm"
               style={{ top: '44px', right: '28px' }}
             >
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,7 +432,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               </svg>
             </button>
             <div className="overflow-y-auto flex-1 px-4 pt-[120px] pb-20">
-              <h2 className="font-headline font-bold text-left mb-12" style={{ color: '#4785ff', fontSize: '20px' }}>
+              <h2 className="font-headline font-bold text-left mb-1" style={{ color: '#4785ff', fontSize: '20px' }}>
                 {t('newPostTitle')}
               </h2>
               <PostEditor
@@ -439,7 +442,8 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Post Editor — Desktop inline section */}

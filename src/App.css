@@ -877,4 +877,12 @@
   .layout-root {
     background: linear-gradient(180deg, #e2ecff 0%, transparent 400px) !important;
   }
+
+  /* Post view (mobile): category-tinted gradient header mirroring the desktop
+     nav treatment. The category colour comes from --postview-cat, set on
+     .page-postview by PostView; falls back to the neutral forum blue. */
+  .page-postview .postview-mobile-header {
+    height: 130px;
+    background: linear-gradient(180deg, hwb(from var(--postview-cat, #e2ecff) h 75% b), transparent);
+  }
 }

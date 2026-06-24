@@ -15,6 +15,7 @@ import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
 import Navigation from '../layout/Navigation'
+import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { getPostDisplayTitle } from '../../utils/text.utils'
 import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
@@ -28,9 +29,14 @@ const PostView: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const [openCommentForm, setOpenCommentForm] = useState(false)
   const [replyToPostAuthor, setReplyToPostAuthor] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const { currentPost: post, loading, loadPost, updatePost } = useForumStore()
-  const { user } = useAuthStore()
+  const { user, userProfile, logout } = useAuthStore()
+
+  const handleSignOut = async () => {
+    await logout()
+  }
 
   // Set up real-time comments for this post
   useCommentsRealtime(postId!)
@@ -165,15 +171,49 @@ const PostView: React.FC = () => {
       className="page-postview min-h-screen relative z-10"
       style={{ backgroundColor: '#fff', '--postview-cat': headerCatColor } as React.CSSProperties}
     >
-      {/* Shared forum top header: gradient, REMY logo, lebenskurve curve and
-          the avatar/region/language group. */}
-      <Navigation onCreatePost={() => {}} />
+      {/* Desktop: shared forum top header — gradient, REMY logo, lebenskurve
+          curve and the avatar/region/language group. */}
+      <div className="hidden md:block">
+        <Navigation onCreatePost={() => {}} />
+      </div>
+
+      {/* Mobile: category-tinted gradient header — back link aligned with the
+          avatar, no logo. The gradient mirrors the desktop nav (CSS uses the
+          --postview-cat colour set on .page-postview). */}
+      <div className="md:hidden postview-mobile-header w-full flex items-start justify-center relative">
+        <div className="max-w-6xl w-full mx-auto px-4 flex justify-between items-center" style={{ marginTop: '24px' }}>
+          {/* Invisible spacer to balance the avatar and center the back button */}
+          <div className="w-6 h-6"></div>
+
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
+            style={{ color: 'var(--primary)' }}
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            {t('backToForumNav')}
+          </button>
+
+          {user && userProfile ? (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="relative p-1 rounded-full transition-colors"
+            >
+              <UserAvatar user={userProfile} size="small" />
+            </button>
+          ) : (
+            <div className="w-6 h-6"></div>
+          )}
+        </div>
+      </div>
 
       <div className="max-w-6xl mx-auto md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '24px' }}>
-        {/* Back to forum — sits a bit below the lebenskurve header */}
+        {/* Back to forum (desktop only — mobile shows it in the header bar) */}
         <button
           onClick={() => navigate('/')}
-          className="inline-flex items-center font-medium hover:opacity-80 transition-opacity mb-4 px-4 md:px-0"
+          className="hidden md:inline-flex items-center font-medium hover:opacity-80 transition-opacity mb-4 md:px-0"
           style={{ color: 'var(--primary)' }}
         >
           <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
@@ -291,7 +331,7 @@ const PostView: React.FC = () => {
           <SelectableText onTextSelect={() => {}}>
             <div
               className="prose prose-gray max-w-none text-left post-view-body"
-              style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px', color: 'var(--post-text)' }}
+              style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px', color: '#000', '--tw-prose-body': '#000' } as React.CSSProperties}
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </SelectableText>
@@ -358,6 +398,14 @@ const PostView: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Mobile slide-in menu (opened from the header avatar) */}
+      <MobileSlideMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        userRole={userProfile?.role || undefined}
+        onLogout={handleSignOut}
+      />
     </div>
   )
 }
