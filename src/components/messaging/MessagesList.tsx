@@ -59,7 +59,7 @@ const MessagesList: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-5 pt-5 pb-4 bg-[var(--bg-element)]">
+      <div className="px-5 pt-5 pb-4">
         <h2 className="text-lg font-semibold text-[var(--primary)] text-left">{t('title')}</h2>
         {conversations.length > 0 && (
           <p className="text-xs mt-1 text-left" style={{color: '#535353'}}>
@@ -69,7 +69,7 @@ const MessagesList: React.FC = () => {
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto px-2 pb-3" style={{ background: 'linear-gradient(180deg, hsla(129, 41%, 93%, 1) 0%, hsla(36, 26%, 96%, 1) 81%, hsla(36, 26%, 96%, 1) 100%)' }}>
+      <div className="flex-1 overflow-y-auto px-2 pb-3">
         {conversations.length === 0 ? (
           <div className="p-6 text-center">
             <div className="text-[var(--primary)] opacity-50 mb-4">

@@ -286,8 +286,8 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   }
 
   return (
-    <div className="bg-white shadow-sm" style={{ borderRadius: '28px' }}>
-      <div className="border-b border-gray-200">
+    <div className="shadow-sm" style={{ borderRadius: '28px', backgroundColor: '#f7f5ef' }}>
+      <div className="border-b border-gray-200" style={{ borderTopLeftRadius: '28px', borderTopRightRadius: '28px' }}>
         <div className="p-6 pb-0">
           <h2 className="text-xl font-semibold text-gray-900 mb-4 text-left">{t('content.title')}</h2>
 

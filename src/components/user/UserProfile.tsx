@@ -70,7 +70,7 @@ const UserProfile: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen relative z-10" style={{ backgroundColor: 'rgb(238, 250, 240)' }}>
+    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#ffffff' }}>
       {/* Header bar - matching PostView */}
       <div
         className="w-full flex items-center justify-center relative"
@@ -185,8 +185,9 @@ const UserProfile: React.FC = () => {
 
         {/* Public Profile Information */}
         <div
-          className="bg-white shadow-sm relative"
+          className="shadow-sm relative"
           style={{
+            backgroundColor: '#f7f5ef',
             marginTop: '0',
             paddingTop: '74px',
             paddingBottom: '32px',

@@ -58,12 +58,13 @@
 }
 
 /* Compact list card for profile content (posts/comments/drafts).
-   No outline/border — visual separation comes from a subtle full-width
-   status band at the top of each item (tinted to match the status colour). */
+   Square edges; items are separated by a 2px white rule below each, plus the
+   full-width status band at the top (tinted to match the status colour). */
 .profile-list-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
+  border-bottom: 2px solid #fff;
 }
 
 /* Slide menu panel width */
@@ -865,5 +866,15 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+/* TEST: mobile — drop background.svg, use a top-down #e2ecff → transparent gradient */
+@media (max-width: 767px) {
+  body {
+    background-image: none !important;
+  }
+  .layout-root {
+    background: linear-gradient(180deg, #e2ecff 0%, transparent 400px) !important;
   }
 }

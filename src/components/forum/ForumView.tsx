@@ -275,7 +275,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
     <div className="min-h-screen">
       <div className="max-w-6xl forum-list-column mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
-        <div className={`forum-navbar p-4 mb-4 mx-4 md:mx-0 relative ${showCreatePostDialog ? 'md:hidden' : ''}`} style={{borderRadius: '20px', backgroundColor: '#d1f2d794', zIndex: 40}}>
+        <div className={`forum-navbar p-4 mb-4 mx-4 md:mx-0 relative ${showCreatePostDialog ? 'md:hidden' : ''}`} style={{borderRadius: '20px', backgroundColor: 'rgba(252, 252, 252, 0.46)', zIndex: 40}}>
           <div className="flex items-center gap-4">
             {/* Search Input */}
             <div className="forum-search relative flex-1">
@@ -286,11 +286,11 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 onChange={handleSearchChange}
                 onFocus={() => setSearchExpanded(true)}
                 onBlur={() => setSearchExpanded(false)}
-                className="w-full pl-4 pr-10 py-2 bg-[var(--bg-body)] text-gray-400 placeholder-[oklch(0.32_0_0)] focus:outline-none focus:ring-2 focus:ring-[#d9f7de] text-lg"
+                className="w-full pl-4 pr-10 py-2 bg-white md:bg-[var(--bg-body)] text-gray-400 placeholder-gray-400 md:placeholder-[oklch(0.32_0_0)] font-medium md:font-normal focus:outline-none focus:ring-2 focus:ring-[#4785ff] md:focus:ring-[#d9f7de] text-sm md:text-lg"
                 style={{borderRadius: '20px'}}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <svg className="h-4 w-4 text-[#2ebe7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 text-[#4785ff] md:text-[#2ebe7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -327,8 +327,16 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           </div>
         </div>
 
+        {/* Lebenskurve — decorative life-curve below the toolbar (mobile only) */}
+        <img
+          src="/images/lebenskurve_mobile.svg"
+          alt=""
+          aria-hidden="true"
+          className="md:hidden block w-full px-4 mt-2 select-none pointer-events-none"
+        />
+
         {/* Filter Modal */}
-        <FilterModal 
+        <FilterModal
           isOpen={showFilterModal}
           onClose={() => setShowFilterModal(false)}
           filters={filters}

@@ -52,7 +52,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
   }
 
   return (
-    <div className="bg-[var(--bg-element)] px-5 py-4">
+    <div className="px-5 py-4" style={{ background: 'linear-gradient(180deg, #e6eeff 0%, #f7f5ef 100%)' }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           {/* Back button (mobile only) */}

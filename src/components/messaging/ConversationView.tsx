@@ -50,7 +50,7 @@ const ConversationView: React.FC = () => {
       />
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4" style={{ background: 'linear-gradient(180deg, hsla(129, 41%, 93%, 1) 0%, hsla(36, 26%, 96%, 1) 81%, hsla(36, 26%, 96%, 1) 100%)' }}>
+      <div className="flex-1 overflow-y-auto p-4" style={{ background: '#f7f5ef' }}>
         {loadingMessages ? (
           <div className="flex items-center justify-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2ebe7a]"></div>

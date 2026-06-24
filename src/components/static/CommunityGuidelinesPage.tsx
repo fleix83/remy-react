@@ -170,13 +170,13 @@ const CommunityGuidelinesPage: React.FC = () => {
     <div className="min-h-screen relative z-10" style={{ backgroundColor: '#eefaf0' }}>
       {/* Header bar - matching profile page */}
       <div
-        className="w-full flex items-center justify-center relative"
+        className="w-full flex items-start justify-center relative"
         style={{
-          height: '65px',
-          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
+          height: '200px',
+          background: 'linear-gradient(rgb(230, 238, 255) 0%, rgb(239, 250, 241) 100%, rgb(239, 250, 241) 100%)'
         }}
       >
-        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
+        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center" style={{ marginTop: '30px' }}>
           {/* Invisible spacer to balance the avatar and center the back button */}
           <div className="w-6 h-6"></div>
 
@@ -206,7 +206,7 @@ const CommunityGuidelinesPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '48px' }}>
+      <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '48px', marginTop: '-100px' }}>
         {/* Edit Mode Controls */}
         {isEditMode && (
           <div className="mb-6 flex gap-3 justify-end">

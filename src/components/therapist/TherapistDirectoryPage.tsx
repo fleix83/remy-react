@@ -104,13 +104,13 @@ const TherapistDirectoryPage: React.FC = () => {
     <div className="min-h-screen relative z-10" style={{ backgroundColor: '#faeeee' }}>
       {/* Header bar - matching PostView */}
       <div
-        className="w-full flex items-center justify-center relative"
+        className="w-full flex items-start justify-center relative"
         style={{
           height: '265px',
           background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, transparent 100%)'
         }}
       >
-        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
+        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center" style={{ marginTop: '30px' }}>
           {/* Invisible spacer to balance the avatar and center the back button */}
           <div className="w-6 h-6"></div>
 
@@ -139,7 +139,7 @@ const TherapistDirectoryPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '48px' }}>
+      <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '48px', marginTop: '-150px' }}>
         {/* Title */}
         <h1 className="text-2xl font-bold mb-4 text-left" style={{ color: 'var(--primary)' }}>
           {t('directory.title')}

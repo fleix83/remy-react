@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { useMessagesStore, initializeMessagingAuth } from '../../stores/messages.store'
@@ -66,7 +67,10 @@ const MessagesPage: React.FC = () => {
       <div className="max-w-7xl mx-auto md:rounded-[20px] md:overflow-hidden md:shadow-[0_8px_30px_rgba(20,66,32,0.06)]">
         <div className="flex h-screen md:h-[calc(100vh-280px)] md:min-h-[520px]">
           {/* Conversations Sidebar */}
-          <div className="w-full md:w-1/3 lg:w-1/4 border-r border-[#dcebe0] bg-[var(--bg-element)]">
+          <div
+            className="w-full md:w-1/3 lg:w-1/4 border-r border-[#e8e3da]"
+            style={{ background: 'linear-gradient(180deg, #e6eeff 0%, #f7f5ef 220px)' }}
+          >
             <MessagesList />
           </div>
 
@@ -75,7 +79,7 @@ const MessagesPage: React.FC = () => {
             {currentConversation ? (
               <ConversationView />
             ) : (
-              <div className="flex-1 flex items-center justify-center" style={{ background: 'linear-gradient(180deg, hsla(129, 41%, 93%, 1) 0%, hsla(36, 26%, 96%, 1) 81%, hsla(36, 26%, 96%, 1) 100%)' }}>
+              <div className="flex-1 flex items-center justify-center" style={{ background: '#f7f5ef' }}>
                 <div className="text-center max-w-sm px-6">
                   <div className="text-[var(--primary)] mb-4 opacity-60">
                     <svg className="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,11 +95,14 @@ const MessagesPage: React.FC = () => {
             )}
           </div>
 
-          {/* Mobile Conversation View */}
-          {currentConversation && (
-            <div className="md:hidden fixed inset-0 z-50 bg-[var(--bg-body)]">
+          {/* Mobile Conversation View — portaled to <body> so it sits above the
+              site nav (whose logo/avatar z-10/z-20 children otherwise paint over
+              a fixed overlay trapped inside <main>'s z-2 stacking context) */}
+          {currentConversation && createPortal(
+            <div className="md:hidden fixed inset-0 z-[60] bg-[var(--bg-body)]">
               <ConversationView />
-            </div>
+            </div>,
+            document.body
           )}
         </div>
       </div>
