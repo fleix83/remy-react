@@ -67,6 +67,24 @@
   border-bottom: 2px solid #fff;
 }
 
+/* Profile page top header (UserProfile). Desktop: compact 65px blue→green bar.
+   Mobile: tall 265px gradient with the content pulled up 200px so the cards
+   stay at their original height. The back link + avatar sit in a fixed 65px
+   row pinned to the top, so they keep their position regardless of header height. */
+.profile-top-header {
+  height: 65px;
+  background: linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%);
+}
+@media (max-width: 767px) {
+  .profile-top-header {
+    height: 265px;
+    background: linear-gradient(rgb(230, 238, 255) 0%, rgb(239 250 241 / 0%) 100%, rgb(239, 250, 241) 100%);
+  }
+  .profile-content {
+    margin-top: -200px;
+  }
+}
+
 /* Slide menu panel width */
 .slide-menu-panel {
   width: 100vw;
@@ -517,6 +535,39 @@
 }
 .post-card-body > p {
   order: 3;
+}
+
+/* Post body text (incl. bold) → #3a3a3a on all screens, overriding the green
+   .prose / .prose strong colours from index.css. Scoped to the post view so
+   the comment .prose styling stays untouched. */
+.post-view-body,
+.post-view-body strong {
+  color: #3a3a3a;
+}
+
+/* New-post / edit-post modal surface: on mobile a category-tinted gradient
+   header fading to white (tint from --editor-cat-tint, set by PostEditor;
+   falls back to the neutral blue). On desktop it's a flat white card. */
+.post-editor-surface {
+  background: linear-gradient(180deg, var(--editor-cat-tint, #e6eeff) 0%, #ffffff 200px);
+}
+@media (min-width: 768px) {
+  .post-editor-surface {
+    background: #ffffff;
+  }
+}
+
+/* Forum first post, top gap to the navbar/header graphic when NO region banner
+   sits above it (region setting not activated). The banner case keeps mt-32 to
+   offset the banner's negative bottom margin; here there's no banner, so use a
+   tighter gap. Desktop matches the .post-card-outline.mt-32 override (×9). */
+.first-post-no-region {
+  margin-top: calc(var(--spacing, 4px) * 16);
+}
+@media (min-width: 768px) {
+  .first-post-no-region {
+    margin-top: calc(var(--spacing, 4px) * 9);
+  }
 }
 
 /* ── Desktop-only overrides for forum list ── */

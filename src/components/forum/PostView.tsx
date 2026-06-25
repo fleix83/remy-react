@@ -123,7 +123,7 @@ const PostView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#f6fff7' }}>
+      <div className="min-h-screen" style={{ backgroundColor: '#fff' }}>
         <div className="max-w-6xl mx-auto py-6 md:px-0">
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2ebe7a]"></div>
@@ -136,7 +136,7 @@ const PostView: React.FC = () => {
 
   if (!post && !loading) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#f6fff7' }}>
+      <div className="min-h-screen" style={{ backgroundColor: '#fff' }}>
         <div className="max-w-6xl mx-auto py-6 md:px-0">
           <div className="text-center py-12">
             <div className="text-red-400 mb-4">
@@ -271,7 +271,7 @@ const PostView: React.FC = () => {
 
           {/* Title - Hidden for Rant posts, auto-generated for others */}
           {post.category_id !== 4 && (
-            <h1 className="text-left" style={{color: 'var(--post-title)', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
+            <h1 className="text-left" style={{color: '#3a3a3a', fontSize: '24px', fontWeight: 800, lineHeight: '1.25', marginBottom: '24px'}}>
               {getPostDisplayTitle(post.title, post.content, post.category_id)}
             </h1>
           )}
@@ -331,7 +331,7 @@ const PostView: React.FC = () => {
           <SelectableText onTextSelect={() => {}}>
             <div
               className="prose prose-gray max-w-none text-left post-view-body"
-              style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px', color: '#000', '--tw-prose-body': '#000' } as React.CSSProperties}
+              style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px', color: '#3a3a3a', '--tw-prose-body': '#3a3a3a' } as React.CSSProperties}
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </SelectableText>

@@ -300,7 +300,7 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="w-full h-full overflow-y-auto" style={{ backgroundColor: '#ecffef' }}>
+      <div className="w-full h-full overflow-y-auto" style={{ background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, rgba(250, 238, 238, 0) 200px), #faeeee' }}>
         {/* Header */}
         <div className="px-4 md:px-6 pb-0" style={{ paddingTop: '35px' }}>
           <button

@@ -6,7 +6,7 @@ import TherapistSelector from '../therapist/TherapistSelector'
 import BadgeDropdown from '../ui/BadgeDropdown'
 import TagInput from '../ui/TagInput'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
-import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
+import { getCategoryColorById, getCategoryName, mixWithWhite } from '../../utils/categoryHelpers'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { toast } from '../../stores/toast.store'
 import { useTranslation } from 'react-i18next'
@@ -17,6 +17,9 @@ interface PostEditorProps {
   isLoading?: boolean
   editMode?: boolean
   mobileOptimized?: boolean
+  // Reports the selected category's light tint (75% white) so the host modal
+  // can paint a category-coloured top-header gradient.
+  onCategoryTintChange?: (tint: string) => void
   initialData?: {
     title?: string
     content?: string
@@ -30,10 +33,11 @@ interface PostEditorProps {
 const PostEditor: React.FC<PostEditorProps> = ({ 
   onSubmit, 
   onCancel, 
-  isLoading, 
+  isLoading,
   editMode = false,
   mobileOptimized = false,
-  initialData 
+  onCategoryTintChange,
+  initialData
 }) => {
   const [title, setTitle] = useState(initialData?.title || '')
   const [content, setContent] = useState(initialData?.content || '')
@@ -65,6 +69,14 @@ const PostEditor: React.FC<PostEditorProps> = ({
       setCanton(selectedTherapist.canton)
     }
   }, [categoryId, selectedTherapist])
+
+  // Report the selected category's tint to the host modal (for the top-header
+  // gradient). Waits until categories are loaded so the colour is accurate.
+  useEffect(() => {
+    if (onCategoryTintChange && categories.length > 0) {
+      onCategoryTintChange(mixWithWhite(getCategoryColorById(categoryId, categories), 0.75))
+    }
+  }, [categoryId, categories, onCategoryTintChange])
 
   // Auto-clear title and canton when switching to Rant category
   useEffect(() => {

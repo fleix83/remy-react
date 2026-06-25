@@ -50,6 +50,9 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
   const [searchExpanded, setSearchExpanded] = useState(false)
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null)
   const [showFilterModal, setShowFilterModal] = useState(false)
+  // Tint of the currently-selected category, reported by the editor — drives
+  // the new-post modal's category-coloured top-header gradient.
+  const [editorTint, setEditorTint] = useState<string | null>(null)
   const [filters, setFiltersState] = useState<PostFilters>({})
   const [designations, setDesignations] = useState<Designation[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false)
@@ -420,8 +423,11 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
           <body> so it covers the site nav (logo/avatar) rather than being
           trapped under it inside <main>'s z-2 stacking context. */}
       {showCreatePostDialog && createPortal(
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 z-[70]">
-          <div className="w-full h-full overflow-hidden flex flex-col relative" style={{ background: 'linear-gradient(180deg, #e6eeff 0%, #ffffff 200px)' }}>
+        /* z-40: above the site nav (logo z-10 / avatar z-20) so they don't bleed
+           through, but below the therapist create modal (a z-50 body portal) so
+           "+ Therapeut:in hinzufügen" still opens on top. */
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-0 z-40">
+          <div className="post-editor-surface w-full h-full overflow-hidden flex flex-col relative" style={{ '--editor-cat-tint': editorTint ?? undefined } as React.CSSProperties}>
             <button
               onClick={onCreatePostDialogClose}
               className="absolute text-[var(--primary)] hover:text-[#3b71e6] transition-colors p-1.5 z-10 rounded-full bg-white/70 backdrop-blur-sm"
@@ -438,6 +444,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
               <PostEditor
                 onSubmit={handleCreatePost}
                 onCancel={onCreatePostDialogClose}
+                onCategoryTintChange={setEditorTint}
                 mobileOptimized={true}
               />
             </div>
@@ -669,7 +676,10 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
                 <PostCard
                   key={post.id}
                   post={post}
-                  className={index === 0 ? 'mt-32' : ''}
+                  /* First post: keep mt-32 when the region banner sits above it
+                     (it offsets the banner's negative bottom margin); otherwise
+                     use a tighter gap to the navbar/header graphic. */
+                  className={index === 0 ? ((defaultCantonActive && !isSearchMode) ? 'mt-32' : 'first-post-no-region') : ''}
                 />
               ))}
             </div>

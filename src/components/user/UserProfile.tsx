@@ -71,15 +71,11 @@ const UserProfile: React.FC = () => {
 
   return (
     <div className="min-h-screen relative z-10" style={{ backgroundColor: '#ffffff' }}>
-      {/* Header bar - matching PostView */}
-      <div
-        className="w-full flex items-center justify-center relative"
-        style={{
-          height: '65px',
-          background: 'linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%)'
-        }}
-      >
-        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 flex justify-between items-center">
+      {/* Header bar — compact 65px on desktop; tall gradient on mobile (CSS).
+          The back link + avatar live in a fixed 65px row pinned to the top so
+          they keep their position no matter how tall the header grows. */}
+      <div className="profile-top-header w-full flex items-start justify-center relative">
+        <div className="max-w-6xl w-full mx-auto px-4 md:px-0 h-[65px] flex justify-between items-center">
           {/* Invisible spacer to balance the avatar and center the back button */}
           <div className="w-6 h-6"></div>
 
@@ -110,7 +106,7 @@ const UserProfile: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '24px' }}>
+      <div className="profile-content max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '24px' }}>
         {/* Header Container with Banner and Avatar */}
         <div className="relative">
           {/* Background Header */}

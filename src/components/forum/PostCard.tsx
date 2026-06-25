@@ -166,7 +166,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
 
         {/* Title - Auto-generated for Rant posts without title */}
         {getPostDisplayTitle(post.title, post.content, post.category_id) && (
-          <h3 className="post-card-title text-base md:text-xl font-semibold mb-1 leading-tight text-left" style={{color: 'var(--post-title)'}}>
+          <h3 className="post-card-title text-base md:text-xl font-semibold mb-1 leading-tight text-left" style={{color: '#3a3a3a'}}>
             {getPostDisplayTitle(post.title, post.content, post.category_id)}
           </h3>
         )}
@@ -176,6 +176,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
           <p
             className="text-sm text-gray-600 text-left mb-4"
             style={{
+              color: '#3a3a3a',
               display: '-webkit-box',
               WebkitLineClamp: 3,
               WebkitBoxOrient: 'vertical',
