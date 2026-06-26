@@ -67,22 +67,16 @@
   border-bottom: 2px solid #fff;
 }
 
-/* Profile page top header (UserProfile). Desktop: compact 65px blue→green bar.
-   Mobile: tall 265px gradient with the content pulled up 200px so the cards
-   stay at their original height. The back link + avatar sit in a fixed 65px
-   row pinned to the top, so they keep their position regardless of header height. */
+/* Profile page top header (UserProfile) — same on desktop and mobile: a tall
+   265px blue gradient with the content pulled up 200px so the cards keep their
+   original height. The back link + avatar sit in a fixed 65px row pinned to the
+   top, so they keep their position regardless of header height. */
 .profile-top-header {
-  height: 65px;
-  background: linear-gradient(180deg, hsla(221, 100%, 95%, 1) 0%, hsla(130, 55%, 96%, 1) 100%, hsla(130, 55%, 96%, 1) 100%);
+  height: 265px;
+  background: linear-gradient(rgb(230, 238, 255) 0%, rgb(239 250 241 / 0%) 100%, rgb(239, 250, 241) 100%);
 }
-@media (max-width: 767px) {
-  .profile-top-header {
-    height: 265px;
-    background: linear-gradient(rgb(230, 238, 255) 0%, rgb(239 250 241 / 0%) 100%, rgb(239, 250, 241) 100%);
-  }
-  .profile-content {
-    margin-top: -200px;
-  }
+.profile-content {
+  margin-top: -200px;
 }
 
 /* Slide menu panel width */
