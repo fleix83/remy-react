@@ -26,6 +26,9 @@
     "defaultRegion": "Standard Region:",
     "preferredLanguage": "Bevorzugte Sprache:",
     "privateMessages": "Private Nachrichten:",
+    "postHistory": "Beitragsverlauf:",
+    "public": "Öffentlich",
+    "private": "Privat",
     "allCantons": "Alle Kantone",
     "on": "An",
     "off": "Aus",
@@ -65,6 +68,7 @@
   },
   "content": {
     "title": "Meine Beiträge",
+    "publicTitle": "Beiträge",
     "tabs": {
       "posts": "Beiträge",
       "comments": "Kommentare",

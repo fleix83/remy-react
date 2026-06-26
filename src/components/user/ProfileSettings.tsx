@@ -22,7 +22,8 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
     bio: '',
     default_canton: '',
     language_preference: '',
-    messages_active: false
+    messages_active: false,
+    post_history_public: true
   })
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
@@ -49,7 +50,8 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
         bio: userProfile.bio || '',
         default_canton: userProfile.default_canton || '',
         language_preference: userProfile.language_preference || 'de',
-        messages_active: userProfile.messages_active ?? true
+        messages_active: userProfile.messages_active ?? true,
+        post_history_public: userProfile.post_history_public ?? true
       })
     }
   }, [userProfile])
@@ -71,7 +73,8 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
         bio: formData.bio,
         default_canton: formData.default_canton || null,
         language_preference: formData.language_preference,
-        messages_active: formData.messages_active
+        messages_active: formData.messages_active,
+        post_history_public: formData.post_history_public
       })
 
       setMessage({ type: 'success', text: t('settings.updateSuccess') })
@@ -95,7 +98,8 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
         bio: userProfile.bio || '',
         default_canton: userProfile.default_canton || '',
         language_preference: userProfile.language_preference || 'de',
-        messages_active: userProfile.messages_active ?? true
+        messages_active: userProfile.messages_active ?? true,
+        post_history_public: userProfile.post_history_public ?? true
       })
     }
     setIsEditing(false)
@@ -212,6 +216,44 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                     ) : (
                       <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
                         {languages.find(l => l.value === userProfile.language_preference)?.label || 'Deutsch'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Post History Visibility */}
+                <div className="flex items-center">
+                  <div className="w-40 text-left">
+                    <span className="text-sm font-medium text-gray-700">
+                      {t('settings.postHistory')}
+                    </span>
+                  </div>
+                  <div className="flex-1 text-left">
+                    {isEditing ? (
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, post_history_public: !formData.post_history_public })}
+                        className={`
+                          relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent
+                          transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2
+                          ${formData.post_history_public ? 'bg-[var(--primary)]' : 'bg-gray-200'}
+                        `}
+                      >
+                        <span
+                          className={`
+                            pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0
+                            transition duration-200 ease-in-out
+                            ${formData.post_history_public ? 'translate-x-5' : 'translate-x-0'}
+                          `}
+                        />
+                      </button>
+                    ) : (
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        (userProfile.post_history_public ?? true)
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {(userProfile.post_history_public ?? true) ? t('settings.public') : t('settings.private')}
                       </span>
                     )}
                   </div>
