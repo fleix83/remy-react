@@ -51,6 +51,19 @@ const PublicProfile: React.FC = () => {
     )
   }
 
+  // Self-view: redirect to /profile is in flight — keep the spinner, never flash
+  // the not-found state or a ghost stranger-view of your own profile.
+  if (id && user && isSelfProfile(id, user.id)) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)] mx-auto"></div>
+          <p className="mt-4 text-gray-600">{t('header.loading')}</p>
+        </div>
+      </div>
+    )
+  }
+
   if (notFound || !profile) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
