@@ -186,6 +186,22 @@ export class UserSearchService {
       return []
     }
   }
+
+  // Fetch a single user's public-profile fields by id. Returns null if missing.
+  static async getPublicUser(userId: string): Promise<User | null> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, username, avatar_url, background_image_url, bio, created_at, role, post_history_public')
+      .eq('id', userId)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Error fetching public user:', error)
+      throw new Error('Failed to load user profile')
+    }
+
+    return (data as User) ?? null
+  }
 }
 
 export default UserSearchService
