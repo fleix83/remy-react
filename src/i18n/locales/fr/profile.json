@@ -14,7 +14,8 @@
     "unknownDate": "Inconnu",
     "changeBanner": "Changer la bannière",
     "uploadingBanner": "Téléchargement...",
-    "backgroundUploadError": "Erreur lors du téléchargement de l'image de fond"
+    "backgroundUploadError": "Erreur lors du téléchargement de l'image de fond",
+    "notFound": "Utilisateur introuvable"
   },
   "settings": {
     "title": "Paramètres du profil",

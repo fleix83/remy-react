@@ -14,7 +14,8 @@
     "unknownDate": "Unbekannt",
     "changeBanner": "Banner ändern",
     "uploadingBanner": "Wird hochgeladen...",
-    "backgroundUploadError": "Fehler beim Hochladen des Hintergrundbilds"
+    "backgroundUploadError": "Fehler beim Hochladen des Hintergrundbilds",
+    "notFound": "Benutzer nicht gefunden"
   },
   "settings": {
     "title": "Profileinstellungen",

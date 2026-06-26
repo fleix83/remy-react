@@ -14,7 +14,8 @@
     "unknownDate": "Sconosciuto",
     "changeBanner": "Cambia banner",
     "uploadingBanner": "Caricamento in corso...",
-    "backgroundUploadError": "Errore durante il caricamento dell'immagine di sfondo"
+    "backgroundUploadError": "Errore durante il caricamento dell'immagine di sfondo",
+    "notFound": "Utente non trovato"
   },
   "settings": {
     "title": "Impostazioni del profilo",

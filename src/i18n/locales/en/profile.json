@@ -14,7 +14,8 @@
     "unknownDate": "Unknown",
     "changeBanner": "Change banner",
     "uploadingBanner": "Uploading...",
-    "backgroundUploadError": "Error uploading the background image"
+    "backgroundUploadError": "Error uploading the background image",
+    "notFound": "User not found"
   },
   "settings": {
     "title": "Profile settings",

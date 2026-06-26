@@ -26,6 +26,7 @@ const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
 const ConfirmEmail = lazy(() => import('./components/auth/ConfirmEmail'))
 const CommunityGuidelinesPage = lazy(() => import('./components/static/CommunityGuidelinesPage'))
 const WelcomePage = lazy(() => import('./components/auth/WelcomePage'))
+const PublicProfile = lazy(() => import('./components/user/PublicProfile'))
 
 function App() {
   const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
@@ -106,6 +107,7 @@ function App() {
             <>
               {/* PostView, TherapistDirectoryPage, and CommunityGuidelinesPage without Layout to avoid double navigation */}
               <Route path="/post/:id" element={<PostView />} />
+              <Route path="/user/:id" element={<PublicProfile />} />
               <Route path="/therapists" element={<TherapistDirectoryPage />} />
               <Route path="/community-guidelines" element={<CommunityGuidelinesPage />} />
 
