@@ -51,10 +51,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} items-end space-x-2`}>
       {/* Avatar for received messages */}
       {!isOwn && showAvatar && message.sender && (
-        <UserAvatar 
-          user={message.sender} 
-          size="small" 
+        <UserAvatar
+          user={message.sender}
+          size="small"
           className="flex-shrink-0"
+          clickable
         />
       )}
       

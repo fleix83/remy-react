@@ -283,6 +283,7 @@ const PostView: React.FC = () => {
                 user={post.users}
                 size="small"
                 className="flex-shrink-0"
+                clickable
               />
             ) : (
               <div className="w-6 h-6 bg-gray-300 rounded-full flex-shrink-0 flex items-center justify-center">

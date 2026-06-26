@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import AvatarService from '../../services/avatar.service'
@@ -16,15 +17,24 @@ interface UserAvatarProps {
   size?: 'small' | 'medium' | 'large' | 'message'
   showUpload?: boolean
   className?: string
+  clickable?: boolean
 }
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
   user,
   size = 'medium',
   showUpload = false,
-  className = ''
+  className = '',
+  clickable = false,
 }) => {
   const { t } = useTranslation('profile')
+  const navigate = useNavigate()
+
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    if (!clickable) return
+    e.stopPropagation()
+    navigate(`/user/${user.id}`)
+  }
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [showControls, setShowControls] = useState(false)
@@ -114,7 +124,10 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div
+      className={`relative ${className} ${clickable ? 'cursor-pointer' : ''}`}
+      onClick={handleAvatarClick}
+    >
       <div
         className={`
           rounded-full overflow-hidden shadow-lg group

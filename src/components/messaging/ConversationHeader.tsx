@@ -69,6 +69,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
           <UserAvatar
             user={conversation.participant}
             size="small"
+            clickable
           />
 
           {/* User Info */}

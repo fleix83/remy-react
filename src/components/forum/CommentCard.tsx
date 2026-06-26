@@ -92,10 +92,11 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
     <div className={`${depth > 0 ? `ml-${marginLeft}` : ''}`} style={{borderRadius: '16px', background: '#f6f9ff', padding: '16px'}}>
       {/* User Info */}
       <div className="flex items-start space-x-3 mb-4">
-        <UserAvatar 
+        <UserAvatar
           user={comment.users || { id: comment.user_id || 'unknown', username: t('unknownUser'), avatar_url: null }}
-          size="small" 
+          size="small"
           className="flex-shrink-0"
+          clickable
         />
         <div className="flex-1 min-w-0">
           <p className="font-medium text-[var(--type)] text-xs text-left leading-none">

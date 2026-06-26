@@ -136,10 +136,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       {/* User Info */}
       <div className="flex items-start space-x-3 mb-4">
         {post.users && (
-          <UserAvatar 
-            user={post.users} 
-            size="small" 
+          <UserAvatar
+            user={post.users}
+            size="small"
             className="flex-shrink-0"
+            clickable
           />
         )}
         <div className="flex-1 min-w-0">

@@ -99,6 +99,7 @@ const MessagesList: React.FC = () => {
                   user={conversation.participant}
                   size="message"
                   className="flex-shrink-0"
+                  clickable
                 />
 
                 {/* Content */}
