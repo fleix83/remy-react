@@ -64,7 +64,7 @@ const MessagesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen md:px-6 lg:px-8 md:py-10">
-      <div className="max-w-7xl mx-auto md:rounded-[20px] md:overflow-hidden md:shadow-[0_8px_30px_rgba(20,66,32,0.06)]">
+      <div className="max-w-7xl mx-auto md:rounded-[20px] md:overflow-hidden md:shadow-[0_8px_30px_rgba(40,60,110,0.10)]">
         <div className="flex h-screen md:h-[calc(100vh-280px)] md:min-h-[520px]">
           {/* Conversations Sidebar */}
           <div

@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({
     <div
       className={`min-h-screen relative layout-root flex flex-col ${pageClass}`}
       style={{
-        background: background ?? 'rgb(239, 255, 241) url(/background.svg) no-repeat 0 0',
+        background: background ?? 'rgb(239, 255, 241)',
         zIndex: 1
       }}
     >

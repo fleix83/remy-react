@@ -122,7 +122,7 @@ function App() {
                   </Layout>
                 }
               />
-              <Route path="/messages" element={<Layout onCreatePost={handleCreatePost}><MessagesPage /></Layout>} />
+              <Route path="/messages" element={<Layout onCreatePost={handleCreatePost} background="linear-gradient(180deg, #e6eeff 0%, #ffffff 380px)"><MessagesPage /></Layout>} />
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/admin" element={<Layout onCreatePost={handleCreatePost}><AdminDashboard /></Layout>} />
               <Route path="/admin/moderation" element={<Layout onCreatePost={handleCreatePost} background="#f8f5e6"><ModerationQueue /></Layout>} />

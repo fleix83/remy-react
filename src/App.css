@@ -624,11 +624,6 @@
     margin-right: 24px;
   }
 
-  /* Remove background.svg on desktop */
-  .layout-root {
-    background-image: none !important;
-  }
-
   /* post-card-body ordering moved to global scope */
 
   /* Shared sidebar filter width */
