@@ -453,29 +453,39 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
         document.body
       )}
 
-      {/* Post Editor — Desktop inline section */}
-      {showCreatePostDialog && (
-        <div className="hidden md:block px-4 md:px-0" style={{marginTop: '132px'}}>
-          <div style={{ backgroundColor: 'white', borderRadius: '30px', padding: '30px' }}>
-            <div className="flex items-start justify-between mb-6">
-              <h2 className="font-headline font-bold text-left" style={{ color: '#4785ff', fontSize: '20px' }}>
-                {t('newPostTitle')}
-              </h2>
+      {/* Post Editor — Desktop modal (portaled; closes on outside click) */}
+      {showCreatePostDialog && createPortal(
+        <div
+          className="hidden md:flex fixed inset-0 z-40 bg-black/30 items-start justify-center overflow-y-auto py-12"
+          onClick={onCreatePostDialogClose}
+        >
+          <div className="relative w-full max-w-3xl px-4" onClick={(e) => e.stopPropagation()}>
+            {/* Modal card */}
+            <div className="relative" style={{ backgroundColor: '#f4f8ff', borderRadius: '28px', padding: '30px', border: '1px solid #a9a9ff' }}>
+              {/* Blue cancel (X), top-right */}
               <button
                 onClick={onCreatePostDialogClose}
-                className="text-base font-medium hover:underline transition-colors bg-transparent border-none cursor-pointer"
-                style={{ color: '#4785ff' }}
+                className="absolute text-[var(--primary)] hover:opacity-70 transition-opacity"
+                style={{ top: '24px', right: '24px' }}
+                aria-label={t('common:actions.cancel')}
               >
-                {t('backToForum')}
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
+
+              <h2 className="font-headline font-bold text-left mb-6" style={{ color: '#4785ff', fontSize: '20px' }}>
+                {t('newPostTitle')}
+              </h2>
+              <PostEditor
+                onSubmit={handleCreatePost}
+                onCancel={onCreatePostDialogClose}
+                mobileOptimized={true}
+              />
             </div>
-            <PostEditor
-              onSubmit={handleCreatePost}
-              onCancel={onCreatePostDialogClose}
-              mobileOptimized={true}
-            />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
         {/* Posts area — filters sidebar + list */}

@@ -393,8 +393,8 @@ const PostEditor: React.FC<PostEditorProps> = ({
         {/* Action Buttons */}
         {mobileOptimized ? (
           /* Mobile: Buttons styled like navbar buttons */
-          <div className="flex items-center justify-between gap-2">
-            {/* Left side buttons */}
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            {/* Left: cancel */}
             <div className="flex items-center gap-2">
               {onCancel && (
                 <button
@@ -406,32 +406,34 @@ const PostEditor: React.FC<PostEditorProps> = ({
                   {t('common:actions.cancel')}
                 </button>
               )}
+            </div>
 
+            {/* Right: save draft + publish */}
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e, false)}
                 className="bg-white hover:bg-gray-50 text-gray-700 px-2.5 py-1.5 rounded-md font-medium transition-colors text-sm border border-gray-200"
                 disabled={publishing}
               >
-                {t('editor.draft')}
+                {t('editor.saveDraft')}
+              </button>
+
+              <button
+                type="submit"
+                disabled={publishing || isLoading}
+                className="text-white px-2.5 py-1.5 rounded-md font-medium transition-all transform hover:scale-105 shadow-md text-sm"
+                style={{
+                  backgroundColor: '#4785ff',
+                  boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                {publishing || isLoading
+                  ? t('editor.saving')
+                  : t('editor.publish')
+                }
               </button>
             </div>
-
-            {/* Right side: Speichern button matching navbar style */}
-            <button
-              type="submit"
-              disabled={publishing || isLoading}
-              className="text-white px-2.5 py-1.5 rounded-md font-medium transition-all transform hover:scale-105 shadow-md text-sm"
-              style={{
-                backgroundColor: '#4785ff',
-                boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.1)'
-              }}
-            >
-              {publishing || isLoading
-                ? t('editor.saving')
-                : t('editor.publish')
-              }
-            </button>
           </div>
         ) : (
           /* Desktop: Traditional button layout */

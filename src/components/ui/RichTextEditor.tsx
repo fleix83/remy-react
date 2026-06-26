@@ -175,7 +175,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     if (mobileOptimized) {
       // Mobile toolbar with all essential tools
       return (
-        <div className="rounded-t-lg bg-[#f7f8f5] p-2 flex items-center gap-1 flex-wrap">
+        <div className="rounded-t-lg bg-[#f4f8ff] p-2 flex items-center gap-1 flex-wrap">
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
@@ -396,14 +396,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
   
   return (
-    <div className={`relative rounded-lg bg-white ${
+    <div className={`relative rounded-lg ${
       mobileOptimized ? 'border border-gray-300 focus-within:border-[var(--primary)] transition-colors' : ''
     }`}>
       {/* Toolbar */}
       {renderToolbar()}
 
-      {/* Editor content */}
-      <div className="relative editor-wrapper">
+      {/* Editor content — white input area (toolbar above stays the modal tint) */}
+      <div className="relative editor-wrapper bg-white rounded-b-lg">
         <EditorContent
           editor={editor}
           className="rounded-b-lg overflow-hidden"
