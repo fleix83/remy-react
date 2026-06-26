@@ -17,11 +17,12 @@ import { confirmDialog } from '../../stores/confirm.store'
 
 interface UserContentProps {
   userId: string
+  publicView?: boolean
 }
 
 type ContentTab = 'drafts' | 'posts' | 'comments'
 
-const UserContent: React.FC<UserContentProps> = ({ userId }) => {
+const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false }) => {
   const { t } = useTranslation('profile')
   const [activeTab, setActiveTab] = useState<ContentTab>('posts')
   const [posts, setPosts] = useState<PostWithRelations[]>([])
@@ -42,6 +43,10 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
   useEffect(() => {
     loadContent()
   }, [activeTab, userId])
+
+  useEffect(() => {
+    if (publicView) setActiveTab('posts')
+  }, [publicView])
 
   const loadContent = async () => {
     setLoading(true)
@@ -289,14 +294,16 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
     <div className="shadow-sm" style={{ borderRadius: '28px', backgroundColor: '#f7f5ef' }}>
       <div className="border-b border-gray-200" style={{ borderTopLeftRadius: '28px', borderTopRightRadius: '28px' }}>
         <div className="p-6 pb-0">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 text-left">{t('content.title')}</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4 text-left">{publicView ? t('content.publicTitle') : t('content.title')}</h2>
 
           {/* Tabs — evenly distributed on mobile to avoid overflow, left-aligned on desktop */}
           <div className="flex md:space-x-8">
             {[
               { id: 'posts' as ContentTab, label: t('content.tabs.posts'), count: posts.length },
-              { id: 'comments' as ContentTab, label: t('content.tabs.comments'), count: comments.length },
-              { id: 'drafts' as ContentTab, label: t('content.tabs.drafts'), count: drafts.length }
+              ...(publicView ? [] : [
+                { id: 'comments' as ContentTab, label: t('content.tabs.comments'), count: comments.length },
+                { id: 'drafts' as ContentTab, label: t('content.tabs.drafts'), count: drafts.length },
+              ]),
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -355,7 +362,9 @@ const UserContent: React.FC<UserContentProps> = ({ userId }) => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <p className="text-gray-500">{t('content.posts.empty')}</p>
-                    <p className="text-sm text-gray-400 mt-1">{t('content.posts.emptyHint')}</p>
+                    {!publicView && (
+                      <p className="text-sm text-gray-400 mt-1">{t('content.posts.emptyHint')}</p>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-4">
