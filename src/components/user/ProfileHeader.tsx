@@ -56,9 +56,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             borderBottomLeftRadius: '0',
             borderBottomRightRadius: '0',
           }}
-          onClick={handleBackgroundClick}
-          onMouseEnter={() => editable && setBackgroundHover(true)}
-          onMouseLeave={() => editable && setBackgroundHover(false)}
+          onClick={editable ? handleBackgroundClick : undefined}
+          onMouseEnter={editable ? () => setBackgroundHover(true) : undefined}
+          onMouseLeave={editable ? () => setBackgroundHover(false) : undefined}
         >
           {user.background_image_url && (
             <div

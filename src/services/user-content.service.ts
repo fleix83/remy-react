@@ -5,6 +5,10 @@ export class UserContentService {
   // Get user's posts with status information
   static async getUserPosts(userId: string, limit: number = 50): Promise<PostWithRelations[]> {
     try {
+      // NOTE: For stranger/public-profile views, moderation visibility (pending/
+      // rejected/unpublished posts hidden from non-owners) is enforced by the
+      // posts RLS SELECT policy, NOT by this query. Do not reuse with a
+      // service-role key for public views without re-adding that filter.
       const { data, error } = await supabase
         .from('posts')
         .select(`

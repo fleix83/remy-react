@@ -96,7 +96,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           user={comment.users || { id: comment.user_id || 'unknown', username: t('unknownUser'), avatar_url: null }}
           size="small"
           className="flex-shrink-0"
-          clickable
+          clickable={!!comment.users}
         />
         <div className="flex-1 min-w-0">
           <p className="font-medium text-[var(--type)] text-xs text-left leading-none">
