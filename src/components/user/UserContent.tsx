@@ -308,7 +308,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 md:flex-none flex items-center justify-center md:justify-start gap-1 md:gap-1.5 pb-3 md:pb-4 px-1 border-b-2 font-medium text-xs md:text-sm whitespace-nowrap transition-colors duration-200 ${
+                className={`${publicView ? 'flex-none justify-start' : 'flex-1 md:flex-none justify-center md:justify-start'} flex items-center gap-1 md:gap-1.5 pb-3 md:pb-4 px-1 border-b-2 font-medium text-xs md:text-sm whitespace-nowrap transition-colors duration-200 ${
                   activeTab === tab.id
                     ? 'border-[var(--primary)] text-[var(--primary)]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
