@@ -1,0 +1,85 @@
+name: Deploy blue to staging-blue
+
+on:
+  push:
+    branches: [blue]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: |
+          # Copy staging environment file to .env.production (Vite uses .env.production for builds).
+          # NOTE: blue mirrors the staging environment. If staging-blue ever serves a
+          # different domain, add a dedicated .env.blue and copy that instead.
+          cp .env.staging .env.production
+          npm run build
+
+      - name: Deploy to staging-blue branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
+        run: |
+          # Set up git credentials
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+          # Use GitHub token for authentication
+          git config --global url."https://github-actions:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+          # Store the current commit hash
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+
+          # Create temporary directory for dist files.
+          # IMPORTANT: use `dist/.` (not `dist/*`) so dotfiles such as
+          # `.htaccess` are included — the shell glob `*` skips dotfiles,
+          # which silently dropped .htaccess from every previous deploy
+          # and broke SPA reload on the staging domain.
+          mkdir -p /tmp/staging-blue-dist
+          cp -r dist/. /tmp/staging-blue-dist/
+
+          # Clean up git state before switching branches
+          git clean -fd
+          git reset --hard HEAD
+
+          # Try to fetch existing staging-blue branch
+          git fetch origin staging-blue 2>/dev/null || true
+
+          # Create and switch to staging-blue branch
+          if git rev-parse --verify origin/staging-blue 2>/dev/null; then
+            git checkout -b staging-blue --track origin/staging-blue
+          else
+            git checkout --orphan staging-blue
+          fi
+
+          # Clear the working directory except .git
+          find . -maxdepth 1 -not -name '.git' -type f -delete
+          find . -maxdepth 1 -not -name '.git' -type d ! -name '.' -exec rm -rf {} + 2>/dev/null || true
+
+          # Copy dist files back — again, use `/.` to include dotfiles
+          # such as .htaccess.
+          cp -r /tmp/staging-blue-dist/. .
+
+          # Add and commit files
+          git add -A || { echo "Failed to add files"; exit 1; }
+          git commit -m "Deploy build from commit ${COMMIT_HASH}" || { echo "No changes to commit"; }
+
+          # Push to remote
+          git push -u origin staging-blue 2>&1 || { echo "Push failed with: $?"; exit 1; }
