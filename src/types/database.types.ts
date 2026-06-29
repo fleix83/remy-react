@@ -278,60 +278,6 @@ export type Database = {
           },
         ]
       }
-      post_saved: {
-        Row: {
-          canton: string
-          category_id: number
-          content: string
-          created_at: string | null
-          designation: string | null
-          id: number
-          tags: string | null
-          therapist: string | null
-          title: string
-          user_id: string
-        }
-        Insert: {
-          canton: string
-          category_id: number
-          content: string
-          created_at?: string | null
-          designation?: string | null
-          id?: number
-          tags?: string | null
-          therapist?: string | null
-          title: string
-          user_id: string
-        }
-        Update: {
-          canton?: string
-          category_id?: number
-          content?: string
-          created_at?: string | null
-          designation?: string | null
-          id?: number
-          tags?: string | null
-          therapist?: string | null
-          title?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_saved_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_saved_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       post_tags: {
         Row: {
           post_id: number
