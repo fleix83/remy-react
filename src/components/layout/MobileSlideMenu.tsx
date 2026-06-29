@@ -219,8 +219,10 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
               )}
 
               <ul className="space-y-1 text-left">
-                {/* Language selector — first item; tap to reveal the others */}
-                <li>
+                {/* Language selector — first item; tap to reveal the others.
+                    Mobile only: on desktop the language switcher lives in the
+                    top bar, so it's hidden here (md:hidden). */}
+                <li className="md:hidden">
                   <button
                     onClick={() => setLangOpen(o => !o)}
                     className={`${MENU_ITEM_CLASS} flex items-center gap-2`}
