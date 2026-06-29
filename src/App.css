@@ -833,8 +833,10 @@
     background: linear-gradient(180deg, #e2ecff, transparent);
   }
 
-  /* Admin dashboard: cream top header */
-  .page-admin nav {
+  /* Admin dashboard: cream top header. Direct-child only, so it styles the
+     Navigation header bar — NOT the inner tab-bar <nav> or the slide-in menu's
+     <nav> (both are deeper descendants). */
+  .page-admin > nav {
     height: 200px;
     background: linear-gradient(180deg, #fffbd2, #f8f6f3);
   }
