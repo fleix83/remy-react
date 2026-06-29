@@ -32,6 +32,35 @@
   unicode-range: U+00C8-00C9, U+00E8-00E9;
 }
 
+/* Gaegu also lacks the cedilla (ç/Ç) — exposed by the French label "Français".
+   Same patched-face approach as above: these compose Gaegu's own comma stroke
+   as a cedilla under the base C/c. A separate unicode-range (U+00C7, U+00E7)
+   keeps them from downloading unless a cedilla actually appears. */
+@font-face {
+  font-family: 'Gaegu Accents';
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/gaegu-cedilla-300.woff2') format('woff2');
+  unicode-range: U+00C7, U+00E7;
+}
+@font-face {
+  font-family: 'Gaegu Accents';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/gaegu-cedilla-400.woff2') format('woff2');
+  unicode-range: U+00C7, U+00E7;
+}
+@font-face {
+  font-family: 'Gaegu Accents';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/gaegu-cedilla-700.woff2') format('woff2');
+  unicode-range: U+00C7, U+00E7;
+}
+
 /* Global CSS Custom Properties for Light Theme */
 :root {
   /* Core Theme Colors */
