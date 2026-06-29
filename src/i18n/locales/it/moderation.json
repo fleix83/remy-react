@@ -34,7 +34,7 @@
     "none": "Nessuna categoria"
   },
   "designation": {
-    "assign": "Assegna una qualifica…"
+    "assign": "Assegna un professionista…"
   },
   "comment": {
     "replyTo": "Commento a:",
@@ -69,7 +69,7 @@
     "deleteError": "Errore durante l'eliminazione",
     "categoryChanged": "Categoria modificata con successo!",
     "categoryChangeError": "Errore durante la modifica della categoria",
-    "designationAssignError": "Errore durante l'assegnazione della qualifica",
+    "designationAssignError": "Errore durante l'assegnazione del professionista",
     "therapistApproved": "Terapeuta approvato!",
     "therapistApproveError": "Errore durante l'approvazione",
     "messageSent": "Messaggio inviato!",

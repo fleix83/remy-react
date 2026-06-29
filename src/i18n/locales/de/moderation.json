@@ -34,7 +34,7 @@
     "none": "Keine Kategorie"
   },
   "designation": {
-    "assign": "Bezeichnung zuweisen…"
+    "assign": "Fachperson zuweisen…"
   },
   "comment": {
     "replyTo": "Kommentar zu:",
@@ -69,7 +69,7 @@
     "deleteError": "Fehler beim Löschen",
     "categoryChanged": "Kategorie erfolgreich geändert!",
     "categoryChangeError": "Fehler beim Ändern der Kategorie",
-    "designationAssignError": "Fehler beim Zuweisen der Bezeichnung",
+    "designationAssignError": "Fehler beim Zuweisen der Fachperson",
     "therapistApproved": "Therapeut freigegeben!",
     "therapistApproveError": "Fehler beim Freigeben",
     "messageSent": "Nachricht gesendet!",

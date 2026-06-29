@@ -9,7 +9,7 @@
     "overview": "Panoramica",
     "users": "Utenti",
     "therapists": "Terapeuti",
-    "designations": "Designazioni",
+    "designations": "Professionisti",
     "categories": "Categorie",
     "cms": "CMS"
   },
@@ -73,14 +73,14 @@
     "namePlaceholderEn": "Nome EN"
   },
   "designations": {
-    "title": "Designazione professionale",
-    "loading": "Caricamento designazioni...",
-    "loadError": "Errore durante il caricamento delle designazioni",
+    "title": "Professionista",
+    "loading": "Caricamento professionisti...",
+    "loadError": "Errore durante il caricamento dei professionisti",
     "retry": "Riprova",
     "new": "Nuovo",
     "creating": "Creazione…",
-    "createError": "Errore durante la creazione della designazione",
-    "defaultLabel": "Nuova designazione",
+    "createError": "Errore durante la creazione del professionista",
+    "defaultLabel": "Nuovo professionista",
     "colSlug": "Slug",
     "colDe": "DE",
     "colFr": "FR",
@@ -89,10 +89,10 @@
     "colSort": "Ordine",
     "colActive": "Attivo",
     "colActions": "Azioni",
-    "empty": "Nessuna designazione disponibile.",
-    "createFirst": "+ Crea la prima designazione",
-    "summary_one": "{{count}} designazione in totale",
-    "summary_other": "{{count}} designazioni in totale",
+    "empty": "Nessun professionista disponibile.",
+    "createFirst": "+ Crea il primo professionista",
+    "summary_one": "{{count}} professionista in totale",
+    "summary_other": "{{count}} professionisti in totale",
     "activeCount": "{{count}} attive"
   },
   "designationRow": {
@@ -104,8 +104,8 @@
     "sortPlaceholder": "Ordine",
     "activeTitle": "Attivo",
     "inactiveTitle": "Inattivo",
-    "deleteConfirm": "Vuoi davvero eliminare la designazione \"{{label}}\"?",
-    "deleteError": "Errore durante l'eliminazione della designazione (è ancora usata da dei terapeuti?)"
+    "deleteConfirm": "Vuoi davvero eliminare il professionista \"{{label}}\"?",
+    "deleteError": "Errore durante l'eliminazione del professionista (è ancora usato da dei terapeuti?)"
   },
   "therapists": {
     "title": "Gestione terapeuti",
@@ -114,8 +114,8 @@
     "retry": "Riprova",
     "new": "Nuovo",
     "searchPlaceholder": "Cerca (nome, istituzione, titolo…)",
-    "missingFilter": "⚠ {{count}} senza designazione",
-    "missingFilterTitle": "Mostra solo i terapeuti senza designazione assegnata",
+    "missingFilter": "⚠ {{count}} senza professionista",
+    "missingFilterTitle": "Mostra solo i terapeuti senza professionista assegnato",
     "colFormOfAddress": "Appellativo",
     "colFirstName": "Nome",
     "colLastName": "Cognome",
@@ -134,7 +134,7 @@
     "emptyFiltered": "Nessun terapeuta trovato.",
     "summary_one": "{{shown}} di {{total}} terapeuta",
     "summary_other": "{{shown}} di {{total}} terapeuti",
-    "summaryMissing": "{{count}} senza designazione",
+    "summaryMissing": "{{count}} senza professionista",
     "summaryInactive": "{{count}} inattivi"
   },
   "therapistRow": {
@@ -146,8 +146,8 @@
     "languagesPlaceholder": "Lingue",
     "specialtyPlaceholder": "Specializzazione",
     "servicesPlaceholder": "Offerte",
-    "noDesignation": "⚠ Senza designazione",
-    "missingDesignationTitle": "Nessuna designazione assegnata — assegnane una",
+    "noDesignation": "⚠ Senza professionista",
+    "missingDesignationTitle": "Nessun professionista assegnato — assegnane uno",
     "genderFemale": "Femminile",
     "genderMale": "Maschile",
     "statusInactive": "Inattivo",

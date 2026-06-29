@@ -34,7 +34,7 @@
     "none": "No category"
   },
   "designation": {
-    "assign": "Assign designation…"
+    "assign": "Assign professional…"
   },
   "comment": {
     "replyTo": "Comment on:",
@@ -69,7 +69,7 @@
     "deleteError": "Error deleting",
     "categoryChanged": "Category changed successfully!",
     "categoryChangeError": "Error changing the category",
-    "designationAssignError": "Error assigning the designation",
+    "designationAssignError": "Error assigning the professional",
     "therapistApproved": "Therapist approved!",
     "therapistApproveError": "Error approving",
     "messageSent": "Message sent!",
