@@ -15,12 +15,16 @@ const TAG_VISIBILITY = [
 interface PostTagsProps {
   tags?: string[] | null
   className?: string
+  categoryColor?: string | null
 }
 
-// Read-only tag row: small black type on white chips, as if highlighted
-// with a white marker on the tinted card backgrounds.
-const PostTags: React.FC<PostTagsProps> = ({ tags, className = '' }) => {
+// Read-only tag row: small black type on chips tinted with the post's category
+// colour at 85% HWB whiteness (a pale wash of the category hue), matching the
+// post-view header treatment. Falls back to a translucent-white chip.
+const PostTags: React.FC<PostTagsProps> = ({ tags, className = '', categoryColor }) => {
   if (!Array.isArray(tags) || tags.length === 0) return null
+
+  const tagBg = categoryColor ? `hwb(from ${categoryColor} h 85% b)` : undefined
 
   return (
     <div className={`flex flex-nowrap items-center gap-1.5 overflow-hidden ${className}`}>
@@ -28,7 +32,7 @@ const PostTags: React.FC<PostTagsProps> = ({ tags, className = '' }) => {
         <span
           key={tag}
           className={`post-tag ${TAG_VISIBILITY[index]} items-center whitespace-nowrap rounded-md bg-[#ffffff8f] px-2 py-0.5 font-medium text-black`}
-          style={{ fontSize: '11px', lineHeight: '1.4' }}
+          style={{ fontSize: '11px', lineHeight: '1.4', ...(tagBg ? { background: tagBg } : {}) }}
         >
           {tag}
         </span>

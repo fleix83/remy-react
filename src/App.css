@@ -870,11 +870,6 @@
   .page-forum .post-card-outline {
     background: #fff !important;
   }
-
-  /* Tags: light grey chips for contrast on the white cards */
-  .page-forum .post-tag {
-    background: #f1f1f18f !important;
-  }
 }
 
 /* Lebenskurve curve is shown only on the desktop forum header (rule above);
