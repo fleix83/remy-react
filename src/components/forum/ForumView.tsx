@@ -5,7 +5,6 @@ import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import 'react-day-picker/style.css'
 import PostCard from './PostCard'
-import ForumBackdrop from './ForumBackdrop'
 import PostEditor from './PostEditor'
 import FilterModal from './FilterModal'
 import Pagination from '../ui/Pagination'
@@ -278,8 +277,7 @@ const ForumView: React.FC<ForumViewProps> = React.memo(({
 
   return (
     <div className="min-h-screen">
-      <ForumBackdrop />
-      <div className="max-w-6xl forum-list-column mx-auto pt-0 pb-6 px-0 md:px-4 relative z-[1]">
+      <div className="max-w-6xl forum-list-column mx-auto pt-0 pb-6 px-0 md:px-4">
         {/* New Navbar */}
         <div className={`forum-navbar p-4 mb-4 mx-4 md:mx-0 relative ${showCreatePostDialog ? 'md:hidden' : ''}`} style={{borderRadius: '20px', backgroundColor: 'rgba(252, 252, 252, 0.46)', zIndex: 40}}>
           <div className="flex items-center gap-4">
