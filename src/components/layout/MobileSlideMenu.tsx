@@ -1,11 +1,8 @@
-import React, { useEffect, useCallback, useMemo } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMessagesStore } from '../../stores/messages.store'
-import { useNotificationsStore } from '../../stores/notifications.store'
-import { format } from 'date-fns'
-import { useActiveLanguage } from '../../hooks/useActiveLanguage'
-import { dateFnsLocale } from '../../utils/dateFormat'
+import { useAuthStore } from '../../stores/auth.store'
 
 interface MobileSlideMenuProps {
   isOpen: boolean
@@ -14,6 +11,23 @@ interface MobileSlideMenuProps {
   onLogout: () => void
 }
 
+// Shared big-menu-item look (Gaegu, blue). Reused by every entry + the
+// language selector so they stay visually identical.
+const MENU_ITEM_CLASS =
+  'block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80'
+const menuItemStyle: React.CSSProperties = {
+  fontFamily: 'Gaegu, "Gaegu Accents", cursive',
+  fontSize: '38px',
+  color: '#4785ff',
+}
+
+const LANGUAGES = [
+  { code: 'de', label: 'Deutsch' },
+  { code: 'fr', label: 'Français' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'en', label: 'English' },
+] as const
+
 const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   isOpen,
   onClose,
@@ -21,18 +35,20 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   onLogout
 }) => {
   const navigate = useNavigate()
-  const { t } = useTranslation()
-  const lang = useActiveLanguage()
-  const { unreadCount: messageCount, conversations, loadConversations, setCurrentConversation } = useMessagesStore()
-  const { notifications, loadNotifications, markPostNotificationsAsRead } = useNotificationsStore()
+  const { t, i18n } = useTranslation()
+  const { unreadCount: messageCount, loadConversations } = useMessagesStore()
+  const { user, updateProfile } = useAuthStore()
+  const [langOpen, setLangOpen] = useState(false)
 
-  // Refresh unread messages + notifications whenever the menu opens
+  const activeLang = (i18n.language || 'de').split('-')[0]
+  const currentLangLabel = LANGUAGES.find(l => l.code === activeLang)?.label ?? 'Deutsch'
+
+  // Refresh the unread-messages count whenever the menu opens; collapse the
+  // language dropdown whenever it closes (the component stays mounted).
   useEffect(() => {
-    if (isOpen) {
-      loadConversations()
-      loadNotifications()
-    }
-  }, [isOpen, loadConversations, loadNotifications])
+    if (isOpen) loadConversations()
+    else setLangOpen(false)
+  }, [isOpen, loadConversations])
 
   // Handle escape key
   useEffect(() => {
@@ -68,41 +84,13 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
     onClose()
   }, [onLogout, onClose])
 
-  // Top-of-menu feed: unread direct messages + unread "comment on your post"
-  // notifications, merged into one time-sorted list capped at 3. Items vanish
-  // once read (the conversation/notification is marked read on click and on
-  // viewing the target), so only genuinely-unread items ever appear here.
-  const menuMessages = useMemo(() => {
-    const dmItems = conversations
-      .filter(c => c.unreadCount > 0 && c.lastMessage)
-      .map(c => ({
-        key: `dm-${c.id}`,
-        name: c.participant.username,
-        date: c.lastMessage?.created_at || c.lastActivity,
-        preview: c.lastMessage?.content?.replace(/<[^>]*>/g, '').slice(0, 50) || '…',
-        onClick: () => {
-          setCurrentConversation(c)
-          handleNavigation('/messages')
-        },
-      }))
-
-    const commentItems = notifications
-      .filter(n => n.type === 'post_comment' && !n.is_read && n.related_post_id)
-      .map(n => ({
-        key: `comment-${n.id}`,
-        name: n.title || 'Neue Antwort',
-        date: n.created_at || '',
-        preview: (n.message || '').replace(/<[^>]*>/g, '').slice(0, 60) || '…',
-        onClick: () => {
-          markPostNotificationsAsRead(n.related_post_id!)
-          handleNavigation(`/post/${n.related_post_id}`)
-        },
-      }))
-
-    return [...dmItems, ...commentItems]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 3)
-  }, [conversations, notifications, setCurrentConversation, markPostNotificationsAsRead, handleNavigation])
+  // Flip i18next instantly and, for logged-in users, persist to their profile
+  // so the choice follows them across devices (mirrors LanguageSwitcher).
+  const changeLanguage = useCallback((lng: string) => {
+    void i18n.changeLanguage(lng)
+    if (user) updateProfile({ language_preference: lng }).catch(() => {})
+    setLangOpen(false)
+  }, [i18n, user, updateProfile])
 
   // Don't render if not open
   if (!isOpen) return null
@@ -124,7 +112,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
         }}
       >
         {/* Close button */}
-        <div className="absolute top-8 right-8">
+        <div className="absolute top-8 right-8 z-10">
           <button
             onClick={onClose}
             className="p-2 hover:opacity-70 transition-opacity"
@@ -137,59 +125,58 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
           </button>
         </div>
 
-        {/* Menu content */}
+        {/* Menu content — scrollable (scrollbar hidden), centred when it fits
+            and scrollable from the top when it overflows (m-auto, not
+            justify-center, so the first item is never clipped). */}
         <div className="flex flex-col h-full pt-16">
-          <nav className="flex-1 flex items-center justify-center">
-            <div className="text-left">
-            {/* Unread messages + post-comment notifications, newest first (max 3) */}
-            {menuMessages.length > 0 && (
-              <div className="mb-4">
-                <div className="space-y-1">
-                  {menuMessages.map(item => (
-                    <button
-                      key={item.key}
-                      onClick={item.onClick}
-                      className="block text-left hover:opacity-80 transition-opacity"
-                      style={{
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        width: 'fit-content',
-                        backgroundColor: '#fffae6'
-                      }}
-                    >
-                      <div className="text-sm text-gray-700 flex items-center">
-                        <span
-                          className="mr-1.5 inline-block h-2 w-2 flex-shrink-0 rounded-full"
-                          style={{ backgroundColor: '#ff6b35' }}
-                        />
-                        <span className="font-medium">{item.name}</span>
-                        <span className="text-gray-400 mx-1">·</span>
-                        <span className="text-gray-400" style={{ fontSize: '0.75rem' }}>
-                          {item.date
-                            ? format(new Date(item.date), 'dd. MMM', { locale: dateFnsLocale(lang) })
-                            : ''}
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-500 truncate" style={{ maxWidth: '220px' }}>
-                        {item.preview}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+          <nav className="flex-1 overflow-y-auto scrollbar-hide flex flex-col">
+            <ul className="m-auto space-y-1 text-left py-6">
+              {/* Language selector — first item; tap to reveal the others */}
+              <li>
+                <button
+                  onClick={() => setLangOpen(o => !o)}
+                  className={`${MENU_ITEM_CLASS} flex items-center gap-2`}
+                  style={menuItemStyle}
+                  aria-expanded={langOpen}
+                  aria-haspopup="listbox"
+                >
+                  {currentLangLabel}
+                  <svg
+                    className="w-6 h-6 transition-transform duration-200"
+                    style={{ transform: langOpen ? 'rotate(180deg)' : 'none' }}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {langOpen && (
+                  <ul className="mt-1 mb-1 space-y-1" role="listbox" aria-label="Sprache">
+                    {LANGUAGES.filter(l => l.code !== activeLang).map(l => (
+                      <li key={l.code}>
+                        <button
+                          onClick={() => changeLanguage(l.code)}
+                          className={MENU_ITEM_CLASS}
+                          style={{ ...menuItemStyle, fontSize: '26px', opacity: 0.7 }}
+                          role="option"
+                          aria-selected={false}
+                        >
+                          {l.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
 
-            <ul className="space-y-3 text-left">
               {/* Forum */}
               <li>
                 <button
                   onClick={() => handleNavigation('/')}
-                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
-                  style={{ 
-                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
-                    fontSize: '38px',
-                    color: '#4785ff'
-                  }}
+                  className={MENU_ITEM_CLASS}
+                  style={menuItemStyle}
                 >
                   {t('nav.forum')}
                 </button>
@@ -199,12 +186,8 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
               <li>
                 <button
                   onClick={() => handleNavigation('/therapists')}
-                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
-                  style={{ 
-                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
-                    fontSize: '38px',
-                    color: '#4785ff'
-                  }}
+                  className={MENU_ITEM_CLASS}
+                  style={menuItemStyle}
                 >
                   {t('nav.therapists')}
                 </button>
@@ -214,12 +197,8 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
               <li>
                 <button
                   onClick={() => handleNavigation('/profile')}
-                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
-                  style={{ 
-                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
-                    fontSize: '38px',
-                    color: '#4785ff'
-                  }}
+                  className={MENU_ITEM_CLASS}
+                  style={menuItemStyle}
                 >
                   {t('nav.profile')}
                 </button>
@@ -229,12 +208,8 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
               <li>
                 <button
                   onClick={() => handleNavigation('/messages')}
-                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80 flex items-center"
-                  style={{
-                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
-                    fontSize: '38px',
-                    color: '#4785ff'
-                  }}
+                  className={`${MENU_ITEM_CLASS} flex items-center`}
+                  style={menuItemStyle}
                 >
                   {t('nav.messages')}
                   {messageCount > 0 && (
@@ -257,12 +232,8 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
               <li>
                 <button
                   onClick={() => handleNavigation('/community-guidelines')}
-                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
-                  style={{
-                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
-                    fontSize: '38px',
-                    color: '#4785ff'
-                  }}
+                  className={MENU_ITEM_CLASS}
+                  style={menuItemStyle}
                 >
                   {t('nav.guidelines')}
                 </button>
@@ -273,12 +244,8 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                 <li>
                   <button
                     onClick={() => handleNavigation('/admin/moderation')}
-                    className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
-                    style={{
-                      fontFamily: 'Gaegu, "Gaegu Accents", cursive',
-                      fontSize: '38px',
-                      color: '#4785ff'
-                    }}
+                    className={MENU_ITEM_CLASS}
+                    style={menuItemStyle}
                   >
                     {t('nav.moderation')}
                   </button>
@@ -290,12 +257,8 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
                 <li>
                   <button
                     onClick={() => handleNavigation('/admin')}
-                    className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
-                    style={{ 
-                      fontFamily: 'Gaegu, "Gaegu Accents", cursive',
-                      fontSize: '38px',
-                      color: '#4785ff'
-                    }}
+                    className={MENU_ITEM_CLASS}
+                    style={menuItemStyle}
                   >
                     {t('nav.admin')}
                   </button>
@@ -306,18 +269,13 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
               <li>
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left font-bold uppercase transition-colors hover:opacity-80 focus:outline-none focus:opacity-80"
-                  style={{ 
-                    fontFamily: 'Gaegu, "Gaegu Accents", cursive',
-                    fontSize: '38px',
-                    color: '#4785ff'
-                  }}
+                  className={MENU_ITEM_CLASS}
+                  style={menuItemStyle}
                 >
                   {t('nav.logout')}
                 </button>
               </li>
             </ul>
-            </div>
           </nav>
         </div>
       </div>
