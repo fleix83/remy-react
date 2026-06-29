@@ -37,7 +37,7 @@ const Pagination: React.FC<PaginationProps> = ({ page, totalPages, onPageChange,
 
   return (
     <nav
-      className={`inline-flex items-center gap-1 rounded-full bg-white/80 p-1 shadow-sm ${className}`}
+      className={`pagination-nav inline-flex items-center gap-1 rounded-full bg-white/80 p-1 shadow-sm ${className}`}
       aria-label="Seitennavigation"
     >
       <button

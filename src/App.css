@@ -827,15 +827,15 @@
 
   /* Top header: taller, blue gradient fading into the white page.
      Shared by the forum landing and the post view. */
-  .page-forum nav,
-  .page-postview nav {
+  .page-forum nav:not(.pagination-nav),
+  .page-postview nav:not(.pagination-nav) {
     height: 200px;
     background: linear-gradient(180deg, #e2ecff, transparent);
   }
 
   /* Post view: the header gradient tints to the current post's category colour
      at 75% HWB whiteness (--postview-cat is set on .page-postview by PostView). */
-  .page-postview nav {
+  .page-postview nav:not(.pagination-nav) {
     background: linear-gradient(180deg, hwb(from var(--postview-cat, #e2ecff) h 75% b), transparent);
   }
 
