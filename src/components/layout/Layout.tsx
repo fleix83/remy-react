@@ -19,8 +19,12 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const footerRef = useRef<HTMLElement>(null)
   const location = useLocation()
-  // Forum landing gets the desktop blue-header / white-page treatment
-  const pageClass = location.pathname === '/' ? 'page-forum' : ''
+  // Forum landing gets the desktop blue-header / white-page treatment;
+  // the admin dashboard gets its own cream top-header treatment.
+  const pageClass =
+    location.pathname === '/' ? 'page-forum'
+    : location.pathname === '/admin' ? 'page-admin'
+    : ''
 
   // Push the fixed filter sidebars up as the footer scrolls into view,
   // so they never overlap it (consumed via --footer-push in App.css)

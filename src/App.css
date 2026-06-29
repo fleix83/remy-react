@@ -833,6 +833,12 @@
     background: linear-gradient(180deg, #e2ecff, transparent);
   }
 
+  /* Admin dashboard: cream top header */
+  .page-admin nav {
+    height: 200px;
+    background: linear-gradient(180deg, #fffbd2, #f8f6f3);
+  }
+
   /* Post view: the header gradient tints to the current post's category colour
      at 75% HWB whiteness (--postview-cat is set on .page-postview by PostView). */
   .page-postview nav:not(.pagination-nav) {
