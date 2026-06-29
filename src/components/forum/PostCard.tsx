@@ -200,7 +200,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       )}
 
       {/* Content Tags - thin row above the Antworten/comments footer */}
-      <PostTags tags={post.tags} className="mb-1" categoryColor={getCategoryColorById(post.category_id, allCategories)} />
+      <PostTags tags={post.tags} className="mb-1" />
 
       {/* Footer: right-aligned Antworten link + comment indicator */}
       <div className="flex items-center justify-end space-x-3 mt-1">

@@ -339,7 +339,7 @@ const PostView: React.FC = () => {
 
           {/* Tags left-aligned, one row above the right-aligned Antworten row */}
           <div className="mt-6">
-            <PostTags tags={post.tags} className="mb-2" categoryColor={headerCatColor} />
+            <PostTags tags={post.tags} className="mb-2" />
 
             {/* Reply and Message Links - right-aligned */}
             <div className="flex items-center justify-end space-x-4">

@@ -15,24 +15,19 @@ const TAG_VISIBILITY = [
 interface PostTagsProps {
   tags?: string[] | null
   className?: string
-  categoryColor?: string | null
 }
 
-// Read-only tag row: small black type on chips tinted with the post's category
-// colour at 85% HWB whiteness (a pale wash of the category hue), matching the
-// post-view header treatment. Falls back to a translucent-white chip.
-const PostTags: React.FC<PostTagsProps> = ({ tags, className = '', categoryColor }) => {
+// Read-only tag row: small black type on uniform light-grey (#eee) chips.
+const PostTags: React.FC<PostTagsProps> = ({ tags, className = '' }) => {
   if (!Array.isArray(tags) || tags.length === 0) return null
-
-  const tagBg = categoryColor ? `hwb(from ${categoryColor} h 85% b)` : undefined
 
   return (
     <div className={`flex flex-nowrap items-center gap-1.5 overflow-hidden ${className}`}>
       {tags.slice(0, TAG_VISIBILITY.length).map((tag, index) => (
         <span
           key={tag}
-          className={`post-tag ${TAG_VISIBILITY[index]} items-center whitespace-nowrap rounded-md bg-[#ffffff8f] px-2 py-0.5 font-medium text-black`}
-          style={{ fontSize: '11px', lineHeight: '1.4', ...(tagBg ? { background: tagBg } : {}) }}
+          className={`post-tag ${TAG_VISIBILITY[index]} items-center whitespace-nowrap rounded-md bg-[#eee] px-2 py-0.5 font-medium text-black`}
+          style={{ fontSize: '11px', lineHeight: '1.4' }}
         >
           {tag}
         </span>
