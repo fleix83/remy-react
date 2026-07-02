@@ -14,4 +14,19 @@
     Header set Pragma "no-cache"
     Header set Expires "0"
   </FilesMatch>
+
+  # --- Security headers (added 2026-07 review) -----------------------------
+  # CSP: no inline/remote scripts. connect/img allow the Supabase backend +
+  # storage + realtime websocket. style/font allow Google Fonts — REMOVE the
+  # fonts.googleapis.com / fonts.gstatic.com entries once fonts are self-hosted
+  # (see index.css), which also closes the visitor-IP-to-Google privacy leak.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+
+  Header always set X-Frame-Options "DENY"
+  Header always set X-Content-Type-Options "nosniff"
+  # no-referrer keeps the forum URL from leaking to third-party sites users click through to
+  Header always set Referrer-Policy "no-referrer"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+  # Enable once the site is served exclusively over HTTPS (Metanet)
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 </IfModule>
