@@ -53,7 +53,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
 
   // Check if user has full User properties (needed for upload functionality)
   const isFullUser = (user: User | MinimalUser): user is User => {
-    return 'email' in user && 'role' in user
+    return 'role' in user
   }
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {

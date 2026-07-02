@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { sanitizeHtml } from '../../lib/sanitize'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
@@ -333,7 +334,7 @@ const PostView: React.FC = () => {
             <div
               className="prose prose-gray max-w-none text-left post-view-body"
               style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px', color: '#3a3a3a', '--tw-prose-body': '#3a3a3a' } as React.CSSProperties}
-              dangerouslySetInnerHTML={{ __html: post.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
             />
           </SelectableText>
 

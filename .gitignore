@@ -1,1 +1,17 @@
 blueprint/blueprint
+
+# Legacy DB dumps — contain real user emails, private messages, and bcrypt
+# password hashes. Never commit data dumps (removed in the 2026-07 security pass).
+pandoc.sql
+schema_dump.sql
+migrate_users.sql
+migrate_posts.sql
+*.dump
+
+# Env files hold config; only .env.example belongs in the repo. NOTE: .env,
+# .env.production and .env.staging are currently still tracked (they carry only
+# the public anon key, and CI reads them) — move those secrets to CI secrets and
+# `git rm --cached` the files to fully honour this rule.
+.env
+.env.*
+!.env.example

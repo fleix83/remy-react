@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { sanitizeHtml } from '../../lib/sanitize'
 import type { CommentWithRelations } from '../../types/database.types'
 import { CommentsService } from '../../services/comments.service'
 import UserAvatar from '../user/UserAvatar'
@@ -170,7 +171,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           <div
             className="prose prose-gray max-w-none text-left post-view-body"
             style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px', color: 'var(--post-text)' }}
-            dangerouslySetInnerHTML={{ __html: comment.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(comment.content) }}
           />
         )}
       </div>

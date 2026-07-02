@@ -1,4 +1,5 @@
 import React from 'react'
+import { sanitizeHtml } from '../../lib/sanitize'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
@@ -148,7 +149,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                     {getPostDisplayTitle(item.title, item.content || '', item.category_id || 1)}
                   </h1>
                   <div className="prose prose-gray max-w-none text-[var(--type)] leading-relaxed text-left text-sm md:text-[15px]">
-                    <div dangerouslySetInnerHTML={{ __html: item.content || '' }} />
+                    <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.content) }} />
                   </div>
                 </div>
               ) : item.content_type === 'therapist' ? (
@@ -180,7 +181,7 @@ const ModerationPreviewModal: React.FC<ModerationPreviewModalProps> = ({
                     </div>
                   )}
                   <div className="prose prose-gray max-w-none text-[var(--type)] leading-relaxed text-left text-sm md:text-[15px] border-l-2 border-[#fa8072] pl-4">
-                    <div dangerouslySetInnerHTML={{ __html: item.content || '' }} />
+                    <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.content) }} />
                   </div>
                 </div>
               )}

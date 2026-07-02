@@ -81,7 +81,7 @@ const ModerationQueue: React.FC = () => {
               .from('posts')
               .select(`
                 *,
-                users!posts_user_id_fkey(id, username, email, role)
+                users!posts_user_id_fkey(id, username, role)
               `)
               .eq('id', newPost.id)
               .single()
@@ -138,7 +138,7 @@ const ModerationQueue: React.FC = () => {
               .from('comments')
               .select(`
                 *,
-                users!comments_user_id_fkey(id, username, email, role)
+                users!comments_user_id_fkey(id, username, role)
               `)
               .eq('id', newComment.id)
               .single()
