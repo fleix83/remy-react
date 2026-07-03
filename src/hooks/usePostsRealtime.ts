@@ -64,7 +64,12 @@ export const usePostsRealtime = () => {
             filter: 'is_published=eq.true,is_active=eq.true'
           },
           (payload) => {
-            if (isSelfWrite(payload)) return
+            // A self-write carrying moderation_status 'approved' can only be
+            // the moderation verdict (authors can't self-approve): it's the
+            // moment the author's own post becomes visible, so refetch.
+            const approved =
+              (payload.new as { moderation_status?: string })?.moderation_status === 'approved'
+            if (isSelfWrite(payload) && !approved) return
             console.log('Post updated:', payload)
             debouncedInvalidate()
           }
