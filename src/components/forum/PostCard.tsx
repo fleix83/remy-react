@@ -1,15 +1,20 @@
 import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import type { PostWithRelations } from '../../types/database.types'
 import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
 import { getPostDisplayTitle } from '../../utils/text.utils'
 import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
-import { useCategories } from '../../hooks/usePosts'
+import { useCategories, postsKeys } from '../../hooks/usePosts'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { intlLocale } from '../../utils/dateFormat'
 import { useTranslation } from 'react-i18next'
+import { useAuthStore } from '../../stores/auth.store'
+import { supabase } from '../../lib/supabase'
+import { confirmDialog } from '../../stores/confirm.store'
+import { toast } from '../../stores/toast.store'
 
 interface PostCardProps {
   post: PostWithRelations
@@ -69,7 +74,34 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
   }
 
   const { t } = useTranslation('forum')
+  const { user } = useAuthStore()
+  const queryClient = useQueryClient()
+  const isOwner = !!user && user.id === post.user_id
 
+  // Same soft delete as the profile view: mark inactive + unpublished
+  // (user_id guard mirrors RLS), then refresh the feed queries.
+  const handleDeletePost = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!user) return
+    if (!(await confirmDialog({
+      message: t('profile:content.deletePostConfirm'),
+      confirmLabel: t('common:actions.delete'),
+      danger: true,
+    }))) {
+      return
+    }
+    const { error } = await supabase
+      .from('posts')
+      .update({ is_active: false, is_published: false })
+      .eq('id', post.id)
+      .eq('user_id', user.id)
+    if (error) {
+      console.error('Error deleting post:', error)
+      toast.error(t('profile:content.deletePostError'))
+      return
+    }
+    queryClient.invalidateQueries({ queryKey: postsKeys.all })
+  }
 
   return (
     <div 
@@ -202,8 +234,23 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
       {/* Content Tags - thin row above the Antworten/comments footer */}
       <PostTags tags={post.tags} className="mb-1" />
 
-      {/* Footer: right-aligned Antworten link + comment indicator */}
-      <div className="flex items-center justify-end space-x-3 mt-1">
+      {/* Footer: owner delete (left) + Antworten link and comment indicator (right) */}
+      <div className="flex items-center justify-between mt-1">
+        {isOwner ? (
+          <button
+            onClick={handleDeletePost}
+            className="p-1 text-red-500 hover:text-red-600 active:scale-95 transition-[color,transform] duration-100"
+            title={t('common:actions.delete')}
+            aria-label={t('common:actions.delete')}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        ) : (
+          <span />
+        )}
+        <div className="flex items-center justify-end space-x-3">
         <button
           onClick={(e) => {
             e.stopPropagation()
@@ -228,6 +275,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
               {commentCount > 99 ? '99+' : commentCount}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
