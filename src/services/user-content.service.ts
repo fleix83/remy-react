@@ -123,6 +123,13 @@ export class UserContentService {
       }
     }
 
+    if (post.moderation_status === 'rejected') {
+      return {
+        status: 'rejected',
+        className: 'bg-red-100 text-red-800 border-red-200'
+      }
+    }
+
     if (!post.is_published) {
       return {
         status: 'inModeration',

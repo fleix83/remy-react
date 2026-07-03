@@ -406,6 +406,17 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
                           {truncateToLines(post.content, 2)}
                         </p>
 
+                        {/* Rejection explanation (from moderation — localized,
+                            author-facing; only the owner can see rejected posts) */}
+                        {post.moderation_status === 'rejected' && post.rejection_reason && (
+                          <p
+                            className="text-sm mb-3 px-3 py-2 text-left leading-relaxed rounded-lg"
+                            style={{ color: '#b91c1c', backgroundColor: 'rgba(220,38,38,0.06)' }}
+                          >
+                            {post.rejection_reason}
+                          </p>
+                        )}
+
                         {/* Bottom Section - Edit and Delete Buttons */}
                         <div className="flex items-center justify-between">
                           {/* Left: Edit Button */}

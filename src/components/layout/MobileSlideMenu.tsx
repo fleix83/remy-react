@@ -42,7 +42,7 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
   const { t, i18n } = useTranslation()
   const lang = useActiveLanguage()
   const { unreadCount: messageCount, conversations, loadConversations, setCurrentConversation } = useMessagesStore()
-  const { notifications, unreadCount: notifCount, loadNotifications, markPostNotificationsAsRead } = useNotificationsStore()
+  const { notifications, unreadCount: notifCount, loadNotifications, markPostNotificationsAsRead, markAsRead } = useNotificationsStore()
   const { user, updateProfile } = useAuthStore()
   const [langOpen, setLangOpen] = useState(false)
 
@@ -135,10 +135,26 @@ const MobileSlideMenu: React.FC<MobileSlideMenuProps> = ({
         },
       }))
 
-    return [...dmItems, ...commentItems]
+    // System notifications (e.g. "your post was not published" from the
+    // LLM moderation) — clicking opens the own profile, where the rejected
+    // item shows the full explanation.
+    const systemItems = notifications
+      .filter(n => n.type === 'system' && !n.is_read)
+      .map(n => ({
+        key: `system-${n.id}`,
+        name: n.title || '',
+        date: n.created_at || '',
+        preview: (n.message || '').replace(/<[^>]*>/g, '').slice(0, 60) || '…',
+        onClick: () => {
+          markAsRead(n.id)
+          if (user) handleNavigation(`/user/${user.id}`)
+        },
+      }))
+
+    return [...dmItems, ...commentItems, ...systemItems]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 3)
-  }, [conversations, notifications, setCurrentConversation, markPostNotificationsAsRead, handleNavigation])
+  }, [conversations, notifications, setCurrentConversation, markPostNotificationsAsRead, markAsRead, user, handleNavigation])
 
   // Don't render if not open
   if (!isOpen) return null

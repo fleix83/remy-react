@@ -19,6 +19,19 @@ patients describing their own suffering) intentionally stays code-side.
 (`site_content` or `default`). Note: the public Community Guidelines page
 (`documents` table) is independent of these rules.
 
+## Rejection notifications
+
+When content is rejected, the same LLM call also writes a warm, plain-language
+explanation addressed to the author in their UI language
+(`users.language_preference`, falling back to the content's own language).
+That text becomes the row's `rejection_reason` (shown on the author's profile
+under the rejected item, red "Nicht veröffentlicht" badge) **and** an in-app
+notification (`notifications`, type `system`, localized title) that feeds the
+unread dot and the slide-menu feed. Technical slugs stay in
+`moderation_result` for moderators. The notification is only sent when the
+function's own update applied — a concurrent human decision never triggers a
+stray notification.
+
 ## How it fits the existing system
 
 - Posts are already inserted as `moderation_status='pending'`, `is_published=false`

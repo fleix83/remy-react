@@ -3,6 +3,7 @@
     "banned": "Blocked",
     "inactive": "Inactive",
     "inModeration": "In moderation",
+    "rejected": "Not published",
     "published": "Published",
     "unknown": "Unknown"
   },
