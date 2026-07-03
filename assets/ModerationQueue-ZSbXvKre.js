@@ -1,4 +1,4 @@
-import{j as t,r as _}from"./tiptap-JZuwL1eq.js";import{s as x,u as H,a as Y,U as Q,x as Z,y as K,L as F,i as ee,t as v,k as Pe,D as Ee,j as Te,T as De,P as $e,c as X}from"./index-EsCe3p1S.js";import"./react-query-JJeSt3gM.js";import"./supabase-Dqtg7jh3.js";import"./date-CFKxcAVG.js";class Le{async getPendingContent(){const{data:s,error:r}=await x.from("posts").select(`
+import{j as t,r as _}from"./tiptap-JZuwL1eq.js";import{s as x,u as H,a as Y,U as Q,x as Z,y as K,L as F,i as ee,t as v,k as Pe,D as Ee,j as Te,T as De,P as $e,c as X}from"./index-DAOEl9lr.js";import"./react-query-JJeSt3gM.js";import"./supabase-Dqtg7jh3.js";import"./date-CFKxcAVG.js";class Le{async getPendingContent(){const{data:s,error:r}=await x.from("posts").select(`
         *,
         users!posts_user_id_fkey(id, username, role, avatar_url),
         categories!inner(id, name_de, name_fr, name_it),
