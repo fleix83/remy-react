@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
 import UserAvatar from '../user/UserAvatar'
 import type { MessageWithUser } from '../../services/messages.service'
@@ -23,8 +23,45 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 }) => {
   const { deleteMessage } = useMessagesStore()
   const [showActions, setShowActions] = useState(false)
+  // Long-press reveal for touch devices (no hover there). Auto-hides again.
+  const [touchRevealed, setTouchRevealed] = useState(false)
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null)
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
   const { t } = useTranslation('messaging')
   const lang = useActiveLanguage()
+
+  useEffect(() => {
+    if (!touchRevealed) return
+    const timeout = setTimeout(() => setTouchRevealed(false), 4000)
+    return () => clearTimeout(timeout)
+  }, [touchRevealed])
+
+  const cancelLongPress = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+  }
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isOwn) return
+    const touch = e.touches[0]
+    touchStart.current = { x: touch.clientX, y: touch.clientY }
+    cancelLongPress()
+    longPressTimer.current = setTimeout(() => setTouchRevealed(true), 500)
+  }
+
+  // Scrolling must never count as a long press.
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!longPressTimer.current || !touchStart.current) return
+    const touch = e.touches[0]
+    if (
+      Math.abs(touch.clientX - touchStart.current.x) > 10 ||
+      Math.abs(touch.clientY - touchStart.current.y) > 10
+    ) {
+      cancelLongPress()
+    }
+  }
 
   const formatTimestamp = (dateString: string) => {
     return new Date(dateString).toLocaleString(intlLocale(lang), {
@@ -63,10 +100,18 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
       {!isOwn && !showAvatar && <div className="w-8" />}
 
       {/* Message Content */}
-      <div 
+      <div
         className={`max-w-xs lg:max-w-md relative group`}
         onMouseEnter={() => setShowActions(true)}
         onMouseLeave={() => setShowActions(false)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={cancelLongPress}
+        onTouchCancel={cancelLongPress}
+        onClick={() => touchRevealed && setTouchRevealed(false)}
+        // Suppress iOS text-selection/callout on own bubbles so a long press
+        // reveals the delete action instead of the selection magnifier.
+        style={isOwn ? { WebkitUserSelect: 'none', userSelect: 'none', WebkitTouchCallout: 'none' } as React.CSSProperties : undefined}
       >
         {/* Message Bubble */}
         <div
@@ -81,12 +126,23 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           </p>
         </div>
 
-        {/* Message Actions (only for own messages) */}
-        {isOwn && showActions && (
-          <div className="absolute top-0 right-0 -mr-8 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        {/* Message Actions (only for own messages) — revealed by hover on
+            desktop, by long-press on touch. Sits on the free (left) side of
+            the right-aligned own bubble so it can't clip at the screen edge. */}
+        {isOwn && (showActions || touchRevealed) && (
+          <div
+            className={`absolute top-0 left-0 -ml-8 flex items-center space-x-1 transition-opacity ${
+              touchRevealed ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            }`}
+          >
             <button
-              onClick={handleDeleteMessage}
-              className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleDeleteMessage()
+              }}
+              className={`p-1 transition-colors ${
+                touchRevealed ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+              }`}
               title={t('bubble.deleteTitle')}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
