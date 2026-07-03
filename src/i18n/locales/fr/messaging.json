@@ -50,6 +50,7 @@
   "host": {
     "subtitle": "Messages système",
     "noReply": "Remy est un compte système – il n'est pas possible d'y répondre.",
-    "back": "Retour"
+    "back": "Retour",
+    "dismiss": "Supprimer"
   }
 }

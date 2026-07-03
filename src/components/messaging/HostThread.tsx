@@ -24,7 +24,7 @@ const HostThread: React.FC<HostThreadProps> = ({ onClose }) => {
   const navigate = useNavigate()
   const lang = useActiveLanguage()
   const { user } = useAuthStore()
-  const { notifications, markAllAsRead } = useNotificationsStore()
+  const { notifications, markAllAsRead, deleteNotification } = useNotificationsStore()
   const bottomRef = useRef<HTMLDivElement>(null)
 
   // Opening the thread = reading the inbox.
@@ -91,19 +91,32 @@ const HostThread: React.FC<HostThreadProps> = ({ onClose }) => {
           return (
             <div key={n.id} className="flex justify-start items-end space-x-2">
               <img src={rIcon} alt="" className="w-8 h-8 rounded-full bg-white p-1 shadow-sm flex-shrink-0" />
-              <button
-                type="button"
+              <div
                 onClick={() => clickable && openNotification(n)}
-                className={`max-w-xs lg:max-w-md text-left ${clickable ? 'cursor-pointer hover:opacity-90' : 'cursor-default'}`}
+                className={`max-w-xs lg:max-w-md text-left ${clickable ? 'cursor-pointer hover:opacity-90' : ''}`}
               >
-                <div className="px-4 py-2 rounded-2xl bg-white shadow-sm break-words">
+                <div className="relative px-4 py-2 pr-8 rounded-2xl bg-white shadow-sm break-words">
+                  {/* Dismiss — deletes the notification */}
+                  <button
+                    type="button"
+                    aria-label={t('host.dismiss')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteNotification(n.id)
+                    }}
+                    className="absolute top-1.5 right-1.5 p-1 rounded-full text-[var(--primary)] hover:bg-[#eef3ff] transition-colors"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                   {n.title && (
                     <p className="text-sm font-semibold mb-0.5" style={{ color: '#5a5a5a' }}>{n.title}</p>
                   )}
                   <p className="text-sm leading-relaxed whitespace-pre-wrap text-gray-700">{n.message}</p>
                 </div>
                 <div className="text-xs text-gray-400 mt-1 text-left">{formatTime(n.created_at ?? null)}</div>
-              </button>
+              </div>
             </div>
           )
         })}

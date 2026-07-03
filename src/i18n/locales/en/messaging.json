@@ -50,6 +50,7 @@
   "host": {
     "subtitle": "System messages",
     "noReply": "Remy is a system account – replies aren't possible here.",
-    "back": "Back"
+    "back": "Back",
+    "dismiss": "Dismiss"
   }
 }
