@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
@@ -6,6 +6,7 @@ import { useMessagesStore, initializeMessagingAuth } from '../../stores/messages
 import { useNotificationsStore } from '../../stores/notifications.store'
 import MessagesList from './MessagesList'
 import ConversationView from './ConversationView'
+import HostThread from './HostThread'
 import { useTranslation } from 'react-i18next'
 
 const MessagesPage: React.FC = () => {
@@ -16,6 +17,9 @@ const MessagesPage: React.FC = () => {
     loadConversations
   } = useMessagesStore()
 
+  // The read-only "Remy" system thread (in-app notifications).
+  const [showHost, setShowHost] = useState(false)
+
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
@@ -24,11 +28,17 @@ const MessagesPage: React.FC = () => {
 
     if (user) {
       loadConversations()
+      useNotificationsStore.getState().loadNotifications()
       // Opening the messages page clears message notifications so the
       // avatar dot doesn't stick around after the messages were seen
       useNotificationsStore.getState().markTypeAsRead('private_message')
     }
   }, [user, loadConversations])
+
+  // Selecting a real conversation closes the Remy thread and vice versa.
+  useEffect(() => {
+    if (currentConversation) setShowHost(false)
+  }, [currentConversation])
 
   // Handle post context from URL params
   useEffect(() => {
@@ -71,13 +81,21 @@ const MessagesPage: React.FC = () => {
             className="w-full md:w-1/3 lg:w-1/4 border-r border-[#e8e3da]"
             style={{ background: 'linear-gradient(180deg, #e6eeff 0%, #f7f5ef 220px)' }}
           >
-            <MessagesList />
+            <MessagesList
+              onOpenHost={() => {
+                useMessagesStore.getState().setCurrentConversation(null)
+                setShowHost(true)
+              }}
+              hostActive={showHost}
+            />
           </div>
 
           {/* Conversation View */}
           <div className="hidden md:flex md:w-2/3 lg:w-3/4 flex-col">
             {currentConversation ? (
               <ConversationView />
+            ) : showHost ? (
+              <HostThread onClose={() => setShowHost(false)} />
             ) : (
               <div className="flex-1 flex items-center justify-center" style={{ background: '#f7f5ef' }}>
                 <div className="text-center max-w-sm px-6">
@@ -101,6 +119,14 @@ const MessagesPage: React.FC = () => {
           {currentConversation && createPortal(
             <div className="md:hidden fixed inset-0 z-[60] bg-[var(--bg-body)]">
               <ConversationView />
+            </div>,
+            document.body
+          )}
+
+          {/* Mobile Remy thread — same full-screen portal treatment */}
+          {showHost && !currentConversation && createPortal(
+            <div className="md:hidden fixed inset-0 z-[60] bg-[var(--bg-body)]">
+              <HostThread onClose={() => setShowHost(false)} />
             </div>,
             document.body
           )}

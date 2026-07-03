@@ -1,11 +1,18 @@
 import React from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
+import { useNotificationsStore } from '../../stores/notifications.store'
 import UserAvatar from '../user/UserAvatar'
 import { useTranslation } from 'react-i18next'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { intlLocale } from '../../utils/dateFormat'
+import rIcon from '../../assets/r.svg'
 
-const MessagesList: React.FC = () => {
+interface MessagesListProps {
+  onOpenHost: () => void
+  hostActive: boolean
+}
+
+const MessagesList: React.FC<MessagesListProps> = ({ onOpenHost, hostActive }) => {
   const { t } = useTranslation('messaging')
   const lang = useActiveLanguage()
   const {
@@ -14,6 +21,7 @@ const MessagesList: React.FC = () => {
     loading,
     setCurrentConversation
   } = useMessagesStore()
+  const { notifications, unreadCount } = useNotificationsStore()
 
   const formatTimestamp = (dateString: string) => {
     const date = new Date(dateString)
@@ -70,7 +78,46 @@ const MessagesList: React.FC = () => {
 
       {/* Conversations List */}
       <div className="flex-1 overflow-y-auto px-2 pb-3">
-        {conversations.length === 0 ? (
+        {/* Remy — system notifications rendered as a pinned, read-only
+            "conversation" (moderation notices, comment replies, …) */}
+        {notifications.length > 0 && (
+          <button
+            onClick={onOpenHost}
+            className={`w-full px-3 py-3 mt-2 text-left rounded-2xl transition-colors ${
+              hostActive ? 'bg-white shadow-sm' : 'hover:bg-white/50'
+            }`}
+          >
+            <div className="flex items-start space-x-3">
+              <img
+                src={rIcon}
+                alt="Remy"
+                className="w-10 h-10 rounded-full bg-white p-1.5 shadow-sm flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="text-sm font-medium truncate" style={{color: '#5a5a5a'}}>
+                    Remy
+                  </h3>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-gray-400">
+                      {notifications[0]?.created_at ? formatTimestamp(notifications[0].created_at) : ''}
+                    </span>
+                    {unreadCount > 0 && (
+                      <div className="bg-[var(--primary)] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className="text-xs truncate text-[var(--primary)]">
+                  {truncateMessage(notifications[0]?.title || notifications[0]?.message || '')}
+                </p>
+              </div>
+            </div>
+          </button>
+        )}
+
+        {conversations.length === 0 && notifications.length === 0 ? (
           <div className="p-6 text-center">
             <div className="text-[var(--primary)] opacity-50 mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">

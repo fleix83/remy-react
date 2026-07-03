@@ -46,5 +46,10 @@
     "message": "Messaggio",
     "sendMessage": "Invia messaggio",
     "openError": "Errore durante l'apertura della conversazione"
+  },
+  "host": {
+    "subtitle": "Messaggi di sistema",
+    "noReply": "Remy è un account di sistema – non è possibile rispondere qui.",
+    "back": "Indietro"
   }
 }

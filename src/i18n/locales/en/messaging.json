@@ -46,5 +46,10 @@
     "message": "Message",
     "sendMessage": "Send message",
     "openError": "Error opening the conversation"
+  },
+  "host": {
+    "subtitle": "System messages",
+    "noReply": "Remy is a system account – replies aren't possible here.",
+    "back": "Back"
   }
 }

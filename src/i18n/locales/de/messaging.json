@@ -46,5 +46,10 @@
     "message": "Nachricht",
     "sendMessage": "Nachricht senden",
     "openError": "Fehler beim Öffnen der Unterhaltung"
+  },
+  "host": {
+    "subtitle": "Systemnachrichten",
+    "noReply": "Remy ist ein Systemkonto – Antworten ist hier nicht möglich.",
+    "back": "Zurück"
   }
 }
