@@ -1,6 +1,7 @@
-# moderate-post — automated LLM post moderation
+# moderate-post — automated LLM post & comment moderation
 
-One chat-completion call per post decides **approve / hold for human / reject**.
+One chat-completion call per post **or comment** decides **approve / hold for
+human / reject** (the webhook payload's `table` field selects the behavior).
 Provider: **Infomaniak AI Services** (Swiss-hosted, no request storage, no
 training on prompts — see `llm.ts` header). Fail-closed: on any error the post
 simply stays `pending` and lands in the existing human ModerationQueue.
@@ -17,6 +18,11 @@ simply stays `pending` and lands in the existing human ModerationQueue.
     the existing realtime subscription)
 - Requires migration `029_llm_moderation.sql` (adds `moderation_result`, index,
   service-role bypass in the `guard_posts_moderation` trigger).
+- **Comments** work identically (migration `030_llm_moderation_comments.sql`):
+  they are also born `pending` + invisible under the comments RLS gate, and the
+  same block/flag/clean mapping applies. Needs a **second webhook** on
+  `public.comments` (same settings as the posts one). Approved comments reach
+  open threads via the realtime UPDATE handler in `useCommentsRealtime.ts`.
 
 ## Setup
 
@@ -40,10 +46,11 @@ simply stays `pending` and lands in the existing human ModerationQueue.
    supabase functions deploy moderate-post
    ```
 
-4. **Database Webhook** (Dashboard → Integrations → Database Webhooks; first
-   use enables the `pg_net` extension):
-   - Name: `moderate_post`
-   - Table: `public.posts`, Events: **INSERT** and **UPDATE**
+4. **Database Webhooks** (Dashboard → Integrations → Database Webhooks; first
+   use enables the `pg_net` extension). Create one per table — `moderate_post`
+   on `public.posts` and `moderate_comment` on `public.comments` — with
+   identical settings:
+   - Events: **INSERT** and **UPDATE**
    - Type: *Supabase Edge Functions* → `moderate-post`
    - HTTP Headers: add the auth header with the project **anon** key
      (`Authorization: Bearer <anon key>`) — the function verifies JWTs.

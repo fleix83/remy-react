@@ -81,9 +81,37 @@ export const useCommentsRealtime = (postId: number) => {
             table: 'comments',
             filter: `post_id=eq.${postId}`
           },
-          throttledHandler((payload: any) => {
+          throttledHandler(async (payload: any) => {
             const updatedComment = payload.new as Comment
-            updateComment(postId, updatedComment.id, updatedComment)
+
+            // Comments start invisible ('pending' under RLS) and only reach
+            // other clients once moderation approves them — as an UPDATE, not
+            // an INSERT. If we don't have the comment yet, treat the approval
+            // like a fresh insert; otherwise patch it in place.
+            const tree = useCommentsStore.getState().comments[postId.toString()]
+            const inTree = (list: any[] | undefined): boolean =>
+              !!list?.some(c => c.id === updatedComment.id || inTree(c.replies))
+            if (inTree(tree)) {
+              updateComment(postId, updatedComment.id, updatedComment)
+              return
+            }
+            if ((updatedComment as any).moderation_status !== 'approved') return
+            if (isCommentRecentlyCreated(postId, updatedComment.id)) return
+            try {
+              const { data: commentWithUser, error } = await supabase
+                .from('comments')
+                .select(`
+                  *,
+                  users!inner(id, username, avatar_url, role)
+                `)
+                .eq('id', updatedComment.id)
+                .single()
+              if (!error && commentWithUser) {
+                addComment(postId, commentWithUser as any)
+              }
+            } catch (error) {
+              console.error('Error in comment UPDATE handler:', error)
+            }
           })
         )
         .on('postgres_changes',
