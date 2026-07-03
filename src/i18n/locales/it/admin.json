@@ -167,7 +167,8 @@
   "cms": {
     "railLabel": "Sezioni CMS",
     "sectionLanding": "Landing Page",
-    "sectionFooter": "Footer"
+    "sectionFooter": "Footer",
+    "sectionModeration": "Moderazione IA"
   },
   "explainerModal": {
     "title": "Modifica spiegazione",

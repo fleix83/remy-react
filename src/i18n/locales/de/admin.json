@@ -167,7 +167,8 @@
   "cms": {
     "railLabel": "CMS-Bereiche",
     "sectionLanding": "Landing Page",
-    "sectionFooter": "Footer"
+    "sectionFooter": "Footer",
+    "sectionModeration": "KI-Moderation"
   },
   "explainerModal": {
     "title": "Erklärung bearbeiten",

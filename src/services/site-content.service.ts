@@ -128,4 +128,45 @@ export class SiteContentService {
       throw error
     }
   }
+
+  /**
+   * Fetch a raw, non-localized content document (e.g. the 'moderation' rules
+   * read by the moderate-post edge function). Returns null when the row is
+   * missing or the fetch fails.
+   */
+  async getRawValue(key: string): Promise<Json | null> {
+    const { data, error } = await supabase
+      .from('site_content')
+      .select('value')
+      .eq('key', key)
+      .maybeSingle()
+
+    if (error) {
+      console.error(`❌ SiteContentService: error fetching '${key}':`, error)
+      return null
+    }
+    return data?.value ?? null
+  }
+
+  /** Upsert a raw, non-localized content document (admin only — RLS). */
+  async saveRawValue(key: string, value: Json): Promise<void> {
+    const { data: userData } = await supabase.auth.getUser()
+
+    const { error } = await supabase
+      .from('site_content')
+      .upsert(
+        {
+          key,
+          value,
+          updated_at: new Date().toISOString(),
+          updated_by: userData.user?.id ?? null,
+        },
+        { onConflict: 'key' }
+      )
+
+    if (error) {
+      console.error(`❌ SiteContentService: error saving '${key}':`, error)
+      throw error
+    }
+  }
 }

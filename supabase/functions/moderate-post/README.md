@@ -6,6 +6,19 @@ Provider: **Infomaniak AI Services** (Swiss-hosted, no request storage, no
 training on prompts — see `llm.ts` header). Fail-closed: on any error the post
 simply stays `pending` and lands in the existing human ModerationQueue.
 
+## Tuning the rules
+
+The moderation rules are **admin-editable in the app**: AdminDashboard → CMS →
+KI-Moderation (stored in `site_content` key `moderation`, seeded by migration
+`031_editable_moderation_rules.sql`). The function reads them on every
+invocation, so saves apply to the next post — no redeploy. The constant in
+`index.ts` is only the fallback for a missing/empty row. The prompt
+scaffolding (JSON output contract, injection guard, self-harm carve-out for
+patients describing their own suffering) intentionally stays code-side.
+`moderation_result.rules_source` records which rules were used
+(`site_content` or `default`). Note: the public Community Guidelines page
+(`documents` table) is independent of these rules.
+
 ## How it fits the existing system
 
 - Posts are already inserted as `moderation_status='pending'`, `is_published=false`

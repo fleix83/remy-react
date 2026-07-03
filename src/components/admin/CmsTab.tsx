@@ -2,14 +2,16 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import LandingPageEditor from './LandingPageEditor'
 import FooterEditor from './FooterEditor'
+import ModerationRulesEditor from './ModerationRulesEditor'
 
-type CmsSection = 'landing' | 'footer'
+type CmsSection = 'landing' | 'footer' | 'moderation'
 
-const SECTION_KEYS: CmsSection[] = ['landing', 'footer']
+const SECTION_KEYS: CmsSection[] = ['landing', 'footer', 'moderation']
 
 const SECTION_LABEL_KEY: Record<CmsSection, string> = {
   landing: 'cms.sectionLanding',
   footer: 'cms.sectionFooter',
+  moderation: 'cms.sectionModeration',
 }
 
 /**
@@ -48,6 +50,7 @@ const CmsTab: React.FC = () => {
       <div className="min-w-0 flex-1">
         {section === 'landing' && <LandingPageEditor />}
         {section === 'footer' && <FooterEditor />}
+        {section === 'moderation' && <ModerationRulesEditor />}
       </div>
     </div>
   )

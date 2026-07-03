@@ -13,12 +13,18 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { chatCompletion } from './llm.ts'
 
 // ---------------------------------------------------------------------------
-// Moderation rules — edit here.
+// Moderation rules.
 //   block -> content rejected outright
 //   flag  -> held for human review (stays 'pending' in ModerationQueue)
 //   warn  -> recorded in the verdict, does not prevent approval
+//
+// The LIVE rules are admin-editable in the CMS (AdminDashboard -> CMS ->
+// KI-Moderation), stored in site_content key 'moderation' (value.rules) and
+// read on every invocation. The constant below is only the fallback when that
+// row is missing or empty — keep it in sync with DEFAULT_MODERATION_RULES in
+// src/components/admin/ModerationRulesEditor.tsx.
 // ---------------------------------------------------------------------------
-const MODERATION_RULES = `
+const DEFAULT_MODERATION_RULES = `
 - therapist_pii (severity: block): The content exposes private or identifying
   information about a named or identifiable real therapist or other private
   person beyond a plain name-in-context: phone numbers, e-mail or postal
@@ -35,14 +41,19 @@ const MODERATION_RULES = `
   mental health, or the purpose of this forum.
 `
 
-const SYSTEM_PROMPT = `You are the content moderator of "Remy", a Swiss community forum where
+// The scaffolding around the rules stays code-side on purpose: it carries the
+// output contract, the prompt-injection guard, and the self-harm carve-out —
+// operational safety, not moderation policy.
+const buildSystemPrompt = (
+  rules: string,
+) => `You are the content moderator of "Remy", a Swiss community forum where
 psychotherapy patients share experiences and support each other. You will be
 given a forum post or a comment, written in German, French or English,
 possibly containing HTML markup from a rich-text editor; judge the text, not
 the markup.
 
 Evaluate the content against these rules:
-${MODERATION_RULES}
+${rules}
 Additionally, report generally harmful content with a fitting slug and
 severity even when no rule above names it: sexual content involving minors or
 non-consent (block), instructions or encouragement for crime, violence,
@@ -179,9 +190,24 @@ Deno.serve(async (req) => {
       ? `Quoted text (cited from the post being replied to):\n"${item.quoted_text}"\n\nComment:\n${item.content}`
       : `Comment:\n${item.content}`)
 
+  // Live, admin-editable rules from the CMS; hardcoded default as fallback so
+  // moderation can never run ruleless.
+  let rules = DEFAULT_MODERATION_RULES
+  let rulesSource = 'default'
+  const { data: rulesRow } = await supabase
+    .from('site_content')
+    .select('value')
+    .eq('key', 'moderation')
+    .maybeSingle()
+  const dbRules = (rulesRow?.value as { rules?: unknown } | null)?.rules
+  if (typeof dbRules === 'string' && dbRules.trim().length > 0) {
+    rules = dbRules
+    rulesSource = 'site_content'
+  }
+
   try {
     const llm = await chatCompletion({
-      system: SYSTEM_PROMPT,
+      system: buildSystemPrompt(rules),
       user: userText,
       schemaName: 'moderation_verdict',
       schema: VERDICT_SCHEMA,
@@ -191,6 +217,7 @@ Deno.serve(async (req) => {
     const moderation_result = {
       provider: llm.provider,
       model: llm.model,
+      rules_source: rulesSource,
       checked_at: new Date().toISOString(),
       violations: verdict.violations,
     }
