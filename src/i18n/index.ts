@@ -60,4 +60,12 @@ export const i18nReady = i18n
     },
   })
 
+// Keep <html lang> in sync with the active language — crawlers and screen
+// readers read it, and index.html can only hardcode the German default.
+const syncDocumentLang = (lng: string) => {
+  document.documentElement.lang = (lng || 'de').split('-')[0]
+}
+i18n.on('languageChanged', syncDocumentLang)
+i18nReady.then(() => syncDocumentLang(i18n.language))
+
 export default i18n
