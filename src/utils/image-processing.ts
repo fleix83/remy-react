@@ -255,13 +255,13 @@ async function detectFileType(file: File): Promise<string> {
 }
 
 /**
- * Process an image file for upload
+ * Normalize an image file's format for the web
  * - Validates the file type
  * - Converts iOS HEIC/HEIF to JPEG using heic2any
  * - Falls back to canvas conversion for other formats
- * - Returns processed file ready for upload
+ * - Corrects wrong MIME types reported by iOS
  */
-export async function processImageForUpload(
+async function normalizeImageFormat(
   file: File,
   maxSizeMB: number = 5
 ): Promise<ProcessedImage> {
@@ -372,6 +372,47 @@ export async function processImageForUpload(
     file,
     originalType,
     wasConverted: false
+  }
+}
+
+// Storage bucket cap (see AvatarService) — the fallback must never exceed it
+const STORAGE_SAFE_MAX_BYTES = 5 * 1024 * 1024
+
+/**
+ * Process an image file for upload
+ * - Normalizes format (HEIC conversion, validation, MIME correction)
+ * - Optionally resizes and compresses (WebP/JPEG) when resizeOptions is given
+ * - Falls back to the uncompressed file if compression fails and the file is
+ *   small enough for storage
+ */
+export async function processImageForUpload(
+  file: File,
+  maxSizeMB: number = 5,
+  resizeOptions?: ResizeOptions
+): Promise<ProcessedImage> {
+  const processed = await normalizeImageFormat(file, maxSizeMB)
+
+  if (!resizeOptions) {
+    return processed
+  }
+
+  try {
+    const compressed = await resizeAndCompressImage(processed.file, resizeOptions)
+    return {
+      file: compressed,
+      originalType: processed.originalType,
+      wasConverted: processed.wasConverted || compressed !== processed.file
+    }
+  } catch (error) {
+    console.error('Resize/compress failed:', error)
+
+    // Graceful degradation: upload uncompressed if it fits in storage
+    if (processed.file.size <= STORAGE_SAFE_MAX_BYTES) {
+      console.log('Falling back to uncompressed upload')
+      return processed
+    }
+
+    throw new Error('Could not process this image. Please try a different image or format.')
   }
 }
 
