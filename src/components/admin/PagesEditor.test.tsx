@@ -18,7 +18,7 @@ vi.mock('../../services/documents.service', () => ({
   },
 }))
 
-import PagesEditor from './PagesEditor'
+import PagesEditor, { draftsEqual } from './PagesEditor'
 
 const DOC: Document = {
   id: 'doc-1', slug: 'impressum', title: 'Impressum',
@@ -62,5 +62,14 @@ describe('PagesEditor', () => {
       'doc-1',
       expect.objectContaining({ title: 'Impressum NEU' })
     )
+  })
+})
+
+describe('draftsEqual', () => {
+  it('ignores object key order (Postgres jsonb reorders keys on write)', () => {
+    const a = { title: 'T', sections: [{ number: 1, title: 'S', content: 'C', examples: [] }] }
+    const b = { sections: [{ examples: [], content: 'C', title: 'S', number: 1 }], title: 'T' }
+    expect(draftsEqual(a, b)).toBe(true)
+    expect(draftsEqual(a, { ...b, title: 'X' })).toBe(false)
   })
 })

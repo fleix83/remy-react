@@ -25,6 +25,25 @@ const toDraft = (doc: Document): PageDraft => ({
   sections: doc.sections,
 })
 
+/**
+ * Key-order-insensitive equality: Postgres jsonb reorders object keys, so a
+ * refetched document can differ from an identical draft only in key order.
+ */
+const sortKeysDeep = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map(sortKeysDeep)
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => [k, sortKeysDeep(v)])
+    )
+  }
+  return value
+}
+
+export const draftsEqual = (a: unknown, b: unknown): boolean =>
+  JSON.stringify(sortKeysDeep(a)) === JSON.stringify(sortKeysDeep(b))
+
 /** Admin editor for the public static pages (documents table, German only for now). */
 const PagesEditor: React.FC = () => {
   const [slug, setSlug] = useState<string>(PAGE_SLUGS[0][0])
@@ -79,7 +98,7 @@ const PageEditorBody: React.FC<{ slug: string }> = ({ slug }) => {
     return <p className="py-8 text-sm text-slate-500">Dokument «{slug}» nicht gefunden — wurde die Migration 032 angewendet?</p>
   }
 
-  const dirty = JSON.stringify(draft) !== JSON.stringify(toDraft(doc))
+  const dirty = !draftsEqual(draft, toDraft(doc))
 
   const setSection = (index: number, patch: Partial<DocumentSection>) =>
     setDraft((d) => d && { ...d, sections: d.sections.map((s, i) => (i === index ? { ...s, ...patch } : s)) })
