@@ -463,6 +463,7 @@ export async function resizeAndCompressImage(
 
         canvas.width = width
         canvas.height = height
+        ctx.imageSmoothingQuality = 'high'
         ctx.drawImage(img, 0, 0, width, height)
 
         const baseName = file.name.replace(/\.[^/.]+$/, '')
