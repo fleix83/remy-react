@@ -13,6 +13,7 @@ import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
 import { useLandingContent, useFooterContent } from './hooks/useSiteContent'
 import { renderWithRemy } from './utils/renderRemy'
+import SeoHead from './components/seo/SeoHead'
 import './App.css'
 
 // Lazy load heavy components
@@ -25,6 +26,7 @@ const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
 const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
 const ConfirmEmail = lazy(() => import('./components/auth/ConfirmEmail'))
 const CommunityGuidelinesPage = lazy(() => import('./components/static/CommunityGuidelinesPage'))
+const StaticDocumentPage = lazy(() => import('./components/static/StaticDocumentPage'))
 const WelcomePage = lazy(() => import('./components/auth/WelcomePage'))
 const PublicProfile = lazy(() => import('./components/user/PublicProfile'))
 
@@ -81,6 +83,9 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/callback" element={<ConfirmEmail />} />
           <Route path="/community-guidelines" element={<CommunityGuidelinesPage />} />
+          <Route path="/impressum" element={<StaticDocumentPage slug="impressum" page="impressum" />} />
+          <Route path="/datenschutz" element={<StaticDocumentPage slug="datenschutz" page="datenschutz" />} />
+          <Route path="/about" element={<StaticDocumentPage slug="about" page="about" />} />
           <Route path="/auth/confirm" element={
             <WelcomePage
               onComplete={completeOnboarding}
@@ -247,6 +252,7 @@ function AuthForm() {
       overflowY: 'auto',
       overflowX: 'hidden'
     }}>
+      <SeoHead page="landing" />
       {/* Language switcher — lets anonymous visitors override browser detection */}
       <LanguageSwitcher style={{ position: 'fixed', top: '44px', left: '16px', zIndex: 50, background: '#ffffffcc', backdropFilter: 'blur(4px)', borderRadius: '9999px', padding: '4px 12px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }} />
       {/* Info bar - mobile only (hidden on desktop via CSS) */}

@@ -8,6 +8,7 @@ import MobileSlideMenu from '../layout/MobileSlideMenu'
 import GuidelineSection from '../ui/GuidelineSection'
 import type { Document, DocumentSection } from '../../types/database.types'
 import { toast } from '../../stores/toast.store'
+import SeoHead from '../seo/SeoHead'
 
 const CommunityGuidelinesPage: React.FC = () => {
   const navigate = useNavigate()
@@ -168,6 +169,7 @@ const CommunityGuidelinesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen relative z-10" style={{ backgroundColor: '#eefaf0' }}>
+      <SeoHead page="communityGuidelines" />
       {/* Header bar - matching profile page */}
       <div
         className="w-full flex items-start justify-center relative"
