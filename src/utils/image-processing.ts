@@ -376,88 +376,119 @@ export async function processImageForUpload(
 }
 
 /**
- * Resize image if it exceeds maximum dimensions
- * Maintains aspect ratio
+ * Resize an image to fit within max dimensions and re-encode it compressed.
+ * Encodes to WebP; falls back to JPEG on browsers that can't encode WebP
+ * (Safari's canvas.toBlob silently returns PNG for unsupported types).
+ * Returns the original file unchanged if re-encoding wouldn't shrink it.
  */
-export async function resizeImageIfNeeded(
+export async function resizeAndCompressImage(
   file: File,
-  maxWidth: number = 2048,
-  maxHeight: number = 2048
+  options: ResizeOptions
 ): Promise<File> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     const objectUrl = URL.createObjectURL(file)
-    
+
+    // Set a timeout for image loading (iOS sometimes hangs)
+    const timeout = setTimeout(() => {
+      URL.revokeObjectURL(objectUrl)
+      reject(new Error('Image loading timed out'))
+    }, 10000)
+
     img.onload = () => {
-      const { naturalWidth, naturalHeight } = img
-      
-      // Check if resize is needed
-      if (naturalWidth <= maxWidth && naturalHeight <= maxHeight) {
-        URL.revokeObjectURL(objectUrl)
-        resolve(file)
-        return
-      }
-      
-      // Calculate new dimensions
-      let newWidth = naturalWidth
-      let newHeight = naturalHeight
-      
-      if (naturalWidth > maxWidth) {
-        newWidth = maxWidth
-        newHeight = Math.round(naturalHeight * (maxWidth / naturalWidth))
-      }
-      
-      if (newHeight > maxHeight) {
-        newHeight = maxHeight
-        newWidth = Math.round(newWidth * (maxHeight / newHeight))
-      }
-      
-      // Create canvas and resize
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-      
-      if (!ctx) {
-        URL.revokeObjectURL(objectUrl)
-        reject(new Error('Could not get canvas context'))
-        return
-      }
-      
-      canvas.width = newWidth
-      canvas.height = newHeight
-      
-      ctx.drawImage(img, 0, 0, newWidth, newHeight)
-      
-      // Determine output format
-      const isJpeg = file.type === 'image/jpeg' || file.name.toLowerCase().endsWith('.jpg')
-      const outputType = isJpeg ? 'image/jpeg' : 'image/png'
-      const quality = isJpeg ? 0.9 : undefined
-      
-      canvas.toBlob(
-        (blob) => {
+      clearTimeout(timeout)
+      try {
+        if (img.naturalWidth === 0 || img.naturalHeight === 0) {
           URL.revokeObjectURL(objectUrl)
-          
-          if (!blob) {
-            reject(new Error('Could not resize image'))
+          reject(new Error('Image loaded with zero dimensions'))
+          return
+        }
+
+        const { width, height } = fitWithin(
+          img.naturalWidth,
+          img.naturalHeight,
+          options.maxWidth,
+          options.maxHeight
+        )
+
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+
+        if (!ctx) {
+          URL.revokeObjectURL(objectUrl)
+          reject(new Error('Could not get canvas context'))
+          return
+        }
+
+        canvas.width = width
+        canvas.height = height
+        ctx.drawImage(img, 0, 0, width, height)
+
+        const baseName = file.name.replace(/\.[^/.]+$/, '')
+        const alreadyFits =
+          img.naturalWidth <= options.maxWidth &&
+          img.naturalHeight <= options.maxHeight
+        // GIF is deliberately excluded: re-encoding flattens animation, which we
+        // want regardless of size
+        const isWebSafeStill = ['image/jpeg', 'image/png', 'image/webp'].includes(file.type)
+
+        const finish = (blob: Blob, extension: string, mimeType: string) => {
+          URL.revokeObjectURL(objectUrl)
+
+          // No-regression guard: keep the original if re-encoding didn't shrink it
+          if (blob.size >= file.size && alreadyFits && isWebSafeStill) {
+            console.log('Compression would not shrink file, keeping original')
+            resolve(file)
             return
           }
-          
-          const newFile = new File([blob], file.name, {
-            type: outputType,
-            lastModified: Date.now()
+
+          console.log('Image compressed:', {
+            from: `${img.naturalWidth}x${img.naturalHeight} ${file.size}B ${file.type}`,
+            to: `${width}x${height} ${blob.size}B ${mimeType}`
           })
-          
-          resolve(newFile)
-        },
-        outputType,
-        quality
-      )
+
+          resolve(new File([blob], `${baseName}.${extension}`, {
+            type: mimeType,
+            lastModified: Date.now()
+          }))
+        }
+
+        canvas.toBlob(
+          (webpBlob) => {
+            if (webpBlob && webpBlob.type === 'image/webp') {
+              finish(webpBlob, 'webp', 'image/webp')
+              return
+            }
+
+            // Browser can't encode WebP — re-encode as JPEG instead
+            canvas.toBlob(
+              (jpegBlob) => {
+                if (!jpegBlob) {
+                  URL.revokeObjectURL(objectUrl)
+                  reject(new Error('Could not compress image'))
+                  return
+                }
+                finish(jpegBlob, 'jpg', 'image/jpeg')
+              },
+              'image/jpeg',
+              options.quality
+            )
+          },
+          'image/webp',
+          options.quality
+        )
+      } catch (error) {
+        URL.revokeObjectURL(objectUrl)
+        reject(error)
+      }
     }
-    
+
     img.onerror = () => {
+      clearTimeout(timeout)
       URL.revokeObjectURL(objectUrl)
-      reject(new Error('Failed to load image for resizing'))
+      reject(new Error('Failed to load image for compression'))
     }
-    
+
     img.src = objectUrl
   })
 }
@@ -466,7 +497,8 @@ export default {
   processImageForUpload,
   convertToJpeg,
   convertHeicToJpeg,
-  resizeImageIfNeeded,
+  resizeAndCompressImage,
+  fitWithin,
   needsConversion,
   FILE_INPUT_ACCEPT,
   ACCEPTED_IMAGE_TYPES
