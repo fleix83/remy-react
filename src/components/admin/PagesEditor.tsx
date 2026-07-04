@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { DocumentsService } from '../../services/documents.service'
 import type { Document, DocumentSection } from '../../types/database.types'
 import { CmsField, CmsSection, CmsSaveBar } from './CmsField'
+import { draftsEqual } from '../../utils/draftsEqual'
 
 const documentsService = new DocumentsService()
 
@@ -24,25 +25,6 @@ const toDraft = (doc: Document): PageDraft => ({
   lead_text: doc.lead_text ?? '',
   sections: doc.sections,
 })
-
-/**
- * Key-order-insensitive equality: Postgres jsonb reorders object keys, so a
- * refetched document can differ from an identical draft only in key order.
- */
-const sortKeysDeep = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map(sortKeysDeep)
-  if (value && typeof value === 'object') {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => [k, sortKeysDeep(v)])
-    )
-  }
-  return value
-}
-
-export const draftsEqual = (a: unknown, b: unknown): boolean =>
-  JSON.stringify(sortKeysDeep(a)) === JSON.stringify(sortKeysDeep(b))
 
 /** Admin editor for the public static pages (documents table, German only for now). */
 const PagesEditor: React.FC = () => {

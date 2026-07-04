@@ -18,7 +18,8 @@ vi.mock('../../services/documents.service', () => ({
   },
 }))
 
-import PagesEditor, { draftsEqual } from './PagesEditor'
+import PagesEditor from './PagesEditor'
+import { draftsEqual } from '../../utils/draftsEqual'
 
 const DOC: Document = {
   id: 'doc-1', slug: 'impressum', title: 'Impressum',
