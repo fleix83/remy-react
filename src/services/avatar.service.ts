@@ -1,9 +1,15 @@
 import { supabase } from '../lib/supabase'
-import { processImageForUpload, FILE_INPUT_ACCEPT, ACCEPTED_IMAGE_TYPES } from '../utils/image-processing'
+import { processImageForUpload, FILE_INPUT_ACCEPT, ACCEPTED_IMAGE_TYPES, type ResizeOptions } from '../utils/image-processing'
 
 export class AvatarService {
   private static readonly BUCKET_NAME = 'avatars'
-  private static readonly MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+  // Client-side input cap — large originals are fine, they're compressed before upload
+  private static readonly MAX_INPUT_FILE_SIZE = 20 * 1024 * 1024 // 20MB
+  // Storage bucket limit — unchanged; compressed output stays far below this
+  private static readonly BUCKET_FILE_SIZE_LIMIT = 5 * 1024 * 1024 // 5MB
+
+  private static readonly AVATAR_RESIZE: ResizeOptions = { maxWidth: 512, maxHeight: 512, quality: 0.82 }
+  private static readonly BANNER_RESIZE: ResizeOptions = { maxWidth: 1920, maxHeight: 1920, quality: 0.82 }
   
   // Export for use in components
   static readonly FILE_INPUT_ACCEPT = FILE_INPUT_ACCEPT
@@ -20,7 +26,8 @@ export class AvatarService {
       // Process image (handles iOS HEIC conversion and validation)
       const { file: processedFile, wasConverted } = await processImageForUpload(
         file,
-        this.MAX_FILE_SIZE / (1024 * 1024) // Convert to MB
+        this.MAX_INPUT_FILE_SIZE / (1024 * 1024), // Convert to MB
+        this.AVATAR_RESIZE
       )
       
       if (wasConverted) {
@@ -134,7 +141,8 @@ export class AvatarService {
       // Process image (handles iOS HEIC conversion and validation)
       const { file: processedFile, wasConverted } = await processImageForUpload(
         file,
-        this.MAX_FILE_SIZE / (1024 * 1024) // Convert to MB
+        this.MAX_INPUT_FILE_SIZE / (1024 * 1024), // Convert to MB
+        this.BANNER_RESIZE
       )
       
       if (wasConverted) {
@@ -263,7 +271,7 @@ export class AvatarService {
     const { error } = await supabase.storage.createBucket(this.BUCKET_NAME, {
       public: true,
       allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
-      fileSizeLimit: this.MAX_FILE_SIZE
+      fileSizeLimit: this.BUCKET_FILE_SIZE_LIMIT
     })
 
     if (error && !error.message.includes('already exists')) {
