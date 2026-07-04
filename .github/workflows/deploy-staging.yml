@@ -30,6 +30,14 @@ jobs:
           cp .env.staging .env.production
           npm run build
 
+      - name: Neutralize crawling on staging
+        run: |
+          # Staging must never be indexed: it would enter the index before
+          # production and create duplicate-content problems at launch.
+          printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+          rm -f dist/sitemap.xml
+          printf '\n# Staging only: never index (added by CI)\nHeader set X-Robots-Tag "noindex, nofollow"\n' >> dist/.htaccess
+
       - name: Deploy to staging branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
