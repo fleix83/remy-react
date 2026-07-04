@@ -14,6 +14,7 @@ import PostView from './components/forum/PostView'
 import { useLandingContent, useFooterContent } from './hooks/useSiteContent'
 import { renderWithRemy } from './utils/renderRemy'
 import SeoHead from './components/seo/SeoHead'
+import OrgJsonLd from './components/seo/OrgJsonLd'
 import './App.css'
 
 // Lazy load heavy components
@@ -253,6 +254,7 @@ function AuthForm() {
       overflowX: 'hidden'
     }}>
       <SeoHead page="landing" />
+      <OrgJsonLd />
       {/* Language switcher — lets anonymous visitors override browser detection */}
       <LanguageSwitcher style={{ position: 'fixed', top: '44px', left: '16px', zIndex: 50, background: '#ffffffcc', backdropFilter: 'blur(4px)', borderRadius: '9999px', padding: '4px 12px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }} />
       {/* Info bar - mobile only (hidden on desktop via CSS) */}
