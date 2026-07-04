@@ -29,6 +29,29 @@ export const ACCEPTED_IMAGE_TYPES = [...STANDARD_IMAGE_TYPES, ...IOS_IMAGE_TYPES
 // Accept string for file input (includes all formats + camera capture)
 export const FILE_INPUT_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,image/*'
 
+export interface ResizeOptions {
+  maxWidth: number
+  maxHeight: number
+  quality: number
+}
+
+/**
+ * Scale dimensions to fit within a bounding box, preserving aspect ratio.
+ * Never upscales; never returns less than 1px per side.
+ */
+export function fitWithin(
+  width: number,
+  height: number,
+  maxWidth: number,
+  maxHeight: number
+): { width: number; height: number } {
+  const scale = Math.min(maxWidth / width, maxHeight / height, 1)
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale))
+  }
+}
+
 /**
  * Check if file is a HEIC/HEIF image based on type or extension
  */
