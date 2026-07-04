@@ -45,7 +45,7 @@ export function contentReady(query: { dataUpdatedAt: number; isFetchedAfterMount
   return query.dataUpdatedAt > 0 || query.isFetchedAfterMount
 }
 
-function useContentDocument<T>(key: string, defaults: T, lng?: string): ContentDocument<T> {
+export function useContentDocument<T>(key: string, defaults: T, lng?: string): ContentDocument<T> {
   const queryClient = useQueryClient()
   // Public callers omit `lng` and follow the active UI language (so the landing
   // tracks the switcher); the admin editors pass an explicit language to edit.
