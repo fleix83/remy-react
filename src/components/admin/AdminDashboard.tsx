@@ -9,6 +9,7 @@ import DesignationsTab from './DesignationsTab'
 import TherapistsTab from './TherapistsTab'
 import CategoriesTab from './CategoriesTab'
 import CmsTab from './CmsTab'
+import SeoTab from './SeoTab'
 import type { User } from '../../types/database.types'
 import { toast } from '../../stores/toast.store'
 
@@ -21,7 +22,7 @@ interface ModerationStats {
   totalComments: number
 }
 
-type TabId = 'overview' | 'users' | 'therapists' | 'designations' | 'categories' | 'cms'
+type TabId = 'overview' | 'users' | 'therapists' | 'designations' | 'categories' | 'cms' | 'seo'
 
 // Outline icon paths (24x24, stroke) matching the app's icon style
 const TAB_ICONS: Record<TabId, string> = {
@@ -31,6 +32,7 @@ const TAB_ICONS: Record<TabId, string> = {
   designations: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z',
   categories: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z',
   cms: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+  seo: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z',
 }
 
 const AdminDashboard: React.FC = () => {
@@ -119,6 +121,7 @@ const AdminDashboard: React.FC = () => {
     ...(permissions.isAdmin ? [{ id: 'designations' as TabId }] : []),
     ...(permissions.isAdmin ? [{ id: 'categories' as TabId }] : []),
     ...(permissions.isAdmin ? [{ id: 'cms' as TabId }] : []),
+    ...(permissions.isAdmin ? [{ id: 'seo' as TabId }] : []),
   ]
 
   return (
@@ -303,6 +306,11 @@ const AdminDashboard: React.FC = () => {
         {/* CMS Tab */}
         {activeTab === 'cms' && permissions.isAdmin && (
           <CmsTab />
+        )}
+
+        {/* SEO Tab */}
+        {activeTab === 'seo' && permissions.isAdmin && (
+          <SeoTab />
         )}
       </div>
     </div>
