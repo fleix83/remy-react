@@ -861,14 +861,23 @@ function AuthForm() {
             className="h-[65px] w-auto md:shrink-0"
             style={{ filter: 'grayscale(100%)' }}
           />
-          <div
-            className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[17px] text-[#828282] md:pb-[5px] md:whitespace-nowrap"
-            style={{ fontFamily: '"Nunito Sans", sans-serif' }}
-          >
-            <a href={footer.impressumHref} className="transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
-            <a href={footer.datenschutzHref} className="transition-opacity hover:opacity-70">{footer.datenschutzLabel}</a>
-            <span className="hidden h-[18px] w-px self-center bg-[#828282] opacity-40 md:block" aria-hidden="true"></span>
-            <span>{footer.madeByPrefix} {footer.madeByName}</span>
+          <div className="flex flex-col gap-3 md:pb-[5px]">
+            <p
+              className="max-w-md text-center text-[15px] leading-relaxed md:text-left"
+              style={{ fontFamily: '"Nunito Sans", sans-serif', color: '#828282' }}
+            >
+              {footer.description}
+            </p>
+            <div
+              className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[17px] text-[#828282] md:justify-start md:whitespace-nowrap"
+              style={{ fontFamily: '"Nunito Sans", sans-serif' }}
+            >
+              <a href={footer.aboutHref} className="transition-opacity hover:opacity-70">{footer.aboutLabel}</a>
+              <a href={footer.impressumHref} className="transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
+              <a href={footer.datenschutzHref} className="transition-opacity hover:opacity-70">{footer.datenschutzLabel}</a>
+              <span className="hidden h-[18px] w-px self-center bg-[#828282] opacity-40 md:block" aria-hidden="true"></span>
+              <span>{footer.madeByPrefix} {footer.madeByName}</span>
+            </div>
           </div>
         </div>
 

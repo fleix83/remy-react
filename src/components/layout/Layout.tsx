@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import Navigation from './Navigation'
+import { useFooterContent } from '../../hooks/useSiteContent'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -19,6 +20,7 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const footerRef = useRef<HTMLElement>(null)
   const location = useLocation()
+  const { content: footer } = useFooterContent()
   // Forum landing gets the desktop blue-header / white-page treatment;
   // the admin dashboard gets its own cream top-header treatment.
   const pageClass =
@@ -86,9 +88,10 @@ const Layout: React.FC<LayoutProps> = ({
               className="flex flex-col items-start gap-y-2 text-left text-[17px] text-[#828282] md:pb-[5px]"
               style={{ fontFamily: '"Nunito Sans", sans-serif' }}
             >
-              <a href="/impressum" className="transition-opacity hover:opacity-70">Impressum</a>
-              <a href="/datenschutz" className="transition-opacity hover:opacity-70">Datenschutz</a>
-              <span>Made by<br />Studio LUMINELLI</span>
+              <a href={footer.aboutHref} className="transition-opacity hover:opacity-70">{footer.aboutLabel}</a>
+              <a href={footer.impressumHref} className="transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
+              <a href={footer.datenschutzHref} className="transition-opacity hover:opacity-70">{footer.datenschutzLabel}</a>
+              <span>{footer.madeByPrefix}<br />{footer.madeByName}</span>
             </div>
           </div>
 

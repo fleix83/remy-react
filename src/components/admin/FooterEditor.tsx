@@ -37,12 +37,24 @@ const FooterEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
 
   return (
     <div className="space-y-5 pb-2">
+      <CmsSection title="Projektbeschrieb">
+        <CmsField
+          label="Kurzbeschreibung (erscheint im Footer jeder Seite)"
+          value={draft.description}
+          onChange={(v) => set({ description: v })}
+          multiline
+          rows={3}
+        />
+      </CmsSection>
+
       <CmsSection title="Links">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <CmsField label="Impressum – Beschriftung" value={draft.impressumLabel} onChange={(v) => set({ impressumLabel: v })} />
           <CmsField label="Impressum – Link (URL)" value={draft.impressumHref} onChange={(v) => set({ impressumHref: v })} />
           <CmsField label="Datenschutz – Beschriftung" value={draft.datenschutzLabel} onChange={(v) => set({ datenschutzLabel: v })} />
           <CmsField label="Datenschutz – Link (URL)" value={draft.datenschutzHref} onChange={(v) => set({ datenschutzHref: v })} />
+          <CmsField label="Über Remy – Beschriftung" value={draft.aboutLabel} onChange={(v) => set({ aboutLabel: v })} />
+          <CmsField label="Über Remy – Link (URL)" value={draft.aboutHref} onChange={(v) => set({ aboutHref: v })} />
         </div>
       </CmsSection>
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { deepMerge, localizedBranch } from './site-content.service'
-import { DEFAULT_LANDING_CONTENT } from '../types/landing-content.types'
+import { DEFAULT_LANDING_CONTENT, DEFAULT_FOOTER_CONTENT } from '../types/landing-content.types'
 
 describe('deepMerge', () => {
   it('returns defaults unchanged when override is an empty object', () => {
@@ -69,5 +69,16 @@ describe('localizedBranch', () => {
   it('returns undefined for non-object values so defaults take over', () => {
     expect(localizedBranch(null, 'de')).toBeUndefined()
     expect(localizedBranch('x', 'de')).toBeUndefined()
+  })
+})
+
+describe('footer content new fields', () => {
+  it('defaults fill description/about for legacy DB rows that lack them', () => {
+    const legacyRow = { impressumLabel: 'Impressum (alt)' } // pre-existing partial override
+    const merged = deepMerge(DEFAULT_FOOTER_CONTENT, legacyRow)
+    expect(merged.impressumLabel).toBe('Impressum (alt)')
+    expect(merged.description.length).toBeGreaterThan(20)
+    expect(merged.aboutHref).toBe('/about')
+    expect(merged.aboutLabel).toBe('Über Remy')
   })
 })
