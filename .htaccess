@@ -30,3 +30,6 @@
   # Enable once the site is served exclusively over HTTPS (Metanet)
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 </IfModule>
+
+# Staging only: never index (added by CI)
+Header set X-Robots-Tag "noindex, nofollow"
