@@ -12,7 +12,7 @@ import Layout from './components/layout/Layout'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
 import { useLandingContent, useFooterContent } from './hooks/useSiteContent'
-import { renderWithRemy } from './utils/renderRemy'
+import { renderLandingText } from './utils/renderRemy'
 import SeoHead from './components/seo/SeoHead'
 import OrgJsonLd from './components/seo/OrgJsonLd'
 import './App.css'
@@ -255,66 +255,13 @@ function AuthForm() {
     }}>
       <SeoHead page="landing" path="/" />
       <OrgJsonLd />
-      {/* Language switcher — lets anonymous visitors override browser detection */}
-      <LanguageSwitcher style={{ position: 'fixed', top: '44px', left: '16px', zIndex: 50, background: '#ffffffcc', backdropFilter: 'blur(4px)', borderRadius: '9999px', padding: '4px 12px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }} />
-      {/* Info bar - mobile only (hidden on desktop via CSS) */}
-      <div className="landing-info-bar" style={{
-        width: '100%',
-        height: '36px',
-        backgroundColor: '#ffffffd1',
-        flexShrink: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '40px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
-        position: 'relative',
-        zIndex: 20
-      }}>
-        <span style={{
-          fontFamily: '"Nunito Sans", sans-serif',
-          fontSize: '13px',
-          fontWeight: 600,
-          color: '#8a9ab5',
-          letterSpacing: '0.03em',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '5px'
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a9ab5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          {landing.badges.secure}
-        </span>
-        <span style={{
-          fontFamily: '"Nunito Sans", sans-serif',
-          fontSize: '13px',
-          fontWeight: 600,
-          color: '#8a9ab5',
-          letterSpacing: '0.03em',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '5px'
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a9ab5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
-          {landing.badges.anonymous}
-        </span>
-        <span style={{
-          fontFamily: '"Nunito Sans", sans-serif',
-          fontSize: '13px',
-          fontWeight: 600,
-          color: '#8a9ab5',
-          letterSpacing: '0.03em',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '5px'
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a9ab5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-          {landing.badges.moderated}
-        </span>
-      </div>
+      {/* Language switcher — lets anonymous visitors override browser detection.
+          Positioned via .landing-lang-switcher (desktop top-left, mobile top-right). */}
+      <LanguageSwitcher className="landing-lang-switcher" style={{ position: 'fixed', zIndex: 50 }} />
 
       {/* First Section - Landing Page */}
       <div className="landing-hero" style={{
-        height: 'calc(100vh - 36px)',
+        height: '100vh',
         background: 'linear-gradient(to bottom, #e8f5e9 0%, #c8e6c9 100%)',
         position: 'relative',
         overflow: 'hidden',
@@ -360,46 +307,6 @@ function AuthForm() {
         />
       )}
 
-      {/* Dog illustration - upper left, hidden on login */}
-      {!showLoginForm && (
-        <img
-          className="landing-dog"
-          src={`/images/dog.png`}
-          alt=""
-          width={393}
-          height={485}
-          decoding="async"
-          style={{
-            position: 'absolute',
-            top: '5%',
-            left: '0%',
-            width: '100%',
-            height: '57%',
-            zIndex: 1,
-            pointerEvents: 'none'
-          }}
-        />
-      )}
-
-      {/* Saul illustration - wavy river, middle area */}
-      <img
-        className="landing-saul"
-        src={`/images/saul.png`}
-        alt=""
-        width={171}
-        height={196}
-        decoding="async"
-        style={{
-          position: 'absolute',
-          top: '0%',
-          left: '0%',
-          width: '41%',
-          height: 'auto',
-          zIndex: 2,
-          pointerEvents: 'none'
-        }}
-      />
-
       <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Welcome Text - Matching mockup exactly */}
         {!showLoginForm && (
@@ -408,59 +315,99 @@ function AuthForm() {
             flexDirection: 'column',
             height: '100%'
           }}>
-            {/* Logo and claim image - upper right */}
+            {/* Logo: REMY wordmark + claim text - upper left (mobile only; desktop hides it) */}
             <div className="landing-logo-wrap" style={{
               display: 'flex',
-              justifyContent: 'flex-end',
-              paddingTop: '28px',
-              paddingRight: '4px'
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              gap: '12px',
+              paddingTop: '42px',
+              paddingLeft: '40px'
             }}>
               <img
                 className="landing-logo"
-                src={`/images/logo_claim.png`}
-                alt="REMY - Forum für Menschen in Psychotherapie"
-                width={437}
-                height={169}
+                src={`/images/remy-wordmark.png`}
+                alt="REMY"
+                width={322}
+                height={91}
                 decoding="async"
                 fetchPriority="high"
                 style={{
-                  width: 'clamp(117px, 36vw, 275px)',
+                  width: '111px',
                   height: 'auto'
                 }}
               />
+              <div className="landing-logo-claim">
+                {landing.hero.claim.split('\n').map((line, i, arr) => (
+                  <Fragment key={i}>{line}{i < arr.length - 1 ? <br /> : null}</Fragment>
+                ))}
+              </div>
             </div>
 
-            {/* Spacer to push content down */}
-            <div style={{ flex: 1 }} />
+            {/* Tagline - mobile single block (hidden on desktop via CSS) */}
+            {!showRegisterForm && (
+              <div className="landing-tagline" style={{
+                fontFamily: '"Gaegu", "Gaegu Accents", cursive',
+                fontWeight: 700,
+                // 40px per the mockup (430px artboard); shrinks fluidly so the two
+                // tagline lines never wrap on narrower phones
+                fontSize: 'min(40px, calc((100vw - 64px) / 8.6))',
+                lineHeight: 1.27,
+                letterSpacing: '0.04em',
+                wordSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: 'rgb(84, 130, 255)',
+                textAlign: 'left',
+                margin: '54px 0 0',
+                padding: '0 24px 0 40px'
+              }}>
+                {landing.hero.taglineMobile.split('\n').map((line, i, arr) => (
+                  <Fragment key={i}>{line}{i < arr.length - 1 ? <br /> : null}</Fragment>
+                ))}
+              </div>
+            )}
 
-            {/* Text and CTA group - bottom portion */}
+            {/* Swirl + registration button row (mobile); on desktop the swirl is
+                hidden and .landing-cta-wrap floats bottom-right via CSS */}
+            {!showRegisterForm && (
+              <div className="landing-hero-actions">
+                <img
+                  className="landing-swirl"
+                  src={`/images/swirl.png`}
+                  alt=""
+                  width={212}
+                  height={113}
+                  decoding="async"
+                />
+                <div className="landing-cta-wrap">
+                  <button className="landing-cta" onClick={handleRegisterClick}>
+                    {landing.hero.ctaLabel}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Remy duo figures - fills the hero's free space (mobile only) */}
+            <div className="landing-duo-wrap">
+              <img
+                className="landing-duo"
+                src={`/images/remy-duo.png`}
+                alt=""
+                width={615}
+                height={532}
+                decoding="async"
+              />
+            </div>
+
+            {/* Register form + login link - bottom portion */}
             <div className="landing-cta-area" onClick={() => { if (showRegisterForm) { setShowRegisterForm(false); setMessage('') } }} style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               paddingLeft: '24px',
               paddingRight: '24px',
-              paddingBottom: '8vh'
+              paddingBottom: '3vh'
             }}>
-              {/* Tagline - mobile single block (hidden on desktop via CSS) */}
-              {!showRegisterForm && (
-                <div className="landing-tagline" style={{
-                  fontFamily: '"Gaegu", "Gaegu Accents", cursive',
-                  fontWeight: 700,
-                  fontSize: '51px',
-                  lineHeight: '45px',
-                  color: 'rgb(84, 130, 255)',
-                  marginBottom: '49px',
-                  textAlign: 'left',
-                  alignSelf: 'center',
-                  maxWidth: '500px'
-                }}>
-                  {landing.hero.taglineMobile.split('\n').map((line, i, arr) => (
-                    <Fragment key={i}>{line}{i < arr.length - 1 ? <br /> : null}</Fragment>
-                  ))}
-                </div>
-              )}
-
               {/* Tagline - desktop scattered word pills */}
               {!showRegisterForm && (
                 <>
@@ -469,44 +416,6 @@ function AuthForm() {
                   <div className="landing-tag landing-tag-eine">{landing.hero.taglineWords[2]}</div>
                   <div className="landing-tag landing-tag-psycho">{landing.hero.taglineWords[3]}</div>
                 </>
-              )}
-
-              {/* Registration Button - hidden when form is shown */}
-              {!showRegisterForm && (
-                <div className="landing-cta-wrap">
-                <button
-                  className="landing-cta"
-                  onClick={handleRegisterClick}
-                  style={{
-                    width: '65vw',
-                    maxWidth: '360px',
-                    padding: '14px 28px',
-                    backgroundColor: 'rgb(84, 130, 255)',
-                    color: 'white',
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: '20px',
-                    fontWeight: 600,
-                    letterSpacing: '0.02em',
-                    borderRadius: '25px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: '0.2s',
-                    boxShadow: 'rgba(84, 130, 255, 0.3) 0px 4px 12px'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#4070e0'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(84, 130, 255, 0.4)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#5482ff'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(84, 130, 255, 0.3)'
-                  }}
-                >
-                  {landing.hero.ctaLabel}
-                </button>
-                </div>
               )}
 
               {/* Inline Registration Form */}
@@ -836,13 +745,13 @@ function AuthForm() {
           marginTop: '20px'
         }}>
           <p style={{ marginBottom: '24px' }}>
-            {renderWithRemy(landing.about.paragraphs[0] ?? '', 'about-0')}
+            {renderLandingText(landing.about.paragraphs[0] ?? '', 'about-0')}
           </p>
           <p style={{ marginBottom: '24px' }}>
-            {renderWithRemy(landing.about.paragraphs[1] ?? '', 'about-1')}
+            {renderLandingText(landing.about.paragraphs[1] ?? '', 'about-1')}
           </p>
           <p style={{ color: 'rgb(137, 169, 255)' }}>
-            {renderWithRemy(landing.about.paragraphs[2] ?? '', 'about-2')}
+            {renderLandingText(landing.about.paragraphs[2] ?? '', 'about-2')}
           </p>
         </div>
       </div>

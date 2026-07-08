@@ -97,6 +97,12 @@
   display: none;
 }
 
+/* Language switcher: desktop top-left; mobile moves it top-right (logo sits left) */
+.landing-lang-switcher {
+  top: 44px;
+  left: 16px;
+}
+
 /* Top-right nav hidden on mobile (desktop only) */
 .landing-topnav {
   display: none;
@@ -112,11 +118,6 @@
   50% { transform: translateY(-8px); }
 }
 
-@keyframes landing-feature-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .landing-tag,
   .landing-cta {
@@ -124,169 +125,145 @@
   }
 }
 
-/* ── Mobile landing 2nd section: features + about (≤767px only) ── */
+/* ── Mobile landing (≤767px): one continuous blue top-down gradient across
+   hero + text section, per design/Landing Blue Mobile.png. The hero covers
+   the #c8d7ff → #e5ecff segment, the text section carries #e5ecff → white. ── */
 @media (max-width: 767px) {
+  .landing-lang-switcher {
+    top: 14px;
+    left: auto;
+    right: 14px;
+    margin-top: 31px;
+    margin-right: 12px;
+    color: #ffffff;
+  }
+
+  .landing-hero {
+    height: 100svh !important;
+    background: linear-gradient(180deg, #c8d7ff 0%, #e5ecff 100%) !important;
+  }
+
+  /* Claim lines next to the REMY wordmark */
+  .landing-logo-claim {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #69789b;
+    text-align: left;
+  }
+
+  /* Swirl (left) + yellow CTA (right) on one row under the tagline */
+  .landing-hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 22px;
+    padding: 0 56px 0 26px;
+  }
+  .landing-swirl {
+    width: 140px;
+    height: auto;
+  }
+  .landing-cta {
+    background-color: #fff399;
+    color: #575757;
+    font-family: 'Gaegu', 'Gaegu Accents', cursive;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    padding: 16px 18px;
+    margin-left: 13px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-out;
+  }
+  .landing-cta:hover {
+    background-color: #f7e885;
+  }
+  .landing-cta:active {
+    transform: translateY(1px);
+  }
+
+  /* Remy duo figures centered in the hero's remaining space */
+  .landing-duo-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0 8px;
+  }
+  .landing-duo {
+    width: min(74vw, 330px);
+    max-height: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Text section: gradient continues from the hero down to white */
   .landing-about {
-    padding-top: 64px;
-    /* Faint vertical drift so the section doesn't sit flat */
-    background: linear-gradient(180deg, #d4e3fb 0%, #cddeff 42%, #c4d7ff 100%) !important;
+    padding-top: 56px;
+    padding-bottom: 220px;
+    background: linear-gradient(180deg, #e5ecff 0%, #ffffff 100%) !important;
   }
-
-  /* Organic wave handover from the green hero into the blue section:
-     a soft translucent swell behind a solid green crest */
-  .landing-about::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: 0;
-    right: 0;
-    height: 64px;
-    background-image:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 64' preserveAspectRatio='none'%3E%3Cpath d='M0 0 H390 V14 C336 36 270 8 204 22 C144 35 92 10 44 24 C26 29 11 26 0 19 Z' fill='%23c8e6c9'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 64' preserveAspectRatio='none'%3E%3Cpath d='M0 0 H390 V24 C322 48 258 16 196 32 C138 47 86 22 38 38 C22 43 9 40 0 33 Z' fill='%23c8e6c9' fill-opacity='0.45'/%3E%3C/svg%3E");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    pointer-events: none;
-  }
-
-  /* Snail hidden on mobile as well (desktop-only accent) */
   .landing-about-snail {
     display: none;
   }
-
-  /* Reveal the feature row as an alternating zig-zag of organic blobs.
-     The blob is the hero element; text sits beside it, sides mirroring. */
-  .landing-features {
-    display: flex;
-    flex-direction: column;
-    gap: 26px;
-    width: 100%;
-    max-width: 440px;
-    margin: 16px auto 46px;
-    padding: 0 2px;
-  }
-  /* Hand-drawn squiggle separator between features */
-  .landing-feature + .landing-feature {
-    padding-top: 30px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 10' width='56' height='10'%3E%3Cpath d='M2 6 C7 2 12 2 17 6 C22 10 27 10 32 6 C37 2 42 2 47 6 C50.5 8.5 53 8 54.5 6.5' fill='none' stroke='%235482ff' stroke-opacity='0.32' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") top center / 56px 10px no-repeat;
-  }
-  .landing-feature {
-    display: grid;
-    grid-template-columns: 96px 1fr;
-    grid-template-areas:
-      'blob title'
-      'blob lead';
-    align-items: center;
-    column-gap: 18px;
-    text-align: left;
-  }
-  .landing-feature:nth-child(even) {
-    grid-template-columns: 1fr 96px;
-    grid-template-areas:
-      'title blob'
-      'lead blob';
-    text-align: right;
-  }
-
-  .landing-feature-blob {
-    grid-area: blob;
-    position: relative;
-    width: 96px;
-    height: 96px;
-  }
-  .landing-feature-shape {
-    display: block;
-    width: 100%;
-    height: 100%;
-    filter: drop-shadow(0 7px 14px rgba(38, 66, 140, 0.20));
-  }
-  .landing-feature-shape svg,
-  .landing-feature-icon svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-  .landing-feature-icon {
-    position: absolute;
-    top: 9px;
-    left: 8px;
-    width: 80px;
-    height: 80px;
-    pointer-events: none;
-  }
-
-  /* Gentle hand-made tilt, distinct per blob */
-  .landing-feature--austauschen .landing-feature-blob { transform: rotate(-6deg); }
-  .landing-feature--anonymitaet .landing-feature-blob { transform: rotate(7deg); }
-  .landing-feature--moderiert   .landing-feature-blob { transform: rotate(-4deg); }
-  .landing-feature--schweiz     .landing-feature-blob { transform: rotate(6deg); }
-
-  /* Soft diagonal gradients in the blobs, alternating direction with the zig-zag */
-  .landing-feature--austauschen .landing-feature-shape path { fill: url(#blobGradAustauschen); }
-  .landing-feature--anonymitaet .landing-feature-shape path { fill: url(#blobGradAnonymitaet); }
-  .landing-feature--moderiert   .landing-feature-shape path { fill: url(#blobGradModeriert); }
-  .landing-feature--schweiz     .landing-feature-shape path { fill: url(#blobGradSchweiz); }
-
-  .landing-feature-title {
-    grid-area: title;
-    align-self: end;
-    margin: 0;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    font-size: 26px;
-    line-height: 1;
-    letter-spacing: 0.005em;
-    color: #5482ff;
-  }
-  .landing-feature-lead {
-    grid-area: lead;
-    align-self: start;
-    margin: 8px 0 0;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 500;
-    font-size: 15px;
-    line-height: 1.45;
-    color: #5d6d8e;
-    text-wrap: balance;
-  }
-
-  /* Same squiggle marks the handover from features to the about text */
-  .landing-about-text {
-    padding-top: 36px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 10' width='56' height='10'%3E%3Cpath d='M2 6 C7 2 12 2 17 6 C22 10 27 10 32 6 C37 2 42 2 47 6 C50.5 8.5 53 8 54.5 6.5' fill='none' stroke='%235482ff' stroke-opacity='0.32' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") top center / 56px 10px no-repeat;
-  }
-
-  /* About text: keep the bold-blue voice, ease the scale for small screens */
   .landing-about-text .landing-about-body {
-    font-size: 19px !important;
-    letter-spacing: 0.07em !important;
-    line-height: 1.52 !important;
-    margin-top: 6px !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-size: 24px !important;
+    line-height: 1.45 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    color: #5d8be8 !important;
+    margin-top: 0 !important;
   }
+  .landing-about-text .landing-about-body p {
+    color: #5d8be8 !important;
+    margin-bottom: 30px !important;
+  }
+  .landing-about-text .landing-about-body p:last-child {
+    margin-bottom: 0 !important;
+  }
+  /* The mockup sets the brand word in the same bold Nunito as the copy */
   .landing-about-text .landing-about-body .landing-remy-name {
-    font-size: 27px !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-size: 24px !important;
+    letter-spacing: 0 !important;
   }
-}
-
-/* Staggered entrance for the mobile feature blobs (motion-safe) */
-@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
-  .landing-feature {
-    animation: landing-feature-in 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* ==Marked== sentences get a yellow marker shade; box-decoration-break keeps
+     the padding + rounding on every wrapped line */
+  .landing-about-text .landing-about-body .landing-highlight {
+    background: #fff399;
+    padding: 3px 9px;
+    margin: 0 -2px;
+    border-radius: 10px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
-  .landing-feature:nth-child(1) { animation-delay: 60ms; }
-  .landing-feature:nth-child(2) { animation-delay: 145ms; }
-  .landing-feature:nth-child(3) { animation-delay: 230ms; }
-  .landing-feature:nth-child(4) { animation-delay: 315ms; }
 }
 
 /* ── Desktop landing page overrides ── */
 @media (min-width: 768px) {
+  /* Desktop keeps the translucent white pill look for the language dropdown */
+  .landing-lang-switcher {
+    background: #ffffffcc;
+    backdrop-filter: blur(4px);
+    border-radius: 9999px;
+    padding: 4px 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    color: #4785ff;
+  }
   .landing-logo-wrap {
     display: none !important;
   }
-  .landing-dog,
-  .landing-saul {
+  .landing-swirl,
+  .landing-duo-wrap {
     display: none !important;
   }
   .landing-frau {
@@ -300,9 +277,6 @@
     top: 3vh !important;
     margin-left: -100px !important;
     margin-top: -36px !important;
-  }
-  .landing-info-bar {
-    display: none !important;
   }
   .landing-hero {
     height: 100vh !important;
@@ -399,14 +373,30 @@
     z-index: 10 !important;
     animation: landing-float 4s ease-in-out 1s infinite !important;
   }
+  /* Appearance lives here since the button element carries no inline styles;
+     mobile (yellow pill) styles it in the ≤767px block instead. */
   .landing-cta {
     width: auto !important;
     min-width: 180px !important;
     max-width: 240px !important;
     font-family: "Gaegu", "Gaegu Accents", cursive !important;
+    font-weight: 700 !important;
     font-size: 28px !important;
     padding: 12px 28px !important;
     align-self: auto !important;
+    background-color: rgb(84, 130, 255) !important;
+    color: #ffffff !important;
+    letter-spacing: 0.02em !important;
+    border: none !important;
+    border-radius: 25px !important;
+    cursor: pointer !important;
+    transition: 0.2s !important;
+    box-shadow: 0 4px 12px rgba(84, 130, 255, 0.3) !important;
+  }
+  .landing-cta:hover {
+    background-color: #4070e0 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(84, 130, 255, 0.4) !important;
   }
   .landing-login-link {
     display: none !important;

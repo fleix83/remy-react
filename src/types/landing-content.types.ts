@@ -17,13 +17,10 @@ export interface LandingFeature {
 }
 
 export interface LandingContent {
-  badges: {
-    secure: string
-    anonymous: string
-    moderated: string
-  }
   hero: {
-    /** Mobile tagline; `\n` renders as a line break. */
+    /** Claim lines next to the REMY wordmark (mobile logo); `\n` renders as a line break. */
+    claim: string
+    /** Mobile tagline; `\n` renders as a line break (uppercased via CSS). */
     taglineMobile: string
     /** Desktop word-pills — exactly 4, mapped to fixed positioned slots. */
     taglineWords: string[]
@@ -53,7 +50,10 @@ export interface LandingContent {
   /** Desktop feature row — exactly 4; layout is tuned for 4 entries. */
   features: LandingFeature[]
   about: {
-    /** Exactly 3 paragraphs; the word "Remy" is auto-styled in cursive on render. */
+    /**
+     * Exactly 3 paragraphs — the text section on both desktop and the mobile
+     * landing page; the word "Remy" is auto-styled in cursive on desktop.
+     */
     paragraphs: string[]
   }
 }
@@ -72,12 +72,8 @@ export interface FooterContent {
 }
 
 export const DEFAULT_LANDING_CONTENT: LandingContent = {
-  badges: {
-    secure: 'Sicher',
-    anonymous: 'Anonym',
-    moderated: 'Moderiert',
-  },
   hero: {
+    claim: 'Forum für\nMenschen in\nPsychotherapie',
     taglineMobile: 'Du machst eine\nPsycho­therapie?',
     taglineWords: ['Du', 'machst', 'eine', 'Psycho­therapie?'],
     ctaLabel: 'Austauschen',
@@ -124,7 +120,7 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
   about: {
     paragraphs: [
       'Über 400’000 Men­schen in der Schweiz machen eine Psycho­therapie. Aber wenige reden darüber, ver­ständ­licher­weise.',
-      'Therapie ist kompli­ziert und kann ver­unsichern. Remy ist der Ort, an dem du dich anonym aus­tauschen kannst. Über das, was dich be­schäftigt. Über Therapeut:innen. Über den Weg, den du gehst.',
+      'Therapie ist kompli­ziert und kann ver­unsichern. ==Remy ist der Ort, an dem du dich anonym aus­tauschen kannst.== Über das, was dich be­schäftigt. Über Therapeut:innen. Über den Weg, den du gehst.',
       'Remy ist eine un­ab­hängige Patienten­initiative für die Schweiz.',
     ],
   },

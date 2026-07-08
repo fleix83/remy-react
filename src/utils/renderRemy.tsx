@@ -23,3 +23,21 @@ export function renderWithRemy(text: string, keyPrefix = 'remy'): React.ReactNod
     )
   )
 }
+
+/**
+ * Landing paragraph renderer: on top of the cursive-"Remy" treatment,
+ * `==so markierter Text==` is wrapped in a `.landing-highlight` span (yellow
+ * marker shade on the mobile landing; unstyled elsewhere). Unpaired `==`
+ * markers are left as literal text.
+ */
+export function renderLandingText(text: string, keyPrefix = 'lp'): React.ReactNode[] {
+  return text.split(/==(.+?)==/g).flatMap((part, index) =>
+    index % 2 === 1 ? (
+      <span key={`${keyPrefix}-hl-${index}`} className="landing-highlight">
+        {renderWithRemy(part, `${keyPrefix}-hl-${index}`)}
+      </span>
+    ) : (
+      renderWithRemy(part, `${keyPrefix}-${index}`)
+    )
+  )
+}

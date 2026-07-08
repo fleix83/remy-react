@@ -24,8 +24,6 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
   const editor = useContentEditor<LandingContent>(doc, DEFAULT_LANDING_CONTENT)
   const { draft, setDraft } = editor
 
-  const setBadges = (patch: Partial<LandingContent['badges']>) =>
-    setDraft((d) => ({ ...d, badges: { ...d.badges, ...patch } }))
   const setHero = (patch: Partial<LandingContent['hero']>) =>
     setDraft((d) => ({ ...d, hero: { ...d.hero, ...patch } }))
   const setWord = (index: number, value: string) =>
@@ -59,20 +57,22 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
 
   return (
     <div className="space-y-5 pb-2">
-      <CmsSection title="Vertrauens-Badges (Info-Leiste)">
-        <CmsField label="Badge 1" value={draft.badges.secure} onChange={(v) => setBadges({ secure: v })} />
-        <CmsField label="Badge 2" value={draft.badges.anonymous} onChange={(v) => setBadges({ anonymous: v })} />
-        <CmsField label="Badge 3" value={draft.badges.moderated} onChange={(v) => setBadges({ moderated: v })} />
-      </CmsSection>
-
       <CmsSection title="Hero">
+        <CmsField
+          label="Logo-Claim (mobil)"
+          value={draft.hero.claim}
+          onChange={(v) => setHero({ claim: v })}
+          multiline
+          rows={3}
+          hint="Text neben dem REMY-Schriftzug. Zeilenumbruch = neue Zeile."
+        />
         <CmsField
           label="Slogan (mobil)"
           value={draft.hero.taglineMobile}
           onChange={(v) => setHero({ taglineMobile: v })}
           multiline
           rows={2}
-          hint="Zeilenumbruch = neue Zeile."
+          hint="Zeilenumbruch = neue Zeile. Wird auf Mobile in Grossbuchstaben dargestellt."
         />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {draft.hero.taglineWords.map((word, i) => (
@@ -118,7 +118,7 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
         </div>
       </CmsSection>
 
-      <CmsSection title="Über Remy (Abschnitt)">
+      <CmsSection title="Textabschnitt «Über Remy» (Mobile & Desktop)">
         {draft.about.paragraphs.map((paragraph, i) => (
           <CmsField
             key={i}
@@ -127,7 +127,7 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
             onChange={(v) => setParagraph(i, v)}
             multiline
             rows={4}
-            hint={'Das Wort „Remy" wird automatisch kursiv dargestellt.'}
+            hint={'Das Wort „Remy" wird auf Desktop automatisch kursiv dargestellt. ==Text== erhält auf Mobile eine gelbe Markierung.'}
           />
         ))}
       </CmsSection>

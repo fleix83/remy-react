@@ -20,7 +20,7 @@ describe('deepMerge', () => {
     // Sibling fields untouched
     expect(merged.hero.registerSubmit).toBe(DEFAULT_LANDING_CONTENT.hero.registerSubmit)
     // Other sections untouched
-    expect(merged.badges).toEqual(DEFAULT_LANDING_CONTENT.badges)
+    expect(merged.login).toEqual(DEFAULT_LANDING_CONTENT.login)
   })
 
   it('replaces arrays wholesale (does not element-merge)', () => {

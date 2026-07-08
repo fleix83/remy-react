@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import type { ReactElement } from 'react'
-import { renderWithRemy } from './renderRemy'
+import { renderLandingText, renderWithRemy } from './renderRemy'
 
 // Inspect the returned React element objects directly (no DOM render needed).
 function remySpanCount(nodes: ReturnType<typeof renderWithRemy>): number {
@@ -37,5 +37,39 @@ describe('renderWithRemy', () => {
     expect(text).toContain('vor ')
     expect(text).toContain(' nach')
     expect(text).toContain('Remy')
+  })
+})
+
+function highlightSpans(nodes: ReturnType<typeof renderLandingText>): ReactElement[] {
+  return nodes.filter(
+    (n) => (n as ReactElement)?.type === 'span' &&
+      (n as ReactElement<{ className?: string }>).props.className === 'landing-highlight'
+  ) as ReactElement[]
+}
+
+describe('renderLandingText', () => {
+  it('wraps ==marked== text in a highlight span and strips the markers', () => {
+    const nodes = renderLandingText('Davor. ==Der markierte Satz.== Danach.')
+    expect(highlightSpans(nodes)).toHaveLength(1)
+    expect(JSON.stringify(nodes)).not.toContain('==')
+  })
+
+  it('applies the Remy brand span inside a highlight', () => {
+    const nodes = renderLandingText('==Remy ist der Ort.==')
+    const [hl] = highlightSpans(nodes)
+    const inner = (hl.props as { children: ReturnType<typeof renderWithRemy> }).children
+    expect(remySpanCount(inner)).toBe(1)
+  })
+
+  it('leaves text without markers unchanged (only Remy treatment applies)', () => {
+    const nodes = renderLandingText('Remy ist eine Patienteninitiative.')
+    expect(highlightSpans(nodes)).toHaveLength(0)
+    expect(remySpanCount(nodes)).toBe(1)
+  })
+
+  it('keeps an unpaired == literal', () => {
+    const nodes = renderLandingText('Ein == allein.')
+    expect(highlightSpans(nodes)).toHaveLength(0)
+    expect(JSON.stringify(nodes)).toContain('==')
   })
 })
