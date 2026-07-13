@@ -354,7 +354,7 @@ function AuthForm() {
               justifyContent: 'flex-start',
               alignItems: 'center',
               gap: '12px',
-              paddingTop: '52px',
+              paddingTop: '40px',
               paddingLeft: '40px'
             }}>
               <img
@@ -377,6 +377,7 @@ function AuthForm() {
               </div>
             </div>
 
+
             {/* Tagline - mobile single block (hidden on desktop via CSS) */}
             {!showRegisterForm && (
               <div ref={taglineRef} className="landing-tagline" style={{
@@ -391,7 +392,7 @@ function AuthForm() {
                 textTransform: 'uppercase',
                 color: 'rgb(84, 130, 255)',
                 textAlign: 'left',
-                margin: '104px 0 0',
+                margin: '44px 0 0',
                 padding: '0 24px 0 40px'
               }}>
                 {landing.hero.taglineMobile.split('\n').map((line, i, arr) => (
@@ -444,7 +445,7 @@ function AuthForm() {
               alignItems: 'center',
               paddingLeft: '24px',
               paddingRight: '24px',
-              paddingBottom: '7vh'
+              paddingBottom: '3vh'
             }}>
               {/* Tagline - desktop scattered word pills */}
               {!showRegisterForm && (

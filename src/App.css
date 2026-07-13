@@ -163,7 +163,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 46px;
+    margin-top: 16px;
     padding: 0 var(--cta-inset, max(32px, calc(100vw - 375px))) 0 30px;
   }
   .landing-swirl {
@@ -204,12 +204,15 @@
     justify-content: center;
     padding: 8px 0 4px;
   }
-  /* As wide as possible while keeping a small margin to the screen edges;
-     width-based so it renders predictably on every mobile browser (no svh). */
+  /* As wide as possible while keeping a small margin to the screen edges.
+     max-width + max-height (not a fixed width/height) let the figures fill
+     91vw normally but scale DOWN to fit the column on short viewports, so they
+     never overflow up over the swirl/button. No svh; aspect always preserved. */
   .landing-duo {
     display: block;
-    width: 94vw;
-    max-width: 460px;
+    max-width: 91vw;
+    max-height: 100%;
+    width: auto;
     height: auto;
   }
 
