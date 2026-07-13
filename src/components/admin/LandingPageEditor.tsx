@@ -59,14 +59,6 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
     <div className="space-y-5 pb-2">
       <CmsSection title="Hero">
         <CmsField
-          label="Logo-Claim (mobil)"
-          value={draft.hero.claim}
-          onChange={(v) => setHero({ claim: v })}
-          multiline
-          rows={3}
-          hint="Text neben dem REMY-Schriftzug. Zeilenumbruch = neue Zeile."
-        />
-        <CmsField
           label="Slogan (mobil)"
           value={draft.hero.taglineMobile}
           onChange={(v) => setHero({ taglineMobile: v })}

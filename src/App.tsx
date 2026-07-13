@@ -11,6 +11,7 @@ import LanguageSwitcher from './components/ui/LanguageSwitcher'
 import Layout from './components/layout/Layout'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
+import { useTranslation } from 'react-i18next'
 import { useLandingContent, useFooterContent } from './hooks/useSiteContent'
 import { useActiveLanguage } from './hooks/useActiveLanguage'
 import { renderLandingText } from './utils/renderRemy'
@@ -200,6 +201,7 @@ function AuthForm() {
   const { login, register } = useAuthStore()
   const { content: landing } = useLandingContent()
   const { content: footer } = useFooterContent()
+  const { t } = useTranslation()
   const lang = useActiveLanguage()
 
   // Per-language tagline tuning so the two `\n` lines never wrap further on
@@ -388,7 +390,7 @@ function AuthForm() {
                 }}
               />
               <div className="landing-logo-claim">
-                {landing.hero.claim.split('\n').map((line, i, arr) => (
+                {t('brandClaim').split('\n').map((line, i, arr) => (
                   <Fragment key={i}>{line}{i < arr.length - 1 ? <br /> : null}</Fragment>
                 ))}
               </div>

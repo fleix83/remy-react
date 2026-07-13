@@ -18,8 +18,6 @@ export interface LandingFeature {
 
 export interface LandingContent {
   hero: {
-    /** Claim lines next to the REMY wordmark (mobile logo); `\n` renders as a line break. */
-    claim: string
     /** Mobile tagline; `\n` renders as a line break (uppercased via CSS). */
     taglineMobile: string
     /** Desktop word-pills — exactly 4, mapped to fixed positioned slots. */
@@ -73,7 +71,6 @@ export interface FooterContent {
 
 export const DEFAULT_LANDING_CONTENT: LandingContent = {
   hero: {
-    claim: 'Forum für\nMenschen in\nPsychotherapie',
     taglineMobile: 'Du machst eine\nPsycho­therapie?',
     taglineWords: ['Du', 'machst', 'eine', 'Psycho­therapie?'],
     ctaLabel: 'Austauschen',
