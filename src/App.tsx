@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy, useRef, Fragment } from 'react'
+import { useState, useEffect, useLayoutEffect, Suspense, lazy, useRef, Fragment } from 'react'
 import { BrowserRouter as Router, Routes, Route, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from './stores/auth.store'
 import { initializeMessagingAuth } from './stores/messages.store'
@@ -189,10 +189,43 @@ function AuthForm() {
   const [message, setMessage] = useState('')
   const [registrationComplete, setRegistrationComplete] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
+  const taglineRef = useRef<HTMLDivElement>(null)
+  // Right inset (px from viewport's right edge) that lines the CTA's right edge
+  // up with the tagline's rendered right edge. Measured at runtime because the
+  // Gaegu tagline renders at different widths per device/font-load — a fixed
+  // formula drifts on real phones. `null` until measured (CSS fallback applies).
+  const [ctaInset, setCtaInset] = useState<number | null>(null)
 
   const { login, register } = useAuthStore()
   const { content: landing } = useLandingContent()
   const { content: footer } = useFooterContent()
+
+  useLayoutEffect(() => {
+    const el = taglineRef.current
+    if (!el) return
+    const measure = () => {
+      const node = taglineRef.current
+      if (!node) return
+      const range = document.createRange()
+      range.selectNodeContents(node)
+      const rects = range.getClientRects()
+      if (!rects.length) return
+      let right = 0
+      for (const r of rects) right = Math.max(right, r.right)
+      // Below the desktop breakpoint only; desktop uses its own CTA layout.
+      if (window.innerWidth >= 768) { setCtaInset(null); return }
+      setCtaInset(Math.max(16, Math.round(window.innerWidth - right)))
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    document.fonts?.ready.then(measure).catch(() => {})
+    return () => {
+      window.removeEventListener('resize', measure)
+      ro.disconnect()
+    }
+  }, [showLoginForm, showRegisterForm, landing.hero.taglineMobile])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -346,7 +379,7 @@ function AuthForm() {
 
             {/* Tagline - mobile single block (hidden on desktop via CSS) */}
             {!showRegisterForm && (
-              <div className="landing-tagline" style={{
+              <div ref={taglineRef} className="landing-tagline" style={{
                 fontFamily: '"Gaegu", "Gaegu Accents", cursive',
                 fontWeight: 700,
                 // 40px per the mockup (430px artboard); shrinks fluidly so the two
@@ -358,7 +391,7 @@ function AuthForm() {
                 textTransform: 'uppercase',
                 color: 'rgb(84, 130, 255)',
                 textAlign: 'left',
-                margin: '84px 0 0',
+                margin: '104px 0 0',
                 padding: '0 24px 0 40px'
               }}>
                 {landing.hero.taglineMobile.split('\n').map((line, i, arr) => (
@@ -370,7 +403,10 @@ function AuthForm() {
             {/* Swirl + registration button row (mobile); on desktop the swirl is
                 hidden and .landing-cta-wrap floats bottom-right via CSS */}
             {!showRegisterForm && (
-              <div className="landing-hero-actions">
+              <div
+                className="landing-hero-actions"
+                style={ctaInset != null ? ({ ['--cta-inset']: `${ctaInset}px` } as React.CSSProperties) : undefined}
+              >
                 <img
                   className="landing-swirl"
                   src={`/images/swirl.png`}
@@ -387,14 +423,16 @@ function AuthForm() {
               </div>
             )}
 
-            {/* Remy duo figures - fills the hero's free space (mobile only) */}
+            {/* Remy duo figures - fills the hero's free space (mobile only).
+                v2 is cropped tight to the figures so the feet sit at the box
+                bottom (tight gap to the login) with no wasted padding. */}
             <div className="landing-duo-wrap">
               <img
                 className="landing-duo"
-                src={`/images/remy-duo.png`}
+                src={`/images/remy-duo-v2.png`}
                 alt=""
-                width={615}
-                height={532}
+                width={597}
+                height={459}
                 decoding="async"
               />
             </div>
