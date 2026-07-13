@@ -210,7 +210,7 @@
      never overflow up over the swirl/button. No svh; aspect always preserved. */
   .landing-duo {
     display: block;
-    max-width: 91vw;
+    max-width: 86vw;
     max-height: 100%;
     width: auto;
     height: auto;

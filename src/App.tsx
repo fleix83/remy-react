@@ -392,7 +392,7 @@ function AuthForm() {
                 textTransform: 'uppercase',
                 color: 'rgb(84, 130, 255)',
                 textAlign: 'left',
-                margin: '44px 0 0',
+                margin: '53px 0 0',
                 padding: '0 24px 0 40px'
               }}>
                 {landing.hero.taglineMobile.split('\n').map((line, i, arr) => (
