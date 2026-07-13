@@ -224,8 +224,8 @@
   }
   /* Register view: shrink the figures and lift them off the form below. */
   .landing-duo-wrap--form .landing-duo {
-    max-width: 62vw;
-    margin-bottom: 44px;
+    max-width: 64vw;
+    margin-bottom: 38px;
   }
 
   /* Text section: gradient continues from the hero down to white */
