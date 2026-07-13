@@ -166,8 +166,13 @@
     margin-top: 16px;
     padding: 0 var(--cta-inset, max(32px, calc(100vw - 375px))) 0 30px;
   }
+  /* Nudge the CTA 15px left of the measured tagline edge; the swirl loses the
+     same 15px of width (its left position is fixed) so the gap is unchanged. */
+  .landing-cta-wrap {
+    margin-right: 15px;
+  }
   .landing-swirl {
-    width: 146px;
+    width: 131px;
     height: auto;
   }
   .landing-cta {
