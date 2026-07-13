@@ -165,11 +165,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 22px;
-    padding: 0 max(32px, calc(100vw - 375px)) 0 26px;
+    margin-top: 38px;
+    padding: 0 max(32px, calc(100vw - 375px)) 0 30px;
   }
   .landing-swirl {
-    width: 140px;
+    width: 146px;
     height: auto;
   }
   .landing-cta {
@@ -180,7 +180,7 @@
     font-size: 24px;
     line-height: 1;
     letter-spacing: 0.05em;
-    padding: 16px 18px;
+    padding: 16px 13px;
     margin-left: 13px;
     flex-shrink: 0;
     border: none;
@@ -196,15 +196,15 @@
   }
 
   /* Remy duo figures centered in the hero's remaining space */
-  /* Duo figures fill the hero's free space, anchored toward the bottom so the
-     gap down to the login link stays tight */
+  /* Duo figures fill the hero's free space, anchored to the bottom so the gap
+     down to the login link stays tight (mockup: figures nearly meet the link) */
   .landing-duo-wrap {
     flex: 1;
     min-height: 0;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    padding: 12px 0 26px;
+    padding: 8px 0 8px;
   }
   .landing-duo {
     width: min(88vw, 390px);

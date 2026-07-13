@@ -321,7 +321,7 @@ function AuthForm() {
               justifyContent: 'flex-start',
               alignItems: 'center',
               gap: '12px',
-              paddingTop: '42px',
+              paddingTop: '52px',
               paddingLeft: '40px'
             }}>
               <img
@@ -358,7 +358,7 @@ function AuthForm() {
                 textTransform: 'uppercase',
                 color: 'rgb(84, 130, 255)',
                 textAlign: 'left',
-                margin: '54px 0 0',
+                margin: '84px 0 0',
                 padding: '0 24px 0 40px'
               }}>
                 {landing.hero.taglineMobile.split('\n').map((line, i, arr) => (
@@ -406,7 +406,7 @@ function AuthForm() {
               alignItems: 'center',
               paddingLeft: '24px',
               paddingRight: '24px',
-              paddingBottom: '3vh'
+              paddingBottom: '7vh'
             }}>
               {/* Tagline - desktop scattered word pills */}
               {!showRegisterForm && (
