@@ -165,6 +165,8 @@
     justify-content: space-between;
     margin-top: 16px;
     padding: 0 var(--cta-inset, max(32px, calc(100vw - 375px))) 0 30px;
+    /* Shift the swirl + button row 3px left as a unit (gap preserved). */
+    transform: translateX(-3px);
   }
   /* Nudge the CTA 15px left of the measured tagline edge; the swirl loses the
      same 15px of width (its left position is fixed) so the gap is unchanged. */
@@ -219,6 +221,11 @@
     max-height: 100%;
     width: auto;
     height: auto;
+  }
+  /* Register view: shrink the figures and lift them off the form below. */
+  .landing-duo-wrap--form .landing-duo {
+    max-width: 62vw;
+    margin-bottom: 44px;
   }
 
   /* Text section: gradient continues from the hero down to white */

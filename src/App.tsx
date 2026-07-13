@@ -426,8 +426,9 @@ function AuthForm() {
 
             {/* Remy duo figures - fills the hero's free space (mobile only).
                 v2 is cropped tight to the figures so the feet sit at the box
-                bottom (tight gap to the login) with no wasted padding. */}
-            <div className="landing-duo-wrap">
+                bottom (tight gap to the login) with no wasted padding. On the
+                register view the figures shrink to leave room for the form. */}
+            <div className={`landing-duo-wrap${showRegisterForm ? ' landing-duo-wrap--form' : ''}`}>
               <img
                 className="landing-duo"
                 src={`/images/remy-duo-v2.png`}
