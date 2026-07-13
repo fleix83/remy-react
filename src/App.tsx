@@ -12,6 +12,7 @@ import Layout from './components/layout/Layout'
 import ForumView from './components/forum/ForumView'
 import PostView from './components/forum/PostView'
 import { useLandingContent, useFooterContent } from './hooks/useSiteContent'
+import { useActiveLanguage } from './hooks/useActiveLanguage'
 import { renderLandingText } from './utils/renderRemy'
 import SeoHead from './components/seo/SeoHead'
 import OrgJsonLd from './components/seo/OrgJsonLd'
@@ -199,6 +200,22 @@ function AuthForm() {
   const { login, register } = useAuthStore()
   const { content: landing } = useLandingContent()
   const { content: footer } = useFooterContent()
+  const lang = useActiveLanguage()
+
+  // Per-language tagline tuning so the two `\n` lines never wrap further on
+  // mobile. Font size is untouched; only tracking/word-spacing is eased, and
+  // French gets a narrow no-break space before its "?" (also the correct FR
+  // typography) so the "?" can't drop to its own line.
+  const taglineSpacing =
+    lang === 'fr'
+      ? { letterSpacing: '0.025em', wordSpacing: '0.1em' }
+      : lang === 'it'
+        ? { letterSpacing: '0.008em', wordSpacing: '0em' }
+        : { letterSpacing: '0.04em', wordSpacing: '0.1em' }
+  const taglineText =
+    lang === 'fr'
+      ? landing.hero.taglineMobile.replace(/ ([?!:;»])/g, ' $1')
+      : landing.hero.taglineMobile
 
   useLayoutEffect(() => {
     const el = taglineRef.current
@@ -387,15 +404,15 @@ function AuthForm() {
                 // tagline lines never wrap on narrower phones
                 fontSize: 'min(40px, calc((100vw - 64px) / 8.6))',
                 lineHeight: 1.27,
-                letterSpacing: '0.04em',
-                wordSpacing: '0.1em',
+                letterSpacing: taglineSpacing.letterSpacing,
+                wordSpacing: taglineSpacing.wordSpacing,
                 textTransform: 'uppercase',
                 color: 'rgb(84, 130, 255)',
                 textAlign: 'left',
                 margin: '53px 0 0',
                 padding: '0 24px 0 40px'
               }}>
-                {landing.hero.taglineMobile.split('\n').map((line, i, arr) => (
+                {taglineText.split('\n').map((line, i, arr) => (
                   <Fragment key={i}>{line}{i < arr.length - 1 ? <br /> : null}</Fragment>
                 ))}
               </div>
