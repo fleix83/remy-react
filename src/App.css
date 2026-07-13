@@ -155,17 +155,19 @@
     text-align: left;
   }
 
-  /* Swirl (left) + yellow CTA (right) on one row under the tagline */
+  /* Swirl (left) + yellow CTA (right) on one row under the tagline.
+     Right padding pulls the button's right edge in line with the logo claim
+     above (~248px @412w); the swirl is width-compressed to hold a small gap. */
   .landing-hero-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: 22px;
-    padding: 0 56px 0 26px;
+    padding: 0 160px 0 26px;
   }
   .landing-swirl {
-    width: 140px;
-    height: auto;
+    width: 52px;
+    height: 34px;
   }
   .landing-cta {
     background-color: #fff399;
@@ -175,7 +177,7 @@
     font-size: 24px;
     line-height: 1;
     letter-spacing: 0.05em;
-    padding: 16px 18px;
+    padding: 16px 14px;
     margin-left: 13px;
     border: none;
     border-radius: 20px;
@@ -190,16 +192,18 @@
   }
 
   /* Remy duo figures centered in the hero's remaining space */
+  /* Duo figures fill the hero's free space, anchored toward the bottom so the
+     gap down to the login link stays tight */
   .landing-duo-wrap {
     flex: 1;
     min-height: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    padding: 16px 0 8px;
+    padding: 12px 0 26px;
   }
   .landing-duo {
-    width: min(74vw, 330px);
+    width: min(88vw, 390px);
     max-height: 100%;
     height: auto;
     object-fit: contain;
@@ -236,13 +240,14 @@
     font-size: 24px !important;
     letter-spacing: 0 !important;
   }
-  /* ==Marked== sentences get a yellow marker shade; box-decoration-break keeps
-     the padding + rounding on every wrapped line */
+  /* ==Marked== sentences get a flat yellow marker shade. Zero vertical padding
+     leaves a ~2px gap between the stacked line bands (line-height 34.8 −
+     content 33); box-decoration-break carries it onto every wrapped line. */
   .landing-about-text .landing-about-body .landing-highlight {
     background: #fff399;
-    padding: 3px 9px;
+    padding: 0 9px;
     margin: 0 -2px;
-    border-radius: 10px;
+    border-radius: 0;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }
