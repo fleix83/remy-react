@@ -156,18 +156,21 @@
   }
 
   /* Swirl (left) + yellow CTA (right) on one row under the tagline.
-     Right padding pulls the button's right edge in line with the logo claim
-     above (~248px @412w); the swirl is width-compressed to hold a small gap. */
+     The right padding tracks the tagline's right edge so the button's right
+     edge lines up under "PSYCHO­THERAPIE?": the tagline text right edge sits
+     at ~375px (40px left inset + the capped 40px line), fluid below ~408px
+     where the type shrinks. max(32px, 100vw − 375px) matches it within ~1px
+     from 360px up through the large phones. */
   .landing-hero-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: 22px;
-    padding: 0 160px 0 26px;
+    padding: 0 max(32px, calc(100vw - 375px)) 0 26px;
   }
   .landing-swirl {
-    width: 52px;
-    height: 34px;
+    width: 140px;
+    height: auto;
   }
   .landing-cta {
     background-color: #fff399;
@@ -177,8 +180,9 @@
     font-size: 24px;
     line-height: 1;
     letter-spacing: 0.05em;
-    padding: 16px 14px;
+    padding: 16px 18px;
     margin-left: 13px;
+    flex-shrink: 0;
     border: none;
     border-radius: 20px;
     cursor: pointer;
