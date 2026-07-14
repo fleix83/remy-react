@@ -861,18 +861,14 @@ function AuthForm() {
             </div>
           </div>
         )}
-
-        {/* Closing line — moved below the checklist */}
-        <div className="landing-about-body landing-about-closing" style={aboutBodyStyle}>
-          <p style={{ color: 'rgb(137, 169, 255)' }}>
-            {renderLandingText(landing.about.paragraphs[2] ?? '', 'about-2')}
-          </p>
-        </div>
       </div>
     </div>
 
     {/* Footer */}
-    <footer className="flex h-[350px] flex-shrink-0 items-center bg-[#f1f1f1] px-6 md:px-0">
+    <footer
+      className="flex h-[350px] flex-shrink-0 items-center px-6 md:px-0"
+      style={{ background: 'linear-gradient(180deg, transparent 0%, #e8e8e8 100%)' }}
+    >
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
         {/* Left: logo + credits on one line, aligned to the REMY baseline */}
         <div className="flex flex-col items-center gap-6 md:flex-row md:items-end md:gap-12">
@@ -888,10 +884,10 @@ function AuthForm() {
           />
           <div className="flex flex-col gap-3 md:pb-[5px]">
             <p
-              className="max-w-md text-center text-[15px] leading-relaxed md:text-left"
+              className="w-full max-w-md text-left text-[19px] font-bold leading-snug md:text-left"
               style={{ fontFamily: '"Nunito Sans", sans-serif', color: '#828282' }}
             >
-              {footer.description}
+              {landing.about.paragraphs[2]}
             </p>
             <div
               className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[17px] text-[#828282] md:justify-start md:whitespace-nowrap"
