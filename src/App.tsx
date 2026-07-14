@@ -839,6 +839,29 @@ function AuthForm() {
           </ul>
         )}
 
+        {/* Call-to-action (mobile): copy + swirl + Registrieren button that
+            opens the register form (same elements as the hero). */}
+        {landing.about.cta?.text && (
+          <div className="landing-about-cta">
+            <div className="landing-about-body" style={aboutBodyStyle}>
+              <p>{renderLandingText(landing.about.cta.text, 'about-cta')}</p>
+            </div>
+            <div className="landing-about-cta-row">
+              <img
+                className="landing-swirl"
+                src={`/images/swirl.png`}
+                alt=""
+                width={212}
+                height={113}
+                decoding="async"
+              />
+              <button className="landing-cta landing-about-cta-btn" onClick={handleRegisterClick}>
+                {landing.about.cta.button}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Closing line — moved below the checklist */}
         <div className="landing-about-body landing-about-closing" style={aboutBodyStyle}>
           <p style={{ color: 'rgb(137, 169, 255)' }}>

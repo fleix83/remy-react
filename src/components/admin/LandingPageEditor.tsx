@@ -50,6 +50,8 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
       ...d,
       about: { ...d.about, checklist: d.about.checklist.map((c, i) => (i === index ? value : c)) },
     }))
+  const setAboutCta = (patch: Partial<LandingContent['about']['cta']>) =>
+    setDraft((d) => ({ ...d, about: { ...d.about, cta: { ...d.about.cta, ...patch } } }))
 
   if (!editor.isFetched) {
     return (
@@ -136,6 +138,18 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
             hint={i === 0 ? 'Mit gelbem Häkchen (mobil, unter dem Textabschnitt).' : undefined}
           />
         ))}
+        <CmsField
+          label="CTA-Text (unter der Checkliste)"
+          value={draft.about.cta?.text ?? ''}
+          onChange={(v) => setAboutCta({ text: v })}
+          multiline
+          rows={2}
+        />
+        <CmsField
+          label="CTA-Button (öffnet Registrierung)"
+          value={draft.about.cta?.button ?? ''}
+          onChange={(v) => setAboutCta({ button: v })}
+        />
       </CmsSection>
 
       <CmsSaveBar

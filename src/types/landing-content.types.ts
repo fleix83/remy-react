@@ -55,6 +55,11 @@ export interface LandingContent {
     paragraphs: string[]
     /** Short reassurance points, each rendered with a hand-drawn checkmark. */
     checklist: string[]
+    /** Call-to-action below the checklist (mobile): a line of copy + button. */
+    cta: {
+      text: string
+      button: string
+    }
   }
 }
 
@@ -127,6 +132,10 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
       'Remy ist moderiert',
       'Remy ist eine Schweizer Plattform',
     ],
+    cta: {
+      text: 'Interessiert dich das Thema? Dann registriere dich doch hier und schaue dich im Forum um.',
+      button: 'Registrieren',
+    },
   },
 }
 

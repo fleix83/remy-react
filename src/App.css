@@ -143,6 +143,21 @@
   color: #5482ff;
 }
 
+/* About-section call-to-action: copy + swirl + yellow register button
+   (same elements as the hero), placed under the checklist. */
+.landing-about-cta {
+  margin-bottom: 44px;
+}
+.landing-about-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 26px;
+}
+.landing-about-cta-row .landing-cta {
+  margin-left: 0;
+}
+
 @keyframes landing-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
@@ -561,9 +576,10 @@
   .landing-about-text .landing-about-body .landing-remy-name {
     font-size: 44px !important;
   }
-  /* Desktop already carries the feature blobs — the mobile checklist is
-     redundant there; the closing line spans full width below the columns. */
-  .landing-about-checklist {
+  /* Desktop already carries the feature blobs — the mobile checklist and its
+     CTA are redundant there; the closing line spans full width below. */
+  .landing-about-checklist,
+  .landing-about-cta {
     display: none !important;
   }
   .landing-about-text .landing-about-closing {
