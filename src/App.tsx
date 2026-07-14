@@ -219,6 +219,19 @@ function AuthForm() {
       ? landing.hero.taglineMobile.replace(/ ([?!:;»])/g, ' $1')
       : landing.hero.taglineMobile
 
+  // Shared style for the About copy blocks (desktop values; mobile overrides
+  // in CSS). Reused so the closing paragraph below the checklist matches.
+  const aboutBodyStyle: React.CSSProperties = {
+    fontFamily: '"Nunito Sans", sans-serif',
+    textTransform: 'uppercase',
+    fontWeight: 700,
+    fontSize: '22px',
+    lineHeight: '1.4',
+    color: 'rgb(71, 132, 255)',
+    letterSpacing: '0.09em',
+    textAlign: 'left',
+  }
+
   useLayoutEffect(() => {
     const el = taglineRef.current
     if (!el) return
@@ -791,26 +804,13 @@ function AuthForm() {
         paddingLeft: '10px',
         paddingRight: '10px'
       }}>
-        {/* Main text */}
-        <div className="landing-about-body" style={{
-          fontFamily: '"Nunito Sans", sans-serif',
-          textTransform: 'uppercase' as const,
-          fontWeight: 700,
-          fontSize: '22px',
-          lineHeight: '1.4',
-          color: 'rgb(71, 132, 255)',
-          letterSpacing: '0.09em',
-          textAlign: 'left',
-          marginTop: '20px'
-        }}>
+        {/* Main text (intro + core) */}
+        <div className="landing-about-body" style={{ ...aboutBodyStyle, marginTop: '20px' }}>
           <p style={{ marginBottom: '24px' }}>
             {renderLandingText(landing.about.paragraphs[0] ?? '', 'about-0')}
           </p>
           <p style={{ marginBottom: '24px' }}>
             {renderLandingText(landing.about.paragraphs[1] ?? '', 'about-1')}
-          </p>
-          <p style={{ color: 'rgb(137, 169, 255)' }}>
-            {renderLandingText(landing.about.paragraphs[2] ?? '', 'about-2')}
           </p>
         </div>
 
@@ -822,7 +822,7 @@ function AuthForm() {
                   className="landing-check-icon"
                   viewBox="0 0 44 44"
                   fill="none"
-                  stroke="#f4cf4a"
+                  stroke="#fff399"
                   strokeWidth={3.4}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -838,6 +838,13 @@ function AuthForm() {
             ))}
           </ul>
         )}
+
+        {/* Closing line — moved below the checklist */}
+        <div className="landing-about-body landing-about-closing" style={aboutBodyStyle}>
+          <p style={{ color: 'rgb(137, 169, 255)' }}>
+            {renderLandingText(landing.about.paragraphs[2] ?? '', 'about-2')}
+          </p>
+        </div>
       </div>
     </div>
 
