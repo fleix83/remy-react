@@ -53,6 +53,8 @@ export interface LandingContent {
      * landing page; the word "Remy" is auto-styled in cursive on desktop.
      */
     paragraphs: string[]
+    /** Short reassurance points, each rendered with a hand-drawn checkmark. */
+    checklist: string[]
   }
 }
 
@@ -119,6 +121,11 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
       'Über 400’000 Men­schen in der Schweiz machen eine Psycho­therapie. Aber wenige reden darüber, ver­ständ­licher­weise.',
       'Therapie ist kompli­ziert und kann ver­unsichern. ==Remy ist der Ort, an dem du dich anonym aus­tauschen kannst.== Über das, was dich be­schäftigt. Über Therapeut:innen. Über den Weg, den du gehst.',
       'Remy ist eine un­ab­hängige Patienten­initiative für die Schweiz.',
+    ],
+    checklist: [
+      'Auf Remy schreibst du anonym',
+      'Remy ist moderiert',
+      'Remy ist eine Schweizer Plattform',
     ],
   },
 }

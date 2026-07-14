@@ -43,7 +43,12 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
   const setParagraph = (index: number, value: string) =>
     setDraft((d) => ({
       ...d,
-      about: { paragraphs: d.about.paragraphs.map((p, i) => (i === index ? value : p)) },
+      about: { ...d.about, paragraphs: d.about.paragraphs.map((p, i) => (i === index ? value : p)) },
+    }))
+  const setChecklistItem = (index: number, value: string) =>
+    setDraft((d) => ({
+      ...d,
+      about: { ...d.about, checklist: d.about.checklist.map((c, i) => (i === index ? value : c)) },
     }))
 
   if (!editor.isFetched) {
@@ -120,6 +125,15 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
             multiline
             rows={4}
             hint={'Das Wort „Remy" wird auf Desktop automatisch kursiv dargestellt. ==Text== erhält auf Mobile eine gelbe Markierung.'}
+          />
+        ))}
+        {(draft.about.checklist ?? []).map((item, i) => (
+          <CmsField
+            key={`check-${i}`}
+            label={`Checkliste Punkt ${i + 1}`}
+            value={item}
+            onChange={(v) => setChecklistItem(i, v)}
+            hint={i === 0 ? 'Mit gelbem Häkchen (mobil, unter dem Textabschnitt).' : undefined}
           />
         ))}
       </CmsSection>

@@ -113,6 +113,36 @@
   display: none;
 }
 
+/* About-section reassurance checklist — hand-drawn yellow checkmarks + the
+   same bold Nunito blue as the mobile about copy. */
+.landing-about-checklist {
+  list-style: none;
+  margin: 44px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.landing-about-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  text-align: left;
+}
+.landing-check-icon {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.landing-about-checklist span {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.15;
+  color: #5482ff;
+}
+
 @keyframes landing-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
