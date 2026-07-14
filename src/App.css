@@ -149,7 +149,7 @@
    px-6 (24px) + about-text (10px) insets; padding puts the copy back at 34px. */
 .landing-about-cta {
   margin: 44px -34px 0;
-  padding: 44px 34px 54px;
+  padding: 44px 34px 96px;
   background: #e1ebff;
 }
 .landing-about-cta-row {
@@ -280,11 +280,12 @@
     margin-bottom: 38px;
   }
 
-  /* Text section: gradient continues from the hero down to white. Small bottom
-     padding leaves a clean white gap between the CTA band and the footer. */
+  /* Text section: gradient continues from the hero down to white. No bottom
+     padding so the CTA band runs straight into the footer (no white gap);
+     the band's own bottom padding provides the spacing. */
   .landing-about {
     padding-top: 56px;
-    padding-bottom: 48px;
+    padding-bottom: 0;
     background: linear-gradient(180deg, #e5ecff 0%, #ffffff 100%) !important;
   }
   .landing-about-snail {

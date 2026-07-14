@@ -770,8 +770,7 @@ function AuthForm() {
     {/* Second Section - About */}
     <div className="landing-about flex flex-col px-6" style={{
       background: '#cddeff',
-      position: 'relative',
-      paddingBottom: '60px'
+      position: 'relative'
     }}>
       {/* Snail illustration — below the fold, lazy load */}
       <img
@@ -867,11 +866,11 @@ function AuthForm() {
     {/* Footer */}
     <footer
       className="flex h-[350px] flex-shrink-0 items-center px-6 md:px-0"
-      style={{ background: 'linear-gradient(180deg, transparent 0%, #e8e8e8 100%)' }}
+      style={{ background: 'linear-gradient(#f6f6f6 0%, rgb(225 225 225) 100%)' }}
     >
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-8 text-left md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
         {/* Left: logo + credits on one line, aligned to the REMY baseline */}
-        <div className="flex flex-col items-center gap-6 md:flex-row md:items-end md:gap-12">
+        <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:gap-12">
           <img
             src="/images/logo_claim.png"
             alt="Remy"
@@ -885,13 +884,13 @@ function AuthForm() {
           <div className="flex flex-col gap-3 md:pb-[5px]">
             <p
               className="w-full max-w-md text-left text-[19px] font-bold leading-snug md:text-left"
-              style={{ fontFamily: '"Nunito Sans", sans-serif', color: '#828282' }}
+              style={{ fontFamily: '"Nunito", sans-serif', color: '#828282' }}
             >
               {landing.about.paragraphs[2]}
             </p>
             <div
-              className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[17px] text-[#828282] md:justify-start md:whitespace-nowrap"
-              style={{ fontFamily: '"Nunito Sans", sans-serif' }}
+              className="flex flex-wrap items-center justify-start gap-x-8 gap-y-2 text-[17px] text-[#828282] md:justify-start md:whitespace-nowrap"
+              style={{ fontFamily: '"Nunito", sans-serif' }}
             >
               <a href={footer.aboutHref} className="transition-opacity hover:opacity-70">{footer.aboutLabel}</a>
               <a href={footer.impressumHref} className="transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
