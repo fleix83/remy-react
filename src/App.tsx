@@ -865,7 +865,7 @@ function AuthForm() {
 
     {/* Footer */}
     <footer
-      className="flex h-auto flex-shrink-0 items-start px-6 pt-[30px] pb-[20px] md:h-[350px] md:items-center md:px-0 md:py-0"
+      className="flex h-auto flex-shrink-0 items-start px-6 pt-[60px] pb-[40px] md:h-[350px] md:items-center md:px-0 md:py-0"
       style={{ background: 'linear-gradient(#f6f6f6 0%, rgb(225 225 225) 100%)' }}
     >
       <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-8 text-left md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
