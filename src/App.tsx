@@ -443,18 +443,18 @@ function AuthForm() {
               </div>
             )}
 
-            {/* Remy duo figures - fills the hero's free space (mobile only).
-                v2 is cropped tight to the figures so the feet sit at the box
-                bottom (tight gap to the login) with no wasted padding. On the
-                register view the figures shrink to leave room for the form. */}
+            {/* Remy duo figures — TEST: animated version embedded from the
+                self-contained /figures_animation_mobile.html (transparent stage,
+                363×314 = aspect 1.156). Sized to match the previous image's
+                footprint; shrinks on the register view. */}
             <div className={`landing-duo-wrap${showRegisterForm ? ' landing-duo-wrap--form' : ''}`}>
-              <img
+              <iframe
                 className="landing-duo"
-                src={`/images/remy-duo-v2.png`}
-                alt=""
-                width={597}
-                height={459}
-                decoding="async"
+                src="/figures_animation_mobile.html"
+                title="Remy Figuren"
+                loading="lazy"
+                scrolling="no"
+                aria-hidden="true"
               />
             </div>
 

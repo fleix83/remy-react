@@ -211,20 +211,23 @@
     justify-content: center;
     padding: 8px 0 4px;
   }
-  /* As wide as possible while keeping a small margin to the screen edges.
-     max-width + max-height (not a fixed width/height) let the figures fill
-     91vw normally but scale DOWN to fit the column on short viewports, so they
-     never overflow up over the swirl/button. No svh; aspect always preserved. */
+  /* TEST: the figures are an <iframe> (animated). Iframes need explicit sizing,
+     so drive it by width + aspect-ratio (363/314 = the stage). max-height caps
+     it on short viewports so it never rides up over the swirl/button. */
   .landing-duo {
     display: block;
-    max-width: 86vw;
+    width: 90vw;
+    max-width: 380px;
+    aspect-ratio: 363 / 314;
     max-height: 100%;
-    width: auto;
-    height: auto;
+    border: 0;
+    background: transparent;
+    color-scheme: light;
   }
   /* Register view: shrink the figures and lift them off the form below. */
   .landing-duo-wrap--form .landing-duo {
-    max-width: 64vw;
+    width: 68vw;
+    max-width: 300px;
     margin-bottom: 38px;
   }
 
@@ -263,7 +266,7 @@
      leaves a ~2px gap between the stacked line bands (line-height 34.8 −
      content 33); box-decoration-break carries it onto every wrapped line. */
   .landing-about-text .landing-about-body .landing-highlight {
-    background: #fff399;
+    background: #fff9cd;
     padding: 0 9px;
     margin: 0 -2px;
     border-radius: 0;
