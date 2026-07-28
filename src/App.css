@@ -114,20 +114,38 @@
 }
 
 /* About-section reassurance checklist — hand-drawn yellow checkmarks + the
-   same bold Nunito blue as the mobile about copy. */
+   same bold Nunito blue as the mobile about copy. Its own full-bleed band
+   (#dde7ff) sized so the three items nearly fill one phone screen; the
+   -34px margins break out of the about px-6 (24px) + about-text (10px)
+   insets, and the padding puts the content back at 34px. */
 .landing-about-checklist {
   list-style: none;
-  margin: 100px 0 100px;
-  padding: 0;
+  margin: 0 -34px;
+  padding: 104px 34px 96px;
+  background: #dde7ff;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 64px;
 }
+/* Each item sits on a soft pale-yellow "cloud": a blurred rounded rect behind
+   the row (blur on a pseudo-element only, so the icon + text stay sharp). */
 .landing-about-checklist li {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   gap: 20px;
+  padding: 20px 22px;
   text-align: left;
+}
+.landing-about-checklist li::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  background: #fff9ce;
+  border-radius: 39px;
+  filter: blur(31px);
 }
 .landing-check-icon {
   width: 50px;
@@ -140,17 +158,19 @@
   font-weight: 700;
   font-size: 24px;
   line-height: 1.15;
-  color: #5482ff;
+  color: #5d8be8;
 }
 
 /* About-section call-to-action: copy + swirl + yellow register button
    (same elements as the hero), placed under the checklist as its own
    full-bleed band. The -34px horizontal margin breaks out of the about
-   px-6 (24px) + about-text (10px) insets; padding puts the copy back at 34px. */
+   px-6 (24px) + about-text (10px) insets; padding puts the copy back at 34px.
+   Gradient picks up the checklist band's #dde7ff and warms into the cream
+   that meets the footer. */
 .landing-about-cta {
-  margin: 44px -34px 0;
-  padding: 44px 34px 96px;
-  background: linear-gradient(180deg, #f3f7ff, #e1ebff);
+  margin: 0 -34px;
+  padding: 56px 34px 96px;
+  background: linear-gradient(180deg, #dde7ff, #fff6e1);
 }
 .landing-about-cta-row {
   display: flex;
@@ -280,13 +300,15 @@
     margin-bottom: 38px;
   }
 
-  /* Text section: gradient continues from the hero down to white. No bottom
-     padding so the CTA band runs straight into the footer (no white gap);
-     the band's own bottom padding provides the spacing. */
+  /* Text section: gradient continues from the hero and settles on the
+     checklist band's #dde7ff by the time the intro copy ends (fixed 500px
+     stop, then flat), so the band reads as its own section without a seam.
+     No bottom padding so the CTA band runs straight into the footer (no
+     white gap); the band's own bottom padding provides the spacing. */
   .landing-about {
     padding-top: 56px;
     padding-bottom: 0;
-    background: linear-gradient(180deg, #e5ecff 0%, #ffffff 100%) !important;
+    background: linear-gradient(180deg, #e5ecff 0%, #dde7ff 500px) !important;
   }
   .landing-about-snail {
     display: none;
@@ -313,6 +335,11 @@
     font-size: 24px !important;
     letter-spacing: 0 !important;
   }
+  /* Footer sits flat grey on mobile (desktop keeps its gradient). */
+  .landing-footer {
+    background: #eeeeee !important;
+  }
+
   /* ==Marked== sentences get a flat yellow marker shade. Zero vertical padding
      leaves a ~2px gap between the stacked line bands (line-height 34.8 −
      content 33); box-decoration-break carries it onto every wrapped line. */

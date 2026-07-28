@@ -865,12 +865,12 @@ function AuthForm() {
 
     {/* Footer */}
     <footer
-      className="flex h-auto flex-shrink-0 items-start px-6 pt-[60px] pb-[40px] md:h-[350px] md:items-center md:px-0 md:py-0"
+      className="landing-footer flex h-auto flex-shrink-0 items-start px-6 pt-[60px] pb-[44px] md:h-[350px] md:items-center md:px-0 md:py-0"
       style={{ background: 'linear-gradient(#f6f6f6 0%, rgb(225 225 225) 100%)' }}
     >
       <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-8 text-left md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
         {/* Left: logo + credits on one line, aligned to the REMY baseline */}
-        <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:gap-12">
+        <div className="flex flex-col items-start gap-[30px] md:flex-row md:items-end md:gap-12">
           <img
             src="/images/logo_claim.png"
             alt="Remy"
@@ -883,20 +883,22 @@ function AuthForm() {
           />
           <div className="flex flex-col md:pb-[5px]">
             <p
-              className="w-full max-w-md mb-[13px] text-left text-[19px] font-bold leading-snug md:text-left"
+              className="w-full max-w-md mb-[24px] md:mb-[13px] text-left text-[19px] font-bold leading-snug md:text-left"
               style={{ fontFamily: '"Nunito", sans-serif', color: 'rgb(130, 130, 130)' }}
             >
               {landing.about.paragraphs[2]}
             </p>
             <div
-              className="flex flex-wrap items-center justify-start gap-x-8 gap-y-8 text-[17px] text-[#828282] md:justify-start md:whitespace-nowrap"
+              className="flex flex-wrap items-center justify-start gap-x-8 gap-y-0 text-[17px] text-[#828282] md:gap-y-8 md:justify-start md:whitespace-nowrap"
               style={{ fontFamily: '"Nunito", sans-serif' }}
             >
               <a href={footer.aboutHref} className="underline transition-opacity hover:opacity-70">{footer.aboutLabel}</a>
               <a href={footer.impressumHref} className="underline transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
               <a href={footer.datenschutzHref} className="underline transition-opacity hover:opacity-70">{footer.datenschutzLabel}</a>
               <span className="hidden h-[18px] w-px self-center bg-[#828282] opacity-40 md:block" aria-hidden="true"></span>
-              <span className="text-[#959595]">{footer.madeByPrefix} {footer.madeByName}</span>
+              {/* Mobile: own row, well below the links (per mockup). Desktop
+                  keeps it inline after the divider. */}
+              <span className="w-full mt-[110px] text-[#959595] md:mt-0 md:w-auto">{footer.madeByPrefix} {footer.madeByName}</span>
             </div>
           </div>
         </div>
