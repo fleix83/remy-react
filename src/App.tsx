@@ -34,6 +34,14 @@ const StaticDocumentPage = lazy(() => import('./components/static/StaticDocument
 const WelcomePage = lazy(() => import('./components/auth/WelcomePage'))
 const PublicProfile = lazy(() => import('./components/user/PublicProfile'))
 
+// Checklist row icons (masks / flag / bookmark), exported 1:1 from the mockup —
+// rendered at their intrinsic sizes, one per row in CMS order.
+const CHECKLIST_ICONS = [
+  { src: '/assets/icon-masks.svg', w: 47, h: 54 },
+  { src: '/assets/icon-flag.svg', w: 46, h: 49 },
+  { src: '/assets/icon-bookmark.svg', w: 34, h: 53 },
+]
+
 function App() {
   const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
   const { user, userProfile, loading, completeOnboarding, checkUsernameAvailable } = useAuthStore()
@@ -812,26 +820,17 @@ function AuthForm() {
 
         {landing.about.checklist?.length > 0 && (
           <ul className="landing-about-checklist">
-            {landing.about.checklist.map((item, i) => (
-              <li key={i}>
-                <svg
-                  className="landing-check-icon"
-                  viewBox="0 0 44 44"
-                  fill="none"
-                  stroke="#fff399"
-                  strokeWidth={3.4}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  {/* hand-drawn open circle */}
-                  <path d="M23 4.2 C12.4 3.2 4 11.4 4 22 C4 32.9 12.7 40.9 23.4 40.2 C33.4 39.5 40.6 31.2 39.7 20.9" />
-                  {/* checkmark, right arm reaching past the gap */}
-                  <path d="M13.6 23.2 L20.4 30.4 L38.5 8.4" />
-                </svg>
-                <span>{item}</span>
-              </li>
-            ))}
+            {landing.about.checklist.map((item, i) => {
+              const icon = CHECKLIST_ICONS[i % CHECKLIST_ICONS.length]
+              return (
+                <li key={i}>
+                  <span className="landing-check-icon" aria-hidden="true">
+                    <img src={icon.src} alt="" width={icon.w} height={icon.h} loading="lazy" decoding="async" />
+                  </span>
+                  <span>{item}</span>
+                </li>
+              )
+            })}
           </ul>
         )}
 
