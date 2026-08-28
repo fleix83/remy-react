@@ -162,12 +162,33 @@
    (same elements as the hero), placed under the checklist as its own
    full-bleed band. The -34px horizontal margin breaks out of the about
    px-6 (24px) + about-text (10px) insets; padding puts the copy back at 34px.
-   Gradient picks up the checklist band's #dde7ff and warms into the cream
-   that meets the footer. */
+   Gradient picks up the checklist band's #dde7ff and cools into the grey the
+   mobile footer sits on; the tall bottom padding is the confetti zone. */
 .landing-about-cta {
+  position: relative;
   margin: 0 -34px;
-  padding: 56px 34px 96px;
-  background: linear-gradient(180deg, #dde7ff, #fff6e1);
+  padding: 56px 34px 140px;
+  background: linear-gradient(180deg, #dde7ff, #eeeeee);
+}
+/* Confetti squares in the hero animation's palette, scattered across the
+   band's bottom zone to mark the page running out toward the footer.
+   Decorative only: clipped to the band, click-through, and drifting with the
+   hero's slow idle float (positions/rotations come from CTA_SQUARES in
+   App.tsx). */
+.landing-cta-squares {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.landing-cta-squares span {
+  position: absolute;
+  transform: rotate(var(--sq-rot, 0deg));
+  animation: landing-sq-float 8s ease-in-out infinite;
+}
+@keyframes landing-sq-float {
+  0%, 100% { transform: translate(0, 0) rotate(var(--sq-rot, 0deg)); }
+  50% { transform: translate(5px, -8px) rotate(calc(var(--sq-rot, 0deg) + 6deg)); }
 }
 .landing-about-cta-row {
   display: flex;
@@ -186,7 +207,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .landing-tag,
-  .landing-cta {
+  .landing-cta,
+  .landing-cta-squares span {
     animation: none !important;
   }
 }

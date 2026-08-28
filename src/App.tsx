@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, Suspense, lazy, useRef, Fragment } from 'react'
+import { useState, useEffect, useLayoutEffect, Suspense, lazy, useRef, Fragment, type CSSProperties } from 'react'
 import { BrowserRouter as Router, Routes, Route, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from './stores/auth.store'
 import { initializeMessagingAuth } from './stores/messages.store'
@@ -33,6 +33,24 @@ const CommunityGuidelinesPage = lazy(() => import('./components/static/Community
 const StaticDocumentPage = lazy(() => import('./components/static/StaticDocumentPage'))
 const WelcomePage = lazy(() => import('./components/auth/WelcomePage'))
 const PublicProfile = lazy(() => import('./components/user/PublicProfile'))
+
+// Confetti squares for the bottom of the mobile CTA band — the hero
+// animation's palette and sizes, hand-scattered (denser toward the bottom) to
+// mark the end of the page. Rendered by .landing-cta-squares (App.css).
+const CTA_SQUARES = [
+  { left: '7%', bottom: 88, size: 21, rot: -8, color: '#FFF399' },
+  { left: '16%', bottom: 30, size: 21, rot: 14, color: '#FF99D8' },
+  { left: '27%', bottom: 64, size: 15, rot: -18, color: '#99BBFF' },
+  { left: '38%', bottom: 18, size: 21, rot: 7, color: '#FFF399' },
+  { left: '49%', bottom: 96, size: 14, rot: 22, color: '#FF2F2F' },
+  { left: '58%', bottom: 44, size: 21, rot: -12, color: '#9AFF99' },
+  { left: '70%', bottom: 82, size: 17, rot: 9, color: '#FFF399' },
+  { left: '82%', bottom: 24, size: 21, rot: -6, color: '#4784FF' },
+  { left: '90%', bottom: 68, size: 15, rot: 18, color: '#FF99D8' },
+  { left: '12%', bottom: 12, size: 13, rot: -22, color: '#FFF9C8' },
+  { left: '63%', bottom: 12, size: 13, rot: 16, color: '#99BBFF' },
+  { left: '95%', bottom: 10, size: 14, rot: -14, color: '#BCFFBB' },
+]
 
 // Checklist row icons (masks / flag / bookmark), exported 1:1 from the mockup —
 // rendered at their intrinsic sizes, one per row in CMS order.
@@ -853,6 +871,22 @@ function AuthForm() {
               <button className="landing-cta landing-about-cta-btn" onClick={handleRegisterClick}>
                 {landing.about.cta.button}
               </button>
+            </div>
+            <div className="landing-cta-squares" aria-hidden="true">
+              {CTA_SQUARES.map((sq, i) => (
+                <span
+                  key={i}
+                  style={{
+                    left: sq.left,
+                    bottom: sq.bottom,
+                    width: sq.size,
+                    height: sq.size,
+                    background: sq.color,
+                    animationDelay: `${i * -1.3}s`,
+                    '--sq-rot': `${sq.rot}deg`,
+                  } as CSSProperties}
+                />
+              ))}
             </div>
           </div>
         )}
