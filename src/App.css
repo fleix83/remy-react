@@ -368,14 +368,13 @@
     flex-direction: column;
     align-items: flex-start !important;
     gap: 16px;
-    margin-top: 25px;
+    margin-top: 35px;
     font-size: 16px;
     line-height: 1;
   }
-  /* Mobile drops the underline in favour of weight (desktop keeps the
-     Tailwind `underline` class; this out-specifies it here). */
   .landing-footer-links a {
-    text-decoration-line: none;
+    text-decoration: underline;
+    text-underline-offset: 4px;
     font-weight: 700;
   }
   .landing-footer-made {
