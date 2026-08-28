@@ -135,25 +135,12 @@
   flex-direction: column;
   gap: 64px;
 }
-/* Each item sits on a soft pale-yellow "cloud": a blurred rounded rect behind
-   the row (blur on a pseudo-element only, so the icon + text stay sharp). */
 .landing-about-checklist li {
-  position: relative;
-  isolation: isolate;
   display: flex;
   align-items: center;
   gap: 22px;
   padding: 20px 22px 20px 17px;
   text-align: left;
-}
-.landing-about-checklist li::before {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  z-index: -1;
-  background: #fff9ce;
-  border-radius: 39px;
-  filter: blur(31px);
 }
 /* Fixed-width column as wide as the widest icon (masks, 47px) so the three
    different icon widths share one centre line, per the mockup. */
