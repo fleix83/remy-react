@@ -912,7 +912,7 @@ function AuthForm() {
             height={166}
             loading="lazy"
             decoding="async"
-            className="landing-footer-logo w-[204px] h-auto md:w-auto md:h-[65px] md:shrink-0"
+            className="landing-footer-logo w-[153px] h-auto md:w-auto md:h-[65px] md:shrink-0"
             style={{ filter: 'grayscale(100%)' }}
           />
           <div className="landing-footer-textcol flex flex-col md:pb-[5px]">

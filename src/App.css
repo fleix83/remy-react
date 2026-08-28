@@ -372,8 +372,9 @@
   .landing-footer-claim {
     font-size: 18px;
     line-height: 20px;
-    /* Forces the mockup's narrow 4-line wrap (breaks at the soft hyphens). */
-    max-width: 170px;
+    /* Wide enough for "Remy ist eine unabhängige" on the first line, narrow
+       enough to break right after it. */
+    max-width: 230px;
   }
   .landing-footer-links {
     flex-direction: column;
