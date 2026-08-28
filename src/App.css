@@ -92,9 +92,17 @@
   }
 }
 
-/* Desktop word pills hidden on mobile (mobile uses .landing-tagline single block) */
+/* The scattered desktop word pills are retired — both breakpoints now use the
+   single .landing-tagline block. */
 .landing-tag {
   display: none;
+}
+
+/* Wrapper around the tagline + swirl/CTA row. Transparent to layout by
+   default so mobile keeps stacking them directly in the hero column; the
+   desktop block turns it into the flex row that pairs them side by side. */
+.landing-hero-mid {
+  display: contents;
 }
 
 /* Language switcher: desktop top-left; mobile moves it top-right (logo sits left) */
@@ -340,6 +348,48 @@
     background: #eeeeee !important;
   }
 
+  /* Footer layout (mobile): everything stacks left-aligned per the mockup —
+     logo (204px, the scale reference for all values below), claim, link
+     column, "Made by". The wrappers are already flex columns from their
+     Tailwind classes; this block sets the mockup's type sizes and vertical
+     rhythm. Margins are box gaps tuned so the INK gaps (glyph edge to glyph
+     edge) land on the measured values: 28px logo→claim, 31px claim→links,
+     32px link cap-to-cap, 52px links→credit, 45px credit→footer edge. */
+  /* The logo PNG (352×166) carries transparent padding: 6px left, 9px bottom,
+     0 top. At the 204px render width the left inset is ~3.5px — pulled back so
+     the ink sits flush with the text column (the bottom inset is absorbed in
+     the brand wrapper's 20px gap, ~28px ink-to-ink). */
+  .landing-footer-logo {
+    margin-left: -3.5px;
+  }
+  .landing-footer-claim {
+    font-size: 18px;
+    line-height: 20px;
+    /* Forces the mockup's narrow 4-line wrap (breaks at the soft hyphens). */
+    max-width: 170px;
+  }
+  .landing-footer-links {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 16px;
+    margin-top: 25px;
+    font-size: 16px;
+    line-height: 1;
+  }
+  /* Mobile drops the underline in favour of weight (desktop keeps the
+     Tailwind `underline` class; this out-specifies it here). */
+  .landing-footer-links a {
+    text-decoration-line: none;
+    font-weight: 700;
+  }
+  .landing-footer-made {
+    margin-top: 48px;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 700;
+    color: #828282;
+  }
+
   /* ==Marked== sentences get a flat yellow marker shade. Zero vertical padding
      leaves a ~2px gap between the stacked line bands (line-height 34.8 −
      content 33); box-decoration-break carries it onto every wrapped line. */
@@ -355,7 +405,8 @@
 
 /* ── Desktop landing page overrides ── */
 @media (min-width: 768px) {
-  /* Desktop keeps the translucent white pill look for the language dropdown */
+  /* Desktop keeps the translucent white pill look for the language dropdown.
+     It sits top-right next to the nav (the logo now owns the top-left). */
   .landing-lang-switcher {
     background: #ffffffcc;
     backdrop-filter: blur(4px);
@@ -363,30 +414,99 @@
     padding: 4px 12px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     color: #4785ff;
+    top: 30px;
+    left: auto;
+    right: 24px;
   }
-  .landing-logo-wrap {
-    display: none !important;
-  }
-  .landing-swirl,
-  .landing-duo-wrap {
-    display: none !important;
-  }
-  .landing-frau {
-    display: block !important;
-    position: absolute !important;
-    left: 71px !important;
-    width: 89% !important;
-    height: auto !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-    top: 3vh !important;
-    margin-left: -100px !important;
-    margin-top: -36px !important;
-  }
+
+  /* ── Hero: the mobile composition scaled up per the desktop mockup —
+     wordmark top-left, one tagline block with the swirl + yellow CTA to its
+     right, and the four-figure animation across the bottom. ── */
   .landing-hero {
     height: 100vh !important;
     overflow: visible !important;
+    background: linear-gradient(180deg, #c8d7ff 0%, #ffffff 100%) !important;
+    /* Rendered width of the 1734×678 figures stage. Shared so the register
+       form can reserve exactly the band above it. vw (not %) so the value
+       still means "width" when it is used inside a height calculation. */
+    --duo-w: min(86vw, 1500px, 52vh * 2.558);
   }
+  .landing-logo-wrap {
+    display: flex !important;
+    flex-shrink: 0;
+    align-items: center !important;
+    gap: clamp(14px, 1.2vw, 22px) !important;
+    padding: clamp(32px, 3.7vh, 52px) 0 0 clamp(32px, 3.9vw, 64px) !important;
+  }
+  .landing-logo-wrap .landing-logo {
+    width: clamp(130px, 11vw, 190px) !important;
+  }
+  .landing-logo-claim {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: clamp(10px, 0.82vw, 14px);
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #7c8296;
+    text-align: left;
+  }
+
+  /* Tagline + swirl + CTA on one row, centred in the space the logo and the
+     figures leave over. The left padding reproduces the mockup's off-centre
+     placement (the block sits over the 2nd–4th figure, not the artboard
+     middle); `min-height: 0` lets it compress before the figures do. */
+  .landing-hero-mid {
+    display: flex !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(20px, 2.6vw, 52px);
+    padding: 0 4% 0 24%;
+  }
+  .landing-tagline {
+    display: block !important;
+    flex-shrink: 0;
+    font-size: clamp(30px, 3.2vw, 58px) !important;
+    line-height: 1.45 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .landing-hero-actions {
+    display: flex !important;
+    flex-shrink: 0;
+    align-items: center !important;
+    gap: clamp(14px, 1.8vw, 38px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+  .landing-swirl {
+    display: block !important;
+    width: clamp(110px, 14vw, 250px) !important;
+    height: auto !important;
+  }
+
+  /* Figures: the 1734×678 stage centred above the fold. The third min() term
+     caps it by height so short/landscape viewports don't hand the whole screen
+     to the animation. */
+  .landing-duo-wrap {
+    display: flex !important;
+    flex-shrink: 0;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 0 4vh;
+  }
+  .landing-duo {
+    display: block;
+    width: var(--duo-w);
+    aspect-ratio: 1734 / 678;
+    border: 0;
+    background: transparent;
+    color-scheme: light;
+  }
+
   .landing-cta-area {
     position: absolute !important;
     top: 0 !important;
@@ -397,17 +517,28 @@
     z-index: 10 !important;
     transform: none !important;
   }
+  /* Without a form this is an empty full-hero overlay; let clicks through to
+     the CTA and the figures underneath it. */
+  .landing-cta-area:not(:has(form)) {
+    pointer-events: none !important;
+  }
+  /* Register/login form drops into the band the tagline vacates — the hero
+     height minus the figures block, so it never lands on the animation. */
   .landing-cta-area:has(form) {
-    top: 360px !important;
-    left: 203px !important;
-    width: calc(100% - 203px) !important;
-    padding-left: 90px !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100% - var(--duo-w) / 2.558 - 4vh) !important;
+    padding: 0 !important;
+    justify-content: center !important;
   }
   .landing-topnav {
     display: flex !important;
     position: absolute !important;
     top: 28px !important;
-    right: 24px !important;
+    /* Clears the language pill, which is fixed to the window's right edge and
+       so sits a scrollbar-width further right than this absolute nav. */
+    right: 110px !important;
     gap: 8px !important;
     z-index: 20 !important;
   }
@@ -429,79 +560,41 @@
   .landing-topnav-link:hover {
     background-color: #f5f5f5 !important;
   }
-  .landing-tagline {
-    display: none !important;
-  }
-  .landing-tag {
-    display: block !important;
-    position: absolute !important;
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    border-radius: 60px !important;
-    font-family: "Gaegu", "Gaegu Accents", cursive !important;
-    font-weight: 700 !important;
-    color: rgb(84, 130, 255) !important;
-    white-space: nowrap !important;
-    line-height: 0.95 !important;
-    z-index: 10 !important;
-  }
-  .landing-tag-du {
-    top: 14% !important;
-    left: 57% !important;
-    font-size: 86px !important;
-    padding: 8px 36px !important;
-  }
-  .landing-tag-machst {
-    top: 27% !important;
-    left: 71% !important;
-    font-size: 51px !important;
-    padding: 8px 28px !important;
-  }
-  .landing-tag-eine {
-    top: 37% !important;
-    left: 60% !important;
-    font-size: 51px !important;
-    padding: 8px 28px !important;
-  }
-  .landing-tag-psycho {
-    top: 59% !important;
-    left: 57% !important;
-    font-size: 86px !important;
-    padding: 8px 40px !important;
-  }
+  /* The scattered word pills are replaced by the single tagline block above;
+     the base `.landing-tag { display: none }` now applies at every width. */
   .landing-cta-wrap {
-    position: absolute !important;
-    bottom: 7% !important;
-    right: 20% !important;
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    border-radius: 60px !important;
-    padding: 26px !important;
-    z-index: 10 !important;
+    position: static !important;
+    background: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
     animation: landing-float 4s ease-in-out 1s infinite !important;
   }
   /* Appearance lives here since the button element carries no inline styles;
-     mobile (yellow pill) styles it in the ≤767px block instead. */
+     the ≤767px block styles the same yellow pill at mobile scale. */
   .landing-cta {
     width: auto !important;
-    min-width: 180px !important;
-    max-width: 240px !important;
+    min-width: 0 !important;
+    max-width: none !important;
     font-family: "Gaegu", "Gaegu Accents", cursive !important;
     font-weight: 700 !important;
-    font-size: 28px !important;
-    padding: 12px 28px !important;
+    font-size: clamp(20px, 1.75vw, 32px) !important;
+    line-height: 1 !important;
+    letter-spacing: 0.05em !important;
+    padding: clamp(14px, 1.3vw, 24px) clamp(18px, 1.7vw, 32px) !important;
     align-self: auto !important;
-    background-color: rgb(84, 130, 255) !important;
-    color: #ffffff !important;
-    letter-spacing: 0.02em !important;
+    background-color: #fff399 !important;
+    color: #575757 !important;
     border: none !important;
-    border-radius: 25px !important;
+    border-radius: 20px !important;
     cursor: pointer !important;
-    transition: 0.2s !important;
-    box-shadow: 0 4px 12px rgba(84, 130, 255, 0.3) !important;
+    transition: background-color 0.2s ease-out !important;
+    box-shadow: none !important;
   }
   .landing-cta:hover {
-    background-color: #4070e0 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(84, 130, 255, 0.4) !important;
+    background-color: #f7e885 !important;
+  }
+  .landing-cta:active {
+    transform: translateY(1px);
   }
   .landing-login-link {
     display: none !important;
@@ -512,7 +605,9 @@
     padding-top: 140px !important;
     padding-bottom: 130px !important;
     overflow: hidden !important;
-    background: #f1fef1 !important;
+    /* Picks up the hero's white bottom edge, cools into the same blue the
+       mobile page uses, then settles towards the footer's grey. */
+    background: linear-gradient(180deg, #ffffff 0%, #e8eeff 55%, #f2f3f7 100%) !important;
   }
   .landing-about::before {
     display: none !important;

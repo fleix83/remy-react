@@ -14,6 +14,7 @@ import PostView from './components/forum/PostView'
 import { useTranslation } from 'react-i18next'
 import { useLandingContent, useFooterContent } from './hooks/useSiteContent'
 import { useActiveLanguage } from './hooks/useActiveLanguage'
+import { useMediaQuery } from './hooks/useMediaQuery'
 import { renderLandingText } from './utils/renderRemy'
 import SeoHead from './components/seo/SeoHead'
 import OrgJsonLd from './components/seo/OrgJsonLd'
@@ -203,6 +204,11 @@ function AuthForm() {
   const { content: footer } = useFooterContent()
   const { t } = useTranslation()
   const lang = useActiveLanguage()
+  // The figures animation is a different artboard per breakpoint (2 figures at
+  // 363×314 on mobile, 4 at 1734×678 on desktop), so the <iframe> src has to
+  // switch in JS — CSS can't pick it, and rendering both would download ~110 KB
+  // of animation twice.
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   // Per-language tagline tuning so the two `\n` lines never wrap further on
   // mobile. Font size is untouched; only tracking/word-spacing is eased, and
@@ -360,18 +366,6 @@ function AuthForm() {
         </div>
       )}
 
-      {/* Masken illustration - desktop only */}
-      {!showLoginForm && (
-        <img
-          className="landing-frau hidden"
-          src="/images/Masken.png"
-          alt=""
-          width={2247}
-          height={1432}
-          decoding="async"
-        />
-      )}
-
       <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Welcome Text - Matching mockup exactly */}
         {!showLoginForm && (
@@ -410,7 +404,10 @@ function AuthForm() {
             </div>
 
 
-            {/* Tagline - mobile single block (hidden on desktop via CSS) */}
+            {/* Tagline + swirl/CTA row. On mobile these stack (the wrapper is
+                `display: contents`); on desktop the wrapper becomes the flex
+                row that centres them between the logo and the figures. */}
+            <div className="landing-hero-mid">
             {!showRegisterForm && (
               <div ref={taglineRef} className="landing-tagline" style={{
                 fontFamily: '"Gaegu", "Gaegu Accents", cursive',
@@ -455,15 +452,15 @@ function AuthForm() {
                 </div>
               </div>
             )}
+            </div>
 
-            {/* Remy duo figures — TEST: animated version embedded from the
-                self-contained /figures_animation_mobile.html (transparent stage,
-                363×314 = aspect 1.156). Sized to match the previous image's
-                footprint; shrinks on the register view. */}
+            {/* Remy figures — animated, embedded from a self-contained,
+                transparent-stage HTML file: two figures (363×314) on mobile,
+                four (1734×678) on desktop. Shrinks on the register view. */}
             <div className={`landing-duo-wrap${showRegisterForm ? ' landing-duo-wrap--form' : ''}`}>
               <iframe
                 className="landing-duo"
-                src="/figures_animation_mobile.html"
+                src={isDesktop ? '/figures_animation_desktop.html' : '/figures_animation_mobile.html'}
                 title="Remy Figuren"
                 loading="lazy"
                 scrolling="no"
@@ -865,12 +862,16 @@ function AuthForm() {
 
     {/* Footer */}
     <footer
-      className="landing-footer flex h-auto flex-shrink-0 items-start px-6 pt-[60px] pb-[44px] md:h-[350px] md:items-center md:px-0 md:py-0"
+      className="landing-footer flex h-auto flex-shrink-0 items-start px-[50px] pt-[62px] pb-[43px] md:h-[350px] md:items-center md:px-0 md:py-0"
       style={{ background: 'linear-gradient(#f6f6f6 0%, rgb(225 225 225) 100%)' }}
     >
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-8 text-left md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
+      {/* Mobile stacks everything left-aligned per the mockup — logo, claim,
+          link column, "Made by" — via the wrappers' own flex-col classes;
+          type sizes + vertical rhythm live in .landing-footer-* (App.css).
+          Desktop keeps the nested flex layout. */}
+      <div className="landing-footer-inner mx-auto flex w-full max-w-7xl flex-col items-start text-left md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
         {/* Left: logo + credits on one line, aligned to the REMY baseline */}
-        <div className="flex flex-col items-start gap-[30px] md:flex-row md:items-end md:gap-12">
+        <div className="landing-footer-brand flex flex-col items-start gap-[20px] md:flex-row md:items-end md:gap-12">
           <img
             src="/images/logo_claim.png"
             alt="Remy"
@@ -878,28 +879,33 @@ function AuthForm() {
             height={169}
             loading="lazy"
             decoding="async"
-            className="h-[65px] w-auto md:shrink-0"
+            className="landing-footer-logo w-[204px] h-auto md:w-auto md:h-[65px] md:shrink-0"
             style={{ filter: 'grayscale(100%)' }}
           />
-          <div className="flex flex-col md:pb-[5px]">
+          <div className="landing-footer-textcol flex flex-col md:pb-[5px]">
             <p
-              className="w-full max-w-md mb-[24px] md:mb-[13px] text-left text-[19px] font-bold leading-snug md:text-left"
+              className="landing-footer-claim w-full max-w-md text-left font-bold leading-snug md:mb-[13px] md:text-[19px] md:text-left"
               style={{ fontFamily: '"Nunito", sans-serif', color: 'rgb(130, 130, 130)' }}
             >
               {landing.about.paragraphs[2]}
             </p>
             <div
-              className="flex flex-wrap items-center justify-start gap-x-8 gap-y-0 text-[17px] text-[#828282] md:gap-y-8 md:justify-start md:whitespace-nowrap"
+              className="landing-footer-links flex items-center text-[#828282] md:flex-wrap md:justify-start md:gap-x-8 md:gap-y-8 md:whitespace-nowrap md:text-[17px]"
               style={{ fontFamily: '"Nunito", sans-serif' }}
             >
+              <a href={footer.forumHref} className="transition-opacity hover:opacity-70 md:hidden">{footer.forumLabel}</a>
               <a href={footer.aboutHref} className="underline transition-opacity hover:opacity-70">{footer.aboutLabel}</a>
               <a href={footer.impressumHref} className="underline transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
               <a href={footer.datenschutzHref} className="underline transition-opacity hover:opacity-70">{footer.datenschutzLabel}</a>
-              <span className="hidden h-[18px] w-px self-center bg-[#828282] opacity-40 md:block" aria-hidden="true"></span>
-              {/* Mobile: own row, well below the links (per mockup). Desktop
-                  keeps it inline after the divider. */}
-              <span className="w-full mt-[110px] text-[#959595] md:mt-0 md:w-auto">{footer.madeByPrefix} {footer.madeByName}</span>
             </div>
+            {/* Own row below the links at every width — it has never fit
+                inline next to them, not even at 1920px. */}
+            <span
+              className="landing-footer-made text-[#959595] md:mt-8 md:text-[17px]"
+              style={{ fontFamily: '"Nunito", sans-serif' }}
+            >
+              {footer.madeByPrefix} {footer.madeByName}
+            </span>
           </div>
         </div>
 

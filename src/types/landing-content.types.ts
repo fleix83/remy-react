@@ -66,6 +66,9 @@ export interface LandingContent {
 export interface FooterContent {
   /** Short project description — crawlable entity text on every page. */
   description: string
+  /** "Forum" link — currently only shown in the mobile landing footer. */
+  forumLabel: string
+  forumHref: string
   aboutLabel: string
   aboutHref: string
   impressumLabel: string
@@ -142,6 +145,8 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
 export const DEFAULT_FOOTER_CONTENT: FooterContent = {
   description:
     'Remy ist eine unabhängige Patienteninitiative für die Schweiz – das anonyme, moderierte Forum für Menschen in Psychotherapie.',
+  forumLabel: 'Forum',
+  forumHref: '/',
   aboutLabel: 'Über Remy',
   aboutHref: '/about',
   impressumLabel: 'Impressum',

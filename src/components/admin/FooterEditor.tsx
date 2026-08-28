@@ -49,6 +49,8 @@ const FooterEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
 
       <CmsSection title="Links">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <CmsField label="Forum – Beschriftung (nur mobiler Footer)" value={draft.forumLabel} onChange={(v) => set({ forumLabel: v })} />
+          <CmsField label="Forum – Link (URL)" value={draft.forumHref} onChange={(v) => set({ forumHref: v })} />
           <CmsField label="Impressum – Beschriftung" value={draft.impressumLabel} onChange={(v) => set({ impressumLabel: v })} />
           <CmsField label="Impressum – Link (URL)" value={draft.impressumHref} onChange={(v) => set({ impressumHref: v })} />
           <CmsField label="Datenschutz – Beschriftung" value={draft.datenschutzLabel} onChange={(v) => set({ datenschutzLabel: v })} />
