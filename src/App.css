@@ -355,13 +355,9 @@
      rhythm. Margins are box gaps tuned so the INK gaps (glyph edge to glyph
      edge) land on the measured values: 28px logo→claim, 31px claim→links,
      32px link cap-to-cap, 52px links→credit, 45px credit→footer edge. */
-  /* The logo PNG (352×166) carries transparent padding: 6px left, 9px bottom,
-     0 top. At the 204px render width the left inset is ~3.5px — pulled back so
-     the ink sits flush with the text column (the bottom inset is absorbed in
-     the brand wrapper's 20px gap, ~28px ink-to-ink). */
-  .landing-footer-logo {
-    margin-left: -3.5px;
-  }
+  /* The logo PNG (346×166) is cropped flush to its ink on the left and top;
+     its ~9px transparent bottom is absorbed in the brand wrapper's 20px gap
+     (~28px ink-to-ink). */
   .landing-footer-claim {
     font-size: 18px;
     line-height: 20px;

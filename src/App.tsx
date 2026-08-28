@@ -875,8 +875,8 @@ function AuthForm() {
           <img
             src="/images/logo_claim.png"
             alt="Remy"
-            width={437}
-            height={169}
+            width={346}
+            height={166}
             loading="lazy"
             decoding="async"
             className="landing-footer-logo w-[204px] h-auto md:w-auto md:h-[65px] md:shrink-0"
