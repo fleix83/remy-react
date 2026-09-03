@@ -1049,10 +1049,10 @@
   }
 
   /* Post view: the header gradient tints to the current post's category colour
-     at 75% HWB whiteness, halved to 0.5 alpha so the tint stays light over the
+     at 75% HWB whiteness, cut to 0.3 alpha so the tint stays light over the
      white page (--postview-cat is set on .page-postview by PostView). */
   .page-postview nav:not(.pagination-nav) {
-    background: linear-gradient(180deg, hwb(from var(--postview-cat, #e2ecff) h 75% b / 0.5), transparent);
+    background: linear-gradient(180deg, hwb(from var(--postview-cat, #e2ecff) h 75% b / 0.3), transparent);
   }
 
   /* Lebenskurve line art layered on top of the gradient (gradient stays
@@ -1134,6 +1134,6 @@
      .page-postview by PostView; falls back to the neutral forum blue. */
   .page-postview .postview-mobile-header {
     height: 130px;
-    background: linear-gradient(180deg, hwb(from var(--postview-cat, #e2ecff) h 75% b / 0.5), transparent);
+    background: linear-gradient(180deg, hwb(from var(--postview-cat, #e2ecff) h 75% b / 0.3), transparent);
   }
 }
