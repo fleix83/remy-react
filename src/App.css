@@ -138,13 +138,13 @@
   flex-direction: column;
 }
 /* Pale-yellow dotted rules between the rows and at both ends: every row draws
-   the line above itself, the last one also below; the 35px vertical padding is
+   the line above itself, the last one also below; the 55px vertical padding is
    the breathing room on each side of a line. */
 .landing-about-checklist li {
   display: flex;
   align-items: center;
   gap: 22px;
-  padding: 35px 22px 35px 17px;
+  padding: 55px 22px 55px 17px;
   text-align: left;
   border-top: 5px dotted #fcf8d3;
 }
