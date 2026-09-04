@@ -322,10 +322,19 @@
     background: transparent;
     color-scheme: light;
   }
-  /* Register view: the figures leave the screen (mobile only; the wrap stays
-     as the flex spacer so the form/CTA layout below keeps its position). */
+  /* Register view (mobile only): the figures leave the screen and their wrap
+     collapses; the form area then takes auto margins so the free hero space
+     splits evenly above and below it — logo up top, form optically centred. */
   .landing-duo-wrap--form .landing-duo {
     display: none;
+  }
+  .landing-duo-wrap--form {
+    flex: 0 0 auto;
+    padding: 0;
+  }
+  .landing-duo-wrap--form + .landing-cta-area {
+    margin-top: auto;
+    margin-bottom: auto;
   }
 
   /* Text section: gradient continues from the hero and settles on the
