@@ -136,7 +136,7 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
       'Remy ist eine Schweizer Plattform',
     ],
     cta: {
-      text: 'Interessiert dich das Thema? Dann registriere dich doch hier und schaue dich im Forum um.',
+      text: 'Interessiert? Einfach anonym registrieren und reinschauen.',
       button: 'Registrieren',
     },
   },
