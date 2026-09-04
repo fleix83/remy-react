@@ -322,11 +322,10 @@
     background: transparent;
     color-scheme: light;
   }
-  /* Register view: shrink the figures and lift them off the form below. */
+  /* Register view: the figures leave the screen (mobile only; the wrap stays
+     as the flex spacer so the form/CTA layout below keeps its position). */
   .landing-duo-wrap--form .landing-duo {
-    width: 68vw;
-    max-width: 300px;
-    margin-bottom: 38px;
+    display: none;
   }
 
   /* Text section: gradient continues from the hero and settles on the
