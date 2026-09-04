@@ -235,6 +235,9 @@ function AuthForm() {
   // switch in JS — CSS can't pick it, and rendering both would download ~110 KB
   // of animation twice.
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  // Mobile renders the register view as its own login-style screen (REMY title,
+  // subtitle, labelled fields) instead of the inline hero form desktop keeps.
+  const mobileRegister = showRegisterForm && !registrationComplete && !isDesktop
 
   // Per-language tagline tuning so the two `\n` lines never wrap further on
   // mobile. Font size is untouched; only tracking/word-spacing is eased, and
@@ -397,8 +400,9 @@ function AuthForm() {
       )}
 
       <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
-        {/* Welcome Text - Matching mockup exactly */}
-        {!showLoginForm && (
+        {/* Welcome Text - Matching mockup exactly (mobile register swaps this
+            whole block — top-bar logo included — for its own screen below) */}
+        {!showLoginForm && !mobileRegister && (
           <div style={{
             display: 'flex',
             flexDirection: 'column',
@@ -638,6 +642,122 @@ function AuthForm() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Mobile register screen — mirrors the login screen: REMY title +
+            subtitle, labelled fields, no top-bar logo, no figures. Desktop
+            keeps the inline hero form above. */}
+        {mobileRegister && (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            padding: '0 24px'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <h2 style={{ fontFamily: 'Gaegu, "Gaegu Accents", cursive', fontWeight: 'bold', fontSize: '60px', color: 'var(--primary)', lineHeight: '0.9', marginBottom: '8px' }}>
+                {landing.login.title}
+              </h2>
+              <p style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '18px', color: '#144220' }}>
+                {landing.hero.registerPrompt}
+              </p>
+            </div>
+
+            <form ref={formRef} onSubmit={handleRegister} style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '100%',
+              gap: '16px'
+            }}>
+              <div style={{ width: '75vw', maxWidth: '340px' }}>
+                <label htmlFor="email" style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#144220', textAlign: 'left' }}>
+                  {landing.login.emailLabel}
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
+                  style={{ width: '100%', fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
+                  placeholder="deine@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div style={{ width: '75vw', maxWidth: '340px' }}>
+                <label htmlFor="password" style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#144220', textAlign: 'left' }}>
+                  {landing.login.passwordLabel}
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  className="px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
+                  style={{ width: '100%', fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              {message && (
+                <div
+                  className={`rounded-lg p-3 text-sm ${
+                    message.includes('error') || message.includes('Error')
+                      ? 'bg-red-50 border border-red-200 text-red-700'
+                      : 'bg-green-50 border border-green-200 text-green-700'
+                  }`}
+                  style={{ width: '75vw', maxWidth: '340px' }}
+                >
+                  {message}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  width: '75vw',
+                  maxWidth: '340px',
+                  padding: '14px 28px',
+                  backgroundColor: 'rgb(84, 130, 255)',
+                  color: 'white',
+                  fontFamily: '"Nunito Sans", sans-serif',
+                  fontSize: '20px',
+                  fontWeight: 600,
+                  borderRadius: '25px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: '0.2s',
+                  opacity: loading ? 0.5 : 1,
+                  marginTop: '8px'
+                }}
+              >
+                {loading ? 'Loading...' : landing.hero.registerSubmit}
+              </button>
+
+              <div style={{ textAlign: 'center', marginTop: '8px' }}>
+                <span style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '15px', color: '#8a9ab5' }}>
+                  {landing.hero.loginLinkPrefix}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLoginClick}
+                  style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '15px', color: '#5482ff', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontWeight: 700 }}
+                >
+                  {landing.hero.loginLinkLabel}
+                </button>
+              </div>
+            </form>
           </div>
         )}
 

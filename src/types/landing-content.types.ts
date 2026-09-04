@@ -84,7 +84,7 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
     taglineMobile: 'Du machst eine\nPsycho­therapie?',
     taglineWords: ['Du', 'machst', 'eine', 'Psycho­therapie?'],
     ctaLabel: 'Austauschen',
-    registerPrompt: 'Melde Dich anonym und sicher an',
+    registerPrompt: 'Melde dich anonym und sicher an.',
     registerSubmit: 'Registrieren',
     loginLinkPrefix: 'Schon registriert? Zum ',
     loginLinkLabel: 'Login.',
