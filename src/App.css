@@ -176,8 +176,8 @@
 .landing-about-cta {
   position: relative;
   margin: 0 -34px;
-  padding: 56px 34px 140px;
-  background: linear-gradient(180deg, #dde7ff, #eeeeee);
+  padding: 56px 34px 174px;
+  background: linear-gradient(180deg, #dde7ff, 83%, #eee);
 }
 /* Confetti squares in the hero animation's palette, scattered across the
    band's bottom zone to mark the page running out toward the footer.
@@ -186,7 +186,10 @@
    App.tsx). */
 .landing-cta-squares {
   position: absolute;
-  inset: 0;
+  /* The 34px bottom offset cancels the band's extra bottom padding (174 vs the
+     140 the square coordinates were placed against), so the squares keep their
+     position relative to the register row while the footer moves down. */
+  inset: 0 0 34px;
   overflow: hidden;
   pointer-events: none;
 }
