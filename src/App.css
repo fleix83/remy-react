@@ -105,8 +105,11 @@
   display: contents;
 }
 
-/* Language switcher: desktop top-left; mobile moves it top-right (logo sits left) */
+/* Language switcher: desktop top-left (fixed); mobile moves it top-right and
+   scrolls with the page (absolute, overridden in the mobile block below). */
 .landing-lang-switcher {
+  position: fixed;
+  z-index: 50;
   top: 44px;
   left: 16px;
 }
@@ -224,6 +227,7 @@
    the #c8d7ff → #e5ecff segment, the text section carries #e5ecff → white. ── */
 @media (max-width: 767px) {
   .landing-lang-switcher {
+    position: absolute;
     top: 14px;
     left: auto;
     right: 14px;

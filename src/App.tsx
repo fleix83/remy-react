@@ -348,13 +348,17 @@ function AuthForm() {
     <div style={{
       height: '100vh',
       overflowY: 'auto',
-      overflowX: 'hidden'
+      overflowX: 'hidden',
+      /* Containing block for the mobile lang switcher (absolute), so it
+         scrolls away with the hero instead of pinning to the viewport. */
+      position: 'relative'
     }}>
       <SeoHead page="landing" path="/" />
       <OrgJsonLd />
       {/* Language switcher — lets anonymous visitors override browser detection.
-          Positioned via .landing-lang-switcher (desktop top-left, mobile top-right). */}
-      <LanguageSwitcher className="landing-lang-switcher" style={{ position: 'fixed', zIndex: 50 }} />
+          Positioned via .landing-lang-switcher (desktop top-left, fixed;
+          mobile top-right, absolute so it scrolls away with the hero). */}
+      <LanguageSwitcher className="landing-lang-switcher" />
 
       {/* First Section - Landing Page */}
       <div className="landing-hero" style={{
