@@ -3,6 +3,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuthStore } from '../../stores/auth.store'
 import { useTranslation } from 'react-i18next'
+import LandingFooter from '../layout/LandingFooter'
 
 interface WelcomePageProps {
   onComplete: (username: string) => Promise<void>
@@ -139,6 +140,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
   const isButtonDisabled = !username.trim() || username.length < 2 || isChecking || isSubmitting || !!error
 
   return (
+    <>
     <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: '#eefaf0' }}>
       <div className="max-w-md w-full">
         {/* Heading */}
@@ -209,6 +211,8 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
         </form>
       </div>
     </div>
+    <LandingFooter />
+    </>
   )
 }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { useTranslation } from 'react-i18next'
+import LandingFooter from '../layout/LandingFooter'
 
 const ResetPassword: React.FC = () => {
   const navigate = useNavigate()
@@ -62,6 +63,7 @@ const ResetPassword: React.FC = () => {
   }
 
   return (
+    <>
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#d5f4da' }}>
       <div className="max-w-md w-full" style={{ padding: '9px' }}>
         <div className="text-center mb-8">
@@ -141,6 +143,8 @@ const ResetPassword: React.FC = () => {
         </form>
       </div>
     </div>
+    <LandingFooter />
+    </>
   )
 }
 

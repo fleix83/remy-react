@@ -9,6 +9,7 @@ import GuidelineSection from '../ui/GuidelineSection'
 import type { Document, DocumentSection } from '../../types/database.types'
 import { toast } from '../../stores/toast.store'
 import SeoHead from '../seo/SeoHead'
+import LandingFooter from '../layout/LandingFooter'
 
 const CommunityGuidelinesPage: React.FC = () => {
   const navigate = useNavigate()
@@ -301,6 +302,7 @@ const CommunityGuidelinesPage: React.FC = () => {
           onLogout={handleSignOut}
         />
       )}
+      <LandingFooter />
     </div>
   )
 }

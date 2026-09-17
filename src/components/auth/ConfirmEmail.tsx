@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useTranslation } from 'react-i18next'
+import LandingFooter from '../layout/LandingFooter'
 
 const ConfirmEmail: React.FC = () => {
   const { t } = useTranslation('auth')
@@ -118,6 +119,7 @@ const ConfirmEmail: React.FC = () => {
   }
 
   return (
+    <>
     <div
       className="min-h-screen flex items-center justify-center py-12 px-4"
       style={{ backgroundColor: '#d5f4da' }}
@@ -188,6 +190,8 @@ const ConfirmEmail: React.FC = () => {
         )}
       </div>
     </div>
+    <LandingFooter />
+    </>
   )
 }
 
