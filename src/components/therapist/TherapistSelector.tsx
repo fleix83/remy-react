@@ -280,7 +280,7 @@ const TherapistSelector: React.FC<TherapistSelectorProps> = ({
                   <div className="font-semibold text-[#37a653]">
                     {personName || therapist.institution}
                   </div>
-                  {isModeratorOrAdmin && therapist.needs_review && (
+                  {isModeratorOrAdmin && therapist.needs_review && !therapist.user_id && (
                     <svg
                       className="w-4 h-4 flex-shrink-0"
                       fill="none"

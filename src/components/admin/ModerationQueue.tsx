@@ -674,7 +674,7 @@ const ModerationQueue: React.FC = () => {
           </div>
 
           {/* Filter pills */}
-          <div className="flex items-center gap-1 rounded-full bg-white/80 p-1 shadow-sm self-start md:self-auto">
+          <div className="flex flex-wrap items-center gap-1 rounded-2xl bg-white/80 p-1 shadow-sm self-start md:self-auto max-w-full">
             {([
               ['alle', 'filter.all'],
               ['beiträge', 'filter.posts'],

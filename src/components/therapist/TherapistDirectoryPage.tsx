@@ -180,7 +180,7 @@ const TherapistDirectoryPage: React.FC = () => {
               )}
 
               {/* Review flag banner - visible only to moderators/admins */}
-              {isModeratorOrAdmin && selectedTherapist.needs_review && (
+              {isModeratorOrAdmin && selectedTherapist.needs_review && !selectedTherapist.user_id && (
                 <div
                   className="mb-4 px-3 py-2 rounded text-sm font-medium text-left flex items-center gap-2"
                   style={{

@@ -62,6 +62,7 @@ Moderation (`ModerationQueue` -> filter "Profil-Anfragen",
   `created_by`, `user_id`, `claimed_at`, `is_active` for non-staff callers.
 - The directory page shows the edit pencil to the owner; the edit modal now
   also has `specialty` and `services`.
+- Profiles created by the claim flow have `needs_review = false` (migration 035); the "wird geprüft" flag is also hidden in the UI for any linked row.
 - INSERT policy (security item M2) is closed: non-staff may only insert rows
   with `created_by = auth.uid()`, `needs_review = true`, `user_id is null`.
 

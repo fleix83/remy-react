@@ -282,7 +282,7 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           {!isActive && (
             <span className="inline-flex rounded-full bg-gray-200 px-2 py-1 text-xs font-semibold text-gray-600">{t('therapistRow.statusInactive')}</span>
           )}
-          {therapist.needs_review ? (
+          {therapist.needs_review && !therapist.user_id ? (
             <button
               onClick={handleDismissReview}
               disabled={isDismissing || !adminId}
