@@ -117,7 +117,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <div
         className="shadow-sm relative"
         style={{
-          backgroundColor: '#f7f5ef',
+          backgroundColor: '#ffffff',
           marginTop: '0',
           paddingTop: '74px',
           paddingBottom: '32px',

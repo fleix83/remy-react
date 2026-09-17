@@ -58,13 +58,14 @@
 }
 
 /* Compact list card for profile content (posts/comments/drafts).
-   Square edges; items are separated by a 2px white rule below each, plus the
-   full-width status band at the top (tinted to match the status colour). */
+   Square edges; items are separated by a 2px page-blue rule below each (the
+   cards are white), plus the full-width status band at the top (tinted to
+   match the status colour). */
 .profile-list-card {
   position: relative;
   border-radius: 0;
   overflow: hidden;
-  border-bottom: 2px solid #fff;
+  border-bottom: 2px solid #f3f7ff;
 }
 
 /* Profile page top header (UserProfile) — same on desktop and mobile: a tall

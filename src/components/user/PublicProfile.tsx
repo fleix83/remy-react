@@ -82,7 +82,7 @@ const PublicProfile: React.FC = () => {
   const showHistory = shouldShowPostHistory(profile, user?.id)
 
   return (
-    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#ffffff' }}>
+    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#f3f7ff' }}>
       <div className="profile-top-header w-full flex items-start justify-center relative">
         <div className="max-w-6xl w-full mx-auto px-4 md:px-0 h-[65px] flex justify-between items-center">
           <div className="w-6 h-6"></div>

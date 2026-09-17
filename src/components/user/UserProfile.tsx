@@ -51,7 +51,7 @@ const UserProfile: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#ffffff' }}>
+    <div className="min-h-screen relative z-10" style={{ backgroundColor: '#f3f7ff' }}>
       {/* Header bar — compact 65px on desktop; tall gradient on mobile (CSS).
           The back link + avatar live in a fixed 65px row pinned to the top so
           they keep their position no matter how tall the header grows. */}
