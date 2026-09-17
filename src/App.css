@@ -137,7 +137,7 @@
   display: flex;
   flex-direction: column;
 }
-/* Pale-yellow dotted rules between the rows and at both ends: every row draws
+/* Pale-blue dotted rules between the rows and at both ends: every row draws
    the line above itself, the last one also below; the 55px vertical padding is
    the breathing room on each side of a line. */
 .landing-about-checklist li {
@@ -146,10 +146,10 @@
   gap: 22px;
   padding: 55px 22px 55px 17px;
   text-align: left;
-  border-top: 5px dotted #fcf8d3;
+  border-top: 5px dotted #cfdfff;
 }
 .landing-about-checklist li:last-child {
-  border-bottom: 5px dotted #fcf8d3;
+  border-bottom: 5px dotted #cfdfff;
 }
 /* Fixed-width column as wide as the widest icon (masks, 75px incl. its 14px
    confetti margin) so the three different icon widths share one centre line,
