@@ -74,7 +74,8 @@
     "tabs": {
       "posts": "Posts",
       "comments": "Comments",
-      "drafts": "Drafts"
+      "drafts": "Drafts",
+      "bookmarks": "Bookmarked"
     },
     "noTitle": "Untitled",
     "unknownDate": "Unknown",
@@ -112,6 +113,10 @@
     "updatePostError": "Post could not be updated",
     "deletePostConfirm": "Really delete this post? It will be hidden, existing comments will remain.",
     "deletePostSuccess": "Post deleted",
-    "deletePostError": "Post could not be deleted"
+    "deletePostError": "Post could not be deleted",
+    "bookmarks": {
+      "empty": "No bookmarked posts",
+      "emptyHint": "Posts you bookmark will appear here"
+    }
   }
 }

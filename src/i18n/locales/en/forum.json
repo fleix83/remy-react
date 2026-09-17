@@ -35,7 +35,10 @@
     "unknownDate": "Unknown",
     "experienceWith": "Experience with {{therapist}}",
     "rejectionReason": "Reason for rejection:",
-    "reply": "Reply"
+    "reply": "Reply",
+    "bookmark": "Bookmark",
+    "unbookmark": "Remove bookmark",
+    "bookmarkError": "Post could not be bookmarked"
   },
   "comments": {
     "placeholder": "Write a comment...",

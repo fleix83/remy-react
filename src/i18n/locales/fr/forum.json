@@ -35,7 +35,10 @@
     "unknownDate": "Inconnu",
     "experienceWith": "Expérience avec {{therapist}}",
     "rejectionReason": "Motif du refus :",
-    "reply": "Répondre"
+    "reply": "Répondre",
+    "bookmark": "Enregistrer",
+    "unbookmark": "Retirer des enregistrés",
+    "bookmarkError": "La publication n'a pas pu être enregistrée"
   },
   "comments": {
     "placeholder": "Écris un commentaire...",

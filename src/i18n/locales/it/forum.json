@@ -35,7 +35,10 @@
     "unknownDate": "Sconosciuto",
     "experienceWith": "Esperienza con {{therapist}}",
     "rejectionReason": "Motivo del rifiuto:",
-    "reply": "Rispondi"
+    "reply": "Rispondi",
+    "bookmark": "Salva",
+    "unbookmark": "Rimuovi dai salvati",
+    "bookmarkError": "Non è stato possibile salvare il post"
   },
   "comments": {
     "placeholder": "Scrivi un commento...",

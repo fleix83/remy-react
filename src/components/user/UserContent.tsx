@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import UserContentService from '../../services/user-content.service'
+import BookmarksService from '../../services/bookmarks.service'
+import BookmarkButton from '../ui/BookmarkButton'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
@@ -20,14 +22,14 @@ interface UserContentProps {
   publicView?: boolean
 }
 
-type ContentTab = 'drafts' | 'posts' | 'comments'
+type ContentTab = 'posts' | 'comments' | 'bookmarks'
 
 const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false }) => {
   const { t } = useTranslation('profile')
   const [activeTab, setActiveTab] = useState<ContentTab>('posts')
   const [posts, setPosts] = useState<PostWithRelations[]>([])
   const [comments, setComments] = useState<(CommentWithUser & { posts?: Post })[]>([])
-  const [drafts, setDrafts] = useState<PostWithRelations[]>([])
+  const [bookmarks, setBookmarks] = useState<PostWithRelations[]>([])
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [editingPost, setEditingPost] = useState<PostWithRelations | null>(null)
@@ -54,17 +56,26 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
 
     try {
       switch (activeTab) {
-        case 'posts':
-          const userPosts = await UserContentService.getUserPosts(userId)
-          setPosts(userPosts)
+        case 'posts': {
+          // Drafts live in the same list as published posts (labelled
+          // "Entwurf"); they are only fetched for the owner's own profile.
+          const isOwnProfile = !publicView && user?.id === userId
+          const [userPosts, userDrafts] = await Promise.all([
+            UserContentService.getUserPosts(userId),
+            isOwnProfile ? UserContentService.getUserDrafts(userId) : Promise.resolve([] as PostWithRelations[]),
+          ])
+          const merged = [...userPosts, ...userDrafts].sort(
+            (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+          )
+          setPosts(merged)
           break
+        }
         case 'comments':
           const userComments = await UserContentService.getUserComments(userId)
           setComments(userComments)
           break
-        case 'drafts':
-          const userDrafts = await UserContentService.getUserDrafts(userId)
-          setDrafts(userDrafts)
+        case 'bookmarks':
+          setBookmarks(await BookmarksService.getBookmarkedPosts())
           break
       }
     } catch (error) {
@@ -84,8 +95,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
     try {
       await UserContentService.deleteDraft(draftId, userId)
       setMessage({ type: 'success', text: t('content.deleteDraftSuccess') })
-      // Reload drafts
-      if (activeTab === 'drafts') {
+      if (activeTab === 'posts') {
         await loadContent()
       }
     } catch (error) {
@@ -161,11 +171,11 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
   // status label and dissolves across the category group.
   const renderItemHeader = (
     item: PostWithRelations,
-    status: { text: string; textColor: string; bgColor: string }
+    status?: { text: string; textColor: string; bgColor: string }
   ) => (
     <div
       className="-mx-4 -mt-4 mb-3 px-4 py-2 flex items-center justify-between gap-2"
-      style={{ background: `linear-gradient(to left, ${status.bgColor} 0%, ${status.bgColor} 35%, transparent 100%)` }}
+      style={status ? { background: `linear-gradient(to left, ${status.bgColor} 0%, ${status.bgColor} 35%, transparent 100%)` } : undefined}
     >
       {/* Left: category + canton */}
       <div className="flex items-center gap-2 flex-wrap min-w-0">
@@ -196,7 +206,9 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
 
       {/* Right: status label + date, tight and vertically centered */}
       <div className="flex flex-col items-end leading-tight flex-shrink-0">
-        <span className="text-xs font-medium" style={{ color: status.textColor }}>{status.text}</span>
+        {status && (
+          <span className="text-xs font-medium" style={{ color: status.textColor }}>{status.text}</span>
+        )}
         <span className="text-gray-500" style={{ fontSize: '0.65rem' }}>
           {item.created_at ? formatDate(item.created_at) : t('content.unknownDate')}
         </span>
@@ -302,7 +314,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
               { id: 'posts' as ContentTab, label: t('content.tabs.posts'), count: posts.length },
               ...(publicView ? [] : [
                 { id: 'comments' as ContentTab, label: t('content.tabs.comments'), count: comments.length },
-                { id: 'drafts' as ContentTab, label: t('content.tabs.drafts'), count: drafts.length },
+                { id: 'bookmarks' as ContentTab, label: t('content.tabs.bookmarks'), count: bookmarks.length },
               ]),
             ].map((tab) => (
               <button
@@ -368,14 +380,22 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {posts.map((post) => (
+                    {posts.map((post) => {
+                      const isDraft = !!post.is_draft
+                      return (
                       <div
                         key={post.id}
                         className="profile-list-card p-4 hover:opacity-90 transition-opacity duration-200 cursor-pointer"
                         onClick={() => handlePostClick(post.id)}
                       >
-                        {/* Header band - category/canton (left) + status + date (right) */}
-                        {renderItemHeader(post, getStatusInfo(post))}
+                        {/* Header band - category/canton (left) + status + date (right);
+                            drafts carry a red "Entwurf" label instead of a moderation status */}
+                        {renderItemHeader(
+                          post,
+                          isDraft
+                            ? { text: t('content.draft'), textColor: '#dc2626', bgColor: 'rgba(220,38,38,0.08)' }
+                            : getStatusInfo(post)
+                        )}
 
                         {/* Title - Hidden for Rant posts */}
                         {post.category_id !== 4 && (
@@ -427,7 +447,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
                                 handleEditPost(post)
                               }}
                               className="text-[var(--primary)] hover:text-[#2d8544] text-xs font-medium transition-colors duration-200"
-                              title={t('content.editPostTitle')}
+                              title={isDraft ? t('content.editDraftTitle') : t('content.editPostTitle')}
                             >
                               {t('content.edit')}
                             </button>
@@ -438,10 +458,11 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
-                                handleDeletePost(post.id)
+                                if (isDraft) handleDeleteDraft(post.id)
+                                else handleDeletePost(post.id)
                               }}
                               className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
-                              title={t('content.deletePostTitle')}
+                              title={isDraft ? t('content.deleteDraftTitle') : t('content.deletePostTitle')}
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -450,7 +471,8 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
                           )}
                         </div>
                       </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 )}
               </div>
@@ -516,35 +538,37 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
               </div>
             )}
 
-            {/* Drafts Tab */}
-            {activeTab === 'drafts' && (
+            {/* Bookmarks Tab — saved posts, no status band, just the post */}
+            {activeTab === 'bookmarks' && (
               <div>
-                {drafts.length === 0 ? (
+                {bookmarks.length === 0 ? (
                   <div className="text-center py-12">
                     <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4.5A1.5 1.5 0 017.5 3h9A1.5 1.5 0 0118 4.5V21l-6-3.75L6 21V4.5z" />
                     </svg>
-                    <p className="text-gray-500">{t('content.drafts.empty')}</p>
-                    <p className="text-sm text-gray-400 mt-1">{t('content.drafts.emptyHint')}</p>
+                    <p className="text-gray-500">{t('content.bookmarks.empty')}</p>
+                    <p className="text-sm text-gray-400 mt-1">{t('content.bookmarks.emptyHint')}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {drafts.map((draft) => (
+                    {bookmarks.map((post) => (
                       <div
-                        key={draft.id}
+                        key={post.id}
                         className="profile-list-card p-4 hover:opacity-90 transition-opacity duration-200 cursor-pointer"
-                        onClick={() => handlePostClick(draft.id)}
+                        onClick={() => handlePostClick(post.id)}
                       >
-                        {/* Header band - category/canton (left) + status + date (right) */}
-                        {renderItemHeader(draft, { text: t('content.draft'), textColor: '#2563eb', bgColor: 'rgba(37,99,235,0.08)' })}
+                        {/* Header band - category/canton (left) + date (right), no status */}
+                        {renderItemHeader(post)}
 
-                        {/* Post Title */}
-                        <h3 className="text-lg font-semibold mb-1 text-left leading-tight">
-                          {draft.title || t('content.noTitle')}
-                        </h3>
+                        {/* Title - Hidden for Rant posts */}
+                        {post.category_id !== 4 && (
+                          <h3 className="text-lg font-medium mb-1 text-left leading-tight" style={{color: 'var(--post-title)'}}>
+                            {post.title || t('content.noTitle')}
+                          </h3>
+                        )}
 
                         {/* Therapist line below title - blue, matches forum list item */}
-                        {draft.therapists && (
+                        {post.therapists && (
                           <div
                             className="text-left mb-2 truncate"
                             style={{
@@ -556,46 +580,25 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            {t('content.experienceWith', { therapist: formatTherapistPostLine(draft.therapists) })}
+                            {t('content.experienceWith', { therapist: formatTherapistPostLine(post.therapists) })}
                           </div>
                         )}
 
                         {/* Content Preview */}
-                        <p className="text-gray-600 text-sm mb-3 text-left">
-                          {truncateText(draft.content.replace(/<[^>]*>/g, ''), 200)}
+                        <p className="text-gray-600 text-sm mb-3 text-left leading-relaxed">
+                          {truncateToLines(post.content, 2)}
                         </p>
 
-                        {/* Bottom Section - Edit and Delete Buttons */}
+                        {/* Bottom: author (left) + un-bookmark (right); removing drops the
+                            row immediately, the hook rolls the cache back on failure */}
                         <div className="flex items-center justify-between">
-                          {/* Left: Edit Button */}
-                          {user && user.id === draft.user_id && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                handleEditPost(draft)
-                              }}
-                              className="text-[var(--primary)] hover:text-[#2d8544] text-xs font-medium transition-colors duration-200"
-                              title={t('content.editDraftTitle')}
-                            >
-                              {t('content.edit')}
-                            </button>
-                          )}
-
-                          {/* Right: Delete Button */}
-                          {user && user.id === draft.user_id && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                handleDeleteDraft(draft.id)
-                              }}
-                              className="text-red-500 hover:text-red-700 p-1 transition-colors duration-200"
-                              title={t('content.deleteDraftTitle')}
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
-                          )}
+                          <span className="text-xs text-gray-500">{post.users?.username}</span>
+                          <BookmarkButton
+                            postId={post.id}
+                            onToggle={(bookmarked) => {
+                              if (!bookmarked) setBookmarks((prev) => prev.filter((b) => b.id !== post.id))
+                            }}
+                          />
                         </div>
                       </div>
                     ))}

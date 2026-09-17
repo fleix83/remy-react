@@ -35,7 +35,10 @@
     "unknownDate": "Unbekannt",
     "experienceWith": "Erfahrung mit {{therapist}}",
     "rejectionReason": "Grund der Ablehnung:",
-    "reply": "Antworten"
+    "reply": "Antworten",
+    "bookmark": "Speichern",
+    "unbookmark": "Nicht mehr speichern",
+    "bookmarkError": "Beitrag konnte nicht gespeichert werden"
   },
   "comments": {
     "placeholder": "Schreibe einen Kommentar...",

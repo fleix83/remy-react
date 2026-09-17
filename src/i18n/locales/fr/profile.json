@@ -74,7 +74,8 @@
     "tabs": {
       "posts": "Publications",
       "comments": "Commentaires",
-      "drafts": "Brouillons"
+      "drafts": "Brouillons",
+      "bookmarks": "Enregistrés"
     },
     "noTitle": "Sans titre",
     "unknownDate": "Inconnu",
@@ -112,6 +113,10 @@
     "updatePostError": "La publication n'a pas pu être mise à jour",
     "deletePostConfirm": "Supprimer vraiment cette publication ? Elle sera masquée, les commentaires existants seront conservés.",
     "deletePostSuccess": "Publication supprimée",
-    "deletePostError": "La publication n'a pas pu être supprimée"
+    "deletePostError": "La publication n'a pas pu être supprimée",
+    "bookmarks": {
+      "empty": "Aucune publication enregistrée",
+      "emptyHint": "Les publications que tu enregistres apparaîtront ici"
+    }
   }
 }

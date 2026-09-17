@@ -15,6 +15,7 @@ import { SelectableText } from '../ui/RichTextEditor'
 import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
 import PostTags from '../ui/PostTags'
+import BookmarkButton from '../ui/BookmarkButton'
 import Navigation from '../layout/Navigation'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { getPostDisplayTitle } from '../../utils/text.utils'
@@ -291,7 +292,7 @@ const PostView: React.FC = () => {
                 <span className="text-xs text-gray-600">?</span>
               </div>
             )}
-            <div className="ml-3 flex-1 min-w-0">
+            <div className="ml-3 min-w-0">
               <p className="font-semibold text-[var(--type)] text-left leading-tight" style={{ fontSize: '11px' }}>
                 {post.users?.username || t('unknownUser')}
               </p>
@@ -299,6 +300,7 @@ const PostView: React.FC = () => {
                 {post.created_at ? formatDate(post.created_at) : t('card.unknownDate')}
               </p>
             </div>
+            <BookmarkButton postId={post.id} className="ml-2 flex-shrink-0" />
 
             {/* Actions on the right side of user info */}
             {isPostAuthor() && (

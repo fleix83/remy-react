@@ -74,7 +74,8 @@
     "tabs": {
       "posts": "Beiträge",
       "comments": "Kommentare",
-      "drafts": "Entwürfe"
+      "drafts": "Entwürfe",
+      "bookmarks": "Gespeichert"
     },
     "noTitle": "Ohne Titel",
     "unknownDate": "Unbekannt",
@@ -112,6 +113,10 @@
     "updatePostError": "Beitrag konnte nicht aktualisiert werden",
     "deletePostConfirm": "Diesen Beitrag wirklich löschen? Er wird ausgeblendet, vorhandene Kommentare bleiben erhalten.",
     "deletePostSuccess": "Beitrag gelöscht",
-    "deletePostError": "Beitrag konnte nicht gelöscht werden"
+    "deletePostError": "Beitrag konnte nicht gelöscht werden",
+    "bookmarks": {
+      "empty": "Keine gespeicherten Beiträge",
+      "emptyHint": "Beiträge, die du speicherst, erscheinen hier"
+    }
   }
 }

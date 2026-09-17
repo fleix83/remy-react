@@ -74,7 +74,8 @@
     "tabs": {
       "posts": "Post",
       "comments": "Commenti",
-      "drafts": "Bozze"
+      "drafts": "Bozze",
+      "bookmarks": "Salvati"
     },
     "noTitle": "Senza titolo",
     "unknownDate": "Sconosciuto",
@@ -112,6 +113,10 @@
     "updatePostError": "Non è stato possibile aggiornare il post",
     "deletePostConfirm": "Eliminare davvero questo post? Verrà nascosto, i commenti esistenti restano.",
     "deletePostSuccess": "Post eliminato",
-    "deletePostError": "Non è stato possibile eliminare il post"
+    "deletePostError": "Non è stato possibile eliminare il post",
+    "bookmarks": {
+      "empty": "Nessun post salvato",
+      "emptyHint": "I post che salvi compaiono qui"
+    }
   }
 }
