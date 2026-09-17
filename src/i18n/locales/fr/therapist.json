@@ -12,7 +12,9 @@
     "anonymous": "Anonyme",
     "unknownDate": "Inconnu",
     "noPosts": "Aucun post sur ce thérapeute pour le moment.",
-    "verifiedProfile": "Profil vérifié"
+    "verifiedProfile": "Profil vérifié",
+    "specialty": "Spécialisations :",
+    "services": "Offre :"
   },
   "selector": {
     "searchPlaceholder": "Rechercher un·e thérapeute / une institution",

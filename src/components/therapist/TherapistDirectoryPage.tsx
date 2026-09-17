@@ -261,6 +261,22 @@ const TherapistDirectoryPage: React.FC = () => {
                     <strong>{t('directory.languages')}</strong> {selectedTherapist.languages}
                   </p>
                 )}
+
+                {/* Focus areas (multi-line text, owner-editable) */}
+                {selectedTherapist.specialty && (
+                  <div className="text-gray-700 mt-3">
+                    <strong>{t('directory.specialty')}</strong>
+                    <p className="whitespace-pre-wrap mt-0.5">{selectedTherapist.specialty}</p>
+                  </div>
+                )}
+
+                {/* Services */}
+                {selectedTherapist.services && (
+                  <div className="text-gray-700 mt-3">
+                    <strong>{t('directory.services')}</strong>
+                    <p className="whitespace-pre-wrap mt-0.5">{selectedTherapist.services}</p>
+                  </div>
+                )}
               </div>
 
               {/* Posts Container */}

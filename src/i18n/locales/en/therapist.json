@@ -12,7 +12,9 @@
     "anonymous": "Anonymous",
     "unknownDate": "Unknown",
     "noPosts": "No posts about this therapist yet.",
-    "verifiedProfile": "Verified profile"
+    "verifiedProfile": "Verified profile",
+    "specialty": "Focus areas:",
+    "services": "Services:"
   },
   "selector": {
     "searchPlaceholder": "Search therapist / institution",

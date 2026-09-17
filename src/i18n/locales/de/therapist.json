@@ -12,7 +12,9 @@
     "anonymous": "Anonym",
     "unknownDate": "Unbekannt",
     "noPosts": "Noch keine Beiträge über diesen Therapeuten vorhanden.",
-    "verifiedProfile": "Verifiziertes Profil"
+    "verifiedProfile": "Verifiziertes Profil",
+    "specialty": "Schwerpunkte:",
+    "services": "Angebot:"
   },
   "selector": {
     "searchPlaceholder": "Therapeut:innen/Institution suchen",
