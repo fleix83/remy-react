@@ -1,19 +1,25 @@
-import React from 'react'
+import { forwardRef } from 'react'
 import { useLandingContent, useFooterContent } from '../../hooks/useSiteContent'
 
+interface LandingFooterProps {
+  className?: string
+}
+
 /**
- * Site footer (CMS-driven), shared by the landing page and every public
- * screen (static pages, community guidelines, auth flows). Layout + type
- * rhythm live in .landing-footer-* (App.css); the claim is the landing's
- * third "about" paragraph.
+ * The site footer (CMS-driven), shared by the landing page, the Layout shell
+ * (forum, messages, admin) and every standalone screen (post, profiles,
+ * therapists, static pages, auth flows). Layout + type rhythm live in
+ * .landing-footer-* (App.css); the claim is the landing's third "about"
+ * paragraph. The ref lets Layout measure it for the sidebar scroll-push.
  */
-const LandingFooter: React.FC = () => {
+const LandingFooter = forwardRef<HTMLElement, LandingFooterProps>(({ className = '' }, ref) => {
   const { content: landing } = useLandingContent()
   const { content: footer } = useFooterContent()
 
   return (
     <footer
-      className="landing-footer flex h-auto flex-shrink-0 items-start px-[50px] pt-[62px] pb-[43px] md:h-[350px] md:items-center md:px-0 md:py-0"
+      ref={ref}
+      className={`${className} landing-footer flex h-auto flex-shrink-0 items-start px-[50px] pt-[62px] pb-[43px] md:h-[350px] md:items-center md:px-0 md:py-0`}
       style={{ background: 'linear-gradient(#f6f6f6 0%, rgb(225 225 225) 100%)' }}
     >
       {/* Mobile stacks everything left-aligned per the mockup — logo, claim,
@@ -70,6 +76,8 @@ const LandingFooter: React.FC = () => {
       </div>
     </footer>
   )
-}
+})
+
+LandingFooter.displayName = 'LandingFooter'
 
 export default LandingFooter

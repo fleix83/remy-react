@@ -22,6 +22,7 @@ import { getPostDisplayTitle } from '../../utils/text.utils'
 import { formatTherapistPostLine } from '../../utils/therapistHelpers'
 import { getCategoryColorById, getCategoryName } from '../../utils/categoryHelpers'
 import { useCategories } from '../../hooks/usePosts'
+import LandingFooter from '../layout/LandingFooter'
 
 const PostView: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -410,6 +411,7 @@ const PostView: React.FC = () => {
         userRole={userProfile?.role || undefined}
         onLogout={handleSignOut}
       />
+      <LandingFooter />
     </div>
   )
 }

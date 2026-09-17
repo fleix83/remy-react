@@ -7,6 +7,7 @@ import UserContent from './UserContent'
 import UserSearchService from '../../services/user-search.service'
 import { isSelfProfile, shouldShowPostHistory } from '../../utils/profileVisibility'
 import type { User } from '../../types/database.types'
+import LandingFooter from '../layout/LandingFooter'
 
 const PublicProfile: React.FC = () => {
   const { t } = useTranslation('profile')
@@ -109,6 +110,7 @@ const PublicProfile: React.FC = () => {
           </div>
         )}
       </div>
+      <LandingFooter />
     </div>
   )
 }

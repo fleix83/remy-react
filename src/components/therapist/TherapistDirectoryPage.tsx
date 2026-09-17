@@ -12,6 +12,7 @@ import { useAuthStore } from '../../stores/auth.store'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import UserAvatar from '../user/UserAvatar'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
+import LandingFooter from '../layout/LandingFooter'
 
 const TherapistDirectoryPage: React.FC = () => {
   const { t } = useTranslation('therapist')
@@ -342,6 +343,7 @@ const TherapistDirectoryPage: React.FC = () => {
         onTherapistCreated={handleTherapistUpdated}
         therapist={selectedTherapist}
       />
+      <LandingFooter />
     </div>
   )
 }

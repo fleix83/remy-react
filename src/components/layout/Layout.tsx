@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import Navigation from './Navigation'
-import { useFooterContent } from '../../hooks/useSiteContent'
+import LandingFooter from './LandingFooter'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -20,7 +20,6 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const footerRef = useRef<HTMLElement>(null)
   const location = useLocation()
-  const { content: footer } = useFooterContent()
   // Forum landing gets the desktop blue-header / white-page treatment;
   // the admin dashboard gets its own cream top-header treatment.
   const pageClass =
@@ -69,42 +68,8 @@ const Layout: React.FC<LayoutProps> = ({
         {children}
       </main>
       
-      {/* Footer */}
-      <footer ref={footerRef} className="mt-auto flex h-[350px] flex-shrink-0 items-center bg-[#f0f0f0] px-6 md:px-0">
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
-          {/* Left: logo + credits on one line, aligned to the REMY baseline */}
-          <div className="flex flex-col items-center gap-6 md:flex-row md:items-end md:gap-12">
-            <img
-              src="/images/remy-wordmark.png"
-              alt="Remy"
-              width={437}
-              height={169}
-              loading="lazy"
-              decoding="async"
-              className="h-[65px] w-auto md:shrink-0"
-              style={{ filter: 'grayscale(100%)' }}
-            />
-            <div
-              className="flex flex-col items-start gap-y-2 text-left text-[17px] text-[#828282] md:pb-[5px]"
-              style={{ fontFamily: '"Nunito Sans", sans-serif' }}
-            >
-              <a href={footer.aboutHref} className="transition-opacity hover:opacity-70">{footer.aboutLabel}</a>
-              <a href={footer.impressumHref} className="transition-opacity hover:opacity-70">{footer.impressumLabel}</a>
-              <a href={footer.datenschutzHref} className="transition-opacity hover:opacity-70">{footer.datenschutzLabel}</a>
-              <span>{footer.madeByPrefix}<br />{footer.madeByName}</span>
-            </div>
-          </div>
-
-          {/* Right: lead text (desktop only) */}
-          <div
-            className="hidden shrink-0 leading-[1.18] text-[#828282] md:block md:max-w-[300px]"
-            style={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, letterSpacing: '0.06em', wordSpacing: '0.1em' }}
-          >
-            <p className="md:text-[34px]">Die Wahrheit ist selten rein und nie einfach.</p>
-            <p className="md:text-[28px] md:text-right">Oscar Wilde</p>
-          </div>
-        </div>
-      </footer>
+      {/* Footer — the landing footer, shared site-wide */}
+      <LandingFooter ref={footerRef} className="mt-auto" />
     </div>
   )
 }

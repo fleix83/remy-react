@@ -10,6 +10,7 @@ import UserContent from './UserContent'
 import AvatarService from '../../services/avatar.service'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { toast } from '../../stores/toast.store'
+import LandingFooter from '../layout/LandingFooter'
 
 const UserProfile: React.FC = () => {
   const { t } = useTranslation('profile')
@@ -117,6 +118,7 @@ const UserProfile: React.FC = () => {
         userRole={userProfile?.role || undefined}
         onLogout={handleSignOut}
       />
+      <LandingFooter />
     </div>
   )
 }
