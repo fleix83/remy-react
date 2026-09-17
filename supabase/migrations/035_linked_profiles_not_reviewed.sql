@@ -102,6 +102,9 @@ begin
 end;
 $$;
 
+-- The therapists guard reverts needs_review for callers without a staff
+-- auth.uid() (a migration has none), so opt out for this statement.
+select set_config('remy.internal', 'on', true);
 update public.therapists
    set needs_review = false
  where user_id is not null and needs_review = true;
