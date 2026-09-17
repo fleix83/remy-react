@@ -20,7 +20,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
   // Override body background so no other bg bleeds through
   useEffect(() => {
     const prev = document.body.style.background
-    document.body.style.background = '#eefaf0'
+    document.body.style.background = '#e5ecff'
     return () => { document.body.style.background = prev }
   }, [])
   const [error, setError] = useState('')
@@ -141,7 +141,7 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
 
   return (
     <>
-    <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: '#eefaf0' }}>
+    <div className="min-h-screen flex items-center justify-center px-6" style={{ background: 'linear-gradient(180deg, #c8d7ff 0%, #ffffff 100%)' }}>
       <div className="max-w-md w-full">
         {/* Heading */}
         <h1
@@ -180,8 +180,8 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
               value={username}
               onChange={handleUsernameChange}
               onBlur={handleUsernameBlur}
-              className="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:border-[#4785ff] bg-white"
-              style={{ fontSize: '16px' }}
+              className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
+              style={{ fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
               disabled={isSubmitting}
               autoFocus
             />
