@@ -46,6 +46,20 @@ Core forum is production-ready. Phases 1–5 complete; Phase 4 (user management)
 - Full i18n coverage (DE done, FR/IT pending)
 - Production deployment ownership / monitoring
 
+## Security — pre-launch checklist
+
+From the 2026-07 security review. **Already fixed** (live): migration `028_security_hardening_rls.sql` applied + verified — dropped `users.email`, trigger-guards on `users`/`posts`/`comments`/`messages` block self-promotion to admin, moderation self-approval, and message tampering. Frontend on `blue`: DOMPurify sanitization of post/comment HTML (`src/lib/sanitize.ts`) + CSP/security headers in `.htaccess`.
+
+**Must clear these BEFORE going to production** (deferred while the app has only test/seed data, no real patients — low urgency now, but they become urgent the moment real users sign up):
+
+- [ ] **H4 — leaked secrets in public git history.** Repo is public, 0 forks. `migrate_users.sql` contained **plaintext passwords** loaded into `auth.users`; `pandoc.sql` had 7 bcrypt hashes + real emails (files now deleted from HEAD but still in history). Action: (1) rotate/reset the affected Supabase Auth passwords + invalidate sessions; (2) purge files from history (`git filter-repo --invert-paths --path pandoc.sql --path migrate_users.sql --path migrate_posts.sql --path schema_dump.sql`, then force-push all branches); (3) request GitHub cache purge. Also move the `.env` anon key to CI secrets and `git rm --cached` the `.env*` files.
+- [ ] **M1 — `notifications` INSERT is `WITH CHECK (true)`.** Any user can forge a notification to anyone. Move notification creation server-side (triggers on comment/message insert) and revoke client INSERT.
+- [ ] **M2 — `therapists` INSERT is `WITH CHECK (true)`.** Any authenticated user can inject directory rows. Restrict INSERT to moderators/admins (or enforce `created_by = auth.uid()`).
+- [ ] **H2 — Google Fonts loaded from Google's CDN** (`src/index.css`) leaks visitor IPs abroad (revDSG/anonymity). Self-host the fonts, then drop the `fonts.googleapis.com`/`fonts.gstatic.com` entries from the CSP in `.htaccess`.
+- [ ] **H3 — `users` SELECT is `USING (true)` to anon**, still exposing `role`/`is_banned`/`created_at`. Restrict to a minimal public column projection (view or column grants).
+
+See the `rls-security-holes-2026-07` memory for full detail and confirmed exploit paths.
+
 ## Architecture
 
 ```

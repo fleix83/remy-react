@@ -70,12 +70,12 @@ const Layout: React.FC<LayoutProps> = ({
       </main>
       
       {/* Footer */}
-      <footer ref={footerRef} className="mt-auto flex h-[350px] flex-shrink-0 items-center bg-[#f1f1f1] px-6 md:px-0">
+      <footer ref={footerRef} className="mt-auto flex h-[350px] flex-shrink-0 items-center bg-[#f0f0f0] px-6 md:px-0">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:gap-10 md:px-6 md:text-left lg:px-8">
           {/* Left: logo + credits on one line, aligned to the REMY baseline */}
           <div className="flex flex-col items-center gap-6 md:flex-row md:items-end md:gap-12">
             <img
-              src="/images/logo_claim.png"
+              src="/images/remy-wordmark.png"
               alt="Remy"
               width={437}
               height={169}
