@@ -14,6 +14,7 @@ import PostEditModal from './PostEditModal'
 import { SelectableText } from '../ui/RichTextEditor'
 import SendMessageButton from '../messaging/SendMessageButton'
 import UserAvatar from '../user/UserAvatar'
+import UserName from '../user/UserName'
 import PostTags from '../ui/PostTags'
 import BookmarkButton from '../ui/BookmarkButton'
 import Navigation from '../layout/Navigation'
@@ -294,9 +295,13 @@ const PostView: React.FC = () => {
               </div>
             )}
             <div className="ml-3 min-w-0">
-              <p className="font-semibold text-[var(--type)] text-left leading-tight" style={{ fontSize: '11px' }}>
-                {post.users?.username || t('unknownUser')}
-              </p>
+              <UserName
+                as="p"
+                user={post.users}
+                fallback={t('unknownUser')}
+                className="font-semibold text-[var(--type)] text-left leading-tight"
+                style={{ fontSize: '11px' }}
+              />
               <p className="text-gray-500 text-left leading-tight" style={{ fontSize: '10px' }}>
                 {post.created_at ? formatDate(post.created_at) : t('card.unknownDate')}
               </p>

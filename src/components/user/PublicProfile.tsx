@@ -8,6 +8,8 @@ import UserSearchService from '../../services/user-search.service'
 import { isSelfProfile, shouldShowPostHistory } from '../../utils/profileVisibility'
 import type { User } from '../../types/database.types'
 import LandingFooter from '../layout/LandingFooter'
+import { supabase } from '../../lib/supabase'
+import { TherapistBadge } from './UserName'
 
 const PublicProfile: React.FC = () => {
   const { t } = useTranslation('profile')
@@ -17,6 +19,7 @@ const PublicProfile: React.FC = () => {
   const [profile, setProfile] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [therapistId, setTherapistId] = useState<number | null>(null)
 
   // Viewing yourself: send to the editable own-profile screen.
   useEffect(() => {
@@ -40,6 +43,20 @@ const PublicProfile: React.FC = () => {
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [id, user])
+
+  // Verified therapists may have a linked directory entry to point to.
+  useEffect(() => {
+    let cancelled = false
+    setTherapistId(null)
+    if (!profile?.therapist_verified_at) return
+    supabase
+      .from('therapists')
+      .select('id, first_name, last_name, form_of_address, institution')
+      .eq('user_id', profile.id)
+      .maybeSingle()
+      .then(({ data }) => { if (!cancelled && data) setTherapistId(data.id) })
+    return () => { cancelled = true }
+  }, [profile?.id, profile?.therapist_verified_at])
 
   if (loading) {
     return (
@@ -103,6 +120,19 @@ const PublicProfile: React.FC = () => {
 
       <div className="profile-content max-w-6xl mx-auto px-4 md:px-0 relative z-20" style={{ paddingTop: '30px', paddingBottom: '24px' }}>
         <ProfileHeader user={profile} editable={false} />
+
+        {therapistId !== null && (
+          <div className="mt-4 text-left">
+            <button
+              onClick={() => navigate(`/therapists?therapist=${therapistId}`)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-sm font-medium shadow-sm hover:opacity-80 transition-opacity"
+              style={{ color: '#4785ff' }}
+            >
+              <TherapistBadge size={16} />
+              {t('therapist.viewProfile')}
+            </button>
+          </div>
+        )}
 
         {showHistory && (
           <div className="mt-6">

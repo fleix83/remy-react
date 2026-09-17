@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import UserContentService from '../../services/user-content.service'
 import BookmarksService from '../../services/bookmarks.service'
 import BookmarkButton from '../ui/BookmarkButton'
+import UserName from './UserName'
 import { useForumStore } from '../../stores/forum.store'
 import { useAuthStore } from '../../stores/auth.store'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
@@ -592,7 +593,7 @@ const UserContent: React.FC<UserContentProps> = ({ userId, publicView = false })
                         {/* Bottom: author (left) + un-bookmark (right); removing drops the
                             row immediately, the hook rolls the cache back on failure */}
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-500">{post.users?.username}</span>
+                          <UserName user={post.users} className="text-xs text-gray-500" />
                           <BookmarkButton
                             postId={post.id}
                             onToggle={(bookmarked) => {

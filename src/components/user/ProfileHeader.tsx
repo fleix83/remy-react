@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import UserAvatar from './UserAvatar'
+import UserName from './UserName'
 import AvatarService from '../../services/avatar.service'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { intlLocale } from '../../utils/dateFormat'
@@ -140,7 +141,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </button>
         )}
         <div className="text-left">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{user.username}</h1>
+          <UserName as="h1" user={user} className="text-2xl font-bold text-gray-900 mb-2" />
           <p className="text-gray-400 text-sm mb-4">
             {t('header.registeredOn', { date: user.created_at ? formatDate(user.created_at) : t('header.unknownDate') })}
           </p>

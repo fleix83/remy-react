@@ -11,7 +11,8 @@
     "postsAbout": "Beiträge über {{name}}",
     "anonymous": "Anonym",
     "unknownDate": "Unbekannt",
-    "noPosts": "Noch keine Beiträge über diesen Therapeuten vorhanden."
+    "noPosts": "Noch keine Beiträge über diesen Therapeuten vorhanden.",
+    "verifiedProfile": "Verifiziertes Profil"
   },
   "selector": {
     "searchPlaceholder": "Therapeut:innen/Institution suchen",
@@ -85,6 +86,10 @@
       "designationRequired": "Bitte wähle eine Fachperson aus",
       "deleteFailed": "Fehler beim Löschen",
       "saveFailed": "Fehler beim Speichern"
-    }
+    },
+    "specialty": "Schwerpunkte (optional)",
+    "specialtyPlaceholder": "z.B. Angststörungen, Depression, Traumatherapie",
+    "services": "Angebot (optional)",
+    "servicesPlaceholder": "z.B. Einzeltherapie, Paartherapie, Online-Sitzungen"
   }
 }

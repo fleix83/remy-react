@@ -2,6 +2,7 @@ import React from 'react'
 import { useMessagesStore } from '../../stores/messages.store'
 import { useNotificationsStore } from '../../stores/notifications.store'
 import UserAvatar from '../user/UserAvatar'
+import UserName from '../user/UserName'
 import { useTranslation } from 'react-i18next'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { intlLocale } from '../../utils/dateFormat'
@@ -152,9 +153,12 @@ const MessagesList: React.FC<MessagesListProps> = ({ onOpenHost, hostActive }) =
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-sm font-medium truncate" style={{color: '#5a5a5a'}}>
-                      {conversation.participant.username}
-                    </h3>
+                    <UserName
+                      as="h3"
+                      user={conversation.participant}
+                      className="text-sm font-medium truncate"
+                      style={{color: '#5a5a5a'}}
+                    />
                     <div className="flex items-center space-x-2">
                       {/* Timestamp */}
                       <span className="text-xs text-gray-400">

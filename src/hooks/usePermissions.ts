@@ -6,6 +6,8 @@ interface UserPermissions {
   isUser: boolean
   isModerator: boolean
   isAdmin: boolean
+  /** Server-verified therapist (HIN identity), orthogonal to role. */
+  isTherapist: boolean
   canModerate: boolean
   canAdmin: boolean
   isBanned: boolean
@@ -27,6 +29,7 @@ export const usePermissions = (): UserPermissions => {
       isUser: false,
       isModerator: false,
       isAdmin: false,
+      isTherapist: false,
       canModerate: false,
       canAdmin: false,
       isBanned: false,
@@ -45,6 +48,7 @@ export const usePermissions = (): UserPermissions => {
   const isUser = role === 'user'
   const isModerator = role === 'moderator'
   const isAdmin = role === 'admin'
+  const isTherapist = !!userProfile.therapist_verified_at
   const canModerate = isModerator || isAdmin
   const canAdmin = isAdmin
 
@@ -53,6 +57,7 @@ export const usePermissions = (): UserPermissions => {
     isUser,
     isModerator,
     isAdmin,
+    isTherapist,
     canModerate: canModerate && !isBanned,
     canAdmin: canAdmin && !isBanned,
     isBanned,

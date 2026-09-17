@@ -36,6 +36,7 @@ Core forum is production-ready. Phases 1–5 complete; Phase 4 (user management)
 - **User blocking:** `user-blocks.service.ts`, `BlockedUsers.tsx`
 - **Notifications:** unread-message dot on avatar (`notifications.store.ts`)
 - **Admin moderation:** `AdminDashboard`, `ModerationQueue`, designation management
+- **Therapist users:** HIN-verified accounts (`users.therapist_verified_at`), blue name + checkmark via `UserName`, directory profile claims + moderation (`docs/therapist-users.md`, migration 034)
 - Mobile UX: badge-based metadata, 60vh editor, full-screen modals
 - Desktop UX: sidebar filters (categories, cantons, designations, date range), inline new-post editor
 
@@ -54,7 +55,7 @@ From the 2026-07 security review. **Already fixed** (live): migration `028_secur
 
 - [ ] **H4 — leaked secrets in public git history.** Repo is public, 0 forks. `migrate_users.sql` contained **plaintext passwords** loaded into `auth.users`; `pandoc.sql` had 7 bcrypt hashes + real emails (files now deleted from HEAD but still in history). Action: (1) rotate/reset the affected Supabase Auth passwords + invalidate sessions; (2) purge files from history (`git filter-repo --invert-paths --path pandoc.sql --path migrate_users.sql --path migrate_posts.sql --path schema_dump.sql`, then force-push all branches); (3) request GitHub cache purge. Also move the `.env` anon key to CI secrets and `git rm --cached` the `.env*` files.
 - [ ] **M1 — `notifications` INSERT is `WITH CHECK (true)`.** Any user can forge a notification to anyone. Move notification creation server-side (triggers on comment/message insert) and revoke client INSERT.
-- [ ] **M2 — `therapists` INSERT is `WITH CHECK (true)`.** Any authenticated user can inject directory rows. Restrict INSERT to moderators/admins (or enforce `created_by = auth.uid()`).
+- [ ] **M2 — `therapists` INSERT is `WITH CHECK (true)`.** Fixed in migration `034_therapist_users.sql` (non-staff: `created_by = auth.uid()` + `needs_review`); tick once 034 is applied live.
 - [ ] **H2 — Google Fonts loaded from Google's CDN** (`src/index.css`) leaks visitor IPs abroad (revDSG/anonymity). Self-host the fonts, then drop the `fonts.googleapis.com`/`fonts.gstatic.com` entries from the CSP in `.htaccess`.
 - [ ] **H3 — `users` SELECT is `USING (true)` to anon**, still exposing `role`/`is_banned`/`created_at`. Restrict to a minimal public column projection (view or column grants).
 
@@ -95,6 +96,7 @@ Implemented tables: `users`, `categories`, `posts`, `comments`, `therapists`, `d
 - `docs/languages.md` — language/i18n notes
 - `docs/THERAPIST_MODERATION_MIGRATION.md` — moderation migration history
 - `docs/review.md` — review notes
+- `docs/therapist-users.md` — HIN verification, profile claims, owner editing
 
 ## Commands
 

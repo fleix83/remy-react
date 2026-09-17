@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { UserBlocksService } from '../../services/user-blocks.service'
 import UserAvatar from '../user/UserAvatar'
+import UserName from '../user/UserName'
 import type { Conversation } from '../../services/messages.service'
 import { toast } from '../../stores/toast.store'
 import { useTranslation } from 'react-i18next'
@@ -74,9 +75,11 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
 
           {/* User Info */}
           <div className="text-left">
-            <h2 className="font-semibold text-[var(--post-title)] leading-tight">
-              {conversation.participant.username}
-            </h2>
+            <UserName
+              as="h2"
+              user={conversation.participant}
+              className="font-semibold text-[var(--post-title)] leading-tight"
+            />
             {isBlocked && (
               <span className="text-xs text-[#fa8072]">{t('blocked')}</span>
             )}

@@ -9,7 +9,8 @@
     "all": "Alle",
     "posts": "Beiträge",
     "comments": "Kommentare",
-    "therapists": "Therapeuten"
+    "therapists": "Therapeuten",
+    "claims": "Profil-Anfragen"
   },
   "contentType": {
     "post": "Beitrag",
@@ -132,5 +133,34 @@
     "delete": "Löschen",
     "reject": "Ablehnen",
     "publish": "Publizieren"
+  },
+  "claims": {
+    "pendingCount": "Profil-Anfragen warten auf Bearbeitung",
+    "emptyTitle": "Keine offenen Profil-Anfragen",
+    "emptyBody": "Alle Therapeut:innen-Anfragen wurden bearbeitet.",
+    "loadError": "Profil-Anfragen konnten nicht geladen werden.",
+    "candidatesError": "Vorschläge konnten nicht geladen werden.",
+    "requestedOn": "Angefragt am {{date}}",
+    "hinName": "HIN-Name",
+    "claimantCanton": "Kanton des Kontos",
+    "conflictWarning": "Dieser Eintrag ist bereits mit einem anderen Konto verknüpft. Bitte prüfe beide Konten, bevor du verknüpfst.",
+    "candidates": "Vorgeschlagene Einträge",
+    "loadingCandidates": "Vorschläge werden geladen …",
+    "noCandidates": "Keine passenden Einträge im Verzeichnis gefunden.",
+    "alreadyLinked": "bereits verknüpft",
+    "searchPlaceholder": "Anderen Eintrag suchen (Name, Institution) …",
+    "searching": "Suche …",
+    "noSearchResults": "Keine weiteren Treffer.",
+    "link": "Verknüpfen",
+    "createNew": "Neues Profil anlegen",
+    "reject": "Ablehnen",
+    "confirmReject": "Ablehnung bestätigen",
+    "rejectPlaceholder": "Grund für die Ablehnung (optional, wird der Person mitgeteilt) …",
+    "toast": {
+      "linked": "Profil verknüpft.",
+      "created": "Neues Profil angelegt und verknüpft.",
+      "rejected": "Anfrage abgelehnt.",
+      "error": "Anfrage konnte nicht bearbeitet werden."
+    }
   }
 }

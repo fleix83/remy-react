@@ -7,6 +7,7 @@ import ProfileHeader from './ProfileHeader'
 import ProfileSettings from './ProfileSettings'
 import BlockedUsers from './BlockedUsers'
 import UserContent from './UserContent'
+import TherapistProfileCard from './TherapistProfileCard'
 import AvatarService from '../../services/avatar.service'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import { toast } from '../../stores/toast.store'
@@ -104,6 +105,9 @@ const UserProfile: React.FC = () => {
             <BlockedUsers />
           </div>
         )}
+
+        {/* Therapist directory entry (verified therapists only) */}
+        <TherapistProfileCard />
 
         {/* User Content */}
         <div className="mt-6">

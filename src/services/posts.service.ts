@@ -61,7 +61,7 @@ export class PostsService {
       .from('posts')
       .select(`
         id, title, content, created_at, user_id, category_id, therapist_id, canton,
-        users!posts_user_id_fkey(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role, therapist_verified_at),
         categories!inner(id, name_de, name_fr, name_it),
         ${PostsService.therapistEmbed(needsTherapistJoin)}
       `, { count: 'exact' })
@@ -153,7 +153,7 @@ export class PostsService {
       .from('posts')
       .select(`
         id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, is_published, is_banned, moderation_status,
-        users!posts_user_id_fkey(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role, therapist_verified_at),
         categories!inner(id, name_de, name_fr, name_it),
         ${PostsService.therapistEmbed(false)}
       `)
@@ -289,19 +289,19 @@ export class PostsService {
     const term = `%${searchTerm}%`
     const baseSelect = `
         id, title, content, created_at, user_id, category_id, therapist_id, canton,
-        users!posts_user_id_fkey(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role, therapist_verified_at),
         categories!inner(id, name_de, name_fr, name_it),
         ${PostsService.therapistEmbed(false)}
       `
     const userInnerSelect = `
         id, title, content, created_at, user_id, category_id, therapist_id, canton,
-        users!posts_user_id_fkey!inner(id, username, avatar_url, role),
+        users!posts_user_id_fkey!inner(id, username, avatar_url, role, therapist_verified_at),
         categories!inner(id, name_de, name_fr, name_it),
         ${PostsService.therapistEmbed(false)}
       `
     const therapistInnerSelect = `
         id, title, content, created_at, user_id, category_id, therapist_id, canton,
-        users!posts_user_id_fkey(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role, therapist_verified_at),
         categories!inner(id, name_de, name_fr, name_it),
         ${PostsService.therapistEmbed(true)}
       `
@@ -438,7 +438,7 @@ export class PostsService {
       .eq('id', id)
       .select(`
         id, title, content, created_at, updated_at, user_id, category_id, therapist_id, canton, is_published, is_banned, moderation_status,
-        users!posts_user_id_fkey(id, username, avatar_url, role),
+        users!posts_user_id_fkey(id, username, avatar_url, role, therapist_verified_at),
         categories!inner(id, name_de, name_fr, name_it),
         ${PostsService.therapistEmbed(false)}
       `)

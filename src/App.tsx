@@ -35,6 +35,10 @@ const StaticDocumentPage = lazy(() => import('./components/static/StaticDocument
 const WelcomePage = lazy(() => import('./components/auth/WelcomePage'))
 const PublicProfile = lazy(() => import('./components/user/PublicProfile'))
 
+// Personal HIN identity (vorname.nachname@hin.ch). Client-side hint only —
+// the signup trigger re-checks the address server-side before verifying.
+export const HIN_PERSONAL_EMAIL_RE = /^[a-z]+(-[a-z]+)*(\.[a-z]+(-[a-z]+)*)+@hin\.ch$/i
+
 // Confetti squares for the bottom of the mobile CTA band — the hero
 // animation's palette and sizes, hand-scattered (denser toward the bottom) to
 // mark the end of the page. Rendered by .landing-cta-squares (App.css).
@@ -218,6 +222,8 @@ function AuthForm() {
   const [showRegisterForm, setShowRegisterForm] = useState(false)
   const [showLoginForm, setShowLoginForm] = useState(searchParams.get('login') === 'true')
   const [message, setMessage] = useState('')
+  const [isError, setIsError] = useState(false)
+  const [isTherapist, setIsTherapist] = useState(false)
   const [registrationComplete, setRegistrationComplete] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
   const taglineRef = useRef<HTMLDivElement>(null)
@@ -230,6 +236,7 @@ function AuthForm() {
   const { login, register } = useAuthStore()
   const { content: landing } = useLandingContent()
   const { t } = useTranslation()
+  const { t: tAuth } = useTranslation('auth')
   const lang = useActiveLanguage()
   // The figures animation is a different artboard per breakpoint (2 figures at
   // 363×314 on mobile, 4 at 1734×678 on desktop), so the <iframe> src has to
@@ -298,10 +305,18 @@ function AuthForm() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
+    setMessage(''); setIsError(false)
+
+    const trimmedEmail = email.trim()
+    if (isTherapist && !HIN_PERSONAL_EMAIL_RE.test(trimmedEmail.toLowerCase())) {
+      setMessage(tAuth('register.therapistEmailInvalid'))
+      setIsError(true)
+      setLoading(false)
+      return
+    }
 
     try {
-      const result = await register(email, password)
+      const result = await register(trimmedEmail, password, isTherapist)
 
       // Handle email confirmation required
       if (result?.requiresConfirmation) {
@@ -312,6 +327,7 @@ function AuthForm() {
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'An error occurred')
+      setIsError(true)
     } finally {
       setLoading(false)
     }
@@ -320,12 +336,13 @@ function AuthForm() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
+    setMessage(''); setIsError(false)
 
     try {
       await login(email, password)
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'An error occurred')
+      setIsError(true)
     } finally {
       setLoading(false)
     }
@@ -335,7 +352,7 @@ function AuthForm() {
     setShowRegisterForm(true)
     setShowLoginForm(false)
     setRegistrationComplete(false)
-    setMessage('')
+    setMessage(''); setIsError(false)
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }, 0)
@@ -345,7 +362,7 @@ function AuthForm() {
     setShowLoginForm(true)
     setShowRegisterForm(false)
     setRegistrationComplete(false)
-    setMessage('')
+    setMessage(''); setIsError(false)
   }
 
   return (
@@ -504,7 +521,7 @@ function AuthForm() {
             </div>
 
             {/* Register form + login link - bottom portion */}
-            <div className="landing-cta-area" onClick={() => { if (showRegisterForm) { setShowRegisterForm(false); setMessage('') } }} style={{
+            <div className="landing-cta-area" onClick={() => { if (showRegisterForm) { setShowRegisterForm(false); setMessage(''); setIsError(false) } }} style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -575,10 +592,43 @@ function AuthForm() {
                     />
                   </div>
 
+                  <div style={{ width: '65vw', maxWidth: '360px', textAlign: 'left' }}>
+                    <label style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontFamily: '"Nunito Sans", sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      color: 'rgb(84, 130, 255)',
+                      cursor: 'pointer'
+                    }}>
+                      <input
+                        type="checkbox"
+                        name="isTherapist"
+                        checked={isTherapist}
+                        onChange={(e) => setIsTherapist(e.target.checked)}
+                        style={{ width: '16px', height: '16px', accentColor: 'rgb(84, 130, 255)', cursor: 'pointer' }}
+                      />
+                      {tAuth('register.therapistCheckbox')}
+                    </label>
+                    {isTherapist && (
+                      <p style={{
+                        fontFamily: '"Nunito Sans", sans-serif',
+                        fontSize: '12px',
+                        color: 'rgb(84, 130, 255)',
+                        marginTop: '4px',
+                        lineHeight: 1.4
+                      }}>
+                        {tAuth('register.therapistHint')}
+                      </p>
+                    )}
+                  </div>
+
                   {message && (
                     <div
                       className={`rounded-lg p-3 text-sm ${
-                        message.includes('error') || message.includes('Error')
+                        isError
                           ? 'bg-red-50 border border-red-200 text-red-700'
                           : 'bg-green-50 border border-green-200 text-green-700'
                       }`}
@@ -710,10 +760,43 @@ function AuthForm() {
                 />
               </div>
 
+              <div style={{ width: '75vw', maxWidth: '340px', textAlign: 'left' }}>
+                <label style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontFamily: '"Nunito Sans", sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#144220',
+                  cursor: 'pointer'
+                }}>
+                  <input
+                    type="checkbox"
+                    name="isTherapist"
+                    checked={isTherapist}
+                    onChange={(e) => setIsTherapist(e.target.checked)}
+                    style={{ width: '16px', height: '16px', accentColor: 'rgb(84, 130, 255)', cursor: 'pointer' }}
+                  />
+                  {tAuth('register.therapistCheckbox')}
+                </label>
+                {isTherapist && (
+                  <p style={{
+                    fontFamily: '"Nunito Sans", sans-serif',
+                    fontSize: '12px',
+                    color: '#144220',
+                    marginTop: '4px',
+                    lineHeight: 1.4
+                  }}>
+                    {tAuth('register.therapistHint')}
+                  </p>
+                )}
+              </div>
+
               {message && (
                 <div
                   className={`rounded-lg p-3 text-sm ${
-                    message.includes('error') || message.includes('Error')
+                    isError
                       ? 'bg-red-50 border border-red-200 text-red-700'
                       : 'bg-green-50 border border-green-200 text-green-700'
                   }`}
@@ -866,7 +949,7 @@ function AuthForm() {
 
               {message && (
                 <div className={`rounded-lg p-3 text-sm ${
-                  message.includes('error') || message.includes('Error')
+                  isError
                     ? 'bg-red-50 border border-red-200 text-red-700'
                     : 'bg-green-50 border border-green-200 text-green-700'
                 }`} style={{ width: '75vw', maxWidth: '340px' }}>

@@ -118,5 +118,15 @@
       "empty": "Keine gespeicherten Beiträge",
       "emptyHint": "Beiträge, die du speicherst, erscheinen hier"
     }
+  },
+  "therapist": {
+    "title": "Dein Therapeutenprofil",
+    "loading": "Lädt …",
+    "linked": "Dieser Eintrag im Therapeutenverzeichnis ist mit dir verknüpft.",
+    "editProfile": "Profil bearbeiten",
+    "pending": "Deine Anfrage wird von der Moderation geprüft. Wir melden uns, sobald dein Profil verknüpft ist.",
+    "rejected": "Deine Anfrage wurde abgelehnt.",
+    "contactModeration": "Bei Fragen melde dich bitte bei der Moderation.",
+    "viewProfile": "Therapeutenprofil ansehen"
   }
 }

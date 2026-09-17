@@ -10,7 +10,7 @@ export class ModerationQueueService {
       .from('posts')
       .select(`
         *,
-        users!posts_user_id_fkey(id, username, role, avatar_url),
+        users!posts_user_id_fkey(id, username, role, avatar_url, therapist_verified_at),
         categories!inner(id, name_de, name_fr, name_it),
         post_tags(tags(name))
       `)
@@ -29,7 +29,7 @@ export class ModerationQueueService {
       .from('comments')
       .select(`
         *,
-        users!comments_user_id_fkey(id, username, role, avatar_url)
+        users!comments_user_id_fkey(id, username, role, avatar_url, therapist_verified_at)
       `)
       .eq('moderation_status', 'pending')
       .order('created_at', { ascending: true })
@@ -47,7 +47,7 @@ export class ModerationQueueService {
         .from('therapists')
         .select(`
           *,
-          users!therapists_created_by_fkey(id, username, role, avatar_url)
+          users!therapists_created_by_fkey(id, username, role, avatar_url, therapist_verified_at)
         `)
         .eq('needs_review', true)
         .order('created_at', { ascending: true })
@@ -267,7 +267,7 @@ export class ModerationQueueService {
         .from('posts')
         .select(`
           *,
-          users!posts_user_id_fkey(id, username, avatar_url)
+          users!posts_user_id_fkey(id, username, avatar_url, therapist_verified_at)
         `)
         .eq('moderated_by', moderatorId)
         .not('moderation_status', 'eq', 'pending')
@@ -277,7 +277,7 @@ export class ModerationQueueService {
         .from('comments')
         .select(`
           *,
-          users!comments_user_id_fkey(id, username, avatar_url)
+          users!comments_user_id_fkey(id, username, avatar_url, therapist_verified_at)
         `)
         .eq('moderated_by', moderatorId)
         .not('moderation_status', 'eq', 'pending')

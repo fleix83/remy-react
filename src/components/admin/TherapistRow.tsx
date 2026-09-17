@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import type { Designation, Therapist, TherapistWithDesignation } from '../../types/database.types'
 import InlineEditCell from '../ui/InlineEditCell'
 import { TherapistsService } from '../../services/therapists.service'
+import { therapistClaimsService } from '../../services/therapist-claims.service'
 import { getDesignationLabel } from '../../utils/designationHelpers'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
 import { FORMS_OF_ADDRESS } from '../../constants/therapist.constants'
@@ -30,6 +31,8 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
   const [isDeleting, setIsDeleting] = useState(false)
   const [isDismissing, setIsDismissing] = useState(false)
   const [isToggling, setIsToggling] = useState(false)
+  const [isUnlinking, setIsUnlinking] = useState(false)
+  const [confirmUnlink, setConfirmUnlink] = useState(false)
   const therapistsService = new TherapistsService()
 
   const missingDesignation = !therapist.designation_id
@@ -72,6 +75,27 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
       toast.error(t('therapistRow.toggleError'))
     } finally {
       setIsToggling(false)
+    }
+  }
+
+  // Two-step inline confirm: first click arms for 4s, second click unlinks.
+  const handleUnlink = async () => {
+    if (!confirmUnlink) {
+      setConfirmUnlink(true)
+      setTimeout(() => setConfirmUnlink(false), 4000)
+      return
+    }
+    setConfirmUnlink(false)
+    setIsUnlinking(true)
+    try {
+      await therapistClaimsService.unlinkTherapist(therapist.id)
+      onUpdated({ ...therapist, user_id: null, claimed_at: null })
+      toast.success(t('therapistLinks.unlinked'))
+    } catch (error) {
+      console.error('Error unlinking therapist:', error)
+      toast.error(t('therapistLinks.unlinkError'))
+    } finally {
+      setIsUnlinking(false)
     }
   }
 
@@ -230,8 +254,31 @@ const TherapistRow: React.FC<TherapistRowProps> = ({ therapist, designations, ad
           />
         </div>
 
-        {/* Status (Review-Queue / Inaktiv) */}
+        {/* Status (Review-Queue / Inaktiv / Verknüpft) */}
         <div className="flex w-24 shrink-0 flex-col items-start gap-1">
+          {therapist.user_id && (
+            <>
+              <span
+                className="inline-flex items-center gap-1 rounded-full bg-[#eef3ff] px-2 py-1 text-xs font-semibold text-[#4785ff]"
+                title={t('therapistLinks.linkedTitle', { id: therapist.user_id })}
+              >
+                <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                {t('therapistLinks.linked')}
+              </span>
+              <button
+                onClick={handleUnlink}
+                disabled={isUnlinking}
+                className={`rounded-full px-2 py-1 text-xs font-semibold transition-colors disabled:opacity-50 ${
+                  confirmUnlink ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+                title={t('therapistLinks.unlinkTitle')}
+              >
+                {isUnlinking ? '…' : confirmUnlink ? t('therapistLinks.confirmUnlink') : t('therapistLinks.unlink')}
+              </button>
+            </>
+          )}
           {!isActive && (
             <span className="inline-flex rounded-full bg-gray-200 px-2 py-1 text-xs font-semibold text-gray-600">{t('therapistRow.statusInactive')}</span>
           )}

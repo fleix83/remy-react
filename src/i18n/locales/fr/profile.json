@@ -118,5 +118,15 @@
       "empty": "Aucune publication enregistrée",
       "emptyHint": "Les publications que tu enregistres apparaîtront ici"
     }
+  },
+  "therapist": {
+    "title": "Ton profil de thérapeute",
+    "loading": "Chargement …",
+    "linked": "Cette entrée de l'annuaire des thérapeutes est liée à ton compte.",
+    "editProfile": "Modifier le profil",
+    "pending": "Ta demande est en cours d'examen par la modération. Nous te contacterons dès que ton profil sera lié.",
+    "rejected": "Ta demande a été refusée.",
+    "contactModeration": "Pour toute question, contacte la modération.",
+    "viewProfile": "Voir le profil de thérapeute"
   }
 }

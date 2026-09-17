@@ -56,7 +56,7 @@ export const useCommentsRealtime = (postId: number) => {
                 .from('comments')
                 .select(`
                   *,
-                  users!inner(id, username, avatar_url, role)
+                  users!inner(id, username, avatar_url, role, therapist_verified_at)
                 `)
                 .eq('id', newComment.id)
                 .single()
@@ -102,7 +102,7 @@ export const useCommentsRealtime = (postId: number) => {
                 .from('comments')
                 .select(`
                   *,
-                  users!inner(id, username, avatar_url, role)
+                  users!inner(id, username, avatar_url, role, therapist_verified_at)
                 `)
                 .eq('id', updatedComment.id)
                 .single()

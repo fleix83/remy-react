@@ -7,6 +7,7 @@ export interface Conversation {
     id: string
     username: string
     avatar_url?: string | null
+    therapist_verified_at?: string | null
   }
   lastMessage: Message
   unreadCount: number
@@ -19,11 +20,13 @@ export interface MessageWithUser extends Message {
     id: string
     username: string
     avatar_url?: string | null
+    therapist_verified_at?: string | null
   }
   receiver?: {
     id: string
     username: string
     avatar_url?: string | null
+    therapist_verified_at?: string | null
   }
 }
 
@@ -45,8 +48,8 @@ export class MessagesService {
       .from('messages')
       .select(`
         *,
-        sender:users!messages_sender_id_fkey(id, username, avatar_url),
-        receiver:users!messages_receiver_id_fkey(id, username, avatar_url)
+        sender:users!messages_sender_id_fkey(id, username, avatar_url, therapist_verified_at),
+        receiver:users!messages_receiver_id_fkey(id, username, avatar_url, therapist_verified_at)
       `)
       .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
       .order('created_at', { ascending: false })
@@ -64,7 +67,7 @@ export class MessagesService {
 
     // Group messages by conversation (other participant)
     const conversationMap = new Map<string, {
-      participant: { id: string; username: string; avatar_url?: string | null }
+      participant: { id: string; username: string; avatar_url?: string | null; therapist_verified_at?: string | null }
       messages: MessageWithUser[]
       unreadCount: number
     }>()
@@ -128,8 +131,8 @@ export class MessagesService {
       .from('messages')
       .select(`
         *,
-        sender:users!messages_sender_id_fkey(id, username, avatar_url),
-        receiver:users!messages_receiver_id_fkey(id, username, avatar_url)
+        sender:users!messages_sender_id_fkey(id, username, avatar_url, therapist_verified_at),
+        receiver:users!messages_receiver_id_fkey(id, username, avatar_url, therapist_verified_at)
       `)
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${participantId}),and(sender_id.eq.${participantId},receiver_id.eq.${user.id})`)
       .order('created_at', { ascending: false })

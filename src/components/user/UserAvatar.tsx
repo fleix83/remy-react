@@ -10,6 +10,7 @@ interface MinimalUser {
   id: string
   username: string
   avatar_url?: string | null
+  therapist_verified_at?: string | null
 }
 
 interface UserAvatarProps {

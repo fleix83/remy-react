@@ -118,5 +118,15 @@
       "empty": "No bookmarked posts",
       "emptyHint": "Posts you bookmark will appear here"
     }
+  },
+  "therapist": {
+    "title": "Your therapist profile",
+    "loading": "Loading …",
+    "linked": "This entry in the therapist directory is linked to you.",
+    "editProfile": "Edit profile",
+    "pending": "Your request is being reviewed by the moderation team. We will let you know as soon as your profile is linked.",
+    "rejected": "Your request was declined.",
+    "contactModeration": "If you have questions, please contact the moderation team.",
+    "viewProfile": "View therapist profile"
   }
 }

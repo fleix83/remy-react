@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import UserSearchService from '../../services/user-search.service'
 import AvatarService from '../../services/avatar.service'
+import UserName from './UserName'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import { intlLocale } from '../../utils/dateFormat'
 import type { User, UserBlock } from '../../types/database.types'
@@ -11,6 +12,7 @@ interface BlockedUserInfo {
   id: string
   username: string
   avatar_url?: string | null
+  therapist_verified_at?: string | null
   created_at: string | null
 }
 
@@ -206,7 +208,7 @@ const BlockedUsers: React.FC = () => {
                       height={32}
                     />
                     <div className="text-left">
-                      <p className="font-medium text-gray-900">{user.username}</p>
+                      <UserName as="p" user={user} className="font-medium text-gray-900" />
                       <p className="text-xs text-gray-500">{t('blocked.memberSince', { date: formatDate(user.created_at!) })}</p>
                     </div>
                   </div>
@@ -259,9 +261,12 @@ const BlockedUsers: React.FC = () => {
                       height={40}
                     />
                     <div className="text-left">
-                      <p className="font-medium text-gray-900">
-                        {blockedUser.blocked_user?.username || t('blocked.unknownUser')}
-                      </p>
+                      <UserName
+                        as="p"
+                        user={blockedUser.blocked_user}
+                        fallback={t('blocked.unknownUser')}
+                        className="font-medium text-gray-900"
+                      />
                       <p className="text-sm text-gray-500">
                         {t('blocked.blockedOn', { date: blockedUser.blocked_at ? formatDate(blockedUser.blocked_at) : t('blocked.unknownDate') })}
                       </p>

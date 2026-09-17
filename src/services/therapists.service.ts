@@ -248,6 +248,8 @@ export class TherapistsService {
   }>): Promise<Therapist[]> {
     console.log('🔧 TherapistsService: Bulk importing', therapists.length, 'therapists...')
 
+    if (therapists.length === 0) return []
+
     // Check authentication first
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
@@ -283,7 +285,8 @@ export class TherapistsService {
 
     console.log('📤 TherapistsService: Inserting', insertData.length, 'therapist records...')
 
-    // Use upsert to handle potential duplicates in database
+    // Plain insert: duplicates are filtered out beforehand by the import
+    // service (in-file and against the existing directory).
     const { data, error } = await supabase
       .from('therapists')
       .insert(insertData)

@@ -11,7 +11,8 @@
     "postsAbout": "Posts sur {{name}}",
     "anonymous": "Anonyme",
     "unknownDate": "Inconnu",
-    "noPosts": "Aucun post sur ce thérapeute pour le moment."
+    "noPosts": "Aucun post sur ce thérapeute pour le moment.",
+    "verifiedProfile": "Profil vérifié"
   },
   "selector": {
     "searchPlaceholder": "Rechercher un·e thérapeute / une institution",
@@ -85,6 +86,10 @@
       "designationRequired": "Merci de choisir un professionnel",
       "deleteFailed": "Erreur lors de la suppression",
       "saveFailed": "Erreur lors de l'enregistrement"
-    }
+    },
+    "specialty": "Spécialisations (optionnel)",
+    "specialtyPlaceholder": "p. ex. troubles anxieux, dépression, thérapie du trauma",
+    "services": "Offre (optionnel)",
+    "servicesPlaceholder": "p. ex. thérapie individuelle, thérapie de couple, séances en ligne"
   }
 }

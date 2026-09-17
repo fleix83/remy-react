@@ -11,6 +11,7 @@ import { TherapistsService } from '../../services/therapists.service'
 import { useAuthStore } from '../../stores/auth.store'
 import { useActiveLanguage } from '../../hooks/useActiveLanguage'
 import UserAvatar from '../user/UserAvatar'
+import UserName, { TherapistBadge } from '../user/UserName'
 import MobileSlideMenu from '../layout/MobileSlideMenu'
 import LandingFooter from '../layout/LandingFooter'
 
@@ -30,6 +31,9 @@ const TherapistDirectoryPage: React.FC = () => {
   const lang = useActiveLanguage()
 
   const isModeratorOrAdmin = userProfile?.role === 'moderator' || userProfile?.role === 'admin'
+  // Verified therapists may edit the directory entry linked to their account.
+  const isOwner = !!selectedTherapist?.user_id && selectedTherapist.user_id === user?.id
+  const canEdit = isModeratorOrAdmin || isOwner
 
   // Load therapist from URL parameter
   useEffect(() => {
@@ -160,8 +164,8 @@ const TherapistDirectoryPage: React.FC = () => {
 
           {selectedTherapist && (
             <div className="mt-8 pt-[30px] relative">
-              {/* Edit button - top right corner (moderator/admin only) */}
-              {isModeratorOrAdmin && (
+              {/* Edit button - top right corner (moderator/admin or linked owner) */}
+              {canEdit && (
                 <button
                   onClick={() => setShowEditModal(true)}
                   className="absolute right-0 text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1 text-sm"
@@ -210,6 +214,16 @@ const TherapistDirectoryPage: React.FC = () => {
                       (e.target as HTMLImageElement).style.display = 'none'
                     }}
                   />
+                )}
+                {selectedTherapist.user_id && (
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
+                    style={{ backgroundColor: '#eef3ff', color: '#4785ff' }}
+                    title={t('directory.verifiedProfile')}
+                  >
+                    <TherapistBadge size={14} />
+                    {t('directory.verifiedProfile')}
+                  </span>
                 )}
               </div>
 
@@ -263,7 +277,7 @@ const TherapistDirectoryPage: React.FC = () => {
                   <div className="space-y-4">
                     {therapistPosts.map((post) => {
                       // Access comment count safely - posts service adds it as { count: number }
-                      const commentCount = (post.comments?.[0] as any)?.count || (post as any).comment_count || 0
+                      const commentCount = (post.comments?.[0] as { count?: number } | undefined)?.count || (post as { comment_count?: number }).comment_count || 0
 
                       return (
                         <Link
@@ -277,7 +291,7 @@ const TherapistDirectoryPage: React.FC = () => {
                                 {post.title}
                               </h5>
                               <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                                <span>{post.users?.username || t('directory.anonymous')}</span>
+                                <UserName user={post.users} fallback={t('directory.anonymous')} />
                                 <span>•</span>
                                 <span>{post.created_at ? formatDate(post.created_at) : t('directory.unknownDate')}</span>
                               </div>

@@ -2,6 +2,7 @@ import type { ParseResult, ParseError } from 'papaparse'
 import { validateCSVHeaders, type TherapistCSVRow } from '../utils/therapist-csv-template'
 import type { Therapist, Designation } from '../types/database.types'
 import { DesignationsService } from './designations.service'
+import { TherapistsService } from './therapists.service'
 import { matchDesignation } from '../utils/designationHelpers'
 
 export interface ImportResult {
@@ -17,6 +18,14 @@ export interface ImportError {
   row: number
   data: Partial<TherapistCSVRow>
   error: string
+}
+
+/** Identity columns shared by parsed CSV rows and database rows. */
+export interface DuplicateKeyFields {
+  first_name: string | null
+  last_name: string | null
+  canton: string | null
+  institution: string | null
 }
 
 interface ParsedTherapist {
@@ -96,7 +105,7 @@ export class TherapistImportService {
   /**
    * Validate individual row data
    */
-  validateRow(row: any): { valid: boolean; error?: string } {
+  validateRow(row: Partial<TherapistCSVRow>): { valid: boolean; error?: string } {
     // A row is either a person (first + last name) or an institution-only
     // entry (institution, no name). Designation is required for both — for
     // institutions it is the kind of institution.
@@ -210,17 +219,35 @@ export class TherapistImportService {
   }
 
   /**
-   * Create duplicate key for comparison
+   * Create duplicate key for comparison. Works for parsed CSV rows and for
+   * rows already in the database (same identity columns). Normalised so that
+   * casing, surrounding and doubled-up whitespace don't produce "new" entries.
    */
-  getDuplicateKey(therapist: ParsedTherapist): string {
-    const firstName = therapist.first_name.trim().toLowerCase()
-    const lastName = therapist.last_name.trim().toLowerCase()
-    const canton = (therapist.canton || '').trim().toLowerCase()
+  getDuplicateKey(therapist: DuplicateKeyFields): string {
+    const norm = (v: string | null | undefined) => (v || '').trim().toLowerCase().replace(/\s+/g, ' ')
+    const firstName = norm(therapist.first_name)
+    const lastName = norm(therapist.last_name)
+    const canton = norm(therapist.canton)
     if (!firstName && !lastName) {
       // Institution-only entries dedupe on institution name + canton
-      return `inst:${(therapist.institution || '').trim().toLowerCase()}|${canton}`
+      return `inst:${norm(therapist.institution)}|${canton}`
     }
     return `${firstName}|${lastName}|${canton}`
+  }
+
+  /**
+   * Drop parsed rows whose identity (see getDuplicateKey) already exists in
+   * the database. Existing rows are never updated — an import must not
+   * overwrite entries that admins have curated or that therapist users have
+   * claimed as their own; skipping is the safe behaviour.
+   */
+  filterAgainstExisting<T extends DuplicateKeyFields>(
+    parsed: T[],
+    existing: DuplicateKeyFields[]
+  ): { therapists: T[]; skipped: number } {
+    const existingKeys = new Set(existing.map((t) => this.getDuplicateKey(t)))
+    const therapists = parsed.filter((t) => !existingKeys.has(this.getDuplicateKey(t)))
+    return { therapists, skipped: parsed.length - therapists.length }
   }
 
   /**
@@ -228,7 +255,7 @@ export class TherapistImportService {
    * The scraped title is stored verbatim in full_title; the curated designation
    * is assigned by keyword matching. Unmatched rows are flagged for review.
    */
-  parseTherapist(row: any, designations: Designation[]): ParsedTherapist {
+  parseTherapist(row: Partial<TherapistCSVRow>, designations: Designation[]): ParsedTherapist {
     const fullTitle = row.designation?.trim() || ''
     const isInstitutionOnly = !row.first_name?.trim() && !row.last_name?.trim()
     // Gender keyword detection only makes sense for persons
@@ -265,7 +292,7 @@ export class TherapistImportService {
   /**
    * Process CSV data and handle duplicates
    */
-  async processTherapists(data: any[], designations: Designation[]): Promise<{ therapists: ParsedTherapist[]; errors: ImportError[] }> {
+  async processTherapists(data: Partial<TherapistCSVRow>[], designations: Designation[]): Promise<{ therapists: ParsedTherapist[]; errors: ImportError[] }> {
     const therapistMap = new Map<string, { therapist: ParsedTherapist; rowIndex: number }>()
     const errors: ImportError[] = []
 
@@ -333,7 +360,10 @@ export class TherapistImportService {
    */
   async importFromCSV(
     file: File,
-    bulkImportFn: (therapists: ParsedTherapist[]) => Promise<Therapist[]>
+    bulkImportFn: (therapists: ParsedTherapist[]) => Promise<Therapist[]>,
+    // Rows already in the database (all of them, inactive included) so the
+    // import can skip re-inserting them. Injectable for tests.
+    loadExisting: () => Promise<DuplicateKeyFields[]> = () => new TherapistsService().getTherapists(true)
   ): Promise<ImportResult> {
     try {
       console.log('📂 Parsing CSV file:', file.name)
@@ -358,11 +388,15 @@ export class TherapistImportService {
         }
       }
 
-      // Load the curated designations once for keyword classification
-      const designations = await new DesignationsService().getActiveDesignations()
-      const { therapists, errors } = await this.processTherapists(parseResult.data, designations)
+      // Load the curated designations (keyword classification) and the
+      // current directory (database-side dedupe) in parallel
+      const [designations, existing] = await Promise.all([
+        new DesignationsService().getActiveDesignations(),
+        loadExisting()
+      ])
+      const { therapists: uniqueInFile, errors } = await this.processTherapists(parseResult.data, designations)
 
-      if (therapists.length === 0) {
+      if (uniqueInFile.length === 0) {
         return {
           success: false,
           imported: 0,
@@ -377,12 +411,19 @@ export class TherapistImportService {
         }
       }
 
-      // Import to database
-      console.log(`💾 Importing ${therapists.length} therapists to database...`)
-      const importedTherapists = await bulkImportFn(therapists)
+      // Skip rows that already exist in the database (never updated)
+      const { therapists, skipped: skippedExisting } = this.filterAgainstExisting(uniqueInFile, existing)
+      if (skippedExisting > 0) {
+        console.log(`⏭️ Skipping ${skippedExisting} therapist(s) already in the database`)
+      }
 
+      // Import to database (no-op on an empty list)
+      console.log(`💾 Importing ${therapists.length} therapists to database...`)
+      const importedTherapists = therapists.length > 0 ? await bulkImportFn(therapists) : []
+
+      // skipped = in-file duplicates + rows already in the database
       const originalCount = parseResult.data.length
-      const skippedDuplicates = originalCount - therapists.length
+      const skippedDuplicates = (originalCount - errors.length - uniqueInFile.length) + skippedExisting
 
       console.log(
         `✅ Import complete: ${importedTherapists.length} imported, ` +

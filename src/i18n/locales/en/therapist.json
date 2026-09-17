@@ -11,7 +11,8 @@
     "postsAbout": "Posts about {{name}}",
     "anonymous": "Anonymous",
     "unknownDate": "Unknown",
-    "noPosts": "No posts about this therapist yet."
+    "noPosts": "No posts about this therapist yet.",
+    "verifiedProfile": "Verified profile"
   },
   "selector": {
     "searchPlaceholder": "Search therapist / institution",
@@ -85,6 +86,10 @@
       "designationRequired": "Please choose a professional",
       "deleteFailed": "Error while deleting",
       "saveFailed": "Error while saving"
-    }
+    },
+    "specialty": "Focus areas (optional)",
+    "specialtyPlaceholder": "e.g. anxiety disorders, depression, trauma therapy",
+    "services": "Services (optional)",
+    "servicesPlaceholder": "e.g. individual therapy, couples therapy, online sessions"
   }
 }

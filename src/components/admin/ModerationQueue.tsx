@@ -9,6 +9,8 @@ import { supabase } from '../../lib/supabase'
 import ModerationPreviewModal from './ModerationPreviewModal'
 import ModerationMessageModal from './ModerationMessageModal'
 import UserAvatar from '../user/UserAvatar'
+import UserName from '../user/UserName'
+import TherapistClaimsPanel from './TherapistClaimsPanel'
 import PostTags from '../ui/PostTags'
 import type { ModerationQueueItem, Designation } from '../../types/database.types'
 import { getPostDisplayTitle } from '../../utils/text.utils'
@@ -36,7 +38,9 @@ const ModerationQueue: React.FC = () => {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [messageAction, setMessageAction] = useState<'approve' | 'reject' | 'message' | null>(null)
   const [messageItem, setMessageItem] = useState<ModerationQueueItem | null>(null)
-  const [contentFilter, setContentFilter] = useState<'alle' | 'beiträge' | 'kommentare' | 'therapeuten'>('alle')
+  const [contentFilter, setContentFilter] = useState<'alle' | 'beiträge' | 'kommentare' | 'therapeuten' | 'anfragen'>('alle')
+  const [claimsVersion, setClaimsVersion] = useState(0)
+  const [claimsCount, setClaimsCount] = useState(0)
   const [designations, setDesignations] = useState<Designation[]>([])
 
   const moderationService = new ModerationQueueService()
@@ -174,9 +178,26 @@ const ModerationQueue: React.FC = () => {
       )
       .subscribe()
 
+    // Subscribe to therapist profile claims — the panel reloads on any change
+    const claimsChannel = supabase
+      .channel('therapist-claims-moderation')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'therapist_claims'
+        },
+        () => {
+          setClaimsVersion(v => v + 1)
+        }
+      )
+      .subscribe()
+
     return () => {
       postsChannel.unsubscribe()
       commentsChannel.unsubscribe()
+      claimsChannel.unsubscribe()
     }
   }
 
@@ -642,9 +663,9 @@ const ModerationQueue: React.FC = () => {
             <h1 className="text-2xl font-bold text-[var(--primary)] mb-2 text-left">{t('title')}</h1>
             <p className="text-[var(--primary)] text-left flex items-center gap-2">
               <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-sm" style={{fontSize: '22px', color: '#fa8072'}}>
-                {filteredQueueItems.length}
+                {contentFilter === 'anfragen' ? claimsCount : filteredQueueItems.length}
               </span>
-              {t('pendingCount')}
+              {contentFilter === 'anfragen' ? t('claims.pendingCount') : t('pendingCount')}
             </p>
           </div>
 
@@ -654,7 +675,8 @@ const ModerationQueue: React.FC = () => {
               ['alle', 'filter.all'],
               ['beiträge', 'filter.posts'],
               ['kommentare', 'filter.comments'],
-              ['therapeuten', 'filter.therapists']
+              ['therapeuten', 'filter.therapists'],
+              ['anfragen', 'filter.claims']
             ] as const).map(([value, labelKey]) => (
               <button
                 key={value}
@@ -672,7 +694,7 @@ const ModerationQueue: React.FC = () => {
         </div>
 
         {/* Bulk action bar */}
-        {selectedItems.size > 0 && (
+        {contentFilter !== 'anfragen' && selectedItems.size > 0 && (
           <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/80 px-5 py-3 shadow-sm">
             <span className="text-sm font-medium text-slate-600">
               {t('bulk.selectedCount', { count: selectedItems.size })}
@@ -705,7 +727,9 @@ const ModerationQueue: React.FC = () => {
         )}
 
         {/* Queue Items */}
-        {filteredQueueItems.length === 0 ? (
+        {contentFilter === 'anfragen' ? (
+          <TherapistClaimsPanel refreshKey={claimsVersion} onCountChange={setClaimsCount} />
+        ) : filteredQueueItems.length === 0 ? (
           <div className="bg-[#fff9e2] p-8 text-center shadow-[0_2px_12px_rgba(20,66,32,0.05)]" style={{borderRadius: '20px'}}>
             <div className="text-[#1f9d57] mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -850,7 +874,7 @@ const ModerationQueue: React.FC = () => {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{item.users?.username}</p>
+                    <UserName user={item.users} as="p" className="font-medium text-[var(--type)] text-xs text-left leading-none" />
                     <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{formatDate(item.created_at)}</p>
                   </div>
                 </div>

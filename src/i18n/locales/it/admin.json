@@ -32,6 +32,7 @@
     "roleAdmin": "Admin",
     "roleModerator": "Moderatore",
     "roleUser": "Utente",
+    "roleTherapist": "Terapeuta",
     "statusBanned": "Bloccato",
     "statusActive": "Attivo",
     "registeredUnknown": "Sconosciuto",
@@ -183,5 +184,14 @@
     "saving": "Salvataggio …",
     "saved": "Descrizioni salvate.",
     "saveError": "Salvataggio non riuscito."
+  },
+  "therapistLinks": {
+    "linked": "Collegato",
+    "linkedTitle": "Collegato all’account utente {{id}}",
+    "unlink": "Scollega",
+    "unlinkTitle": "Rimuovi il collegamento all’account utente",
+    "confirmUnlink": "Scollegare davvero?",
+    "unlinked": "Collegamento rimosso.",
+    "unlinkError": "Impossibile rimuovere il collegamento."
   }
 }

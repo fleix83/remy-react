@@ -14,7 +14,7 @@ interface AuthState {
   // Actions
   initialize: () => Promise<void>
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string) => Promise<{ requiresConfirmation: boolean; message: string } | void>
+  register: (email: string, password: string, isTherapist?: boolean) => Promise<{ requiresConfirmation: boolean; message: string } | void>
   logout: () => Promise<void>
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>
   resetPassword: (email: string) => Promise<void>
@@ -84,14 +84,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  register: async (email: string, password: string) => {
+  register: async (email: string, password: string, isTherapist = false) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         // Username will be set later during onboarding
         // Database trigger will use email prefix as temporary username
-        emailRedirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/auth/callback`
+        emailRedirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/auth/callback`,
+        // Intent only: the signup trigger verifies the HIN address itself and
+        // ignores this flag unless the email is a personal *@hin.ch identity.
+        data: isTherapist ? { is_therapist: true } : undefined
       }
     })
 
@@ -226,6 +229,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     // Reload user profile to get updated data
     await get().loadUserProfile()
+
+    // Verified therapists: match the HIN name against the directory right
+    // away (auto-link or moderation claim). Idempotent, failure is non-fatal.
+    if (get().userProfile?.therapist_verified_at) {
+      try {
+        const { therapistClaimsService } = await import('../services/therapist-claims.service')
+        await therapistClaimsService.claimOwnProfile()
+      } catch (err) {
+        console.error('Therapist profile claim failed:', err)
+      }
+    }
   },
 
   checkUsernameAvailable: async (username: string): Promise<boolean> => {

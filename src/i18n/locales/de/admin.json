@@ -32,6 +32,7 @@
     "roleAdmin": "Admin",
     "roleModerator": "Moderator",
     "roleUser": "Benutzer",
+    "roleTherapist": "Therapeut:in",
     "statusBanned": "Gesperrt",
     "statusActive": "Aktiv",
     "registeredUnknown": "Unbekannt",
@@ -183,5 +184,14 @@
     "saving": "Speichern …",
     "saved": "Beschreibungen gespeichert.",
     "saveError": "Speichern fehlgeschlagen."
+  },
+  "therapistLinks": {
+    "linked": "Verknüpft",
+    "linkedTitle": "Mit Benutzerkonto {{id}} verknüpft",
+    "unlink": "Verknüpfung lösen",
+    "unlinkTitle": "Verknüpfung zum Benutzerkonto entfernen",
+    "confirmUnlink": "Wirklich lösen?",
+    "unlinked": "Verknüpfung gelöst.",
+    "unlinkError": "Verknüpfung konnte nicht gelöst werden."
   }
 }

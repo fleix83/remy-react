@@ -5,6 +5,7 @@ import { useAuthStore } from '../../stores/auth.store'
 import { useNotificationsStore } from '../../stores/notifications.store'
 import { useMessagesStore } from '../../stores/messages.store'
 import UserAvatar from '../user/UserAvatar'
+import UserName from '../user/UserName'
 import MobileSlideMenu from './MobileSlideMenu'
 import LanguageMenu from '../ui/LanguageMenu'
 import { SWISS_CANTONS } from '../../constants/switzerland.constants'
@@ -75,9 +76,11 @@ const Navigation: React.FC<NavigationProps> = ({
                   )}
                 </span>
               )}
-              <span className="rounded-full bg-white/60 px-3 py-1 text-sm font-medium">
-                {userProfile?.username || t('menu')}
-              </span>
+              <UserName
+                user={userProfile}
+                fallback={t('menu')}
+                className="rounded-full bg-white/60 px-3 py-1 text-sm font-medium"
+              />
             </button>
 
             {/* Default region (only when the user has one set) */}

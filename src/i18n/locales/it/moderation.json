@@ -9,7 +9,8 @@
     "all": "Tutti",
     "posts": "Post",
     "comments": "Commenti",
-    "therapists": "Terapeuti"
+    "therapists": "Terapeuti",
+    "claims": "Richieste di profilo"
   },
   "contentType": {
     "post": "Post",
@@ -132,5 +133,34 @@
     "delete": "Elimina",
     "reject": "Rifiuta",
     "publish": "Pubblica"
+  },
+  "claims": {
+    "pendingCount": "richieste di profilo in attesa",
+    "emptyTitle": "Nessuna richiesta di profilo aperta",
+    "emptyBody": "Tutte le richieste dei terapeuti sono state elaborate.",
+    "loadError": "Impossibile caricare le richieste di profilo.",
+    "candidatesError": "Impossibile caricare i suggerimenti.",
+    "requestedOn": "Richiesto il {{date}}",
+    "hinName": "Nome HIN",
+    "claimantCanton": "Cantone dell’account",
+    "conflictWarning": "Questa voce è già collegata a un altro account. Controlla entrambi gli account prima di collegare.",
+    "candidates": "Voci suggerite",
+    "loadingCandidates": "Caricamento dei suggerimenti …",
+    "noCandidates": "Nessuna voce corrispondente trovata nell’elenco.",
+    "alreadyLinked": "già collegato",
+    "searchPlaceholder": "Cerca un’altra voce (nome, istituzione) …",
+    "searching": "Ricerca …",
+    "noSearchResults": "Nessun altro risultato.",
+    "link": "Collega",
+    "createNew": "Crea nuovo profilo",
+    "reject": "Rifiuta",
+    "confirmReject": "Conferma il rifiuto",
+    "rejectPlaceholder": "Motivo del rifiuto (facoltativo, comunicato alla persona) …",
+    "toast": {
+      "linked": "Profilo collegato.",
+      "created": "Nuovo profilo creato e collegato.",
+      "rejected": "Richiesta rifiutata.",
+      "error": "Impossibile elaborare la richiesta."
+    }
   }
 }

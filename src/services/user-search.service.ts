@@ -22,7 +22,7 @@ export class UserSearchService {
     try {
       let searchQuery = supabase
         .from('users')
-        .select('id, username, avatar_url, created_at')
+        .select('id, username, avatar_url, created_at, therapist_verified_at')
         .ilike('username', `%${query.trim()}%`)
         .limit(10)
 
@@ -67,7 +67,7 @@ export class UserSearchService {
       const blockedUserIds = blockedIds.map(block => block.blocked_id)
       const { data: blockedUsers, error: usersError } = await supabase
         .from('users')
-        .select('id, username, avatar_url, created_at')
+        .select('id, username, avatar_url, created_at, therapist_verified_at')
         .in('id', blockedUserIds)
 
       if (usersError) {
@@ -191,7 +191,7 @@ export class UserSearchService {
   static async getPublicUser(userId: string): Promise<User | null> {
     const { data, error } = await supabase
       .from('users')
-      .select('id, username, avatar_url, background_image_url, bio, created_at, role, post_history_public')
+      .select('id, username, avatar_url, background_image_url, bio, created_at, role, post_history_public, therapist_verified_at')
       .eq('id', userId)
       .maybeSingle()
 

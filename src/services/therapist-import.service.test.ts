@@ -80,3 +80,47 @@ describe('parseTherapist', () => {
     expect(parsed.gender).toBe('f') // detectGender: "fachpsychologin"
   })
 })
+
+describe('getDuplicateKey', () => {
+  it('ignores casing and surrounding/doubled whitespace', () => {
+    const a = service.getDuplicateKey({ first_name: 'Mona', last_name: 'Beispiel', canton: 'ZH', institution: null })
+    const b = service.getDuplicateKey({ first_name: '  mona ', last_name: 'BEISPIEL', canton: 'zh ', institution: null })
+    expect(a).toBe(b)
+    const c = service.getDuplicateKey({ first_name: '', last_name: '', canton: 'ZH', institution: 'Klinik  Am   See' })
+    const d = service.getDuplicateKey({ first_name: '', last_name: '', canton: 'ZH', institution: 'klinik am see' })
+    expect(c).toBe(d)
+    expect(c.startsWith('inst:')).toBe(true)
+  })
+
+  it('treats the same person in another canton as a different entry', () => {
+    const zh = service.getDuplicateKey({ first_name: 'Mona', last_name: 'Beispiel', canton: 'ZH', institution: null })
+    const be = service.getDuplicateKey({ first_name: 'Mona', last_name: 'Beispiel', canton: 'BE', institution: null })
+    expect(zh).not.toBe(be)
+  })
+})
+
+describe('filterAgainstExisting', () => {
+  const parsed = [
+    service.parseTherapist(csvRow, designations),
+    service.parseTherapist({ ...csvRow, first_name: 'Egon', last_name: 'Freud' }, designations),
+    service.parseTherapist({ ...csvRow, first_name: '', last_name: '', institution: 'Klinik Am See' }, designations)
+  ]
+
+  it('skips rows whose identity already exists in the database, never updating them', () => {
+    const existing = [
+      // same person, different casing/whitespace and richer data in the DB
+      { first_name: ' mona', last_name: 'beispiel ', canton: 'ZH', institution: null },
+      { first_name: '', last_name: '', canton: 'zh', institution: 'KLINIK AM SEE' }
+    ]
+    const { therapists, skipped } = service.filterAgainstExisting(parsed, existing)
+    expect(skipped).toBe(2)
+    expect(therapists.map((t) => t.last_name)).toEqual(['Freud'])
+  })
+
+  it('keeps everything when the database has no matching rows', () => {
+    const existing = [{ first_name: 'Mona', last_name: 'Beispiel', canton: 'BE', institution: null }]
+    const { therapists, skipped } = service.filterAgainstExisting(parsed, existing)
+    expect(skipped).toBe(0)
+    expect(therapists).toHaveLength(3)
+  })
+})

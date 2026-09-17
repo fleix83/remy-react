@@ -43,7 +43,9 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
     institution: '',
     languages: '',
     city: '',
-    gender: ''
+    gender: '',
+    specialty: '',
+    services: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -85,7 +87,9 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
         institution: therapist.institution || '',
         languages: therapist.languages || '',
         city: therapist.city || '',
-        gender: therapist.gender || ''
+        gender: therapist.gender || '',
+        specialty: therapist.specialty || '',
+        services: therapist.services || ''
       })
     } else if (preselectedCanton) {
       setFormData(prev => ({
@@ -252,7 +256,9 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
         institution: entryType === 'person' ? null : formData.institution.trim() || null,
         languages: formData.languages.trim() || null,
         city: formData.city.trim() || null,
-        gender: isInstitutionOnly ? null : formData.gender || null
+        gender: isInstitutionOnly ? null : formData.gender || null,
+        specialty: formData.specialty.trim() || null,
+        services: formData.services.trim() || null
       }
 
       if (isEditMode && therapist) {
@@ -278,7 +284,9 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
           institution: '',
           languages: '',
           city: '',
-          gender: ''
+          gender: '',
+          specialty: '',
+          services: ''
         })
       }
     } catch (error) {
@@ -657,6 +665,40 @@ const TherapistCreateModal: React.FC<TherapistCreateModalProps> = ({
                 style={{ borderColor: '#ebebeb' }}
                 disabled={isSubmitting}
                 maxLength={200}
+              />
+            </div>
+
+            {/* Specialty (focus areas) */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
+                {t('modal.specialty')}
+              </label>
+              <textarea
+                value={formData.specialty}
+                onChange={(e) => handleInputChange('specialty', e.target.value)}
+                placeholder={t('modal.specialtyPlaceholder')}
+                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] resize-y"
+                style={{ borderColor: '#ebebeb' }}
+                disabled={isSubmitting}
+                maxLength={500}
+                rows={2}
+              />
+            </div>
+
+            {/* Services offered */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary)' }}>
+                {t('modal.services')}
+              </label>
+              <textarea
+                value={formData.services}
+                onChange={(e) => handleInputChange('services', e.target.value)}
+                placeholder={t('modal.servicesPlaceholder')}
+                className="w-full px-3 py-2 bg-white border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] resize-y"
+                style={{ borderColor: '#ebebeb' }}
+                disabled={isSubmitting}
+                maxLength={500}
+                rows={2}
               />
             </div>
 

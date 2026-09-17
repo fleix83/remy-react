@@ -3,6 +3,7 @@ import { sanitizeHtml } from '../../lib/sanitize'
 import type { CommentWithRelations } from '../../types/database.types'
 import { CommentsService } from '../../services/comments.service'
 import UserAvatar from '../user/UserAvatar'
+import UserName from '../user/UserName'
 import SendMessageButton from '../messaging/SendMessageButton'
 import { toast } from '../../stores/toast.store'
 import { confirmDialog } from '../../stores/confirm.store'
@@ -100,9 +101,12 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment, onReply, onUpdate, d
           clickable={!!comment.users}
         />
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-[var(--type)] text-xs text-left leading-none">
-            {comment.users?.username || t('unknownUser')}
-          </p>
+          <UserName
+            as="p"
+            user={comment.users}
+            fallback={t('unknownUser')}
+            className="font-medium text-[var(--type)] text-xs text-left leading-none"
+          />
           <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>
             {comment.created_at ? formatDate(comment.created_at) : t('card.unknownDate')}
             {comment.updated_at && comment.updated_at !== comment.created_at && (

@@ -11,7 +11,8 @@
     "postsAbout": "Post su {{name}}",
     "anonymous": "Anonimo",
     "unknownDate": "Sconosciuto",
-    "noPosts": "Ancora nessun post su questo terapeuta."
+    "noPosts": "Ancora nessun post su questo terapeuta.",
+    "verifiedProfile": "Profilo verificato"
   },
   "selector": {
     "searchPlaceholder": "Cerca terapeuta/istituzione",
@@ -85,6 +86,10 @@
       "designationRequired": "Scegli un professionista",
       "deleteFailed": "Errore durante l'eliminazione",
       "saveFailed": "Errore durante il salvataggio"
-    }
+    },
+    "specialty": "Aree di specializzazione (facoltativo)",
+    "specialtyPlaceholder": "es. disturbi d'ansia, depressione, terapia del trauma",
+    "services": "Offerta (facoltativo)",
+    "servicesPlaceholder": "es. terapia individuale, terapia di coppia, sedute online"
   }
 }

@@ -118,5 +118,15 @@
       "empty": "Nessun post salvato",
       "emptyHint": "I post che salvi compaiono qui"
     }
+  },
+  "therapist": {
+    "title": "Il tuo profilo terapeuta",
+    "loading": "Caricamento …",
+    "linked": "Questa voce dell'elenco dei terapeuti è collegata a te.",
+    "editProfile": "Modifica profilo",
+    "pending": "La tua richiesta è in fase di verifica da parte della moderazione. Ti avviseremo non appena il tuo profilo sarà collegato.",
+    "rejected": "La tua richiesta è stata rifiutata.",
+    "contactModeration": "Per domande, contatta la moderazione.",
+    "viewProfile": "Vedi il profilo terapeuta"
   }
 }

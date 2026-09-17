@@ -9,7 +9,8 @@
     "all": "Tous",
     "posts": "Publications",
     "comments": "Commentaires",
-    "therapists": "Thérapeutes"
+    "therapists": "Thérapeutes",
+    "claims": "Demandes de profil"
   },
   "contentType": {
     "post": "Publication",
@@ -132,5 +133,34 @@
     "delete": "Supprimer",
     "reject": "Refuser",
     "publish": "Publier"
+  },
+  "claims": {
+    "pendingCount": "demandes de profil en attente",
+    "emptyTitle": "Aucune demande de profil en attente",
+    "emptyBody": "Toutes les demandes de thérapeutes ont été traitées.",
+    "loadError": "Les demandes de profil n’ont pas pu être chargées.",
+    "candidatesError": "Les suggestions n’ont pas pu être chargées.",
+    "requestedOn": "Demandé le {{date}}",
+    "hinName": "Nom HIN",
+    "claimantCanton": "Canton du compte",
+    "conflictWarning": "Cette entrée est déjà liée à un autre compte. Vérifie les deux comptes avant de lier.",
+    "candidates": "Entrées suggérées",
+    "loadingCandidates": "Chargement des suggestions …",
+    "noCandidates": "Aucune entrée correspondante dans l’annuaire.",
+    "alreadyLinked": "déjà lié",
+    "searchPlaceholder": "Chercher une autre entrée (nom, institution) …",
+    "searching": "Recherche …",
+    "noSearchResults": "Aucun autre résultat.",
+    "link": "Lier",
+    "createNew": "Créer un nouveau profil",
+    "reject": "Refuser",
+    "confirmReject": "Confirmer le refus",
+    "rejectPlaceholder": "Motif du refus (facultatif, communiqué à la personne) …",
+    "toast": {
+      "linked": "Profil lié.",
+      "created": "Nouveau profil créé et lié.",
+      "rejected": "Demande refusée.",
+      "error": "La demande n’a pas pu être traitée."
+    }
   }
 }

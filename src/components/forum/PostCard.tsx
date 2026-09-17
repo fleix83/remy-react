@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import type { PostWithRelations } from '../../types/database.types'
 import UserAvatar from '../user/UserAvatar'
+import UserName from '../user/UserName'
 import PostTags from '../ui/PostTags'
 import { getPostDisplayTitle } from '../../utils/text.utils'
 import { formatTherapistPostLine } from '../../utils/therapistHelpers'
@@ -176,7 +177,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({ post, onClick, className
           />
         )}
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-[var(--type)] text-xs text-left leading-none">{post.users?.username}</p>
+          <UserName as="p" user={post.users} className="font-medium text-[var(--type)] text-xs text-left leading-none" />
           <p className="text-xs text-gray-500 text-left leading-none mt-0.5" style={{fontSize: '0.65rem'}}>{post.created_at ? formatDate(post.created_at) : t('card.unknownDate')}</p>
         </div>
       </div>

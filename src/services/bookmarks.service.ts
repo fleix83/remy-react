@@ -6,7 +6,7 @@ const BOOKMARKED_POST_SELECT = `
   created_at,
   posts(
     *,
-    users!posts_user_id_fkey(id, username, avatar_url, role),
+    users!posts_user_id_fkey(id, username, avatar_url, role, therapist_verified_at),
     categories(id, name_de, name_fr, name_it),
     therapists(id, form_of_address, first_name, last_name, full_title, designation_id, gender, institution, city, canton, designations(id, slug, label_de, label_fr, label_it))
   )

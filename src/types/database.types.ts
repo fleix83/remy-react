@@ -444,6 +444,7 @@ export type Database = {
         Row: {
           canton: string | null
           city: string | null
+          claimed_at: string | null
           created_at: string | null
           created_by: string | null
           designation_id: number | null
@@ -462,10 +463,12 @@ export type Database = {
           services: string | null
           specialty: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           canton?: string | null
           city?: string | null
+          claimed_at?: string | null
           created_at?: string | null
           created_by?: string | null
           designation_id?: number | null
@@ -484,10 +487,12 @@ export type Database = {
           services?: string | null
           specialty?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           canton?: string | null
           city?: string | null
+          claimed_at?: string | null
           created_at?: string | null
           created_by?: string | null
           designation_id?: number | null
@@ -506,8 +511,16 @@ export type Database = {
           services?: string | null
           specialty?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "therapists_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "therapists_created_by_fkey"
             columns: ["created_by"]
@@ -567,6 +580,70 @@ export type Database = {
           },
         ]
       }
+      therapist_claims: {
+        Row: {
+          created_at: string
+          hin_first_name: string
+          hin_last_name: string
+          id: number
+          note: string | null
+          resolution: Database["public"]["Enums"]["therapist_claim_resolution"] | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["therapist_claim_status"]
+          therapist_id: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hin_first_name: string
+          hin_last_name: string
+          id?: number
+          note?: string | null
+          resolution?: Database["public"]["Enums"]["therapist_claim_resolution"] | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["therapist_claim_status"]
+          therapist_id?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hin_first_name?: string
+          hin_last_name?: string
+          id?: number
+          note?: string | null
+          resolution?: Database["public"]["Enums"]["therapist_claim_resolution"] | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["therapist_claim_status"]
+          therapist_id?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "therapist_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "therapist_claims_therapist_id_fkey"
+            columns: ["therapist_id"]
+            isOneToOne: false
+            referencedRelation: "therapists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "therapist_claims_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_blocks: {
         Row: {
           blocked_at: string | null
@@ -620,6 +697,7 @@ export type Database = {
           onboarding_complete: boolean | null
           post_history_public: boolean
           role: Database["public"]["Enums"]["user_role"] | null
+          therapist_verified_at: string | null
           updated_at: string | null
           username: string
         }
@@ -639,6 +717,7 @@ export type Database = {
           onboarding_complete?: boolean | null
           post_history_public?: boolean | null
           role?: Database["public"]["Enums"]["user_role"] | null
+          therapist_verified_at?: string | null
           updated_at?: string | null
           username: string
         }
@@ -658,6 +737,7 @@ export type Database = {
           onboarding_complete?: boolean | null
           post_history_public?: boolean | null
           role?: Database["public"]["Enums"]["user_role"] | null
+          therapist_verified_at?: string | null
           updated_at?: string | null
           username?: string
         }
@@ -668,6 +748,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_therapist_profile: { Args: never; Returns: Json }
+      get_therapist_claim_candidates: {
+        Args: { p_claim_id: number }
+        Returns: {
+          therapist_id: number
+          first_name: string
+          last_name: string
+          form_of_address: string
+          institution: string | null
+          full_title: string | null
+          canton: string | null
+          city: string | null
+          user_id: string | null
+          score: number
+        }[]
+      }
+      resolve_therapist_claim: {
+        Args: { p_claim_id: number; p_action: string; p_therapist_id?: number | null; p_note?: string | null }
+        Returns: Json
+      }
+      unlink_therapist_profile: { Args: { p_therapist_id: number }; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       toggle_user_ban: {
@@ -682,6 +783,8 @@ export type Database = {
     Enums: {
       access_role: "all" | "user" | "moderator" | "admin"
       moderation_status: "pending" | "approved" | "rejected"
+      therapist_claim_resolution: "auto" | "linked" | "created" | "rejected"
+      therapist_claim_status: "pending" | "approved" | "rejected"
       user_role: "user" | "moderator" | "admin"
     }
     CompositeTypes: {
@@ -812,6 +915,8 @@ export const Constants = {
     Enums: {
       access_role: ["all", "user", "moderator", "admin"],
       moderation_status: ["pending", "approved", "rejected"],
+      therapist_claim_resolution: ["auto", "linked", "created", "rejected"],
+      therapist_claim_status: ["pending", "approved", "rejected"],
       user_role: ["user", "moderator", "admin"],
     },
   },
@@ -844,6 +949,14 @@ export type Message = Tables<'messages'>
 export type Post = Tables<'posts'>
 export type Tag = Tables<'tags'>
 export type Therapist = Tables<'therapists'>
+export type TherapistClaim = Tables<'therapist_claims'>
+export type TherapistClaimStatus = Database['public']['Enums']['therapist_claim_status']
+export type TherapistClaimCandidate = Database['public']['Functions']['get_therapist_claim_candidates']['Returns'][number]
+/** Minimal shape needed to render a user's name with the therapist badge. */
+export type UserNameInfo = { id?: string; username: string; therapist_verified_at?: string | null }
+/** True when the user carries a server-set HIN verification timestamp. */
+export const isVerifiedTherapist = (u?: { therapist_verified_at?: string | null } | null): boolean =>
+  !!u?.therapist_verified_at
 export type DesignationLabels = Pick<Designation, 'id' | 'slug' | 'label_de' | 'label_fr' | 'label_it'>
 export type TherapistWithDesignation = Therapist & { designations?: DesignationLabels | null }
 export type User = Tables<'users'>

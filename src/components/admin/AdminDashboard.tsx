@@ -5,6 +5,7 @@ import { intlLocale } from '../../utils/dateFormat'
 import { usePermissions } from '../../hooks/usePermissions'
 import { ModerationService } from '../../services/moderation.service'
 import UserAvatar from '../user/UserAvatar'
+import UserName from '../user/UserName'
 import DesignationsTab from './DesignationsTab'
 import TherapistsTab from './TherapistsTab'
 import CategoriesTab from './CategoriesTab'
@@ -224,7 +225,7 @@ const AdminDashboard: React.FC = () => {
                             />
                           </div>
                           <div>
-                            <div className="text-sm font-medium text-gray-900">{user.username}</div>
+                            <UserName as="div" user={user} className="text-sm font-medium text-gray-900" />
                             <div className="text-sm text-gray-500">ID: {user.id.slice(0, 8)}...</div>
                           </div>
                         </div>
@@ -239,6 +240,11 @@ const AdminDashboard: React.FC = () => {
                         }`}>
                           {user.role === 'admin' ? t('users.roleAdmin') : user.role === 'moderator' ? t('users.roleModerator') : t('users.roleUser')}
                         </span>
+                        {user.therapist_verified_at && (
+                          <span className="ml-1 inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#e8efff] text-[#4785ff]">
+                            {t('users.roleTherapist')}
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

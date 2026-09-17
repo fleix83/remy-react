@@ -9,7 +9,8 @@
     "all": "All",
     "posts": "Posts",
     "comments": "Comments",
-    "therapists": "Therapists"
+    "therapists": "Therapists",
+    "claims": "Profile requests"
   },
   "contentType": {
     "post": "Post",
@@ -132,5 +133,34 @@
     "delete": "Delete",
     "reject": "Reject",
     "publish": "Publish"
+  },
+  "claims": {
+    "pendingCount": "profile requests awaiting review",
+    "emptyTitle": "No open profile requests",
+    "emptyBody": "All therapist requests have been handled.",
+    "loadError": "Profile requests could not be loaded.",
+    "candidatesError": "Suggestions could not be loaded.",
+    "requestedOn": "Requested on {{date}}",
+    "hinName": "HIN name",
+    "claimantCanton": "Account canton",
+    "conflictWarning": "This entry is already linked to another account. Check both accounts before linking.",
+    "candidates": "Suggested entries",
+    "loadingCandidates": "Loading suggestions …",
+    "noCandidates": "No matching entries found in the directory.",
+    "alreadyLinked": "already linked",
+    "searchPlaceholder": "Search another entry (name, institution) …",
+    "searching": "Searching …",
+    "noSearchResults": "No further matches.",
+    "link": "Link",
+    "createNew": "Create new profile",
+    "reject": "Reject",
+    "confirmReject": "Confirm rejection",
+    "rejectPlaceholder": "Reason for rejection (optional, shared with the person) …",
+    "toast": {
+      "linked": "Profile linked.",
+      "created": "New profile created and linked.",
+      "rejected": "Request rejected.",
+      "error": "The request could not be processed."
+    }
   }
 }
