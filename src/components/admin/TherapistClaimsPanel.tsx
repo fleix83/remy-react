@@ -13,6 +13,8 @@ interface TherapistClaimsPanelProps {
   /** Bump to force a reload (e.g. from a realtime event). */
   refreshKey?: number
   onCountChange?: (count: number) => void
+  /** Render nothing instead of the empty-state card (used when embedded in the "Alle" view). */
+  hideEmpty?: boolean
 }
 
 /** Candidate row shape shared by RPC candidates and free-text search hits. */
@@ -51,7 +53,7 @@ const searchToRow = (t: TherapistWithDesignation): CandidateRow => ({
  * (suggested or searched) and link it, create a fresh row from the verified
  * HIN name, or reject with a note.
  */
-const TherapistClaimsPanel: React.FC<TherapistClaimsPanelProps> = ({ refreshKey = 0, onCountChange }) => {
+const TherapistClaimsPanel: React.FC<TherapistClaimsPanelProps> = ({ refreshKey = 0, onCountChange, hideEmpty = false }) => {
   const { t } = useTranslation('moderation')
   const lang = useActiveLanguage()
   const [claims, setClaims] = useState<PendingClaim[]>([])
@@ -85,6 +87,14 @@ const TherapistClaimsPanel: React.FC<TherapistClaimsPanelProps> = ({ refreshKey 
       month: '2-digit',
       year: 'numeric',
     })
+  }
+
+  if (loading && hideEmpty) {
+    return null
+  }
+
+  if (claims.length === 0 && hideEmpty) {
+    return null
   }
 
   if (loading) {

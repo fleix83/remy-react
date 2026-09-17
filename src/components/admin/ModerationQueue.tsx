@@ -663,7 +663,11 @@ const ModerationQueue: React.FC = () => {
             <h1 className="text-2xl font-bold text-[var(--primary)] mb-2 text-left">{t('title')}</h1>
             <p className="text-[var(--primary)] text-left flex items-center gap-2">
               <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-sm" style={{fontSize: '22px', color: '#fa8072'}}>
-                {contentFilter === 'anfragen' ? claimsCount : filteredQueueItems.length}
+                {contentFilter === 'anfragen'
+                  ? claimsCount
+                  : contentFilter === 'alle'
+                    ? filteredQueueItems.length + claimsCount
+                    : filteredQueueItems.length}
               </span>
               {contentFilter === 'anfragen' ? t('claims.pendingCount') : t('pendingCount')}
             </p>
@@ -726,10 +730,17 @@ const ModerationQueue: React.FC = () => {
           </div>
         )}
 
+        {/* Therapist profile requests also surface in "Alle" so they are never missed */}
+        {contentFilter === 'alle' && (
+          <div className={claimsCount > 0 ? 'mb-4' : ''}>
+            <TherapistClaimsPanel refreshKey={claimsVersion} onCountChange={setClaimsCount} hideEmpty />
+          </div>
+        )}
+
         {/* Queue Items */}
         {contentFilter === 'anfragen' ? (
           <TherapistClaimsPanel refreshKey={claimsVersion} onCountChange={setClaimsCount} />
-        ) : filteredQueueItems.length === 0 ? (
+        ) : filteredQueueItems.length === 0 && !(contentFilter === 'alle' && claimsCount > 0) ? (
           <div className="bg-[#fff9e2] p-8 text-center shadow-[0_2px_12px_rgba(20,66,32,0.05)]" style={{borderRadius: '20px'}}>
             <div className="text-[#1f9d57] mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
