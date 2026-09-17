@@ -52,12 +52,13 @@ const CTA_SQUARES = [
   { left: '95%', bottom: 10, size: 14, rot: -14, color: '#BCFFBB' },
 ]
 
-// Checklist row icons (masks / flag / bookmark), exported 1:1 from the mockup —
-// rendered at their intrinsic sizes, one per row in CMS order.
+// Checklist row icons (masks / flag / bookmark), colour variants: the mockup
+// glyphs at 1:1 with a 14px confetti margin on every side — rendered at their
+// intrinsic sizes, one per row in CMS order.
 const CHECKLIST_ICONS = [
-  { src: '/assets/icon-masks.svg', w: 47, h: 54 },
-  { src: '/assets/icon-flag.svg', w: 46, h: 49 },
-  { src: '/assets/icon-bookmark.svg', w: 34, h: 53 },
+  { src: '/assets/icon-masks-color.svg', w: 75, h: 82 },
+  { src: '/assets/icon-flag-color.svg', w: 74, h: 77 },
+  { src: '/assets/icon-bookmark-color.svg', w: 62, h: 81 },
 ]
 
 function App() {

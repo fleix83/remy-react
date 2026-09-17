@@ -151,10 +151,11 @@
 .landing-about-checklist li:last-child {
   border-bottom: 5px dotted #fcf8d3;
 }
-/* Fixed-width column as wide as the widest icon (masks, 47px) so the three
-   different icon widths share one centre line, per the mockup. */
+/* Fixed-width column as wide as the widest icon (masks, 75px incl. its 14px
+   confetti margin) so the three different icon widths share one centre line,
+   per the mockup. */
 .landing-check-icon {
-  width: 47px;
+  width: 75px;
   display: flex;
   justify-content: center;
   flex-shrink: 0;
