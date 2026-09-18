@@ -621,6 +621,8 @@ function AuthForm() {
                         lineHeight: 1.4
                       }}>
                         {tAuth('register.therapistHint')}
+                        <br />
+                        <strong>{tAuth('register.therapistAnonymityWarning')}</strong>
                       </p>
                     )}
                   </div>
@@ -789,6 +791,8 @@ function AuthForm() {
                     lineHeight: 1.4
                   }}>
                     {tAuth('register.therapistHint')}
+                    <br />
+                    <strong>{tAuth('register.therapistAnonymityWarning')}</strong>
                   </p>
                 )}
               </div>

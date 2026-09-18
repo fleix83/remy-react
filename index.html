@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fonts via <link>, not CSS @import: Chrome ignores @font-face from an
+         @import inside the <style> element Vite injects in dev, so fonts only
+         worked in the production build. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&family=Nunito+Sans:opsz,wght@6..12,200..1000&family=Gaegu:wght@300;400;700&family=Quicksand:wght@300..700&display=swap" />
     <title>Remy – Forum für Menschen in Psychotherapie</title>
     <meta name="description" content="Auf Remy tauschst du dich anonym über deine Erfahrungen in der Psychotherapie aus – sicher, moderiert und unabhängig. Eine Patienteninitiative für die Schweiz." data-seo-static />
     <meta property="og:type" content="website" data-seo-static />

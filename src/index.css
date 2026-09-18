@@ -1,7 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&family=Nunito+Sans:opsz,wght@6..12,200..1000&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+/* Web fonts (Nunito, Nunito Sans, Gaegu, Quicksand) are loaded via <link> in index.html. */
 
 /* Gaegu has no accented-Latin glyphs (é/è/É/È). These patched faces supply just
    those four — composed from Gaegu's own apostrophe stroke — and are used as a
