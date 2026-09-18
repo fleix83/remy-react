@@ -1,4 +1,4 @@
-import{j as e,r as f}from"./tiptap-JZuwL1eq.js";import{s as g,u as O,a as se,U as X,G as me,H as le,L as J,i as re,t as w,T as pe,d as ue,m as ze,D as Ae,l as Ie,P as We,e as ce}from"./index-CZhkI-3p.js";import{therapistClaimsService as te}from"./therapist-claims.service-B7I3LLmI.js";import"./react-query-JJeSt3gM.js";import"./supabase-Dqtg7jh3.js";import"./date-CFKxcAVG.js";class Fe{async getPendingContent(){const{data:r,error:a}=await g.from("posts").select(`
+import{j as e,r as f}from"./tiptap-JZuwL1eq.js";import{s as g,u as O,a as se,U as X,G as me,H as le,L as J,i as re,t as w,T as pe,d as ue,m as ze,D as Ae,l as Ie,P as We,e as ce}from"./index-D13Sbatf.js";import{therapistClaimsService as te}from"./therapist-claims.service-8a0SskGp.js";import"./react-query-JJeSt3gM.js";import"./supabase-Dqtg7jh3.js";import"./date-CFKxcAVG.js";class Fe{async getPendingContent(){const{data:r,error:a}=await g.from("posts").select(`
         *,
         users!posts_user_id_fkey(id, username, role, avatar_url, therapist_verified_at),
         categories!inner(id, name_de, name_fr, name_it),
