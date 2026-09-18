@@ -243,9 +243,9 @@ function AuthForm() {
   // switch in JS — CSS can't pick it, and rendering both would download ~110 KB
   // of animation twice.
   const isDesktop = useMediaQuery('(min-width: 768px)')
-  // Mobile renders the register view as its own login-style screen (REMY title,
-  // subtitle, labelled fields) instead of the inline hero form desktop keeps.
-  const mobileRegister = showRegisterForm && !registrationComplete && !isDesktop
+  // The register view is its own login-style screen (REMY title, subtitle,
+  // labelled fields, no figures) at every width — same layout as the login.
+  const registerScreen = showRegisterForm && !registrationComplete
 
   // Per-language tagline tuning so the two `\n` lines never wrap further on
   // mobile. Font size is untouched; only tracking/word-spacing is eased, and
@@ -418,9 +418,9 @@ function AuthForm() {
       )}
 
       <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
-        {/* Welcome Text - Matching mockup exactly (mobile register swaps this
-            whole block — top-bar logo included — for its own screen below) */}
-        {!showLoginForm && !mobileRegister && (
+        {/* Welcome Text - Matching mockup exactly (the register screen swaps
+            this whole block — top-bar logo included — for its own screen below) */}
+        {!showLoginForm && !registerScreen && (
           <div style={{
             display: 'flex',
             flexDirection: 'column',
@@ -539,131 +539,6 @@ function AuthForm() {
                 </>
               )}
 
-              {/* Inline Registration Form */}
-              {showRegisterForm && !registrationComplete && (
-                <form ref={formRef} onSubmit={handleRegister} onClick={(e) => e.stopPropagation()} style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  width: '100%',
-                  gap: '12px'
-                }}>
-                  <p style={{
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    color: 'rgb(84, 130, 255)',
-                    marginBottom: '-9px',
-                    width: '65vw',
-                    maxWidth: '360px',
-                    textAlign: 'left',
-                    position: 'relative',
-                    left: '8px'
-                  }}>
-                    {landing.hero.registerPrompt}
-                  </p>
-                  <div style={{ width: '65vw', maxWidth: '360px' }}>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      className="px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
-                      style={{ width: '100%', fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
-                      placeholder="E-Mail"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-
-                  <div style={{ width: '65vw', maxWidth: '360px' }}>
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      autoComplete="new-password"
-                      required
-                      className="px-4 py-3 rounded-xl focus:outline-none focus:ring-2 bg-white"
-                      style={{ width: '100%', fontSize: '16px', border: '1.5px solid rgb(84, 130, 255)' }}
-                      placeholder="Passwort"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </div>
-
-                  <div style={{ width: '65vw', maxWidth: '360px', textAlign: 'left' }}>
-                    <label style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontFamily: '"Nunito Sans", sans-serif',
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      color: 'rgb(84, 130, 255)',
-                      cursor: 'pointer'
-                    }}>
-                      <input
-                        type="checkbox"
-                        name="isTherapist"
-                        checked={isTherapist}
-                        onChange={(e) => setIsTherapist(e.target.checked)}
-                        style={{ width: '16px', height: '16px', accentColor: 'rgb(84, 130, 255)', cursor: 'pointer' }}
-                      />
-                      {tAuth('register.therapistCheckbox')}
-                    </label>
-                    {isTherapist && (
-                      <p style={{
-                        fontFamily: '"Nunito Sans", sans-serif',
-                        fontSize: '12px',
-                        color: 'rgb(84, 130, 255)',
-                        marginTop: '4px',
-                        lineHeight: 1.4
-                      }}>
-                        {tAuth('register.therapistHint')}
-                        <br />
-                        <strong>{tAuth('register.therapistAnonymityWarning')}</strong>
-                      </p>
-                    )}
-                  </div>
-
-                  {message && (
-                    <div
-                      className={`rounded-lg p-3 text-sm ${
-                        isError
-                          ? 'bg-red-50 border border-red-200 text-red-700'
-                          : 'bg-green-50 border border-green-200 text-green-700'
-                      }`}
-                      style={{ width: '65vw', maxWidth: '360px' }}
-                    >
-                      {message}
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    style={{
-                      width: '65vw',
-                      maxWidth: '360px',
-                      padding: '14px 28px',
-                      backgroundColor: 'rgb(84, 130, 255)',
-                      color: 'white',
-                      fontFamily: '"Nunito Sans", sans-serif',
-                      fontSize: '20px',
-                      fontWeight: 600,
-                      borderRadius: '25px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: '0.2s',
-                      opacity: loading ? 0.5 : 1
-                    }}
-                  >
-                    {loading ? 'Loading...' : landing.hero.registerSubmit}
-                  </button>
-                </form>
-              )}
-
               {/* Login link - hide after registration complete */}
               {!registrationComplete && (
                 <div className="landing-login-link" style={{ textAlign: 'center', marginTop: '16px', background: 'transparent' }}>
@@ -698,10 +573,9 @@ function AuthForm() {
           </div>
         )}
 
-        {/* Mobile register screen — mirrors the login screen: REMY title +
-            subtitle, labelled fields, no top-bar logo, no figures. Desktop
-            keeps the inline hero form above. */}
-        {mobileRegister && (
+        {/* Register screen — mirrors the login screen: REMY title + subtitle,
+            labelled fields, no top-bar logo, no figures (all widths). */}
+        {registerScreen && (
           <div style={{
             display: 'flex',
             flexDirection: 'column',
