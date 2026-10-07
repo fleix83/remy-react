@@ -133,30 +133,28 @@
 .landing-about-checklist {
   list-style: none;
   margin: 0 -34px;
-  padding: 104px 34px 96px;
+  padding: 69px 34px 61px;
   background: #dde7ff;
   display: flex;
   flex-direction: column;
 }
-/* Pale-blue dotted rules between the rows and at both ends: every row draws
-   the line above itself, the last one also below; the 55px vertical padding is
-   the breathing room on each side of a line. */
+/* No rules between the rows — the 90px vertical padding alone spaces them
+   (180px between rows; the three rows still span ~580px, about one phone
+   screen). The band's own top/bottom padding is trimmed by the same 35px so
+   the gaps to the intro copy and the CTA stay unchanged.
+   The 31px left padding keeps the icons where they sat when they still
+   carried a 14px confetti margin. */
 .landing-about-checklist li {
   display: flex;
   align-items: center;
   gap: 22px;
-  padding: 55px 22px 55px 17px;
+  padding: 90px 22px 90px 31px;
   text-align: left;
-  border-top: 5px dotted #cfdfff;
 }
-.landing-about-checklist li:last-child {
-  border-bottom: 5px dotted #cfdfff;
-}
-/* Fixed-width column as wide as the widest icon (masks, 75px incl. its 14px
-   confetti margin) so the three different icon widths share one centre line,
-   per the mockup. */
+/* Fixed-width column as wide as the widest icon (masks, 47px) so the three
+   different icon widths share one centre line, per the mockup. */
 .landing-check-icon {
-  width: 75px;
+  width: 47px;
   display: flex;
   justify-content: center;
   flex-shrink: 0;
@@ -173,36 +171,12 @@
    (same elements as the hero), placed under the checklist as its own
    full-bleed band. The -34px horizontal margin breaks out of the about
    px-6 (24px) + about-text (10px) insets; padding puts the copy back at 34px.
-   Gradient picks up the checklist band's #dde7ff and cools into the grey the
-   mobile footer sits on; the tall bottom padding is the confetti zone. */
+   Mobile overrides the padding + background (white → footer blue fade). */
 .landing-about-cta {
   position: relative;
   margin: 0 -34px;
   padding: 56px 34px 174px;
   background: linear-gradient(180deg, #dde7ff, 83%, #eee);
-}
-/* Confetti squares in the hero animation's palette, scattered across the
-   band's bottom zone to mark the page running out toward the footer.
-   Decorative only: clipped to the band, click-through, and drifting with the
-   hero's slow idle float (positions/rotations come from CTA_SQUARES in
-   App.tsx). */
-.landing-cta-squares {
-  position: absolute;
-  /* The 34px bottom offset cancels the band's extra bottom padding (174 vs the
-     140 the square coordinates were placed against), so the squares keep their
-     position relative to the register row while the footer moves down. */
-  inset: 0 0 34px;
-  overflow: hidden;
-  pointer-events: none;
-}
-.landing-cta-squares span {
-  position: absolute;
-  transform: rotate(var(--sq-rot, 0deg));
-  animation: landing-sq-float 8s ease-in-out infinite;
-}
-@keyframes landing-sq-float {
-  0%, 100% { transform: translate(0, 0) rotate(var(--sq-rot, 0deg)); }
-  50% { transform: translate(5px, -8px) rotate(calc(var(--sq-rot, 0deg) + 6deg)); }
 }
 .landing-about-cta-row {
   display: flex;
@@ -221,8 +195,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .landing-tag,
-  .landing-cta,
-  .landing-cta-squares span {
+  .landing-cta {
     animation: none !important;
   }
 }
@@ -241,9 +214,13 @@
     color: #ffffff;
   }
 
+  /* Hero fades out into the white sections below (mockup stops: #c8d7ff
+     100% → #e3ebff 50% at 90% → white 0%), laid over a white base. */
   .landing-hero {
     height: 100svh !important;
-    background: linear-gradient(180deg, #c8d7ff 0%, #e5ecff 100%) !important;
+    background:
+      linear-gradient(180deg, #c8d7ff 0%, rgba(227, 235, 255, 0.5) 90%, rgba(255, 255, 255, 0) 100%),
+      #ffffff !important;
   }
 
   /* Claim lines next to the REMY wordmark */
@@ -342,15 +319,46 @@
     margin-bottom: auto;
   }
 
-  /* Text section: gradient continues from the hero and settles on the
-     checklist band's #dde7ff by the time the intro copy ends (fixed 500px
-     stop, then flat), so the band reads as its own section without a seam.
+  /* Text section: flat white — the hero's own fade carries the transition.
      No bottom padding so the CTA band runs straight into the footer (no
      white gap); the band's own bottom padding provides the spacing. */
   .landing-about {
     padding-top: 56px;
     padding-bottom: 0;
-    background: linear-gradient(180deg, #e5ecff 0%, #dde7ff 500px) !important;
+    background: #ffffff !important;
+  }
+  /* Checklist band on white, with soft #5482ff clouds drifting behind the
+     rows — asymmetric but balanced: one behind the masks (left), one off
+     to the right of "moderiert", one under the bookmark (left), plus two
+     faint wide washes at the edges. Each cloud is two offset ellipses so it
+     reads as a soft lump rather than a perfect circle. Pure background
+     layers: no extra DOM, no filter/blur cost. */
+  .landing-about-checklist {
+    background:
+      radial-gradient(52.5% 13.8% at 22% 24%, rgba(84, 130, 255, 0.2), rgba(84, 130, 255, 0.07) 55%, rgba(84, 130, 255, 0) 100%),
+      radial-gradient(37.5% 10% at 33% 28%, rgba(84, 130, 255, 0.1), rgba(84, 130, 255, 0) 100%),
+      radial-gradient(50% 12.5% at 76% 50%, rgba(84, 130, 255, 0.18), rgba(84, 130, 255, 0.06) 55%, rgba(84, 130, 255, 0) 100%),
+      radial-gradient(35% 10% at 66% 46%, rgba(84, 130, 255, 0.08), rgba(84, 130, 255, 0) 100%),
+      radial-gradient(55% 13.8% at 28% 77%, rgba(84, 130, 255, 0.19), rgba(84, 130, 255, 0.07) 55%, rgba(84, 130, 255, 0) 100%),
+      radial-gradient(37.5% 10% at 16% 72%, rgba(84, 130, 255, 0.08), rgba(84, 130, 255, 0) 100%),
+      radial-gradient(37.5% 27.5% at 0% 38%, rgba(84, 130, 255, 0.06), rgba(84, 130, 255, 0) 100%),
+      radial-gradient(37.5% 25% at 100% 74%, rgba(84, 130, 255, 0.05), rgba(84, 130, 255, 0) 100%),
+      #ffffff;
+  }
+  /* CTA band: starts right under the checklist (the band's bottom padding +
+     the last row's is the gap), stays white behind the copy, then fades into the footer's blue
+     over the whole lower ~80% on a smootherstep curve, so the transition is
+     soft. Stops are interpolated in OKLab, so the mid-tones stay blue
+     (a plain sRGB white → navy blend goes grey-lavender; HSL glows). It is
+     long and has no visible start or end edge. The tall bottom padding
+     gives the fade room. */
+  .landing-about-cta {
+    padding-top: 0;
+    padding-bottom: 300px;
+    background: linear-gradient(180deg,
+      #ffffff 0%, #ffffff 22%, #fdfdfe 30%, #f0f4f9 38%, #d7dfee 45%,
+      #b1c1dd 53%, #879fc9 61%, #5e7cb5 69%, #3c60a3 77%,
+      #264c96 84%, #1b4390 92%, #19418f 100%);
   }
   .landing-about-snail {
     display: none;
@@ -377,9 +385,20 @@
     font-size: 24px !important;
     letter-spacing: 0 !important;
   }
-  /* Footer sits flat grey on mobile (desktop keeps its gradient). */
+  /* Footer sits flat on a deep shade of the theme blue on mobile (#5d8be8's
+     220° hue, darkened to 33% lightness to mark the end of the page) with
+     white type + logo (desktop keeps its grey gradient). The !importants beat the component's inline
+     grey colours and the logo's inline grayscale filter. */
   .landing-footer {
-    background: #eeeeee !important;
+    background: #19418f !important;
+  }
+  .landing-footer-claim,
+  .landing-footer-links,
+  .landing-footer-made {
+    color: #ffffff !important;
+  }
+  .landing-footer-logo {
+    filter: brightness(0) invert(1) !important;
   }
 
   /* Footer layout (mobile): everything stacks left-aligned per the mockup —
@@ -417,7 +436,6 @@
     font-size: 14px;
     line-height: 1;
     font-weight: 700;
-    color: #828282;
   }
 
   /* ==Marked== sentences get a flat yellow marker shade. Zero vertical padding
