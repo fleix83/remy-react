@@ -301,9 +301,10 @@ const CommunityGuidelinesPage: React.FC = () => {
         </div>
 
         {/* Onboarding: confirm reading → forum (username already chosen) or
-            back to the username form. */}
+            back to the username form. Right-aligned with the section rows
+            (px-2.5 = their p-2 padding + 2px border). */}
         {onboarding && !isEditMode && (
-          <div className="mt-12 flex justify-center">
+          <div className="mt-12 flex justify-end px-2.5">
             <button
               type="button"
               onClick={() => backToOnboarding(true)}
@@ -325,6 +326,8 @@ const CommunityGuidelinesPage: React.FC = () => {
           onLogout={handleSignOut}
         />
       )}
+      {/* Mint background fades into the blue footer */}
+      <div className="footer-fade-guidelines" aria-hidden="true" />
       <LandingFooter />
     </div>
   )

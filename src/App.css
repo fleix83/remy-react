@@ -319,6 +319,19 @@
   50% { transform: translateY(-8px); }
 }
 
+/* Fade from a page's background into the blue footer (#4b75e6), on the same
+   smootherstep / OKLab curve as the landing page's ending. This variant
+   starts from the community guidelines' mint background (#eefaf0); the
+   1px overlap hides a sub-pixel seam against the footer. */
+.footer-fade-guidelines {
+  height: clamp(200px, 22vw, 360px);
+  margin-bottom: -1px;
+  background: linear-gradient(180deg,
+    #eefaf0 0%, #ecf9f0 10%, #e4f3f0 20%, #d2e5f1 30%,
+    #b7d1f1 40%, #99b9ef 50%, #7ba1ed 60%, #638cea 70%,
+    #537de7 80%, #4c76e6 90%, #4b75e6 100%);
+}
+
 /* Desktop band above the footer that carries the deep-sea closer; hidden on
    mobile, where the closer sits inside the CTA band (desktop styles below). */
 .landing-deepsea-band {
