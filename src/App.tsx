@@ -39,13 +39,16 @@ const PublicProfile = lazy(() => import('./components/user/PublicProfile'))
 // the signup trigger re-checks the address server-side before verifying.
 export const HIN_PERSONAL_EMAIL_RE = /^[a-z]+(-[a-z]+)*(\.[a-z]+(-[a-z]+)*)+@hin\.ch$/i
 
-// Checklist row icons (masks / flag / bookmark): the plain blue mockup
-// glyphs, no confetti — rendered at their intrinsic sizes, one per row in CMS
-// order.
+// Checklist row icons (mask / flag / Swiss cross), drawn in the same
+// confetti squares as the hero and the submarine. The artworks have very
+// different aspect ratios (272×122, 232×242, 204×204), so each is sized for
+// equal visual weight rather than to one box: the wide mask gets the full
+// column width, the flag a bit less, and the solid cross the least. All sit
+// centred in the 88px .landing-check-icon column, one per row in CMS order.
 const CHECKLIST_ICONS = [
-  { src: '/assets/icon-masks.svg', w: 47, h: 54 },
-  { src: '/assets/icon-flag.svg', w: 46, h: 49 },
-  { src: '/assets/icon-bookmark.svg', w: 34, h: 53 },
+  { src: '/assets/sq-mask.svg', w: 88, h: 39 },
+  { src: '/assets/sq-flag.svg', w: 66, h: 69 },
+  { src: '/assets/sq-swiss.svg', w: 58, h: 58 },
 ]
 
 // Searchlight of the deep-sea submarine (mobile CTA band): #fff399 confetti

@@ -133,28 +133,35 @@
 .landing-about-checklist {
   list-style: none;
   margin: 0 -34px;
-  padding: 69px 34px 61px;
+  padding: 89px 34px 81px;
   background: #dde7ff;
   display: flex;
   flex-direction: column;
 }
-/* No rules between the rows — the 90px vertical padding alone spaces them
-   (180px between rows; the three rows still span ~580px, about one phone
-   screen). The band's own top/bottom padding is trimmed by the same 35px so
-   the gaps to the intro copy and the CTA stay unchanged.
-   The 31px left padding keeps the icons where they sat when they still
-   carried a 14px confetti margin. */
+/* No rules between the rows — the 70px vertical padding alone spaces them
+   (140px between rows; the three rows span ~500px, well within one phone
+   screen). The band's own top/bottom padding makes up the difference so the
+   gaps to the intro copy and the CTA stay unchanged.
+   No left padding: the 88px icon column + the 20px gap put the copy at
+   108px, close to where it has always sat (100px). */
 .landing-about-checklist li {
   display: flex;
   align-items: center;
-  gap: 22px;
-  padding: 90px 22px 90px 31px;
+  gap: 20px;
+  padding: 70px 22px 70px 0;
   text-align: left;
 }
-/* Fixed-width column as wide as the widest icon (masks, 47px) so the three
-   different icon widths share one centre line, per the mockup. */
+/* Gentle zig-zag instead of a rigid column: the middle row steps right
+   (towards the cloud behind "moderiert"), the outer rows sit slightly left
+   and slightly right of the base line, so the stack stays balanced around
+   its centre. */
+.landing-about-checklist li:nth-child(1) { margin-left: -6px; }
+.landing-about-checklist li:nth-child(2) { margin-left: 30px; }
+.landing-about-checklist li:nth-child(3) { margin-left: 10px; }
+/* Fixed-width column as wide as the widest icon (the mask, 88px) so the
+   three different icon widths share one centre line. */
 .landing-check-icon {
-  width: 47px;
+  width: 88px;
   display: flex;
   justify-content: center;
   flex-shrink: 0;
@@ -399,9 +406,9 @@
     padding-top: 0;
     padding-bottom: 340px;
     background: linear-gradient(180deg,
-      #ffffff 0%, #ffffff 22%, #fdfdfe 30%, #f0f4f9 38%, #d7dfee 45%,
-      #b1c1dd 53%, #879fc9 61%, #5e7cb5 69%, #3c60a3 77%,
-      #264c96 84%, #1b4390 92%, #19418f 100%);
+      #ffffff 0%, #ffffff 22%, #fdfeff 30%, #f4f7fe 38%, #e0e9fd 45%,
+      #c3d4fb 53%, #a2bcf6 61%, #81a3f1 69%, #668dec 77%,
+      #557ee8 84%, #4c76e6 92%, #4b75e6 100%);
   }
   .landing-about-snail {
     display: none;
@@ -428,12 +435,11 @@
     font-size: 24px !important;
     letter-spacing: 0 !important;
   }
-  /* Footer sits flat on a deep shade of the theme blue on mobile (#5d8be8's
-     220° hue, darkened to 33% lightness to mark the end of the page) with
+  /* Footer sits flat on a saturated theme blue (#4b75e6) on mobile with
      white type + logo (desktop keeps its grey gradient). The !importants beat the component's inline
      grey colours and the logo's inline grayscale filter. */
   .landing-footer {
-    background: #19418f !important;
+    background: #4b75e6 !important;
   }
   .landing-footer-claim,
   .landing-footer-links,
