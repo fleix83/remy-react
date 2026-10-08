@@ -356,6 +356,9 @@ function AuthForm() {
   // The register view is its own login-style screen (REMY title, subtitle,
   // labelled fields, no figures) at every width — same layout as the login.
   const registerScreen = showRegisterForm && !registrationComplete
+  // "Check your inbox" screen after a successful sign-up — replaces the hero
+  // (logo, tagline, figures) entirely, like the register screen does.
+  const registeredScreen = showRegisterForm && registrationComplete
   const isDesktop = useMediaQuery('(min-width: 768px)')
   // Deep-sea closer (confetti submarine + yellow searchlight), shown at the
   // bottom of the mobile CTA band and in its own band above the desktop footer.
@@ -583,7 +586,7 @@ function AuthForm() {
       <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Welcome Text - Matching mockup exactly (the register screen swaps
             this whole block — top-bar logo included — for its own screen below) */}
-        {!showLoginForm && !registerScreen && (
+        {!showLoginForm && !registerScreen && !registeredScreen && (
           <div className="landing-hero-body" style={{
             display: 'flex',
             flexDirection: 'column',
@@ -908,27 +911,19 @@ function AuthForm() {
         )}
 
         {/* Registration Complete - Email Confirmation Required */}
-        {showRegisterForm && registrationComplete && (
-          <div className="text-center space-y-6" style={{ marginBottom: '30px' }}>
-            <div className="text-6xl mb-4" style={{ color: '#4785ff' }}>✓</div>
-
-            <div className="rounded-lg p-6">
-              <p className="text-lg font-medium mb-2" style={{ color: '#144220' }}>
-                {landing.registrationComplete.title}
-              </p>
-              <p className="text-base" style={{ color: '#144220' }}>
-                {landing.registrationComplete.body}
-              </p>
-            </div>
-
-            <div className="text-sm" style={{ color: '#144220' }}>
-              <p>{landing.registrationComplete.hint}</p>
-              <br />
-              <button
-                onClick={handleLoginClick}
-                className="font-body text-[16px] underline font-medium"
-                style={{ color: 'var(--primary)', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
-              >
+        {registeredScreen && (
+          <div className="landing-registered">
+            <div className="landing-registered-card" role="status">
+              {/* Hand-drawn-feel checkmark in a soft blue disc */}
+              <div className="landing-registered-check" aria-hidden="true">
+                <svg viewBox="0 0 64 64" fill="none">
+                  <path d="M18 33.5 L28 43 L47 22" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <h2 className="landing-registered-title">{landing.registrationComplete.title}</h2>
+              <p className="landing-registered-body">{landing.registrationComplete.body}</p>
+              <p className="landing-registered-hint">{landing.registrationComplete.hint}</p>
+              <button type="button" className="landing-registered-login" onClick={handleLoginClick}>
                 {landing.registrationComplete.loginLabel}
               </button>
             </div>

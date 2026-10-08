@@ -17,9 +17,11 @@
 
   # --- Security headers (added 2026-07 review) -----------------------------
   # CSP: no inline/remote scripts. connect/img allow the Supabase backend +
-  # storage + realtime websocket. Fonts are self-hosted (src/fonts.css,
+  # storage + realtime websocket. worker-src allows blob: workers — heic2any
+  # (iOS HEIC → JPEG avatar conversion) builds its worker from a blob: URL;
+  # without it the worker falls back to script-src and is refused. Fonts are self-hosted (src/fonts.css,
   # public/fonts/), so style/font stay 'self' — no visitor IPs go to Google.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 
   Header always set X-Frame-Options "DENY"
   Header always set X-Content-Type-Options "nosniff"

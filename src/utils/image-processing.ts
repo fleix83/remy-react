@@ -9,7 +9,10 @@
  * - Files selected from iOS Files app (raw HEIC that browser can't decode)
  */
 
-import heic2any from 'heic2any'
+// heic2any is loaded on demand inside convertHeicToJpeg: it spawns a blob:
+// Web Worker as soon as its module evaluates, so a static import pulls that
+// into whatever chunk imports this file — and if that worker is blocked
+// (CSP), the throw happens at module load and takes the whole app down.
 
 export interface ProcessedImage {
   file: File
@@ -82,6 +85,7 @@ async function convertHeicToJpeg(file: File, quality: number = 0.9): Promise<Fil
   console.log('Converting HEIC to JPEG using heic2any...')
   
   try {
+    const { default: heic2any } = await import('heic2any')
     const result = await heic2any({
       blob: file,
       toType: 'image/jpeg',

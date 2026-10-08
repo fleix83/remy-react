@@ -99,6 +99,97 @@
   display: none;
 }
 
+/* Sign-up done ("check your inbox"): one card centred in the hero at every
+   width — blue disc with a drawn-in checkmark, title, copy, login link. */
+.landing-registered {
+  flex: 1;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.landing-registered-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 44px 32px 36px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 40px rgba(71, 133, 255, 0.14);
+  text-align: center;
+  animation: landing-registered-in 0.45s ease-out both;
+}
+.landing-registered-check {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5ecff;
+  color: #4785ff;
+  box-shadow: 0 0 0 10px rgba(229, 236, 255, 0.5);
+}
+.landing-registered-check svg {
+  width: 52px;
+  height: 52px;
+}
+.landing-registered-check path {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: landing-registered-draw 0.5s 0.3s ease-out forwards;
+}
+.landing-registered-title {
+  margin: 0 0 12px;
+  font-family: 'Gaegu', 'Gaegu Accents', cursive;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.15;
+  color: #4785ff;
+}
+.landing-registered-body {
+  margin: 0 0 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 17px;
+  line-height: 1.45;
+  color: #2b3a55;
+}
+.landing-registered-hint {
+  margin: 0 0 24px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #6b7a96;
+}
+.landing-registered-login {
+  display: inline-block;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 9999px;
+  background: #4785ff;
+  color: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-out;
+}
+.landing-registered-login:hover {
+  background: #3a74ee;
+}
+@keyframes landing-registered-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes landing-registered-draw {
+  to { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-registered-card { animation: none; }
+  .landing-registered-check path { animation: none; stroke-dashoffset: 0; }
+}
+
 /* Hero subtitle under the tagline: desktop only (styled in the desktop
    block below). */
 .landing-subtitle {
