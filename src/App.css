@@ -193,9 +193,52 @@
   50% { transform: translateY(-8px); }
 }
 
+/* Deep-sea closer at the bottom of the mobile CTA band (the band is
+   hidden on desktop, so this is mobile-only). The confetti submarine sits in
+   the dark end of the white → footer-blue fade, nose to the left, its
+   searchlight a cone of yellow confetti squares (SUB_BEAM_SQUARES in App.tsx)
+   reaching ahead. Decorative, click-through, transform-only animation.
+   Positions in .landing-sub are % of the 340×316 artwork: nose ≈ (6%, 71%). */
+.landing-deepsea {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 300px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.landing-sub {
+  position: absolute;
+  right: 6%;
+  bottom: 18px;
+  width: 200px;
+  animation: landing-sub-bob 7s ease-in-out infinite;
+}
+.landing-sub img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.landing-sub-beam {
+  position: absolute;
+  right: 94%;
+  top: 71%;
+  width: 150px;
+  height: auto;
+  aspect-ratio: 160 / 100;
+  transform: translateY(-50%);
+  overflow: visible;
+}
+@keyframes landing-sub-bob {
+  0%, 100% { transform: translate(0, 0) rotate(-1deg); }
+  50% { transform: translate(-6px, -7px) rotate(1deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-tag,
-  .landing-cta {
+  .landing-cta,
+  .landing-sub {
     animation: none !important;
   }
 }
@@ -351,10 +394,10 @@
      soft. Stops are interpolated in OKLab, so the mid-tones stay blue
      (a plain sRGB white → navy blend goes grey-lavender; HSL glows). It is
      long and has no visible start or end edge. The tall bottom padding
-     gives the fade room. */
+     gives the fade room and holds the deep-sea submarine scene. */
   .landing-about-cta {
     padding-top: 0;
-    padding-bottom: 300px;
+    padding-bottom: 340px;
     background: linear-gradient(180deg,
       #ffffff 0%, #ffffff 22%, #fdfdfe 30%, #f0f4f9 38%, #d7dfee 45%,
       #b1c1dd 53%, #879fc9 61%, #5e7cb5 69%, #3c60a3 77%,

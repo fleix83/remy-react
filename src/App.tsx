@@ -48,6 +48,52 @@ const CHECKLIST_ICONS = [
   { src: '/assets/icon-bookmark.svg', w: 34, h: 53 },
 ]
 
+// Searchlight of the deep-sea submarine (mobile CTA band): #fff399 confetti
+// squares scattered in a cone that opens leftwards from the nose (apex at the
+// right edge, x=160 y=50 of a 160×100 box), bigger near the sub, smaller and
+// slightly fainter with distance (opacity stays ≥ 0.45 so the yellow never
+// muddies to grey on the blue). Rendered by .landing-sub-beam (App.css).
+const SUB_BEAM_SQUARES = [
+  { x: 5.3, y: 4.9, s: 3.0, o: 0.45, r: 18 },
+  { x: 5.6, y: 81.9, s: 3.8, o: 0.45, r: 2 },
+  { x: 7.2, y: 14.3, s: 2.9, o: 0.46, r: 16 },
+  { x: 7.6, y: 64.5, s: 3.9, o: 0.46, r: -10 },
+  { x: 9.9, y: 73.6, s: 3.0, o: 0.47, r: -3 },
+  { x: 15.8, y: 28.5, s: 2.9, o: 0.49, r: 1 },
+  { x: 18.5, y: 82.1, s: 3.6, o: 0.5, r: -17 },
+  { x: 25.1, y: 59.5, s: 3.5, o: 0.52, r: -5 },
+  { x: 28.0, y: 40.5, s: 4.0, o: 0.53, r: 2 },
+  { x: 33.2, y: 82.5, s: 3.8, o: 0.55, r: 12 },
+  { x: 37.0, y: 42.4, s: 4.7, o: 0.57, r: 6 },
+  { x: 38.1, y: 51.0, s: 3.4, o: 0.57, r: 18 },
+  { x: 38.6, y: 27.5, s: 3.7, o: 0.57, r: -4 },
+  { x: 43.9, y: 74.7, s: 4.5, o: 0.59, r: 2 },
+  { x: 44.6, y: 82.3, s: 3.9, o: 0.6, r: -8 },
+  { x: 45.2, y: 15.0, s: 4.2, o: 0.6, r: 13 },
+  { x: 47.0, y: 47.0, s: 4.3, o: 0.6, r: 16 },
+  { x: 49.7, y: 38.8, s: 4.1, o: 0.61, r: -18 },
+  { x: 57.0, y: 71.5, s: 3.8, o: 0.64, r: -16 },
+  { x: 60.9, y: 43.5, s: 4.5, o: 0.66, r: -8 },
+  { x: 64.2, y: 27.6, s: 4.5, o: 0.67, r: 10 },
+  { x: 72.8, y: 36.3, s: 5.2, o: 0.7, r: 7 },
+  { x: 81.4, y: 43.2, s: 4.3, o: 0.73, r: -10 },
+  { x: 81.5, y: 53.1, s: 5.7, o: 0.73, r: 11 },
+  { x: 81.6, y: 68.1, s: 4.5, o: 0.73, r: 14 },
+  { x: 82.4, y: 31.9, s: 5.1, o: 0.73, r: -16 },
+  { x: 91.3, y: 30.6, s: 4.8, o: 0.77, r: -3 },
+  { x: 91.9, y: 53.8, s: 5.4, o: 0.77, r: -13 },
+  { x: 100.3, y: 53.7, s: 4.9, o: 0.8, r: -4 },
+  { x: 102.6, y: 39.3, s: 5.6, o: 0.81, r: -6 },
+  { x: 102.9, y: 61.4, s: 4.7, o: 0.81, r: -10 },
+  { x: 112.1, y: 34.6, s: 5.3, o: 0.84, r: 15 },
+  { x: 118.2, y: 62.6, s: 5.7, o: 0.87, r: 7 },
+  { x: 121.3, y: 42.6, s: 5.1, o: 0.88, r: 11 },
+  { x: 123.3, y: 51.6, s: 5.8, o: 0.88, r: -6 },
+  { x: 136.1, y: 60.1, s: 5.7, o: 0.93, r: -2 },
+  { x: 141.9, y: 41.6, s: 6.5, o: 0.95, r: -5 },
+  { x: 154.8, y: 53.7, s: 7.3, o: 1.0, r: 1 },
+]
+
 function App() {
   const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
   const { user, userProfile, loading, completeOnboarding, checkUsernameAvailable } = useAuthStore()
@@ -939,6 +985,27 @@ function AuthForm() {
               <button className="landing-cta landing-about-cta-btn" onClick={handleRegisterClick}>
                 {landing.about.cta.button}
               </button>
+            </div>
+            {/* Deep-sea closer: the confetti submarine bobbing in the dark end
+                of the fade, its searchlight a cone of yellow squares ahead. */}
+            <div className="landing-deepsea" aria-hidden="true">
+              <div className="landing-sub">
+                <svg className="landing-sub-beam" viewBox="0 0 160 100">
+                  {SUB_BEAM_SQUARES.map((q, i) => (
+                    <rect
+                      key={i}
+                      x={q.x - q.s / 2}
+                      y={q.y - q.s / 2}
+                      width={q.s}
+                      height={q.s}
+                      fill="#fff399"
+                      opacity={q.o}
+                      transform={`rotate(${q.r} ${q.x} ${q.y})`}
+                    />
+                  ))}
+                </svg>
+                <img src="/assets/submarine_v3.svg" alt="" width={340} height={316} loading="lazy" decoding="async" />
+              </div>
             </div>
           </div>
         )}
