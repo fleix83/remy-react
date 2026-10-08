@@ -78,6 +78,14 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
             <CmsField key={i} label={`Slogan-Wort ${i + 1} (Desktop)`} value={word} onChange={(v) => setWord(i, v)} />
           ))}
         </div>
+        <CmsField
+          label="Untertitel unter dem Slogan (Desktop)"
+          value={draft.hero.subtitle ?? ''}
+          onChange={(v) => setHero({ subtitle: v })}
+          multiline
+          rows={2}
+          hint="Zeilenumbruch = neue Zeile."
+        />
         <CmsField label="Button (Registrieren öffnen)" value={draft.hero.ctaLabel} onChange={(v) => setHero({ ctaLabel: v })} />
         <CmsField label="Hinweis über dem Formular" value={draft.hero.registerPrompt} onChange={(v) => setHero({ registerPrompt: v })} />
         <CmsField label="Absende-Button (Registrieren)" value={draft.hero.registerSubmit} onChange={(v) => setHero({ registerSubmit: v })} />
@@ -129,6 +137,11 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
             hint={'Das Wort „Remy" wird auf Desktop automatisch kursiv dargestellt. ==Text== erhält auf Mobile eine gelbe Markierung.'}
           />
         ))}
+        <CmsField
+          label="Titel über dem Text (Desktop)"
+          value={draft.about.title ?? ''}
+          onChange={(v) => setDraft((d) => ({ ...d, about: { ...d.about, title: v } }))}
+        />
         {(draft.about.checklist ?? []).map((item, i) => (
           <CmsField
             key={`check-${i}`}
@@ -136,6 +149,21 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
             value={item}
             onChange={(v) => setChecklistItem(i, v)}
             hint={i === 0 ? 'Mit gelbem Häkchen (mobil, unter dem Textabschnitt).' : undefined}
+          />
+        ))}
+        {(draft.about.notes ?? []).map((note, i) => (
+          <CmsField
+            key={`note-${i}`}
+            label={`Absatz ${i + 1} unter der Checkliste`}
+            value={note}
+            onChange={(v) =>
+              setDraft((d) => ({
+                ...d,
+                about: { ...d.about, notes: d.about.notes.map((n, j) => (j === i ? v : n)) },
+              }))
+            }
+            multiline
+            rows={3}
           />
         ))}
         <CmsField

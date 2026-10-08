@@ -22,6 +22,8 @@ export interface LandingContent {
     taglineMobile: string
     /** Desktop word-pills — exactly 4, mapped to fixed positioned slots. */
     taglineWords: string[]
+    /** Desktop subtitle under the tagline (Gaegu); `\n` = line break. */
+    subtitle: string
     ctaLabel: string
     registerPrompt: string
     registerSubmit: string
@@ -45,9 +47,11 @@ export interface LandingContent {
     registerPrefix: string
     registerLabel: string
   }
-  /** Desktop feature row — exactly 4; layout is tuned for 4 entries. */
+  /** Desktop feature row — exactly 3 (anonym / moderiert / Schweiz), each with a confetti icon. */
   features: LandingFeature[]
   about: {
+    /** Desktop title over the intro columns (Gaegu, uppercase like the hero). */
+    title: string
     /**
      * Exactly 3 paragraphs — the text section on both desktop and the mobile
      * landing page; the word "Remy" is auto-styled in cursive on desktop.
@@ -55,6 +59,8 @@ export interface LandingContent {
     paragraphs: string[]
     /** Short reassurance points, each rendered with a hand-drawn checkmark. */
     checklist: string[]
+    /** Short paragraphs under the checklist (mobile), same style as the copy. */
+    notes: string[]
     /** Call-to-action below the checklist (mobile): a line of copy + button. */
     cta: {
       text: string
@@ -83,6 +89,7 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
   hero: {
     taglineMobile: 'Du machst eine\nPsycho­therapie?',
     taglineWords: ['Du', 'machst', 'eine', 'Psycho­therapie?'],
+    subtitle: 'Tausche dich mit anderen\nanonym aus',
     ctaLabel: 'Austauschen',
     registerPrompt: 'Melde dich anonym und sicher an.',
     registerSubmit: 'Registrieren',
@@ -107,24 +114,12 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
     registerLabel: 'Registrieren',
   },
   features: [
-    {
-      title: 'Austausch',
-      lead: 'Teile deine Erfahrungen mit Menschen, die Ähnliches erleben.',
-    },
-    {
-      title: 'Anonym',
-      lead: 'Schreib offen und geschützt — ohne deinen Namen preiszugeben.',
-    },
-    {
-      title: 'Moderiert',
-      lead: 'Ein respektvoller Raum, sorgfältig betreut und moderiert.',
-    },
-    {
-      title: 'Schweiz',
-      lead: 'Eine unabhängige Patient:innen­initiative aus der Schweiz.',
-    },
+    { title: 'Anonym', lead: 'Auf Remy schreibst du anonym' },
+    { title: 'Moderiert', lead: 'Remy ist moderiert' },
+    { title: 'Schweiz', lead: 'Remy ist eine Schweizer Plattform' },
   ],
   about: {
+    title: 'Um was es geht',
     paragraphs: [
       'Über 400’000 Men­schen in der Schweiz machen eine Psycho­therapie. Aber wenige reden darüber, ver­ständ­licher­weise.',
       'Therapie ist kompli­ziert und kann ver­unsichern. ==Remy ist der Ort, an dem du dich anonym aus­tauschen kannst.== Über das, was dich be­schäftigt. Über Therapeut:innen. Über den Weg, den du gehst.',
@@ -134,6 +129,10 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
       'Auf Remy schreibst du anonym',
       'Remy ist moderiert',
       'Remy ist eine Schweizer Plattform',
+    ],
+    notes: [
+      'Remy ist für die Schweiz kon­zipiert. User aus anderen Ländern sind auch herzlich willkommen.',
+      '==Ich bin eine Fach­person.== Darf ich auch rein­schauen? Selbst­ver­ständ­lich! Bitte mache dich aber durch die Regis­trierung als Fach­person kenntlich, wenn du Beiträge verfasst.',
     ],
     cta: {
       text: 'Interessiert? Einfach anonym registrieren und reinschauen.',

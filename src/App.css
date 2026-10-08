@@ -99,6 +99,12 @@
   display: none;
 }
 
+/* Hero subtitle under the tagline: desktop only (styled in the desktop
+   block below). */
+.landing-subtitle {
+  display: none;
+}
+
 /* Wrapper around the tagline + swirl/CTA row. Transparent to layout by
    default so mobile keeps stacking them directly in the hero column; the
    desktop block turns it into the flex row that pairs them side by side. */
@@ -120,6 +126,11 @@
   display: none;
 }
 
+/* Desktop intro columns hidden on mobile (desktop only) */
+.landing-about-columns {
+  display: none;
+}
+
 /* Desktop feature row hidden on mobile (desktop only) */
 .landing-features {
   display: none;
@@ -133,15 +144,15 @@
 .landing-about-checklist {
   list-style: none;
   margin: 0 -34px;
-  padding: 89px 34px 81px;
+  padding: 89px 34px 40px;
   background: #dde7ff;
   display: flex;
   flex-direction: column;
 }
 /* No rules between the rows — the 70px vertical padding alone spaces them
    (140px between rows; the three rows span ~500px, well within one phone
-   screen). The band's own top/bottom padding makes up the difference so the
-   gaps to the intro copy and the CTA stay unchanged.
+   screen). The band's own top padding keeps the gap to the intro copy; its
+   bottom padding sets the gap to the note paragraph below.
    No left padding: the 88px icon column + the 20px gap put the copy at
    108px, close to where it has always sat (100px). */
 .landing-about-checklist li {
@@ -151,15 +162,14 @@
   padding: 70px 22px 70px 0;
   text-align: left;
 }
-/* Gentle zig-zag instead of a rigid column: the middle row steps right
-   (towards the cloud behind "moderiert"), the outer rows sit slightly left
-   and slightly right of the base line, so the stack stays balanced around
-   its centre. */
-.landing-about-checklist li:nth-child(1) { margin-left: -6px; }
-.landing-about-checklist li:nth-child(2) { margin-left: 30px; }
-.landing-about-checklist li:nth-child(3) { margin-left: 10px; }
-/* Fixed-width column as wide as the widest icon (the mask, 88px) so the
-   three different icon widths share one centre line. */
+/* Each row (icon + copy) is centred on the screen on its own, so the rows
+   sit at slightly different offsets that follow their text widths. Offsets
+   are tuned to the rendered DE copy (line widths ≈ 135 / 110 / 149px next to
+   the 88px icon + 20px gap) — re-measure if the checklist copy changes. */
+.landing-about-checklist li:nth-child(1) { margin-left: 40px; }
+.landing-about-checklist li:nth-child(2) { margin-left: 52px; }
+.landing-about-checklist li:nth-child(3) { margin-left: 32px; }
+/* Fixed-width icon column; every icon is 88px wide and centred in it. */
 .landing-check-icon {
   width: 88px;
   display: flex;
@@ -172,6 +182,19 @@
   font-size: 24px;
   line-height: 1.15;
   color: #5d8be8;
+}
+
+/* Paragraphs between the checklist and the CTA band (mobile). The band's
+   trimmed bottom padding + the last row's 70px put it ~110px under the last
+   feature; its own bottom padding keeps the CTA copy ~150px below, matching
+   the rhythm of the rows above. Hidden on desktop with the checklist. */
+.landing-about-note {
+  padding-bottom: 150px;
+}
+/* Clear break between the notes — wider than the 30px between the intro
+   paragraphs, since each note answers a different question. */
+.landing-about-text .landing-about-note p + p {
+  margin-top: 56px;
 }
 
 /* About-section call-to-action: copy + swirl + yellow register button
@@ -200,8 +223,14 @@
   50% { transform: translateY(-8px); }
 }
 
-/* Deep-sea closer at the bottom of the mobile CTA band (the band is
-   hidden on desktop, so this is mobile-only). The confetti submarine sits in
+/* Desktop band above the footer that carries the deep-sea closer; hidden on
+   mobile, where the closer sits inside the CTA band (desktop styles below). */
+.landing-deepsea-band {
+  display: none;
+}
+
+/* Deep-sea closer at the bottom of the mobile CTA band; desktop re-sizes it
+   inside .landing-deepsea-band. The confetti submarine sits in
    the dark end of the white → footer-blue fade, nose to the left, its
    searchlight a cone of yellow confetti squares (SUB_BEAM_SQUARES in App.tsx)
    reaching ahead. Decorative, click-through, transform-only animation.
@@ -515,19 +544,40 @@
     right: 24px;
   }
 
-  /* ── Hero: the mobile composition scaled up per the desktop mockup —
-     wordmark top-left, one tagline block with the swirl + yellow CTA to its
-     right, and the four-figure animation across the bottom. ── */
+  /* ── Hero: two columns under the wordmark — the two-figure animation big
+     on the left, the tagline with the swirl + yellow CTA beneath it on the
+     right, both centred in the height the wordmark leaves. ── */
+  /* Background: the #c8d7ff wash eases down to 30% strength until 50px above
+     the bottom edge, then drops to nothing over those last 50px — a soft but
+     distinct end to the hero before the features. */
   .landing-hero {
     height: 100vh !important;
     overflow: visible !important;
-    background: linear-gradient(180deg, #c8d7ff 0%, #ffffff 100%) !important;
-    /* Rendered width of the 1734×678 figures stage. Shared so the register
-       form can reserve exactly the band above it. vw (not %) so the value
-       still means "width" when it is used inside a height calculation. */
-    --duo-w: min(86vw, 1500px, 52vh * 2.558);
+    background:
+      linear-gradient(180deg,
+        rgb(200, 215, 255) 0%,
+        rgba(200, 215, 255, 0.3) calc(100% - 50px),
+        rgba(200, 215, 255, 0) 100%),
+      #ffffff !important;
+    /* Rendered width of the desktop figures animation: up to half the
+       viewport, capped by the hero height (minus the wordmark band and
+       breathing room) so it never crowds short viewports. */
+    --duo-w: min(52vw, 1140px, (100vh - 220px) * 1.5047);
+  }
+  /* The wordmark spans the full width (pinned top-left); below it the
+     figures and the tagline block sit side by side as one centred pair, so
+     the outer margins match left and right whatever the viewport width. */
+  .landing-hero-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'logo logo logo logo'
+      '.    duo  mid  .';
+    column-gap: clamp(28px, 4.5vw, 96px);
   }
   .landing-logo-wrap {
+    grid-area: logo;
     display: flex !important;
     flex-shrink: 0;
     align-items: center !important;
@@ -548,26 +598,45 @@
     text-align: left;
   }
 
-  /* Tagline + swirl + CTA on one row, centred in the space the logo and the
-     figures leave over. The left padding reproduces the mockup's off-centre
-     placement (the block sits over the 2nd–4th figure, not the artboard
-     middle); `min-height: 0` lets it compress before the figures do. */
+  /* Right column: tagline, then swirl + CTA on a row beneath it. Sits a touch
+     above the optical centre (the extra bottom padding) so it lines up with
+     the figures' heads-to-shoulders, not their feet. */
   .landing-hero-mid {
+    grid-area: mid;
     display: flex !important;
-    flex: 1 1 auto;
+    flex-direction: column;
     min-height: 0;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    gap: clamp(20px, 2.6vw, 52px);
-    padding: 0 4% 0 24%;
+    gap: clamp(28px, 4.5vh, 60px);
+    padding: 0 0 8vh;
   }
   .landing-tagline {
     display: block !important;
     flex-shrink: 0;
-    font-size: clamp(30px, 3.2vw, 58px) !important;
-    line-height: 1.45 !important;
+    font-size: clamp(34px, 3.9vw, 72px) !important;
+    line-height: 1.4 !important;
     margin: 0 !important;
     padding: 0 !important;
+  }
+  /* Subtitle: the tagline's hand-drawn Gaegu, but in sentence case and
+     without the tagline's wide tracking, so it reads as a softer, spoken
+     follow-up to the shouted claim. Two lines, clearly smaller than the
+     tagline, slightly lighter blue for hierarchy; pulled up towards it
+     (negative margin eats part of the column gap) so the two read as one
+     claim, with the CTA row further below. */
+  .landing-subtitle {
+    display: block;
+    margin: calc(-0.4 * clamp(28px, 4.5vh, 60px)) 0 0;
+    font-family: 'Gaegu', 'Gaegu Accents', cursive;
+    font-weight: 700;
+    font-size: clamp(30px, 2.9vw, 56px);
+    line-height: 1.1;
+    /* Gaegu sets loose by default; tightened so the lines hold together. */
+    letter-spacing: -0.01em;
+    word-spacing: -0.1em;
+    text-align: left;
+    color: #7a9dff;
   }
   .landing-hero-actions {
     display: flex !important;
@@ -580,24 +649,27 @@
   }
   .landing-swirl {
     display: block !important;
-    width: clamp(110px, 14vw, 250px) !important;
+    width: clamp(110px, 12vw, 230px) !important;
     height: auto !important;
   }
 
-  /* Figures: the 1734×678 stage centred above the fold. The third min() term
-     caps it by height so short/landscape viewports don't hand the whole screen
-     to the animation. */
+  /* Figures: the animated duo (figures_duo_desktop.html), vertically
+     centred in the band below the wordmark. The frame's 1.5047 aspect is
+     the animation's own wrapper: the 1194×918 figure box plus the padding it
+     keeps (3.8% top, 16.8% right, 1.7% left) for the swaying wall shadow. */
   .landing-duo-wrap {
+    grid-area: duo;
     display: flex !important;
-    flex-shrink: 0;
-    align-items: flex-end;
+    min-height: 0;
+    align-items: center;
     justify-content: center;
-    padding: 0 0 4vh;
+    padding: 2vh 0 5vh;
   }
   .landing-duo {
     display: block;
     width: var(--duo-w);
-    aspect-ratio: 1734 / 678;
+    height: auto;
+    aspect-ratio: 1.5047;
     border: 0;
     background: transparent;
     color-scheme: light;
@@ -624,7 +696,7 @@
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: calc(100% - var(--duo-w) / 2.558 - 4vh) !important;
+    height: calc(100% - var(--duo-w) / 1.5047 - 4vh) !important;
     padding: 0 !important;
     justify-content: center !important;
   }
@@ -702,8 +774,8 @@
     padding-bottom: 130px !important;
     overflow: hidden !important;
     /* Picks up the hero's white bottom edge, cools into the same blue the
-       mobile page uses, then settles towards the footer's grey. */
-    background: linear-gradient(180deg, #ffffff 0%, #e8eeff 55%, #f2f3f7 100%) !important;
+       mobile page uses, then settles back to white for the deep-sea band. */
+    background: linear-gradient(180deg, #ffffff 0%, #e8eeff 55%, #ffffff 100%) !important;
   }
   .landing-about::before {
     display: none !important;
@@ -711,60 +783,86 @@
   .landing-about-snail {
     display: none !important;
   }
-  /* Feature row — horizontal, vertically staggered */
+  /* Intro copy right under the hero: the two CMS paragraphs as two equal
+     columns on the features' width, in the about section's uppercase Nunito
+     Sans; the text is balanced between them in App.tsx (balanceIntroColumns).
+     Wide gap between them. The mobile two-paragraph block is hidden here. */
+  .landing-about-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(72px, 8vw, 168px);
+    width: min(70vw, 1300px);
+    margin: 0 auto clamp(120px, 11vw, 180px);
+  }
+  .landing-about-columns p {
+    margin: 0;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(22px, 1.85vw, 34px);
+    line-height: 1.4;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-align: left;
+    color: rgb(71, 132, 255);
+  }
+  .landing-about-columns .landing-remy-name {
+    font-size: 1.3em;
+  }
+  /* Section title over the left column, set like the hero tagline: Gaegu,
+     uppercase, lightly tracked, a size step below the tagline. */
+  .landing-about-title {
+    grid-column: 1 / -1;
+    margin: 0 0 clamp(28px, 2.6vw, 48px);
+    font-family: 'Gaegu', 'Gaegu Accents', cursive;
+    font-weight: 700;
+    font-size: clamp(32px, 3vw, 56px);
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    word-spacing: 0;
+    text-transform: uppercase;
+    text-align: left;
+    color: #5482ff;
+  }
+  .landing-about-text .landing-about-intro {
+    display: none !important;
+  }
+
+  /* Feature row — horizontal, vertically staggered, spread wide: the three
+     columns sit at the row's left edge, centre and right edge
+     (space-between) inside a 70vw band. */
   .landing-features {
     display: flex !important;
-    justify-content: center !important;
+    justify-content: space-between !important;
     align-items: flex-start !important;
-    gap: clamp(113px, 4vw, 176px) !important;
-    max-width: 1084px !important;
-    margin: 0 auto 166px !important;
-    padding: 0 40px !important;
+    gap: clamp(48px, 5vw, 120px) !important;
+    width: min(70vw, 1300px) !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
   }
   .landing-feature {
-    flex: 1 1 0 !important;
-    min-width: 260px !important;
+    flex: 0 1 300px !important;
+    min-width: 240px !important;
     text-align: left !important;
   }
-  .landing-feature-blob {
-    position: relative !important;
-    width: 120px !important;
-    height: 120px !important;
-    margin: 0 0 28px !important;
-  }
-  .landing-feature-shape {
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-  .landing-feature-shape svg {
-    width: 100% !important;
-    height: 100% !important;
-    display: block !important;
-  }
-  /* Black thick-outlined icon — almost blob-sized, shifted to overlap (artsy) */
+  /* Confetti icon (same artwork as the mobile checklist), all at one width
+     and centred in a fixed-height box so the titles below line up within
+     each staggered column. */
   .landing-feature-icon {
-    position: absolute !important;
-    top: 26px !important;
-    left: 30px !important;
-    width: 106px !important;
-    height: 106px !important;
-    pointer-events: none !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 120px !important;
+    height: 126px !important;
+    margin: 0 0 24px !important;
   }
-  .landing-feature-icon svg {
-    width: 100% !important;
-    height: 100% !important;
+  .landing-feature-icon img {
     display: block !important;
-    overflow: visible !important;
+    width: 120px !important;
+    height: auto !important;
   }
-  .landing-feature--austauschen { margin-top: 48px !important; }
-  .landing-feature--anonymitaet { margin-top: 0 !important; }
+  .landing-feature--anonym { margin-top: 0 !important; }
   .landing-feature--moderiert { margin-top: 64px !important; }
-  .landing-feature--schweiz { margin-top: 16px !important; }
-  .landing-feature--austauschen .landing-feature-blob { transform: rotate(-6deg); }
-  .landing-feature--anonymitaet .landing-feature-blob { transform: rotate(8deg); }
-  .landing-feature--moderiert .landing-feature-blob { transform: rotate(-3deg); }
-  .landing-feature--schweiz .landing-feature-blob { transform: rotate(5deg); }
+  .landing-feature--schweiz { margin-top: 20px !important; }
   .landing-feature-title {
     font-family: "Nunito", sans-serif !important;
     font-weight: 600 !important;
@@ -782,8 +880,8 @@
     margin: 0 !important;
   }
   .landing-about-text {
-    /* Match the features' total rendered span: 4 items (260px) + 3 gaps */
-    max-width: calc(260px * 4 + clamp(113px, 4vw, 176px) * 3) !important;
+    /* Match the features' total rendered span: 3 items (260px) + 2 gaps */
+    max-width: calc(260px * 3 + clamp(113px, 4vw, 176px) * 2) !important;
     margin: 0 auto !important;
     padding: 0 !important;
   }
@@ -800,11 +898,63 @@
   .landing-about-text .landing-about-body .landing-remy-name {
     font-size: 44px !important;
   }
-  /* Desktop already carries the feature blobs — the mobile checklist and its
+  /* Desktop already carries the feature row — the mobile checklist and its
      CTA are redundant there; the closing line spans full width below. */
   .landing-about-checklist,
+  .landing-about-note,
   .landing-about-cta {
     display: none !important;
+  }
+
+  /* ── Deep-sea band + footer (desktop): the mobile ending scaled up. The
+     band fades from the about section's white into the footer blue on the
+     same smootherstep / OKLab curve as the mobile CTA band, and the
+     submarine cruises in its deep half on the right, nose left,
+     searchlight ahead. ── */
+  .landing-deepsea-band {
+    display: block;
+    position: relative;
+    height: clamp(420px, 34vw, 560px);
+    /* 1px overlap into the footer hides a sub-pixel seam from the vw height. */
+    margin-bottom: -1px;
+    background: linear-gradient(180deg,
+      #ffffff 0%, #fdfeff 10%, #f4f7fe 20%, #e0e9fd 30%,
+      #c3d4fb 40%, #a2bcf6 50%, #81a3f1 60%, #668dec 70%,
+      #557ee8 80%, #4c76e6 90%, #4b75e6 100%);
+  }
+  .landing-deepsea-band .landing-deepsea {
+    height: 100%;
+  }
+  .landing-deepsea-band .landing-sub {
+    right: 17%;
+    bottom: clamp(36px, 3.5vw, 64px);
+    width: clamp(220px, 18vw, 320px);
+  }
+  .landing-deepsea-band .landing-sub-beam {
+    width: clamp(190px, 15vw, 270px);
+  }
+
+  /* Footer on the same flat blue as mobile, everything white. The
+     !importants beat the component's inline greys and the logo's inline
+     grayscale filter. */
+  .landing-footer {
+    background: #4b75e6 !important;
+  }
+  .landing-footer-claim,
+  .landing-footer-links,
+  .landing-footer-made {
+    color: #ffffff !important;
+  }
+  .landing-footer-links a {
+    text-underline-offset: 4px;
+  }
+  .landing-footer-made {
+    opacity: 0.8;
+  }
+  /* Larger logo so it anchors the left end of the footer row. */
+  .landing-footer-logo {
+    filter: brightness(0) invert(1) !important;
+    height: clamp(77px, 5.4vw, 112px) !important;
   }
   .landing-about-text .landing-about-closing {
     column-count: 1 !important;
