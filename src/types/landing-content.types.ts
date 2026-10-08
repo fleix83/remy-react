@@ -59,8 +59,15 @@ export interface LandingContent {
     paragraphs: string[]
     /** Short reassurance points, each rendered with a hand-drawn checkmark. */
     checklist: string[]
-    /** Short paragraphs under the checklist (mobile), same style as the copy. */
+    /** Short paragraphs under the checklist (mobile), same style as the copy;
+     *  `\n` = line break. The second one (professionals) also shows on desktop. */
     notes: string[]
+    /** Desktop: personal "Wer steht hinter Remy?" section (right column, after
+     *  the professionals' note). */
+    story: {
+      title: string
+      text: string
+    }
     /** Call-to-action below the checklist (mobile): a line of copy + button. */
     cta: {
       text: string
@@ -114,15 +121,15 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
     registerLabel: 'Registrieren',
   },
   features: [
-    { title: 'Anonym', lead: 'Auf Remy schreibst du anonym' },
-    { title: 'Moderiert', lead: 'Remy ist moderiert' },
-    { title: 'Schweiz', lead: 'Remy ist eine Schweizer Plattform' },
+    { title: 'Anonym', lead: 'Auf Remy schreibst du anonym. Deine Identität ist geschützt.' },
+    { title: 'Moderiert', lead: 'Remy ist moderiert. Jeder Beitrag wird vor der Veröffent­lichung von der Moderation geprüft.' },
+    { title: 'Schweiz', lead: 'Remy wurde für die Schweiz konzipiert. Alle interessierten User sind willkommen.' },
   ],
   about: {
     title: 'Um was es geht',
     paragraphs: [
-      'Über 400’000 Men­schen in der Schweiz machen eine Psycho­therapie. Aber wenige reden darüber, ver­ständ­licher­weise.',
-      'Therapie ist kompli­ziert und kann ver­unsichern. ==Remy ist der Ort, an dem du dich anonym aus­tauschen kannst.== Über das, was dich be­schäftigt. Über Therapeut:innen. Über den Weg, den du gehst.',
+      'Über 400’000 Men­schen in der Schweiz machen eine Psycho­therapie. Aber wenige reden darüber, ver­ständ­licher­weise. Therapie ist oft kompli­ziert, lang­wierig und kann ver­unsichern.',
+      '==Remy ist der Ort, an dem du dich anonym aus­tauschen kannst.== Über das, was dich be­schäftigt. Über Therapeut:innen. Über den Weg, den du gehst.',
       'Remy ist eine un­ab­hängige Patienten­initiative für die Schweiz.',
     ],
     checklist: [
@@ -132,8 +139,12 @@ export const DEFAULT_LANDING_CONTENT: LandingContent = {
     ],
     notes: [
       'Remy ist für die Schweiz kon­zipiert. User aus anderen Ländern sind auch herzlich willkommen.',
-      '==Ich bin eine Fach­person.== Darf ich auch rein­schauen? Selbst­ver­ständ­lich! Bitte mache dich aber durch die Regis­trierung als Fach­person kenntlich, wenn du Beiträge verfasst.',
+      '==Ich bin eine Fach­person.== Darf ich auch rein­schauen?\n\nSelbst­ver­ständ­lich! Bitte mache dich aber durch die Regis­trierung als Fach­person kenntlich, wenn du Beiträge verfasst.',
     ],
+    story: {
+      title: 'Wer steht hinter Remy?',
+      text: 'Mit richtigem Namen heisse ich anders. Aber nennt mich Remy. Ich bin in frühem Erwachsenen­alter psychisch erkrankt und seither immer wieder bei unterschiedlichen Therapeut:innen in Therapie gewesen, auch in Kliniken. Die Erfahrungen waren von Person zu Person derart unterschiedlich, dass ich mich dazu entschlossen habe, dieses Forum ins Leben zu rufen, um ein wenig mehr Transparenz in die Therapie­landschaft zu bringen. Es soll allen Beteiligten und Interessierten helfen, sich besser zu orientieren.',
+    },
     cta: {
       text: 'Interessiert? Einfach anonym registrieren und reinschauen.',
       button: 'Registrieren',

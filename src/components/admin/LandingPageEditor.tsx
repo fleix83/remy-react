@@ -167,6 +167,18 @@ const LandingPageEditorBody: React.FC<{ lng: string }> = ({ lng }) => {
           />
         ))}
         <CmsField
+          label="«Wer steht hinter Remy?» – Titel (Desktop)"
+          value={draft.about.story?.title ?? ''}
+          onChange={(v) => setDraft((d) => ({ ...d, about: { ...d.about, story: { ...d.about.story, title: v } } }))}
+        />
+        <CmsField
+          label="«Wer steht hinter Remy?» – Text (Desktop)"
+          value={draft.about.story?.text ?? ''}
+          onChange={(v) => setDraft((d) => ({ ...d, about: { ...d.about, story: { ...d.about.story, text: v } } }))}
+          multiline
+          rows={6}
+        />
+        <CmsField
           label="CTA-Text (unter der Checkliste)"
           value={draft.about.cta?.text ?? ''}
           onChange={(v) => setAboutCta({ text: v })}

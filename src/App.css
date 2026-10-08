@@ -126,8 +126,9 @@
   display: none;
 }
 
-/* Desktop intro columns hidden on mobile (desktop only) */
-.landing-about-columns {
+/* Desktop intro columns + professionals' note hidden on mobile (desktop only) */
+.landing-about-columns,
+.landing-about-pro {
   display: none;
 }
 
@@ -190,6 +191,10 @@
    the rhythm of the rows above. Hidden on desktop with the checklist. */
 .landing-about-note {
   padding-bottom: 150px;
+}
+/* Notes may carry line breaks (\n in the CMS text). */
+.landing-about-note p {
+  white-space: pre-line;
 }
 /* Clear break between the notes — wider than the 30px between the intro
    paragraphs, since each note answers a different question. */
@@ -548,17 +553,16 @@
      on the left, the tagline with the swirl + yellow CTA beneath it on the
      right, both centred in the height the wordmark leaves. ── */
   /* Background: the #c8d7ff wash eases down to 30% strength until 50px above
-     the bottom edge, then drops to nothing over those last 50px — a soft but
-     distinct end to the hero before the features. */
+     its end, then drops to nothing over those last 50px — a soft but
+     distinct end to the hero. The wash lives on ::before, skewed about the
+     bottom-right corner so that end runs diagonally: from 10vh above the
+     hero's bottom on the left down to the bottom-right corner. The layer is
+     extended by the same drop upwards so the skew never uncovers the top-left. */
   .landing-hero {
+    --hero-skew-drop: 10vh;
     height: 100vh !important;
     overflow: visible !important;
-    background:
-      linear-gradient(180deg,
-        rgb(200, 215, 255) 0%,
-        rgba(200, 215, 255, 0.3) calc(100% - 50px),
-        rgba(200, 215, 255, 0) 100%),
-      #ffffff !important;
+    background: #ffffff !important;
     /* Rendered width of the desktop figures animation: up to half the
        viewport, capped by the hero height (minus the wordmark band and
        breathing room) so it never crowds short viewports. */
@@ -567,6 +571,23 @@
   /* The wordmark spans the full width (pinned top-left); below it the
      figures and the tagline block sit side by side as one centred pair, so
      the outer margins match left and right whatever the viewport width. */
+  .landing-hero::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(-1 * var(--hero-skew-drop));
+    bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg,
+      rgb(200, 215, 255) 0%,
+      rgb(200, 215, 255) var(--hero-skew-drop),
+      rgba(200, 215, 255, 0.3) calc(100% - 50px),
+      rgba(200, 215, 255, 0) 100%);
+    transform-origin: 100% 100%;
+    transform: skewY(atan2(var(--hero-skew-drop), 100vw));
+  }
   .landing-hero-body {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
@@ -610,6 +631,8 @@
     justify-content: center;
     gap: clamp(28px, 4.5vh, 60px);
     padding: 0 0 8vh;
+    /* Nudged 20px down and 20px left of its grid position. */
+    transform: translate(-20px, 20px);
   }
   .landing-tagline {
     display: block !important;
@@ -794,7 +817,8 @@
     width: min(70vw, 1300px);
     margin: 0 auto clamp(120px, 11vw, 180px);
   }
-  .landing-about-columns p {
+  .landing-about-columns p,
+  .landing-about-pro p {
     margin: 0;
     font-family: 'Nunito Sans', sans-serif;
     font-weight: 700;
@@ -805,8 +829,22 @@
     text-align: left;
     color: rgb(71, 132, 255);
   }
-  .landing-about-columns .landing-remy-name {
-    font-size: 1.3em;
+  /* "Remy" stays in the column's own font here (the renderer's inline
+     cursive style is overridden), and the ==marked== sentence gets the same
+     thick #fff399 underline as on mobile, scaled to the type size. */
+  .landing-about-columns .landing-remy-name,
+  .landing-about-pro .landing-remy-name {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    letter-spacing: inherit !important;
+  }
+  .landing-about-columns .landing-highlight,
+  .landing-about-pro .landing-highlight {
+    text-decoration-line: underline;
+    text-decoration-color: #fff399;
+    text-decoration-thickness: 0.24em;
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: none;
   }
   /* Section title over the left column, set like the hero tagline: Gaegu,
      uppercase, lightly tracked, a size step below the tagline. */
@@ -825,6 +863,52 @@
   }
   .landing-about-text .landing-about-intro {
     display: none !important;
+  }
+  /* Professionals' note + "Wer steht hinter Remy?" under the features, on
+     the intro's two-column grid (same width and gap, so the edges line up
+     with the intro and the features): the note in the left column, the story
+     in the right column stepped down so its title starts level with the
+     note's last lines — a diagonal read from the note into the personal
+     story without leaving big empty corners. */
+  .landing-about-pro {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    column-gap: clamp(72px, 8vw, 168px);
+    text-align: left;
+    width: min(70vw, 1300px);
+    margin: clamp(120px, 11vw, 180px) auto 0;
+  }
+  .landing-about-pro-note {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .landing-about-pro p {
+    white-space: pre-line;
+  }
+  .landing-about-story {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: clamp(320px, 28vw, 520px);
+    /* A bit wider than the column for the long story: it keeps the left edge
+       of the intro's right column and reaches past the row's right edge. */
+    width: calc(100% + 6vw);
+  }
+  .landing-about-story .landing-about-title {
+    white-space: nowrap;
+  }
+  /* The story is long and personal, so it is set in sentence case (same
+     Nunito Sans weight, size and blue as the intro) for easier reading. */
+  .landing-about-pro .landing-about-story p {
+    text-transform: none;
+    letter-spacing: 0.01em;
+    line-height: 1.45;
+  }
+  /* Yellow register button under the note; opens the form with the
+     therapist checkbox ticked. Same pill as the hero CTA. */
+  .landing-about-pro-cta {
+    display: inline-block;
+    margin-top: clamp(32px, 3vw, 52px);
   }
 
   /* Feature row — horizontal, vertically staggered, spread wide: the three
@@ -859,6 +943,13 @@
     display: block !important;
     width: 120px !important;
     height: auto !important;
+  }
+  /* The flat mask reads small next to the flag and cross: 20% larger. */
+  .landing-feature--anonym .landing-feature-icon {
+    width: 144px !important;
+  }
+  .landing-feature--anonym .landing-feature-icon img {
+    width: 144px !important;
   }
   .landing-feature--anonym { margin-top: 0 !important; }
   .landing-feature--moderiert { margin-top: 64px !important; }
@@ -1374,5 +1465,28 @@
   .page-postview .postview-mobile-header {
     height: 130px;
     background: linear-gradient(180deg, hwb(from var(--postview-cat, #e2ecff) h 75% b / 0.3), transparent);
+  }
+}
+
+/* Confetti rain above the desktop login/register screens (canvas option C).
+   The 1440×300 band is cropped at the sides on narrower windows and scaled up
+   on wider ones; the screen's content drops by 120px so the title clears the
+   densest part of the funnel. */
+.landing-auth-confetti {
+  display: none;
+}
+@media (min-width: 768px) {
+  .landing-auth-confetti {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 300px;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .landing-auth-screen {
+    padding-top: 120px !important;
   }
 }

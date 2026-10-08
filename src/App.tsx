@@ -96,6 +96,103 @@ const SUB_BEAM_SQUARES = [
   { x: 154.8, y: 53.7, s: 7.3, o: 1.0, r: 1 },
 ]
 
+// Confetti rain above the desktop login/register screens (design canvas
+// option C, 90 squares, seed 22): theme-colour squares in a 1440×300 band,
+// bigger and more opaque at the top edge, thinning out in a funnel toward
+// the centred REMY title. Rendered by .landing-auth-confetti (App.css).
+const AUTH_CONFETTI_SQUARES = [
+  { x: 895, y: 10, s: 17, c: '#4785ff', o: 0.91, r: -12 },
+  { x: 1292, y: 28, s: 18, c: '#edd3ff', o: 0.82, r: -44 },
+  { x: 155, y: -4, s: 17, c: '#ffeb99', o: 0.94, r: -31 },
+  { x: 795, y: 10, s: 19, c: '#98ffc7', o: 0.91, r: 15 },
+  { x: 1115, y: -5, s: 20, c: '#c5d0ff', o: 0.94, r: -45 },
+  { x: 69, y: 51, s: 14, c: '#4785ff', o: 0.71, r: -21 },
+  { x: 1176, y: -5, s: 18, c: '#4785ff', o: 0.94, r: -19 },
+  { x: 426, y: -3, s: 18, c: '#c5d0ff', o: 0.94, r: -34 },
+  { x: 4, y: 19, s: 14, c: '#98ffc7', o: 0.83, r: 11 },
+  { x: 54, y: -5, s: 19, c: '#95c7ff', o: 0.94, r: 29 },
+  { x: 288, y: 30, s: 18, c: '#ffeb99', o: 0.84, r: 36 },
+  { x: 604, y: 5, s: 17, c: '#c5d0ff', o: 0.92, r: 20 },
+  { x: 755, y: 102, s: 17, c: '#4785ff', o: 0.73, r: -13 },
+  { x: 1089, y: -4, s: 16, c: '#c5d0ff', o: 0.94, r: 26 },
+  { x: 690, y: 209, s: 10, c: '#4785ff', o: 0.51, r: -44 },
+  { x: 886, y: 78, s: 15, c: '#c5d0ff', o: 0.76, r: -18 },
+  { x: 203, y: 110, s: 10, c: '#ffeb99', o: 0.56, r: -32 },
+  { x: 1375, y: 14, s: 18, c: '#ff6b6b', o: 0.86, r: -17 },
+  { x: 1018, y: 34, s: 17, c: '#95c7ff', o: 0.84, r: 37 },
+  { x: 617, y: 247, s: 9, c: '#c5d0ff', o: 0.41, r: 15 },
+  { x: 125, y: 41, s: 13, c: '#ffc8c8', o: 0.77, r: -23 },
+  { x: 701, y: 90, s: 17, c: '#ffeb99', o: 0.75, r: -3 },
+  { x: 319, y: -8, s: 19, c: '#95c7ff', o: 0.95, r: 9 },
+  { x: 616, y: 203, s: 11, c: '#edd3ff', o: 0.5, r: 13 },
+  { x: 1436, y: 18, s: 19, c: '#4785ff', o: 0.83, r: -15 },
+  { x: 717, y: 79, s: 17, c: '#edd3ff', o: 0.78, r: 14 },
+  { x: 1019, y: 45, s: 16, c: '#95c7ff', o: 0.81, r: -7 },
+  { x: 704, y: 161, s: 14, c: '#95c7ff', o: 0.61, r: 11 },
+  { x: 685, y: 192, s: 13, c: '#98ffc7', o: 0.55, r: 36 },
+  { x: 448, y: 122, s: 12, c: '#ffc8c8', o: 0.62, r: -40 },
+  { x: 1323, y: -5, s: 17, c: '#98ffc7', o: 0.94, r: -15 },
+  { x: 1419, y: 42, s: 12, c: '#4785ff', o: 0.73, r: -16 },
+  { x: 177, y: 0, s: 19, c: '#edd3ff', o: 0.92, r: -43 },
+  { x: 767, y: 57, s: 15, c: '#ffc8c8', o: 0.82, r: -43 },
+  { x: 614, y: 88, s: 16, c: '#ffc8c8', o: 0.74, r: -31 },
+  { x: 362, y: 91, s: 11, c: '#c5d0ff', o: 0.68, r: 1 },
+  { x: 299, y: -6, s: 16, c: '#98ffc7', o: 0.94, r: -23 },
+  { x: 247, y: 96, s: 14, c: '#c5d0ff', o: 0.62, r: 32 },
+  { x: 118, y: 110, s: 8, c: '#4785ff', o: 0.51, r: 37 },
+  { x: 1279, y: 145, s: 7, c: '#4785ff', o: 0.41, r: -40 },
+  { x: 838, y: 207, s: 9, c: '#edd3ff', o: 0.48, r: 26 },
+  { x: 1266, y: 87, s: 14, c: '#95c7ff', o: 0.62, r: 17 },
+  { x: 395, y: 168, s: 13, c: '#edd3ff', o: 0.48, r: 13 },
+  { x: 1074, y: 78, s: 16, c: '#95c7ff', o: 0.71, r: -12 },
+  { x: 882, y: 130, s: 12, c: '#edd3ff', o: 0.64, r: 6 },
+  { x: 1295, y: -7, s: 19, c: '#98ffc7', o: 0.95, r: 2 },
+  { x: 472, y: 95, s: 16, c: '#4785ff', o: 0.7, r: -36 },
+  { x: 486, y: -4, s: 21, c: '#4785ff', o: 0.94, r: -5 },
+  { x: 872, y: 23, s: 16, c: '#ffc8c8', o: 0.88, r: -44 },
+  { x: 1208, y: 70, s: 16, c: '#ffc8c8', o: 0.7, r: -1 },
+  { x: 82, y: 12, s: 19, c: '#95c7ff', o: 0.87, r: 34 },
+  { x: 947, y: 59, s: 14, c: '#c5d0ff', o: 0.79, r: 25 },
+  { x: 107, y: -8, s: 19, c: '#ffc8c8', o: 0.95, r: 32 },
+  { x: 121, y: 6, s: 20, c: '#edd3ff', o: 0.9, r: 40 },
+  { x: 498, y: 10, s: 20, c: '#98ffc7', o: 0.91, r: 4 },
+  { x: 178, y: 44, s: 16, c: '#4785ff', o: 0.77, r: -6 },
+  { x: 543, y: 10, s: 19, c: '#95c7ff', o: 0.91, r: -25 },
+  { x: 282, y: 23, s: 18, c: '#ffeb99', o: 0.86, r: -33 },
+  { x: 562, y: 19, s: 20, c: '#ff6b6b', o: 0.89, r: -15 },
+  { x: 1272, y: 140, s: 7, c: '#95c7ff', o: 0.43, r: -33 },
+  { x: 1248, y: -6, s: 19, c: '#edd3ff', o: 0.94, r: 27 },
+  { x: 441, y: 178, s: 12, c: '#edd3ff', o: 0.48, r: 11 },
+  { x: 485, y: 183, s: 12, c: '#c5d0ff', o: 0.49, r: 6 },
+  { x: 799, y: 114, s: 13, c: '#ffc8c8', o: 0.69, r: -37 },
+  { x: 290, y: 130, s: 12, c: '#95c7ff', o: 0.54, r: -27 },
+  { x: 1323, y: 113, s: 12, c: '#4785ff', o: 0.5, r: 28 },
+  { x: 1319, y: 17, s: 15, c: '#95c7ff', o: 0.86, r: 7 },
+  { x: 1060, y: 85, s: 12, c: '#ff6b6b', o: 0.7, r: 6 },
+  { x: 1225, y: 44, s: 17, c: '#ff6b6b', o: 0.78, r: 10 },
+  { x: 341, y: 2, s: 18, c: '#edd3ff', o: 0.92, r: 32 },
+  { x: 23, y: -8, s: 18, c: '#edd3ff', o: 0.95, r: 17 },
+  { x: 744, y: 43, s: 20, c: '#4785ff', o: 0.85, r: -5 },
+  { x: 357, y: 144, s: 9, c: '#ffeb99', o: 0.53, r: -37 },
+  { x: 995, y: 10, s: 16, c: '#4785ff', o: 0.91, r: 42 },
+  { x: 166, y: 92, s: 12, c: '#4785ff', o: 0.6, r: 12 },
+  { x: 1133, y: 56, s: 19, c: '#98ffc7', o: 0.76, r: -32 },
+  { x: 740, y: 230, s: 8, c: '#98ffc7', o: 0.48, r: 42 },
+  { x: 1347, y: 121, s: 12, c: '#ff6b6b', o: 0.44, r: -34 },
+  { x: 276, y: 64, s: 15, c: '#ffeb99', o: 0.73, r: -21 },
+  { x: 1188, y: -5, s: 19, c: '#4785ff', o: 0.94, r: -23 },
+  { x: 1221, y: 10, s: 17, c: '#4785ff', o: 0.89, r: -45 },
+  { x: 355, y: -2, s: 21, c: '#98ffc7', o: 0.93, r: -41 },
+  { x: 1239, y: -6, s: 19, c: '#4785ff', o: 0.94, r: -11 },
+  { x: 829, y: 177, s: 14, c: '#4785ff', o: 0.55, r: 32 },
+  { x: 463, y: 132, s: 11, c: '#ff6b6b', o: 0.6, r: -10 },
+  { x: 895, y: -2, s: 21, c: '#edd3ff', o: 0.94, r: -1 },
+  { x: 659, y: 211, s: 12, c: '#98ffc7', o: 0.5, r: -14 },
+  { x: 658, y: 134, s: 16, c: '#4785ff', o: 0.66, r: -2 },
+  { x: 486, y: -6, s: 18, c: '#95c7ff', o: 0.94, r: -34 },
+  { x: 60, y: -5, s: 19, c: '#ffeb99', o: 0.94, r: -40 },
+]
+
 function App() {
   const [showCreatePostDialog, setShowCreatePostDialog] = useState(false)
   const { user, userProfile, loading, completeOnboarding, checkUsernameAvailable } = useAuthStore()
@@ -388,7 +485,10 @@ function AuthForm() {
     }
   }
 
-  const handleRegisterClick = () => {
+  // `asTherapist` pre-ticks the form's therapist checkbox (the professionals'
+  // note CTA); every other entry point opens it unticked.
+  const handleRegisterClick = (asTherapist = false) => {
+    setIsTherapist(asTherapist)
     setShowRegisterForm(true)
     setShowLoginForm(false)
     setRegistrationComplete(false)
@@ -456,6 +556,29 @@ function AuthForm() {
           </button>
         </div>
       )}
+
+        {(showLoginForm || registerScreen) && (
+          <svg
+            className="landing-auth-confetti"
+            viewBox="0 0 1440 300"
+            preserveAspectRatio="xMidYMin slice"
+            aria-hidden="true"
+          >
+            {AUTH_CONFETTI_SQUARES.map((q, i) => (
+              <rect
+                key={i}
+                x={q.x}
+                y={q.y}
+                width={q.s}
+                height={q.s}
+                rx={2}
+                fill={q.c}
+                opacity={q.o}
+                transform={`rotate(${q.r} ${q.x + q.s / 2} ${q.y + q.s / 2})`}
+              />
+            ))}
+          </svg>
+        )}
 
       <div className="w-full" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Welcome Text - Matching mockup exactly (the register screen swaps
@@ -547,7 +670,7 @@ function AuthForm() {
                   decoding="async"
                 />
                 <div className="landing-cta-wrap">
-                  <button className="landing-cta" onClick={handleRegisterClick}>
+                  <button className="landing-cta" onClick={() => handleRegisterClick()}>
                     {landing.hero.ctaLabel}
                   </button>
                 </div>
@@ -637,7 +760,7 @@ function AuthForm() {
         {/* Register screen — mirrors the login screen: REMY title + subtitle,
             labelled fields, no top-bar logo, no figures (all widths). */}
         {registerScreen && (
-          <div style={{
+          <div className="landing-auth-screen" style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -814,7 +937,7 @@ function AuthForm() {
 
         {/* Login Form */}
         {showLoginForm && (
-          <div style={{
+          <div className="landing-auth-screen" style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -925,7 +1048,7 @@ function AuthForm() {
                 </span>
                 <button
                   type="button"
-                  onClick={handleRegisterClick}
+                  onClick={() => handleRegisterClick()}
                   style={{ fontFamily: '"Nunito Sans", sans-serif', fontSize: '15px', color: '#5482ff', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontWeight: 700 }}
                 >
                   {landing.login.registerLabel}
@@ -975,6 +1098,31 @@ function AuthForm() {
             <p className="landing-feature-lead">{desktopFeatures[i]?.lead ?? f.lead}</p>
           </div>
         ))}
+      </div>
+
+      {/* Desktop: the professionals' note under the features (the mobile
+          notes' second entry — the first, "für die Schweiz konzipiert", is
+          covered by the Schweiz feature here). Hidden on mobile, which shows
+          both notes under its checklist. */}
+      {/* …followed by "Wer steht hinter Remy?" in the right column, stepped
+          down below the note (desktop only). */}
+      <div className="landing-about-pro">
+        {landing.about.notes?.length > 1 && (
+          <div className="landing-about-pro-note">
+            {landing.about.notes.slice(1).map((note, i) => (
+              <p key={i}>{renderLandingText(note, `about-pro-${i}`)}</p>
+            ))}
+            <button className="landing-cta landing-about-pro-cta" onClick={() => handleRegisterClick(true)}>
+              {landing.about.cta?.button || landing.hero.registerSubmit}
+            </button>
+          </div>
+        )}
+        {landing.about.story?.text && (
+          <div className="landing-about-story">
+            {landing.about.story.title && <h2 className="landing-about-title">{landing.about.story.title}</h2>}
+            <p>{renderLandingText(landing.about.story.text, 'about-story')}</p>
+          </div>
+        )}
       </div>
 
       <div className="landing-about-text" style={{
@@ -1033,7 +1181,7 @@ function AuthForm() {
                 height={113}
                 decoding="async"
               />
-              <button className="landing-cta landing-about-cta-btn" onClick={handleRegisterClick}>
+              <button className="landing-cta landing-about-cta-btn" onClick={() => handleRegisterClick()}>
                 {landing.about.cta.button}
               </button>
             </div>
