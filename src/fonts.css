@@ -1,11 +1,16 @@
 /* Self-hosted web fonts (latin + latin-ext subsets, woff2), replacing the
    Google Fonts CDN: no visitor IPs leak to Google (security item H2) and no
-   dependency on Google's user-agent sniffing. Files live in public/fonts/. */
+   dependency on Google's user-agent sniffing. Files live in public/fonts/;
+   the above-the-fold ones are preloaded in index.html.
+   Gaegu uses font-display: block — its fallback is the generic `cursive`
+   face (Apple Chancery on macOS), which looks far worse than a few ms of
+   invisible text. Nunito / Nunito Sans / Quicksand keep swap: their plain
+   sans fallback is harmless and body text must never stay hidden. */
 @font-face {
   font-family: 'Gaegu';
   font-style: normal;
   font-weight: 300;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/gaegu-300-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
@@ -13,7 +18,7 @@
   font-family: 'Gaegu';
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/gaegu-400-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
@@ -21,7 +26,7 @@
   font-family: 'Gaegu';
   font-style: normal;
   font-weight: 700;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/gaegu-700-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }

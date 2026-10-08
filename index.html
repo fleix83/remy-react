@@ -13,6 +13,13 @@
     <meta property="og:url" content="https://remyforum.ch/" data-seo-static />
     <meta property="og:image" content="https://remyforum.ch/images/logo_claim.png" data-seo-static />
     <meta property="og:locale" content="de_CH" data-seo-static />
+    <!-- Preload the above-the-fold web fonts so they download in parallel with
+         the JS bundle. Without this they are only discovered once React renders
+         text that uses them (after the auth check), and the fallback flashes:
+         for Gaegu that is the generic `cursive` face (Apple Chancery on macOS). -->
+    <link rel="preload" href="/fonts/gaegu-700-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/nunito-200-900-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/nunito-sans-200-1000-latin.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <div id="root"></div>

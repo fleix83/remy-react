@@ -26,8 +26,8 @@ export function renderWithRemy(text: string, keyPrefix = 'remy'): React.ReactNod
 
 /**
  * Landing paragraph renderer: on top of the cursive-"Remy" treatment,
- * `==so markierter Text==` is wrapped in a `.landing-highlight` span (yellow
- * marker shade on the mobile landing; unstyled elsewhere). Unpaired `==`
+ * `==so markierter Text==` is wrapped in a `.landing-highlight` span (thick
+ * yellow underline on the mobile landing; unstyled elsewhere). Unpaired `==`
  * markers are left as literal text.
  */
 export function renderLandingText(text: string, keyPrefix = 'lp'): React.ReactNode[] {
