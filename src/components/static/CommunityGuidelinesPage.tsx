@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { usePermissions } from '../../hooks/usePermissions'
 import { DocumentsService } from '../../services/documents.service'
@@ -13,6 +14,13 @@ import LandingFooter from '../layout/LandingFooter'
 
 const CommunityGuidelinesPage: React.FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { t: tAuth } = useTranslation('auth')
+  // Opened from the onboarding username screen (WelcomePage): back leads
+  // there, and a closing "read" button continues the onboarding.
+  const onboarding = (location.state as { onboarding?: { returnTo: string; username?: string } } | null)?.onboarding
+  const backToOnboarding = (guidelinesRead: boolean) =>
+    navigate(onboarding!.returnTo, { state: { username: onboarding!.username, guidelinesRead } })
   const { user, userProfile, logout } = useAuthStore()
   const { isAdmin } = usePermissions()
   const [document, setDocument] = useState<Document | null>(null)
@@ -184,14 +192,14 @@ const CommunityGuidelinesPage: React.FC = () => {
           <div className="w-6 h-6"></div>
 
           <button
-            onClick={() => navigate(user ? '/' : '/?login=true')}
+            onClick={() => (onboarding ? backToOnboarding(false) : navigate(user ? '/' : '/?login=true'))}
             className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
             style={{ color: 'var(--primary)' }}
           >
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" style={{ stroke: 'var(--primary)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            {user ? 'Zurück zum Forum' : 'Login / Registrieren'}
+            {onboarding ? tAuth('welcome.backToUsername') : user ? 'Zurück zum Forum' : 'Login / Registrieren'}
           </button>
 
           {user && userProfile && (
@@ -291,6 +299,21 @@ const CommunityGuidelinesPage: React.FC = () => {
             />
           ))}
         </div>
+
+        {/* Onboarding: confirm reading → forum (username already chosen) or
+            back to the username form. */}
+        {onboarding && !isEditMode && (
+          <div className="mt-12 flex justify-center">
+            <button
+              type="button"
+              onClick={() => backToOnboarding(true)}
+              className="px-8 py-3 rounded-full text-white font-semibold transition-opacity hover:opacity-90"
+              style={{ backgroundColor: '#4785ff' }}
+            >
+              {tAuth('welcome.guidelinesRead')}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Mobile Slide-in Menu */}

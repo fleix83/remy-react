@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuthStore } from '../../stores/auth.store'
 import { useTranslation } from 'react-i18next'
 import LandingFooter from '../layout/LandingFooter'
+
+/** Router state exchanged with CommunityGuidelinesPage during onboarding. */
+export interface OnboardingReturnState {
+  username?: string
+  guidelinesRead?: boolean
+}
 
 interface WelcomePageProps {
   onComplete: (username: string) => Promise<void>
@@ -13,9 +19,12 @@ interface WelcomePageProps {
 const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvailable }) => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { refreshSession } = useAuthStore()
   const { t } = useTranslation('auth')
-  const [username, setUsername] = useState('')
+  // Returning from the guidelines (see openGuidelines): restore what was typed.
+  const returnState = location.state as OnboardingReturnState | null
+  const [username, setUsername] = useState(returnState?.username ?? '')
 
   // Override body background so no other bg bleeds through
   useEffect(() => {
@@ -79,8 +88,8 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault()
 
     // Validate
     const validationError = validateUsername(username)
@@ -137,6 +146,29 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
     }
   }
 
+  // Guidelines open in the same tab, carrying where to come back to (this URL,
+  // incl. the email link's token_hash) and the username typed so far.
+  const openGuidelines = () => {
+    navigate('/community-guidelines', {
+      state: { onboarding: { returnTo: location.pathname + location.search, username } },
+    })
+  }
+
+  // Back from the guidelines via "Ich habe die Community Guidelines gelesen":
+  // with a username already filled in, finish onboarding straight away
+  // (→ forum); otherwise stay here so the user can pick one.
+  const autoSubmitted = React.useRef(false)
+  useEffect(() => {
+    if (!returnState?.guidelinesRead || autoSubmitted.current) return
+    autoSubmitted.current = true
+    // Drop the flag from history so a reload doesn't submit again.
+    navigate(location.pathname + location.search, { replace: true, state: { username: returnState.username } })
+    if (returnState.username && !validateUsername(returnState.username)) {
+      void handleSubmit()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const isButtonDisabled = !username.trim() || username.length < 2 || isChecking || isSubmitting || !!error
 
   return (
@@ -157,14 +189,14 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onComplete, checkUsernameAvai
         </p>
 
         <div className="mb-10 text-left">
-          <Link
-            to="/community-guidelines"
-            target="_blank"
+          <button
+            type="button"
+            onClick={openGuidelines}
             className="inline-block px-6 py-2 rounded-full text-white font-medium"
             style={{ backgroundColor: '#4785ff' }}
           >
             {t('welcome.guidelinesLink')}
-          </Link>
+          </button>
         </div>
 
         {/* Username Section */}
